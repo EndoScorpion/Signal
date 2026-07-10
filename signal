@@ -1,0 +1,202 @@
+npm install @nktkas/hyperliquid
+import { HttpInfoClient, WebSocketClient, PrivateClient } from "@nktkas/hyperliquid";
+import { ethers } from "ethers";
+
+// --- CONFIGURATION ---
+const PRIVATE_KEY = "0xYourPrivateKeyHere"; // Replace with your actual private key
+const IS_TESTNET = true; // Set to false for Mainnet
+const COIN = "BTC"; // Asset to trade
+const TRADE_SIZE = 0.01; // Order size
+
+// --- STATE MANAGEMENT ---
+let candles = []; // Array to store recent 1-minute candles
+let yesterdaysLowestRange = 0; // Value must be set based on yesterday's data
+
+// --- INITIALIZE HYPERLIQUID CLIENTS ---
+// The private client requires an ethers wallet derived from your private key
+const wallet = new ethers.Wallet(PRIVATE_KEY);
+const privateClient = new PrivateClient(wallet, { isTestnet: IS_TESTNET });
+const infoClient = new HttpInfoClient({ isTestnet: IS_TESTNET });
+const wsClient = new WebSocketClient({ isTestnet: IS_TESTNET });
+
+// --- INDICATOR LOGIC ---
+function getTrueRange(highs, lows, closes) {
+    let trueRanges = [];
+    for (let i = 0; i < highs.length; i++) {
+        let h = highs[i];
+        let l = lows[i];
+        let prevC = i > 0 ? closes[i - 1] : l;
+        let tr = Math.max(h - l, Math.abs(h - prevC), Math.abs(prevC - l));
+        trueRanges.push(tr);
+    }
+    return trueRanges;
+}
+
+function calculateATR(highs, lows, closes, period = 14) {
+    let tr = getTrueRange(highs, lows, closes);
+    let atr = [];
+    for (let i = 0; i < tr.length; i++) {
+        if (i < period - 1) atr.push(null);
+        else if (i === period - 1) {
+            let sum = tr.slice(0, period).reduce((a, b) => a + b, 0);
+            atr.push(sum / period);
+        } else {
+            atr.push((atr[i - 1] * (period - 1) + tr[i]) / period);
+        }
+    }
+    return atr;
+}
+
+function calculateStochastic(highs, lows, closes, kPeriod = 5, slowing = 3) {
+    let lowestLows = [];
+    let highestHighs = [];
+
+    for (let i = 0; i < highs.length; i++) {
+        if (i < kPeriod - 1) {
+            lowestLows.push(null);
+            highestHighs.push(null);
+        } else {
+            let sliceLows = lows.slice(i - kPeriod + 1, i + 1);
+            let sliceHighs = highs.slice(i - kPeriod + 1, i + 1);
+            lowestLows.push(Math.min(...sliceLows));
+            highestHighs.push(Math.max(...sliceHighs));
+        }
+    }
+
+    let fastK = [];
+    for (let i = 0; i < closes.length; i++) {
+        if (lowestLows[i] === null || highestHighs[i] === null || highestHighs[i] === lowestLows[i]) {
+            fastK.push(null);
+        } else {
+            fastK.push(((closes[i] - lowestLows[i]) / (highestHighs[i] - lowestLows[i])) * 100);
+        }
+    }
+
+    let slowK = [];
+    for (let i = 0; i < fastK.length; i++) {
+        if (i < slowing - 1 || fastK[i] === null) {
+            slowK.push(null);
+        } else {
+            let sum = fastK.slice(i - slowing + 1, i + 1).reduce((a, b) => a + b, 0);
+            slowK.push(sum / slowing);
+        }
+    }
+    return slowK;
+}
+
+// --- ORDER EXECUTION ---
+async function executeMarketBuyOrder() {
+    try {
+        console.log(`Executing Market BUY Order for ${TRADE_SIZE} ${COIN}...`);
+        
+        const response = await privateClient.order({
+            orders: [{
+                coin: COIN,
+                isBuy: true,
+                sz: TRADE_SIZE,
+                limitPx: 0, // 0 denotes a Market Order on Hyperliquid
+                orderType: { group: "market" },
+                reduceOnly: false
+            }]
+        });
+
+        console.log("Order submitted successfully:", JSON.stringify(response));
+    } catch (error) {
+        console.error("Failed to execute order:", error);
+    }
+}
+
+// --- ENGINE RUNNER ---
+function processNewCandle() {
+    if (candles.length < 20) return; // Wait for enough historical ticks
+
+    let highs = candles.map(c => c.high);
+    let lows = candles.map(c => c.low);
+    let closes = candles.map(c => c.close);
+
+    let atrValues = calculateATR(highs, lows, closes);
+    let currentATR = atrValues[atrValues.length - 1];
+
+    let slowK = calculateStochastic(highs, lows, closes);
+    let currentK = slowK[slowK.length - 1];
+    let prevK = slowK[slowK.length - 2];
+
+    if (currentATR === null || currentK === null || prevK === null) return;
+
+    // Conditions
+    let atrCondition = currentATR < yesterdaysLowestRange;
+    let stochCrossCondition = prevK < 50 && currentK > 50;
+
+    console.log(`Checking Signal - ATR: ${currentATR.toFixed(2)}, Stoch %K: ${currentK.toFixed(2)}`);
+
+    if (atrCondition && stochCrossCondition) {
+        console.log("🚀 MATCH FOUND: Conditions Met!");
+        executeMarketBuyOrder();
+    }
+}
+
+// --- DATA INGESTION ---
+async function startBot() {
+    // 1. Fetch Yesterday's Candlesticks to calculate historical limits
+    console.log("Fetching historical data...");
+    const historicalCandles = await infoClient.getCandlesSnapshot({
+        coin: COIN,
+        interval: "1d",
+        startTime: Date.now() - (2 * 24 * 60 * 60 * 1000), // Last 2 days
+        endTime: Date.now()
+    });
+
+    if (historicalCandles && historicalCandles.length > 0) {
+        // Simple mock calculation: High minus Low of yesterday's daily candle
+        const yesterday = historicalCandles[historicalCandles.length - 2];
+        yesterdaysLowestRange = parseFloat(yesterday.h) - parseFloat(yesterday.l);
+        console.log(`Calculated Yesterday's Range Limit: ${yesterdaysLowestRange}`);
+    } else {
+        throw new Error("Could not retrieve daily baseline limits.");
+    }
+
+    // 2. Hydrate the initial 1m candle array
+    const baseline1m = await infoClient.getCandlesSnapshot({
+        coin: COIN,
+        interval: "1m",
+        startTime: Date.now() - (100 * 60 * 1000), // Get last 100 minutes
+        endTime: Date.now()
+    });
+    
+    candles = baseline1m.map(c => ({
+        high: parseFloat(c.h),
+        low: parseFloat(c.l),
+        close: parseFloat(c.c),
+        timestamp: c.t
+    }));
+
+    // 3. Listen to live WebSocket streams
+    console.log(`Connecting to WebSocket for ${COIN} 1m updates...`);
+    await wsClient.connect();
+
+    wsClient.subscribe({ type: "candle", coin: COIN, interval: "1m" }, (data) => {
+        if (!data || !data.data) return;
+        
+        const update = data.data;
+        const freshCandle = {
+            high: parseFloat(update.h),
+            low: parseFloat(update.l),
+            close: parseFloat(update.c),
+            timestamp: update.t
+        };
+
+        // If the candle has closed (new timestamp arriving) or if updating the current ongoing candle
+        const existingIdx = candles.findIndex(c => c.timestamp === freshCandle.timestamp);
+        if (existingIdx !== -1) {
+            candles[existingIdx] = freshCandle; // Update open candle metrics
+        } else {
+            candles.push(freshCandle); // Save complete historical entry
+            if (candles.length > 200) candles.shift(); // Keep array memory light
+            
+            // Process the closed candle data
+            processNewCandle();
+        }
+    });
+}
+
+startBot().catch(console.error);
