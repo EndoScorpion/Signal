@@ -1,202 +1,147 @@
+npm init -y
 npm install @nktkas/hyperliquid
-import { HttpInfoClient, WebSocketClient, PrivateClient } from "@nktkas/hyperliquid";
-import { ethers } from "ethers";
+import { Hyperliquid, candle } from '@nktkas/hyperliquid';
 
-// --- CONFIGURATION ---
-const PRIVATE_KEY = "0xYourPrivateKeyHere"; // Replace with your actual private key
-const IS_TESTNET = true; // Set to false for Mainnet
-const COIN = "BTC"; // Asset to trade
-const TRADE_SIZE = 0.01; // Order size
+// Initialize the SDK. No private key is passed as we are strictly signaling, not trading.
+const hl = new Hyperliquid();
+const SYMBOL = 'BTC'; 
+const INTERVAL = '1m'; 
 
-// --- STATE MANAGEMENT ---
-let candles = []; // Array to store recent 1-minute candles
-let yesterdaysLowestRange = 0; // Value must be set based on yesterday's data
+// --- Helper Functions ---
 
-// --- INITIALIZE HYPERLIQUID CLIENTS ---
-// The private client requires an ethers wallet derived from your private key
-const wallet = new ethers.Wallet(PRIVATE_KEY);
-const privateClient = new PrivateClient(wallet, { isTestnet: IS_TESTNET });
-const infoClient = new HttpInfoClient({ isTestnet: IS_TESTNET });
-const wsClient = new WebSocketClient({ isTestnet: IS_TESTNET });
+/**
+ * Calculates the Stochastic Oscillator %K and %D.
+ * Formula: %K = ((Current Close - Lowest Low) / (Highest High - Lowest Low)) * 100
+ * %D = Simple Moving Average of %K
+ */
+function calculateStochastic(candles, kPeriod = 5, dPeriod = 3, slowing = 3) {
+    if (candles.length < kPeriod + slowing) return null;
 
-// --- INDICATOR LOGIC ---
-function getTrueRange(highs, lows, closes) {
-    let trueRanges = [];
-    for (let i = 0; i < highs.length; i++) {
-        let h = highs[i];
-        let l = lows[i];
-        let prevC = i > 0 ? closes[i - 1] : l;
-        let tr = Math.max(h - l, Math.abs(h - prevC), Math.abs(prevC - l));
-        trueRanges.push(tr);
+    let kValues = [];
+    for (let i = 0; i < candles.length - slowing + 1; i++) {
+        let highestHigh = -Infinity;
+        let lowestLow = Infinity;
+        
+        // Find highest high and lowest low in the K period window
+        for (let j = 0; j < kPeriod; j++) {
+            const c = candles[i + j];
+            if (c.high > highestHigh) highestHigh = c.high;
+            if (c.low < lowestLow) lowestLow = c.low;
+        }
+
+        const currentClose = candles[i + kPeriod - 1].close;
+        const denominator = highestHigh - lowestLow;
+        let rawK = denominator === 0 ? 0 : ((currentClose - lowestLow) / denominator) * 100;
+        kValues.push(rawK);
     }
-    return trueRanges;
+
+    // Apply slowing to get %K
+    let slowKValues = [];
+    for (let i = 0; i <= kValues.length - slowing; i++) {
+        let sum = 0;
+        for (let j = 0; j < slowing; j++) {
+            sum += kValues[i + j];
+        }
+        slowKValues.push(sum / slowing);
+    }
+
+    // Calculate %D (Moving Average of SlowK)
+    if (slowKValues.length < dPeriod) return null;
+    let dValues = [];
+    for (let i = 0; i <= slowKValues.length - dPeriod; i++) {
+        let sum = 0;
+        for (let j = 0; j < dPeriod; j++) {
+            sum += slowKValues[i + j];
+        }
+        dValues.push(sum / dPeriod);
+    }
+
+    return {
+        K: slowKValues[slowKValues.length - 1],
+        prevK: slowKValues[slowKValues.length - 2],
+        D: dValues[dValues.length - 1]
+    };
 }
 
-function calculateATR(highs, lows, closes, period = 14) {
-    let tr = getTrueRange(highs, lows, closes);
-    let atr = [];
-    for (let i = 0; i < tr.length; i++) {
-        if (i < period - 1) atr.push(null);
-        else if (i === period - 1) {
-            let sum = tr.slice(0, period).reduce((a, b) => a + b, 0);
-            atr.push(sum / period);
-        } else {
-            atr.push((atr[i - 1] * (period - 1) + tr[i]) / period);
-        }
+/**
+ * Calculates the Average True Range (ATR)
+ */
+function calculateATR(candles, period = 14) {
+    if (candles.length < period) return null;
+    let trSum = 0;
+
+    for (let i = 1; i < candles.length; i++) {
+        const prevClose = candles[i - 1].close;
+        const currentHigh = candles[i].high;
+        const currentLow = candles[i].low;
+        const currentClose = candles[i].close;
+
+        const hl = currentHigh - currentLow;
+        const hc = Math.abs(currentHigh - prevClose);
+        const lc = Math.abs(currentLow - prevClose);
+        const tr = Math.max(hl, hc, lc);
+        trSum += tr;
     }
-    return atr;
+
+    return trSum / period;
 }
 
-function calculateStochastic(highs, lows, closes, kPeriod = 5, slowing = 3) {
-    let lowestLows = [];
-    let highestHighs = [];
+// --- Main Signal Logic ---
 
-    for (let i = 0; i < highs.length; i++) {
-        if (i < kPeriod - 1) {
-            lowestLows.push(null);
-            highestHighs.push(null);
-        } else {
-            let sliceLows = lows.slice(i - kPeriod + 1, i + 1);
-            let sliceHighs = highs.slice(i - kPeriod + 1, i + 1);
-            lowestLows.push(Math.min(...sliceLows));
-            highestHighs.push(Math.max(...sliceHighs));
-        }
-    }
-
-    let fastK = [];
-    for (let i = 0; i < closes.length; i++) {
-        if (lowestLows[i] === null || highestHighs[i] === null || highestHighs[i] === lowestLows[i]) {
-            fastK.push(null);
-        } else {
-            fastK.push(((closes[i] - lowestLows[i]) / (highestHighs[i] - lowestLows[i])) * 100);
-        }
-    }
-
-    let slowK = [];
-    for (let i = 0; i < fastK.length; i++) {
-        if (i < slowing - 1 || fastK[i] === null) {
-            slowK.push(null);
-        } else {
-            let sum = fastK.slice(i - slowing + 1, i + 1).reduce((a, b) => a + b, 0);
-            slowK.push(sum / slowing);
-        }
-    }
-    return slowK;
-}
-
-// --- ORDER EXECUTION ---
-async function executeMarketBuyOrder() {
+async function checkTradingSignals() {
     try {
-        console.log(`Executing Market BUY Order for ${TRADE_SIZE} ${COIN}...`);
+        // Fetch historical candlestick data (e.g., 100 candles for indicator history)
+        const candles = await hl.info.getCandles(SYMBOL, INTERVAL, 100);
         
-        const response = await privateClient.order({
-            orders: [{
-                coin: COIN,
-                isBuy: true,
-                sz: TRADE_SIZE,
-                limitPx: 0, // 0 denotes a Market Order on Hyperliquid
-                orderType: { group: "market" },
-                reduceOnly: false
-            }]
-        });
+        if (candles.length < 50) return; // Wait for enough data
 
-        console.log("Order submitted successfully:", JSON.stringify(response));
-    } catch (error) {
-        console.error("Failed to execute order:", error);
-    }
-}
-
-// --- ENGINE RUNNER ---
-function processNewCandle() {
-    if (candles.length < 20) return; // Wait for enough historical ticks
-
-    let highs = candles.map(c => c.high);
-    let lows = candles.map(c => c.low);
-    let closes = candles.map(c => c.close);
-
-    let atrValues = calculateATR(highs, lows, closes);
-    let currentATR = atrValues[atrValues.length - 1];
-
-    let slowK = calculateStochastic(highs, lows, closes);
-    let currentK = slowK[slowK.length - 1];
-    let prevK = slowK[slowK.length - 2];
-
-    if (currentATR === null || currentK === null || prevK === null) return;
-
-    // Conditions
-    let atrCondition = currentATR < yesterdaysLowestRange;
-    let stochCrossCondition = prevK < 50 && currentK > 50;
-
-    console.log(`Checking Signal - ATR: ${currentATR.toFixed(2)}, Stoch %K: ${currentK.toFixed(2)}`);
-
-    if (atrCondition && stochCrossCondition) {
-        console.log("🚀 MATCH FOUND: Conditions Met!");
-        executeMarketBuyOrder();
-    }
-}
-
-// --- DATA INGESTION ---
-async function startBot() {
-    // 1. Fetch Yesterday's Candlesticks to calculate historical limits
-    console.log("Fetching historical data...");
-    const historicalCandles = await infoClient.getCandlesSnapshot({
-        coin: COIN,
-        interval: "1d",
-        startTime: Date.now() - (2 * 24 * 60 * 60 * 1000), // Last 2 days
-        endTime: Date.now()
-    });
-
-    if (historicalCandles && historicalCandles.length > 0) {
-        // Simple mock calculation: High minus Low of yesterday's daily candle
-        const yesterday = historicalCandles[historicalCandles.length - 2];
-        yesterdaysLowestRange = parseFloat(yesterday.h) - parseFloat(yesterday.l);
-        console.log(`Calculated Yesterday's Range Limit: ${yesterdaysLowestRange}`);
-    } else {
-        throw new Error("Could not retrieve daily baseline limits.");
-    }
-
-    // 2. Hydrate the initial 1m candle array
-    const baseline1m = await infoClient.getCandlesSnapshot({
-        coin: COIN,
-        interval: "1m",
-        startTime: Date.now() - (100 * 60 * 1000), // Get last 100 minutes
-        endTime: Date.now()
-    });
-    
-    candles = baseline1m.map(c => ({
-        high: parseFloat(c.h),
-        low: parseFloat(c.l),
-        close: parseFloat(c.c),
-        timestamp: c.t
-    }));
-
-    // 3. Listen to live WebSocket streams
-    console.log(`Connecting to WebSocket for ${COIN} 1m updates...`);
-    await wsClient.connect();
-
-    wsClient.subscribe({ type: "candle", coin: COIN, interval: "1m" }, (data) => {
-        if (!data || !data.data) return;
+        // Split today and yesterday
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
         
-        const update = data.data;
-        const freshCandle = {
-            high: parseFloat(update.h),
-            low: parseFloat(update.l),
-            close: parseFloat(update.c),
-            timestamp: update.t
-        };
+        const todaysCandles = candles.filter(c => c.t >= startOfToday);
+        const yesterdaysCandles = candles.filter(c => c.t < startOfToday);
 
-        // If the candle has closed (new timestamp arriving) or if updating the current ongoing candle
-        const existingIdx = candles.findIndex(c => c.timestamp === freshCandle.timestamp);
-        if (existingIdx !== -1) {
-            candles[existingIdx] = freshCandle; // Update open candle metrics
-        } else {
-            candles.push(freshCandle); // Save complete historical entry
-            if (candles.length > 200) candles.shift(); // Keep array memory light
-            
-            // Process the closed candle data
-            processNewCandle();
+        if (yesterdaysCandles.length === 0 || todaysCandles.length < 2) return;
+
+        // 1. Calculate Yesterday's Lowest Range
+        let yesterdaysLowestRange = Infinity;
+        for (let c of yesterdaysCandles) {
+            const range = c.high - c.low;
+            if (range < yesterdaysLowestRange) yesterdaysLowestRange = range;
         }
-    });
+
+        // 2. Calculate ATR (using standard 14 periods)
+        const atr = calculateATR(candles, 14);
+        
+        // 3. Calculate Stochastic (5, 3, 3)
+        const stoch = calculateStochastic(candles, 5, 3, 3);
+
+        if (!atr || !stoch) return;
+
+        console.log(`[${new Date().toLocaleTimeString()}] ATR: ${atr.toFixed(4)} | Yest. Lowest Range: ${yesterdaysLowestRange.toFixed(4)} | Stoch %K: ${stoch.K.toFixed(2)}`);
+
+        // 4. Signal Conditions Evaluation
+        // - ATR is below yesterday's lowest range
+        // - Stochastic %K crossed from below 50 to above 50
+        const isAtrCondition = atr < yesterdaysLowestRange;
+        const isStochCross = stoch.prevK < 50 && stoch.K >= 50;
+
+        if (isAtrCondition && isStochCross) {
+            console.log(`\n=========================================`);
+            console.log(`🚨 BUY SIGNAL DETECTED for ${SYMBOL}`);
+            console.log(`ATR ${atr.toFixed(4)} < Yest. Lowest Range ${yesterdaysLowestRange.toFixed(4)}`);
+            console.log(`Stochastic %K crossed to ${stoch.K.toFixed(2)} (Prev: ${stoch.prevK.toFixed(2)})`);
+            console.log(`=========================================\n`);
+        }
+
+    } catch (error) {
+        console.error("Error fetching or processing data:", error);
+    }
 }
 
-startBot().catch(console.error);
+// Run polling every 1 minute
+setInterval(checkTradingSignals, 60 * 1000);
+
+// Run immediately on start
+checkTradingSignals();
