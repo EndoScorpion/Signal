@@ -2050,26 +2050,32 @@ function setFont(sz,btn){document.getElementById('fontTog').querySelectorAll('bu
 function toggleTerm(){document.getElementById('termBar').classList.toggle('show');}
 function downloadHTML(){
   var html=document.documentElement.outerHTML;
-  // Try blob download first (works locally / outside sandbox)
+  // Use artifact downloads capability when inside claude.ai viewer
+  if(window.claude&&typeof window.claude.use==='function'){
+    window.claude.use('downloads').then(function(dl){
+      if(dl){
+        dl.save({filename:'trade_signal_v0.01b_export.html',data:html})
+          .catch(function(e){if(e&&e.code!=='declined')alert('Save failed: '+(e.message||e.code));});
+      } else {
+        _dlFallback(html);
+      }
+    }).catch(function(){_dlFallback(html);});
+    return;
+  }
+  _dlFallback(html);
+}
+function _dlFallback(html){
   try{
     var b=new Blob([html],{type:'text/html'});
-    var url=URL.createObjectURL(b);
     var a=document.createElement('a');
-    a.href=url;a.download='trade_signal_v0.01b_export.html';
+    a.href=URL.createObjectURL(b);
+    a.download='trade_signal_v0.01b_export.html';
     document.body.appendChild(a);a.click();
-    setTimeout(function(){URL.revokeObjectURL(url);document.body.removeChild(a);},1500);
-    return;
-  }catch(e){}
-  // Fallback: open in new tab so user can Ctrl+S (works in sandbox)
-  try{
-    var b2=new Blob([html],{type:'text/html'});
-    var w=window.open(URL.createObjectURL(b2),'_blank');
-    if(w){w.document.title='trade_signal_v0.01b_export.html';return;}
-  }catch(e){}
-  // Last resort: data URI in new tab
-  try{
-    window.open('data:text/html;charset=utf-8,'+encodeURIComponent(html),'_blank');
-  }catch(e){alert('Download not supported in this frame. Use the ↓ Download button in Claude Code sidebar instead.');}
+    setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},1500);
+  }catch(e){
+    try{window.open('data:text/html;charset=utf-8,'+encodeURIComponent(html),'_blank');}
+    catch(e2){alert('Download unavailable here — use the file attached in Claude Code.');}
+  }
 }
 function showHelp(){alert('Trade Signal v0.01b\n\nFeatures:\n• Canvas 2D rendering — real drawCandles / drawLine / drawMA\n• ECharts 5.6 — full candlestick with sub-indicators, dataZoom\n• Overlay mode — candle + line at 50% alpha\n• calcSMA / calcEMA from source file\n• Backtest: SMA Crossover / RSI Reversal\n• USDC/USDT SVG panel with TradingView data\n• Live price simulation\n• + New Panel dynamically adds canvas panels\n• ⬇ Download saves this file\n• TV ↗ links open TradingView for each symbol');}
 function termRun(e){
