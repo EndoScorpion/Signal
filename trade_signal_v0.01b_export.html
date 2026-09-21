@@ -1402,7 +1402,8 @@ function drawSVG(id){
     svg.appendChild(l);
   });
 
-  // ── Stoch K(5) oversold/overbought background layer (behind chartG) ──
+  // ── Stoch K(5) zone background layer (behind chartG) ──
+  // red <=20 (oversold) | yellow 40-60 (neutral) | green >=80 (overbought)
   (function(){
     var k5=data.map(function(d,i){
       if(i<4)return 50;
@@ -1411,22 +1412,30 @@ function drawSVG(id){
       var hi=Math.max.apply(null,sl.map(function(b){return b.high;}));
       return hi===lo?50:(d.close-lo)/(hi-lo)*100;
     });
-    // Full-chart red overlay when current bar is oversold (K<=20)
+    function zoneColor(k){
+      if(k<=20)return '#ef5350';   // oversold → red
+      if(k>=80)return '#26a69a';   // overbought → green
+      if(k>=40&&k<=60)return '#ffb400'; // neutral → yellow
+      return null;
+    }
+    // Full-chart overlay tint based on current (last) bar
     var curK=k5[k5.length-1];
-    if(curK<=20){
+    var curCol=zoneColor(curK);
+    if(curCol){
       var ov=document.createElementNS(ns,'rect');
       ov.setAttribute('x',padL);ov.setAttribute('y',padT);
       ov.setAttribute('width',fullW-padL-padR);ov.setAttribute('height',plotH);
-      ov.setAttribute('fill','#ef5350');ov.setAttribute('opacity','0.07');
+      ov.setAttribute('fill',curCol);ov.setAttribute('opacity','0.07');
       svg.appendChild(ov);
     }
-    // Per-bar red column where K(5)<=20
+    // Per-bar column highlights
     k5.forEach(function(k,i){
-      if(k>20)return;
+      var col=zoneColor(k);
+      if(!col)return;
       var r=document.createElementNS(ns,'rect');
       r.setAttribute('x',padL+i*stepX);r.setAttribute('y',padT);
       r.setAttribute('width',Math.max(stepX,1));r.setAttribute('height',plotH);
-      r.setAttribute('fill','#ef5350');r.setAttribute('opacity','0.10');
+      r.setAttribute('fill',col);r.setAttribute('opacity','0.10');
       svg.appendChild(r);
     });
   })();
