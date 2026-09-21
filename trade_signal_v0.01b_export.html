@@ -1080,10 +1080,10 @@ svg{max-width:100%;height:auto;}
 <script>
 // ── Shared state ──
 var panels = {
-  btc:{price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false},
-  eth:{price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false},
-  sol:{price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false},
-  bnb:{price:312.8,   base:312.8,   mode:'echarts',zx:1, zy:1, paused:false}
+  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false},
+  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false},
+  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false},
+  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'echarts',zx:1, zy:1, paused:false}
 };
 var usdc = {price:1.00095};
 
@@ -1301,7 +1301,15 @@ function drawSVG(id){
   // Generate ~120 bars at full resolution; viewport clips/zooms
   var nBars=120;
   // Use cached live REST data if available, otherwise synthetic
-  var data=(p._liveData&&p._liveData.length>=10)?p._liveData:genOHLC(p.base,nBars,p.base*0.014);
+  var _hasLive=(p._liveData&&p._liveData.length>=10);
+  var data=_hasLive?p._liveData:genOHLC(p.base,nBars,p.base*0.014);
+  // Mark status line with [SIM] badge when using synthetic
+  if(!_hasLive){
+    var _sl=document.getElementById('sl-'+id);
+    if(_sl&&_sl.innerHTML.indexOf('REST')===-1&&_sl.innerHTML.indexOf('LIVE')===-1){
+      _sl.innerHTML='&#9654; SIM <span style="color:#556;font-size:9px;">[OFFLINE]</span>';
+    }
+  }
   var closes=data.map(function(d){return d.close;});
   var allPx=data.reduce(function(a,d){return a.concat([d.high,d.low]);}, []);
   var minP=Math.min.apply(null,allPx), maxP=Math.max.apply(null,allPx);
@@ -1318,7 +1326,7 @@ function drawSVG(id){
   // ── Outer wrapper div (clips, receives pointer events) ──
   var wrap=document.createElement('div');
   wrap.id=wrapperId;
-  wrap.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;cursor:grab;user-select:none;';
+  wrap.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;min-height:150px;overflow:hidden;cursor:grab;user-select:none;';
 
   // ── SVG element (content, wider than viewport) ──
   var svg=document.createElementNS(ns,'svg');
@@ -1442,6 +1450,7 @@ function drawSVG(id){
   }
 
   // Candlesticks
+  try{
   data.forEach(function(d,i){
     var x=padL+i*stepX+stepX/2;
     var up=d.close>=d.open;
@@ -1460,6 +1469,7 @@ function drawSVG(id){
     body.setAttribute('fill',col);
     chartG.appendChild(body);
   });
+  }catch(e){ _diagEntry(id,'err','Candle draw exception: '+e); }
 
   // ── Buy/Sell signal arrows ──
   var _sigs=genBarSignals(data);
@@ -1719,8 +1729,10 @@ function renderAll(){
     });
     // BNB starts in ECharts mode
     if(typeof echarts!=='undefined') drawECharts('bnb');
-    // Try REST API for live data; synthetic fallback if CORS or network fails
-    fetchAndRefreshAll();
+    // Draw synthetic data SYNCHRONOUSLY on boot — chart is never blank from frame 1
+    ['btc','eth','sol'].forEach(function(id){ try{ drawSVG(id); }catch(e){ _diagEntry(id,'err','Boot drawSVG exception: '+e); } });
+    // Then hydrate with live REST data in background (replaces synthetic if successful)
+    setTimeout(function(){ fetchAndRefreshAll(); }, 500);
     // Set active button state for SVG panels
     ['btc','eth','sol'].forEach(function(id){
       var area=document.getElementById('ca-'+id);
@@ -3272,40 +3284,54 @@ function togglePopupInd(pid,ind){_popups.forEach(function(e){if(e.pid===pid)cpTo
 
 // ══════════════════════════════════════════════════════
 // ── REST API Live Data (Binance public — no auth) ──
+// Tier 1: Direct  →  Tier 2: corsproxy.io  →  Tier 3: Synthetic
 // ══════════════════════════════════════════════════════
 var _restSym={btc:'BTCUSDT',eth:'ETHUSDT',sol:'SOLUSDT',bnb:'BNBUSDT'};
-var _restBase='https://api.binance.com/api/v3/klines';
+var _restDirect='https://api.binance.com/api/v3/klines';
+var _restProxy='https://corsproxy.io/?https://api.binance.com/api/v3/klines';
 var _restFetching={}; // guard against parallel fetches
+
+function _parseKlines(arr){
+  if(!Array.isArray(arr)||arr.length<5)return null;
+  return arr.map(function(k){
+    return{open:parseFloat(k[1]),high:parseFloat(k[2]),low:parseFloat(k[3]),close:parseFloat(k[4]),volume:parseFloat(k[5])};
+  });
+}
 
 function fetchOHLCV(pid,interval,limit,cb){
   var sym=_restSym[pid];
   if(!sym){cb('no REST symbol for '+pid,null);return;}
   if(_restFetching[pid]){cb('fetch in progress',null);return;}
   _restFetching[pid]=true;
-  var url=_restBase+'?symbol='+sym+'&interval='+(interval||'5m')+'&limit='+(limit||120);
-  fetch(url)
-    .then(function(r){
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      return r.json();
-    })
-    .then(function(arr){
+  var params='?symbol='+sym+'&interval='+(interval||'5m')+'&limit='+(limit||120);
+
+  function tryURL(url,fallback){
+    try{
+      fetch(url)
+        .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+        .then(function(arr){
+          _restFetching[pid]=false;
+          var data=_parseKlines(arr);
+          if(!data){cb('empty response',null);}else{cb(null,data);}
+        })
+        .catch(function(err){
+          if(fallback){fallback();}
+          else{_restFetching[pid]=false;cb(err.message||String(err),null);}
+        });
+    }catch(e){
+      if(fallback){fallback();}
+      else{_restFetching[pid]=false;cb(String(e),null);}
+    }
+  }
+
+  // Tier 1: direct Binance; on any error try Tier 2: corsproxy.io
+  tryURL(_restDirect+params, function(){
+    _diagEntry(pid,'warn','Direct Binance blocked — trying corsproxy.io…');
+    tryURL(_restProxy+params, function(){
       _restFetching[pid]=false;
-      if(!Array.isArray(arr)||arr.length<5){cb('empty response',null);return;}
-      var data=arr.map(function(k){
-        return{
-          open:parseFloat(k[1]),
-          high:parseFloat(k[2]),
-          low:parseFloat(k[3]),
-          close:parseFloat(k[4]),
-          volume:parseFloat(k[5])
-        };
-      });
-      cb(null,data);
-    })
-    .catch(function(err){
-      _restFetching[pid]=false;
-      cb(err.message||String(err),null);
+      cb('direct+proxy both failed',null);
     });
+  });
 }
 
 // Fetch live OHLCV from Binance REST then redraw; synthetic fallback on any error
