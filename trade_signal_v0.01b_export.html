@@ -1291,8 +1291,10 @@ function drawSVG(id){
   if(existing&&existing.dataset.locked) return;
   if(existing)existing.remove();
 
-  var w=area.clientWidth||400;
-  var h=area.clientHeight||160;
+  var w=area.clientWidth||0;
+  var h=area.clientHeight||0;
+  // Retry if layout hasn't settled yet
+  if(w<80||h<40){ setTimeout(function(){drawSVG(id);},220); return; }
   var padL=6,padR=44,padT=10,padB=22;
   var plotW=w-padL-padR, plotH=h-padT-padB;
 
@@ -1300,9 +1302,7 @@ function drawSVG(id){
   var nBars=120;
   var data=genOHLC(p.base,nBars,p.base*0.014);
   var closes=data.map(function(d){return d.close;});
-  // Use last 72 bars for Y range to avoid early drift outliers distorting scale
-  var yWindow=data.slice(-72);
-  var allPx=yWindow.reduce(function(a,d){return a.concat([d.high,d.low]);}, []);
+  var allPx=data.reduce(function(a,d){return a.concat([d.high,d.low]);}, []);
   var minP=Math.min.apply(null,allPx), maxP=Math.max.apply(null,allPx);
   var rng=(maxP-minP)||1;
   var padY=rng*0.10; // 10% breathing room so candles never touch chart edges
@@ -1535,8 +1535,11 @@ function drawSVG(id){
 
   // ── Interaction state ──
   var st=getSVGState(id);
-  // Start at right edge (most recent candles)
-  if(st.tx===0) st.tx=-(fullW-w);
+  // Start at right edge (most recent candles) — reset any time width changes meaningfully
+  if(!st._initW || Math.abs(st._initW-w)>30){
+    st.tx=-(fullW-w);
+    st._initW=w;
+  }
   var dragging=false,dragStartX=0,dragStartY=0,dragTx=0,dragTy=0;
 
   function applyTransform(){
