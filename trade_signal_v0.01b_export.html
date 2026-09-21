@@ -1333,6 +1333,7 @@ function drawSVG(id){
   svg.setAttribute('id','svg-'+id);
   svg.setAttribute('width',fullW);
   svg.setAttribute('height',h);
+  svg.setAttribute('overflow','visible'); // prevent SVG viewport from clipping chartG
   svg.style.cssText='display:block;transform-origin:0 0;';
 
   // Background
@@ -1360,9 +1361,8 @@ function drawSVG(id){
     svg.appendChild(l);
   });
 
-  // Chart group (clipped — only candles/lines clip, not axes)
+  // Chart group — clip-path via overflow:hidden on wrap (url(#id) can fail in sandboxed iframes)
   var chartG=document.createElementNS(ns,'g');
-  chartG.setAttribute('clip-path','url(#clip-'+id+')');
 
   // Vertical grid
   var vStep=Math.max(1,Math.round(nBars/12));
@@ -1471,6 +1471,7 @@ function drawSVG(id){
   });
 
   svg.appendChild(chartG); // candles in DOM first — signal arrows are optional
+  console.log('[drawSVG] '+id+': chartG appended, candles='+chartG.querySelectorAll('rect[data-candle]').length+' w='+w+' h='+h+' tx='+svgState[id].tx.toFixed(0));
 
   // ── Buy/Sell signal arrows ──
   try{
