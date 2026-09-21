@@ -1449,8 +1449,7 @@ function drawSVG(id){
     chartG.appendChild(ma50El);
   }
 
-  // Candlesticks
-  try{
+  // Candlesticks — no try/catch so errors surface to console
   data.forEach(function(d,i){
     var x=padL+i*stepX+stepX/2;
     var up=d.close>=d.open;
@@ -1467,9 +1466,9 @@ function drawSVG(id){
     body.setAttribute('x',x-cw/2);body.setAttribute('y',bodyY);
     body.setAttribute('width',cw);body.setAttribute('height',bodyH);
     body.setAttribute('fill',col);
+    body.setAttribute('data-candle','1'); // marker for blank-detection
     chartG.appendChild(body);
   });
-  }catch(e){ _diagEntry(id,'err','Candle draw exception: '+e); }
 
   // ── Buy/Sell signal arrows ──
   var _sigs=genBarSignals(data);
@@ -1730,9 +1729,20 @@ function renderAll(){
     // BNB starts in ECharts mode
     if(typeof echarts!=='undefined') drawECharts('bnb');
     // Draw synthetic data SYNCHRONOUSLY on boot — chart is never blank from frame 1
-    ['btc','eth','sol'].forEach(function(id){ try{ drawSVG(id); }catch(e){ _diagEntry(id,'err','Boot drawSVG exception: '+e); } });
+    ['btc','eth','sol'].forEach(function(id){
+      try{ drawSVG(id); }catch(e){ console.error('Boot drawSVG('+id+') failed:',e); }
+    });
     // Then hydrate with live REST data in background (replaces synthetic if successful)
     setTimeout(function(){ fetchAndRefreshAll(); }, 500);
+    // 1.2s health check: force-draw any panels that are still blank after boot+fetch
+    setTimeout(function(){
+      ['btc','eth','sol'].forEach(function(id){
+        if(!document.getElementById('svgwrap-'+id)){
+          console.warn('[healthcheck] '+id+' svgwrap missing — forcing redraw');
+          try{ drawSVG(id); }catch(e){ console.error('Health drawSVG('+id+') failed:',e); }
+        }
+      });
+    },1200);
     // Set active button state for SVG panels
     ['btc','eth','sol'].forEach(function(id){
       var area=document.getElementById('ca-'+id);
@@ -3343,8 +3353,11 @@ function fetchAndDrawSVG(pid){
   _diagEntry(pid,'info','REST fetch → '+sym+' (5m ×120)…');
   fetchOHLCV(pid,'5m',120,function(err,data){
     if(err||!data){
-      _diagEntry(pid,'warn','REST failed ('+err+') — synthetic fallback');
-      drawSVG(pid);
+      _diagEntry(pid,'warn','REST failed ('+err+') — keeping existing chart; drawing synthetic if blank');
+      // Preserve the boot-draw chart — only draw synthetic if panel is genuinely blank
+      if(!document.getElementById('svgwrap-'+pid)){
+        drawSVG(pid);
+      }
     } else {
       // Update live price from real data
       var last=data[data.length-1];
@@ -3449,9 +3462,9 @@ function isChartBlank(pid){
   var svgEl=document.getElementById('svg-'+pid);
   var canvasEl=document.getElementById('cv-'+pid);
   if(!svgEl&&!canvasEl)return{blank:true,reason:'no SVG or canvas element exists'};
-  // Check SVG candle count
+  // Check SVG candle count — use data-candle marker to avoid counting stoch zone rects
   if(svgEl&&svgEl.style.display!=='none'){
-    var candles=svgEl.querySelectorAll('rect[fill="#26a69a"],rect[fill="#ef5350"]');
+    var candles=svgEl.querySelectorAll('rect[data-candle]');
     if(candles.length<3)return{blank:true,reason:'only '+candles.length+' candle rect(s) in SVG'};
   }
   if(canvasEl&&canvasEl.style.display!=='none'){
