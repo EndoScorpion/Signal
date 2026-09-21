@@ -1471,7 +1471,6 @@ function drawSVG(id){
   });
 
   svg.appendChild(chartG); // candles in DOM first — signal arrows are optional
-  console.log('[drawSVG] '+id+': chartG appended, candles='+chartG.querySelectorAll('rect[data-candle]').length+' w='+w+' h='+h+' tx='+svgState[id].tx.toFixed(0));
 
   // ── Buy/Sell signal arrows ──
   try{
