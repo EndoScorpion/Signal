@@ -403,6 +403,8 @@ svg{max-width:100%;height:auto;}
 <!-- MAIN TOOLBAR -->
 <div id="mainToolbar" style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:5px 8px;background:#000;border-bottom:1px solid #1e2228;">
   <span id="tbDragHandle" title="Drag to float" style="cursor:grab;color:#2a3a5a;font-size:15px;padding:0 3px;user-select:none;line-height:1;" onmousedown="startDragPanel('mainToolbar',event)">&#8942;</span>
+  <button id="refreshBtn" class="tb-btn" onclick="refreshAll(this)" style="color:#3ecf5e;border-color:#1a4a2a;background:#001a08;font-weight:bold;font-size:11px;" title="Redraw all charts">&#8635; Refresh</button>
+  <button id="repairBtn" class="tb-btn" onclick="repairCharts(this)" style="color:#ffb400;border-color:#553300;background:#1a0a00;font-weight:bold;font-size:11px;" title="Force-clear locks and redraw all charts; opens Diag panel">&#9889; Repair</button>
   <span style="color:#666;">Chart Panels —</span>
   <button class="tb-btn" onclick="addPanel()">+ New Panel</button>
   <button class="tb-btn" onclick="backupAll()">Backup All</button>
@@ -1705,22 +1707,26 @@ function refreshPanel(id){panels[id].base=panels[id].price;drawPanel(id);}
 
 // ── Initial render ──
 function renderAll(){
-  ['btc','eth','sol'].forEach(function(id){
-    document.getElementById('cv-'+id).style.display='none';
-    drawSVG(id);
-  });
-  // BNB starts in ECharts mode
-  if(typeof echarts!=='undefined') drawECharts('bnb');
-  // Set active button state for SVG panels
-  ['btc','eth','sol'].forEach(function(id){
-    var area=document.getElementById('ca-'+id);
-    if(!area)return;
-    var panel=area.closest('.panel');
-    if(!panel)return;
-    panel.querySelectorAll('.ctrl-row .cb').forEach(function(b){b.className='cb';});
-    var svgBtn=Array.from(panel.querySelectorAll('.ctrl-row .cb')).find(function(b){return b.textContent.trim()==='SVG';});
-    if(svgBtn)svgBtn.classList.add('on-svg');
-  });
+  // Delay 300ms so flexbox/grid layout has settled and clientWidth is correct
+  setTimeout(function(){
+    ['btc','eth','sol'].forEach(function(id){
+      var cv=document.getElementById('cv-'+id);
+      if(cv)cv.style.display='none';
+      drawSVG(id);
+    });
+    // BNB starts in ECharts mode
+    if(typeof echarts!=='undefined') drawECharts('bnb');
+    // Set active button state for SVG panels
+    ['btc','eth','sol'].forEach(function(id){
+      var area=document.getElementById('ca-'+id);
+      if(!area)return;
+      var panel=area.closest('.panel');
+      if(!panel)return;
+      panel.querySelectorAll('.ctrl-row .cb').forEach(function(b){b.className='cb';});
+      var svgBtn=Array.from(panel.querySelectorAll('.ctrl-row .cb')).find(function(b){return b.textContent.trim()==='SVG';});
+      if(svgBtn)svgBtn.classList.add('on-svg');
+    });
+  },300);
 }
 if(typeof echarts!=='undefined'){
   renderAll();
@@ -2885,14 +2891,48 @@ function cpApply(){
 
 // ── Refresh All ──
 function refreshAll(btn){
+  // Clear any locked SVG wrappers so drawSVG will re-render
+  document.querySelectorAll('[id^="svgwrap-"]').forEach(function(el){
+    delete el.dataset.locked;
+  });
   Object.keys(panels).forEach(function(id){
     var p=panels[id];
     if(!p)return;
     if(p.mode==='svg')drawSVG(id);
     else if(p.mode==='canvas')drawCanvas(id);
+    else if(p.mode==='echarts')drawECharts(id);
   });
   refreshVLPanel();
-  if(btn){var t=btn.textContent;btn.textContent='✓ Done';setTimeout(function(){btn.textContent=t;},900);}
+  if(btn){var t=btn.textContent;btn.textContent='✓ Done';setTimeout(function(){btn.textContent=t;},1200);}
+}
+
+// ── Repair Charts (force-clear + redraw + diag) ──
+function repairCharts(btn){
+  if(btn){btn.textContent='⏳ Repairing…';btn.disabled=true;}
+  // 1. Remove all SVG wrappers entirely so drawSVG rebuilds from scratch
+  document.querySelectorAll('[id^="svgwrap-"]').forEach(function(el){el.remove();});
+  // 2. Clear any blank overlays
+  Object.keys(panels).forEach(function(pid){_clearBlankOverlay(pid);});
+  // 3. Short delay so DOM has settled dimensions, then redraw all
+  setTimeout(function(){
+    Object.keys(panels).forEach(function(id){
+      var p=panels[id];
+      if(!p)return;
+      if(p.mode==='svg')drawSVG(id);
+      else if(p.mode==='canvas')drawCanvas(id);
+      else if(p.mode==='echarts')drawECharts(id);
+    });
+    refreshVLPanel();
+    // 4. Open diag panel and run a scan to report status
+    var diagEl=document.getElementById('diagPanel');
+    if(diagEl)diagEl.style.display='flex';
+    updateDiagPanel();
+    _startDiagWatch();
+    setTimeout(function(){
+      runDiagAll();
+      if(btn){btn.textContent='⚡ Repair';btn.disabled=false;}
+    },400);
+  },150);
 }
 
 // ── Compact mode ──
