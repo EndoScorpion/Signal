@@ -2050,19 +2050,26 @@ function setFont(sz,btn){document.getElementById('fontTog').querySelectorAll('bu
 function toggleTerm(){document.getElementById('termBar').classList.toggle('show');}
 function downloadHTML(){
   var html=document.documentElement.outerHTML;
+  // Try blob download first (works locally / outside sandbox)
   try{
     var b=new Blob([html],{type:'text/html'});
+    var url=URL.createObjectURL(b);
     var a=document.createElement('a');
-    a.href=URL.createObjectURL(b);
-    a.download='trade_signal_v0.01b_export.html';
+    a.href=url;a.download='trade_signal_v0.01b_export.html';
     document.body.appendChild(a);a.click();
-    setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},1000);
-  }catch(e){
-    var a2=document.createElement('a');
-    a2.href='data:text/html;charset=utf-8,'+encodeURIComponent(html);
-    a2.download='trade_signal_v0.01b_export.html';
-    document.body.appendChild(a2);a2.click();document.body.removeChild(a2);
-  }
+    setTimeout(function(){URL.revokeObjectURL(url);document.body.removeChild(a);},1500);
+    return;
+  }catch(e){}
+  // Fallback: open in new tab so user can Ctrl+S (works in sandbox)
+  try{
+    var b2=new Blob([html],{type:'text/html'});
+    var w=window.open(URL.createObjectURL(b2),'_blank');
+    if(w){w.document.title='trade_signal_v0.01b_export.html';return;}
+  }catch(e){}
+  // Last resort: data URI in new tab
+  try{
+    window.open('data:text/html;charset=utf-8,'+encodeURIComponent(html),'_blank');
+  }catch(e){alert('Download not supported in this frame. Use the ↓ Download button in Claude Code sidebar instead.');}
 }
 function showHelp(){alert('Trade Signal v0.01b\n\nFeatures:\n• Canvas 2D rendering — real drawCandles / drawLine / drawMA\n• ECharts 5.6 — full candlestick with sub-indicators, dataZoom\n• Overlay mode — candle + line at 50% alpha\n• calcSMA / calcEMA from source file\n• Backtest: SMA Crossover / RSI Reversal\n• USDC/USDT SVG panel with TradingView data\n• Live price simulation\n• + New Panel dynamically adds canvas panels\n• ⬇ Download saves this file\n• TV ↗ links open TradingView for each symbol');}
 function termRun(e){
