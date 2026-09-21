@@ -300,6 +300,43 @@ svg{max-width:100%;height:auto;}
   <div id="diagLog" style="flex:1;overflow-y:auto;padding:4px 6px;max-height:260px;"></div>
 </div>
 
+<!-- ═══ FLOATING DIAGNOSTICS PANEL ═══ -->
+<div id="fdp" style="display:none;position:fixed;bottom:52px;right:14px;z-index:91000;width:440px;height:360px;min-width:260px;min-height:180px;background:rgba(8,11,15,0.82);border:1px solid #3a4820;border-radius:7px;box-shadow:0 6px 40px rgba(0,0,0,0.92);font-family:'IBM Plex Mono','Courier New',monospace;font-size:10px;flex-direction:column;resize:both;overflow:hidden;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);">
+  <div id="fdpHead" onmousedown="startDragPanel('fdp',event)" style="cursor:move;display:flex;align-items:center;gap:5px;background:rgba(14,20,8,0.95);padding:5px 8px;border-radius:7px 7px 0 0;border-bottom:1px solid #2a3a14;flex-shrink:0;user-select:none;">
+    <span style="color:#d4b800;font-size:14px;">⚡</span>
+    <span style="color:#d4b800;font-weight:bold;font-size:10px;letter-spacing:.6px;">DIAGNOSTICS</span>
+    <span id="fdpWatchBadge" style="color:#3ecf5e;font-size:8px;background:#001a00;border:1px solid #1a4;border-radius:2px;padding:0 3px;display:none;">WATCH</span>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+      <label style="color:#4a5570;font-size:9px;">α</label>
+      <input type="range" id="fdpOpacity" min="20" max="100" value="82" style="width:50px;height:10px;accent-color:#d4b800;cursor:pointer;" oninput="fdpSetOpacity(this.value)" title="Panel opacity">
+      <button onclick="fdpMinimize()" title="Minimize to bar" style="background:none;border:1px solid #2a3a14;border-radius:2px;color:#d4b800;font-size:11px;cursor:pointer;padding:0 5px;line-height:1.3;">_</button>
+      <button onclick="fdpClose()" title="Close" style="background:none;border:1px solid #2a3a14;border-radius:2px;color:#5a6070;font-size:11px;cursor:pointer;padding:0 5px;line-height:1.3;">✕</button>
+    </div>
+  </div>
+  <div style="display:flex;background:rgba(5,8,3,0.95);flex-shrink:0;border-bottom:1px solid #1a2a0a;">
+    <button onclick="fdpTab('log')"    id="fdp-t-log"    style="flex:1;padding:4px 2px;background:#0a0f04;border:none;border-right:1px solid #1a2a0a;color:#d4b800;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">📋 Log</button>
+    <button onclick="fdpTab('bugs')"   id="fdp-t-bugs"   style="flex:1;padding:4px 2px;background:none;border:none;border-right:1px solid #1a2a0a;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">🐛 Bugs</button>
+    <button onclick="fdpTab('repair')" id="fdp-t-repair" style="flex:1;padding:4px 2px;background:none;border:none;border-right:1px solid #1a2a0a;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">⚙ Repair</button>
+    <button onclick="fdpTab('info')"   id="fdp-t-info"   style="flex:1;padding:4px 2px;background:none;border:none;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">ℹ Info</button>
+  </div>
+  <div id="fdpBody" style="flex:1;overflow-y:auto;overflow-x:hidden;padding:5px 7px;line-height:1.5;"></div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;padding:5px 7px;background:rgba(5,8,3,0.95);border-top:1px solid #1a2a0a;flex-shrink:0;">
+    <button onclick="runDiagAll();fdpTab('log')"    style="background:#001800;border:1px solid #1a4;border-radius:3px;color:#3ecf5e;font-size:9px;cursor:pointer;padding:2px 7px;">▶ Diag All</button>
+    <button onclick="fdpAutoRepair()"               style="background:#001800;border:1px solid #1a4;border-radius:3px;color:#3ecf5e;font-size:9px;cursor:pointer;padding:2px 7px;">⚙ Repair All</button>
+    <button onclick="fdpAutoRepair('btc')" style="background:none;border:1px solid #443300;border-radius:3px;color:#ffb400;font-size:9px;cursor:pointer;padding:2px 6px;">BTC</button>
+    <button onclick="fdpAutoRepair('eth')" style="background:none;border:1px solid #1a2a4a;border-radius:3px;color:#7af;font-size:9px;cursor:pointer;padding:2px 6px;">ETH</button>
+    <button onclick="fdpAutoRepair('sol')" style="background:none;border:1px solid #2a1a4a;border-radius:3px;color:#a78fff;font-size:9px;cursor:pointer;padding:2px 6px;">SOL</button>
+    <button onclick="clearDiagLog();fdpRenderLog()" style="background:none;border:1px solid #2a2a2a;border-radius:3px;color:#3a4050;font-size:9px;cursor:pointer;padding:2px 6px;margin-left:auto;">Clear</button>
+  </div>
+</div>
+<!-- FDP minimized bar -->
+<div id="fdpBar" style="display:none;position:fixed;bottom:0;right:14px;z-index:91000;background:rgba(8,11,15,0.92);border:1px solid #3a4820;border-top-left-radius:5px;border-top-right-radius:5px;padding:3px 10px;align-items:center;gap:6px;cursor:pointer;" onclick="fdpRestore()">
+  <span style="color:#d4b800;font-size:12px;">⚡</span>
+  <span style="color:#d4b800;font-size:9px;font-family:monospace;">DIAGNOSTICS</span>
+  <span id="fdpBarWarn" style="display:none;color:#ef5350;font-size:9px;">⚠</span>
+  <span style="color:#4a5570;font-size:10px;">▲</span>
+</div>
+
 <!-- ═══ COLOR PICKER POPUP ═══ -->
 <div id="cpModal" style="display:none;position:fixed;top:44px;right:12px;z-index:99999;background:#0d0f14;border:1px solid #3a2a5a;border-radius:8px;padding:12px 14px;width:288px;box-shadow:0 8px 40px rgba(0,0,0,0.85);font-family:monospace;font-size:11px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -436,6 +473,7 @@ svg{max-width:100%;height:auto;}
   <button class="tb-btn" style="color:#7f7;border-color:#2a5a;font-size:10px;" onclick="downloadHTML()">&#11015; Download</button>
   <button id="compactBtn" class="tb-btn" style="color:#ffb400;border-color:#553300;font-size:10px;" onclick="toggleCompact()" title="Move Volume Leaders above toolbar in compact mode">&#8633; Compact</button>
   <button class="tb-btn" id="diagBtn" onclick="toggleDiagPanel()" style="color:#3ecf5e;border-color:#1a4a2a;font-size:10px;" title="Auto Diagnostics — detect and fix blank charts">&#128301; Diag</button>
+  <button class="tb-btn" id="fdpBtn" onclick="toggleFDP()" style="color:#d4b800;border-color:#3a3000;font-size:12px;font-weight:bold;letter-spacing:0;" title="Floating Diagnostics Panel — bugs, auto-repair, info">&#9889;</button>
 </div>
 
 <!-- NEWS BAR -->
@@ -1066,6 +1104,9 @@ svg{max-width:100%;height:auto;}
   <button class="cb" style="color:#3ecf5e;border-color:#1a5a2a;">&#8644; Corr</button>
   <button class="cb" style="color:#ef5350;border-color:#6a1a1a;">&#9638; Heatmap</button>
   <button class="cb" style="color:#9db4ff;border-color:#334466;" onclick="downloadHTML()">&#11015; Export</button>
+  <button class="cb" style="color:#d4b800;border-color:#3a3000;" onclick="toggleFDP();fdpTab('repair')" title="Auto Repair — fix blank charts">&#9889; Auto Repair</button>
+  <button class="cb" style="color:#ffb400;border-color:#553300;" onclick="toggleFDP();fdpTab('bugs')" title="Bug Registry">&#128027; Bug Log</button>
+  <button class="cb" style="color:#7af;border-color:#2a4a6a;" onclick="toggleFDP();fdpTab('info')" title="System Info">&#8505; Info</button>
   <span class="fmt-svg" style="margin-left:auto;">100% SVG/Unicode</span>
 </div>
 
@@ -1360,6 +1401,35 @@ function drawSVG(id){
     l.setAttribute('stroke','#2a2e39');l.setAttribute('stroke-width','0.5');
     svg.appendChild(l);
   });
+
+  // ── Stoch K(5) oversold/overbought background layer (behind chartG) ──
+  (function(){
+    var k5=data.map(function(d,i){
+      if(i<4)return 50;
+      var sl=data.slice(i-4,i+1);
+      var lo=Math.min.apply(null,sl.map(function(b){return b.low;}));
+      var hi=Math.max.apply(null,sl.map(function(b){return b.high;}));
+      return hi===lo?50:(d.close-lo)/(hi-lo)*100;
+    });
+    // Full-chart red overlay when current bar is oversold (K<=20)
+    var curK=k5[k5.length-1];
+    if(curK<=20){
+      var ov=document.createElementNS(ns,'rect');
+      ov.setAttribute('x',padL);ov.setAttribute('y',padT);
+      ov.setAttribute('width',fullW-padL-padR);ov.setAttribute('height',plotH);
+      ov.setAttribute('fill','#ef5350');ov.setAttribute('opacity','0.07');
+      svg.appendChild(ov);
+    }
+    // Per-bar red column where K(5)<=20
+    k5.forEach(function(k,i){
+      if(k>20)return;
+      var r=document.createElementNS(ns,'rect');
+      r.setAttribute('x',padL+i*stepX);r.setAttribute('y',padT);
+      r.setAttribute('width',Math.max(stepX,1));r.setAttribute('height',plotH);
+      r.setAttribute('fill','#ef5350');r.setAttribute('opacity','0.10');
+      svg.appendChild(r);
+    });
+  })();
 
   // Chart group — clip-path via overflow:hidden on wrap (url(#id) can fail in sandboxed iframes)
   var chartG=document.createElementNS(ns,'g');
@@ -3442,9 +3512,16 @@ function _diagEntry(pid,level,msg){
   var hms=pad2(ts.getHours())+':'+pad2(ts.getMinutes())+':'+pad2(ts.getSeconds());
   _diagLog.unshift({pid:pid||'',level:level,msg:msg,ts:hms});
   if(_diagLog.length>300)_diagLog.length=300;
-  // Only update DOM if panel is visible
   var panel=document.getElementById('diagPanel');
   if(panel&&panel.style.display==='flex')updateDiagPanel();
+  // Also refresh FDP log tab if open
+  var fdp=document.getElementById('fdp');
+  if(fdp&&fdp.style.display==='flex'&&_fdpTab==='log')fdpRenderLog();
+  // Flash warn badge on minimized FDP bar
+  if(level==='err'||level==='warn'){
+    var bar=document.getElementById('fdpBar');
+    if(bar&&bar.style.display==='flex'){var w=document.getElementById('fdpBarWarn');if(w)w.style.display='inline';}
+  }
 }
 
 function updateDiagPanel(){
@@ -3607,6 +3684,197 @@ function _stopDiagWatch(){
   if(_diagWatcher){clearInterval(_diagWatcher);_diagWatcher=null;}
   var badge=document.getElementById('diagWatchBadge');
   if(badge)badge.style.display='none';
+}
+
+// ══════════════════════════════════════════════════════
+// ── Floating Diagnostics Panel (FDP) ──
+// ══════════════════════════════════════════════════════
+var _fdpTab='log';
+
+var _bugRegistry=[
+  {id:'BUG-001',sev:'crit',status:'fixed',ver:'v18',
+   title:'chartG never appended when genBarSignals throws',
+   desc:'genBarSignals() was called BEFORE svg.appendChild(chartG). Any exception in signal generation left chartG (all 120 candles) out of the SVG — chart blank, Y-axis still visible.',
+   fix:'Moved svg.appendChild(chartG) before genBarSignals call. Wrapped signal arrow loop in try/catch so a signal error never blocks chart render.'},
+  {id:'BUG-002',sev:'crit',status:'fixed',ver:'v22',
+   title:'Debug console.log crashed drawSVG on every invocation',
+   desc:'Diagnostic log at line 1475 referenced svgState[id].tx before getSVGState(id) was called (line 1549). Threw "TypeError: Cannot read properties of undefined (read \'tx\')" on every drawSVG call.',
+   fix:'Removed the premature console.log. svgState[id] is initialised inside getSVGState() — no reference is valid before that call.'},
+  {id:'BUG-003',sev:'high',status:'fixed',ver:'v21',
+   title:'SVG clip-path url(#id) invisible in sandboxed artifact iframe',
+   desc:'clip-path="url(#clip-btc)" resolves relative to document base URL. In null-origin sandboxed iframes the reference fails, causing chartG to be clipped to the empty region — blank chart despite SVG being in DOM.',
+   fix:'Removed clip-path attribute from chartG. Added overflow="visible" to SVG element. Boundary clipping is handled by the wrapper div\'s overflow:hidden.'},
+  {id:'BUG-004',sev:'med',status:'fixed',ver:'v20',
+   title:'In-viewer download button silently failed',
+   desc:'downloadHTML() used <a download> with blob: and data: hrefs. Artifact sandbox blocks all script-initiated downloads — the click triggered nothing and showed no error.',
+   fix:'Implemented window.claude.use("downloads") API which triggers a native save dialog. Falls back to blob URL for local/non-artifact use.'},
+  {id:'BUG-005',sev:'crit',status:'fixed',ver:'v18',
+   title:'fetchAndDrawSVG erased boot-draw chart on REST failure',
+   desc:'On Binance API failure (CSP-blocked in sandbox), fetchAndDrawSVG called drawSVG() which first REMOVED the existing svgwrap, then tried to re-render. If re-render also failed, chart was left blank.',
+   fix:'Changed to only call drawSVG() when svgwrap-{pid} does not already exist. Preserves the working synthetic chart rendered on boot when REST fails.'}
+];
+
+function toggleFDP(){
+  var fdp=document.getElementById('fdp');
+  var bar=document.getElementById('fdpBar');
+  if(!fdp)return;
+  if(fdp.style.display==='flex'){
+    fdp.style.display='none';
+  } else {
+    fdp.style.display='flex';
+    if(bar)bar.style.display='none';
+    fdpTab(_fdpTab);
+    _startDiagWatch();
+    var wb=document.getElementById('fdpWatchBadge');
+    if(wb)wb.style.display='inline';
+  }
+}
+
+function fdpClose(){
+  var fdp=document.getElementById('fdp');
+  var bar=document.getElementById('fdpBar');
+  if(fdp)fdp.style.display='none';
+  if(bar)bar.style.display='none';
+}
+
+function fdpMinimize(){
+  var fdp=document.getElementById('fdp');
+  var bar=document.getElementById('fdpBar');
+  if(fdp)fdp.style.display='none';
+  if(bar)bar.style.display='flex';
+}
+
+function fdpRestore(){
+  var fdp=document.getElementById('fdp');
+  var bar=document.getElementById('fdpBar');
+  if(fdp)fdp.style.display='flex';
+  if(bar)bar.style.display='none';
+  fdpTab(_fdpTab);
+}
+
+function fdpSetOpacity(val){
+  var fdp=document.getElementById('fdp');
+  if(fdp)fdp.style.opacity=(parseInt(val)/100).toFixed(2);
+}
+
+function fdpTab(name){
+  _fdpTab=name;
+  ['log','bugs','repair','info'].forEach(function(t){
+    var b=document.getElementById('fdp-t-'+t);
+    if(!b)return;
+    b.style.background=t===name?'#0a0f04':'transparent';
+    b.style.color=t===name?'#d4b800':'#4a5570';
+    b.style.borderBottom=t===name?'2px solid #d4b800':'2px solid transparent';
+  });
+  if(name==='log')    fdpRenderLog();
+  else if(name==='bugs')   fdpRenderBugs();
+  else if(name==='repair') fdpRenderRepair();
+  else if(name==='info')   fdpRenderInfo();
+}
+
+function fdpRenderLog(){
+  var body=document.getElementById('fdpBody');
+  if(!body||_fdpTab!=='log')return;
+  var colors={ok:'#3ecf5e',warn:'#ffb400',err:'#ef5350',info:'#7af'};
+  var icons={ok:'✓',warn:'⚠',err:'✗',info:'ℹ'};
+  if(!_diagLog.length){
+    body.innerHTML='<div style="color:#3a4050;padding:10px 4px;font-size:9px;">No entries yet — press ▶ Diag All or wait for auto-watcher.</div>';
+    return;
+  }
+  body.innerHTML=_diagLog.map(function(e){
+    var col=colors[e.level]||'#aaa';
+    var ic=icons[e.level]||'·';
+    var pid=e.pid?'<span style="color:#4a6080;margin-right:3px;">['+e.pid+']</span>':'';
+    return '<div style="display:flex;gap:3px;padding:2px 0;border-bottom:1px solid #0d1510;line-height:1.4;">'
+      +'<span style="color:#2a3a2a;flex-shrink:0;width:54px;">'+e.ts+'</span>'
+      +'<span style="color:'+col+';flex-shrink:0;width:12px;">'+ic+'</span>'
+      +pid+'<span style="color:'+col+';word-break:break-all;">'+e.msg+'</span></div>';
+  }).join('');
+}
+
+function fdpRenderBugs(){
+  var body=document.getElementById('fdpBody');
+  if(!body)return;
+  var sc={crit:'#ef5350',high:'#ff7043',med:'#ffb400',low:'#7af'};
+  var sbg={fixed:'#001800',open:'#1a0000',watching:'#110a00'};
+  var stc={fixed:'#3ecf5e',open:'#ef5350',watching:'#ffb400'};
+  body.innerHTML=_bugRegistry.map(function(b){
+    return '<div style="border:1px solid #1a2a0a;border-radius:4px;margin-bottom:5px;padding:5px 6px;background:rgba(0,0,0,0.35);">'
+      +'<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">'
+      +'<span style="color:'+(sc[b.sev]||'#aaa')+';font-size:8px;font-weight:bold;border:1px solid currentColor;border-radius:2px;padding:0 3px;">'+b.sev.toUpperCase()+'</span>'
+      +'<span style="color:#4a5070;font-size:8px;">'+b.id+'</span>'
+      +'<span style="margin-left:auto;background:'+(sbg[b.status]||'#000')+';color:'+(stc[b.status]||'#aaa')+';font-size:8px;border-radius:2px;padding:0 4px;">'+b.status.toUpperCase()+'</span>'
+      +'<span style="color:#2a3040;font-size:8px;margin-left:4px;">'+b.ver+'</span>'
+      +'</div>'
+      +'<div style="color:#d4b800;font-size:9.5px;font-weight:bold;margin-bottom:2px;">'+b.title+'</div>'
+      +'<div style="color:#6a7080;font-size:9px;margin-bottom:3px;line-height:1.5;">'+b.desc+'</div>'
+      +'<div style="color:#3ecf5e;font-size:9px;line-height:1.5;"><span style="color:#2a4030;">→ FIX: </span>'+b.fix+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function fdpRenderRepair(){
+  var body=document.getElementById('fdpBody');
+  if(!body)return;
+  var rows=Object.keys(panels).map(function(pid){
+    var p=panels[pid];
+    var chk=isChartBlank(pid);
+    var sc=chk.blank?'#ef5350':'#3ecf5e';
+    var st=chk.blank?'⚠ BLANK — '+chk.reason:'✓ OK';
+    return '<div style="display:flex;align-items:center;gap:5px;padding:4px 2px;border-bottom:1px solid #0d1510;">'
+      +'<span style="color:#7af;font-size:10px;width:32px;font-weight:bold;">'+pid.toUpperCase()+'</span>'
+      +'<span style="flex:1;color:'+sc+';font-size:9px;">'+st+'</span>'
+      +'<button onclick="fdpAutoRepair(\''+pid+'\');setTimeout(function(){fdpTab(\'repair\');},550)" style="background:#001800;border:1px solid #1a4;border-radius:3px;color:#3ecf5e;font-size:9px;cursor:pointer;padding:2px 6px;">⚙ Repair</button>'
+      +'<button onclick="diagnosChart(\''+pid+'\');fdpTab(\'log\')" style="background:none;border:1px solid #2a3a2a;border-radius:3px;color:#7af;font-size:9px;cursor:pointer;padding:2px 6px;">▶ Diag</button>'
+      +'</div>';
+  }).join('');
+  body.innerHTML='<div style="color:#4a5570;font-size:9px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #1a2a0a;">Status refreshed on tab open. Press Repair to force-redraw a blank panel.</div>'
+    +rows
+    +'<div style="display:flex;gap:5px;padding-top:8px;">'
+    +'<button onclick="fdpAutoRepair();setTimeout(function(){fdpTab(\'repair\');},700)" style="background:#001800;border:1px solid #1a4;border-radius:3px;color:#3ecf5e;font-size:10px;cursor:pointer;padding:3px 10px;font-weight:bold;">⚙ Repair All</button>'
+    +'<button onclick="runDiagAll();fdpTab(\'log\')" style="background:none;border:1px solid #3a3a2a;border-radius:3px;color:#ffb400;font-size:10px;cursor:pointer;padding:3px 10px;">▶ Diag All</button>'
+    +'</div>';
+}
+
+function fdpRenderInfo(){
+  var body=document.getElementById('fdpBody');
+  if(!body)return;
+  var prows=Object.keys(panels).map(function(pid){
+    var p=panels[pid];
+    var chk=isChartBlank(pid);
+    return '<tr>'
+      +'<td style="color:#7af;padding:2px 6px 2px 0;font-weight:bold;">'+pid.toUpperCase()+'</td>'
+      +'<td style="color:#aaa;">'+p.sym+'</td>'
+      +'<td style="color:#ffb400;text-align:right;padding-left:8px;">$'+(p.price||0).toFixed(2)+'</td>'
+      +'<td style="color:#4a5570;padding-left:6px;">'+p.mode+'</td>'
+      +'<td style="color:'+(chk.blank?'#ef5350':'#3ecf5e')+';padding-left:6px;font-size:9px;">'+(chk.blank?'⚠':'✓')+'</td>'
+      +'</tr>';
+  }).join('');
+  var fixed=_bugRegistry.filter(function(b){return b.status==='fixed';}).length;
+  var open=_bugRegistry.filter(function(b){return b.status!=='fixed';}).length;
+  body.innerHTML='<div style="color:#d4b800;font-weight:bold;font-size:10px;margin-bottom:5px;">Trade Signal v0.01b — System Status</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:8px;">'+prows+'</table>'
+    +'<div style="font-size:9px;color:#4a5570;border-top:1px solid #1a2a0a;padding-top:6px;">'
+    +'<div><span style="color:#2a3a2a;">WSS: </span><span style="color:'+(window._wsConnected?'#3ecf5e':'#ef5350')+'">'+(window._wsConnected?'Connected':'Offline — synthetic data active')+'</span></div>'
+    +'<div><span style="color:#2a3a2a;">Bug Registry: </span><span style="color:#3ecf5e;">'+fixed+' fixed</span> / <span style="color:'+(open?'#ef5350':'#3ecf5e')+'">'+(open?open+' open':'0 open')+'</span></div>'
+    +'<div><span style="color:#2a3a2a;">Session start: </span><span style="color:#7af;">'+new Date().toLocaleTimeString()+'</span></div>'
+    +'</div>'
+    +'<div style="border-top:1px solid #1a2a0a;margin-top:6px;padding-top:6px;">'
+    +'<div style="color:#2a3a2a;font-size:8.5px;margin-bottom:3px;">Resolved in this build:</div>'
+    +_bugRegistry.filter(function(b){return b.status==='fixed';}).map(function(b){
+      return '<div style="color:#3ecf5e;font-size:8.5px;padding:1px 0;">✓ <span style="color:#2a5030;">['+b.ver+']</span> '+b.id+': '+b.title+'</div>';
+    }).join('')
+    +'</div>';
+}
+
+function fdpAutoRepair(pid){
+  if(pid){
+    _diagEntry(pid,'info','⚙ Auto-repair: '+((panels[pid]||{}).sym||pid));
+    diagnosChart(pid);
+  } else {
+    _diagEntry(null,'info','⚙ Auto-repair ALL panels');
+    Object.keys(panels).forEach(function(p){diagnosChart(p);});
+  }
 }
 
 // ── Auto-init VL Panel on load ──
