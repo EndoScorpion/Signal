@@ -471,6 +471,7 @@ svg{max-width:100%;height:auto;}
   <button class="tb-btn" id="vlPanelBtn" style="color:#3ecf5e;border-color:#1a4a2a;font-weight:bold;background:#001a08;" onclick="toggleVLPanel()">&#128202; Vol Panel</button>
   <button class="tb-btn" style="color:#3ecf5e;border-color:#1a4a2a;" onclick="toggleVLPop()">&#8599; Pop Out</button>
   <button class="tb-btn" style="color:#7f7;border-color:#2a5a;font-size:10px;" onclick="downloadHTML()">&#11015; Download</button>
+  <button class="tb-btn" style="color:#7dd3fc;border-color:#1a3a5a;font-size:10px;" onclick="containerExport()" title="Export clean standalone HTML container">&#128190; Export</button>
   <button id="compactBtn" class="tb-btn" style="color:#ffb400;border-color:#553300;font-size:10px;" onclick="toggleCompact()" title="Move Volume Leaders above toolbar in compact mode">&#8633; Compact</button>
   <button class="tb-btn" id="diagBtn" onclick="toggleDiagPanel()" style="color:#3ecf5e;border-color:#1a4a2a;font-size:10px;" title="Auto Diagnostics — detect and fix blank charts">&#128301; Diag</button>
   <button class="tb-btn" id="fdpBtn" onclick="toggleFDP()" style="color:#d4b800;border-color:#3a3000;font-size:12px;font-weight:bold;letter-spacing:0;" title="Floating Diagnostics Panel — bugs, auto-repair, info">&#9889;</button>
@@ -2143,12 +2144,12 @@ function downloadHTML(){
   }
   _dlFallback(html);
 }
-function _dlFallback(html){
+function _dlFallback(html,fname){
   try{
     var b=new Blob([html],{type:'text/html'});
     var a=document.createElement('a');
     a.href=URL.createObjectURL(b);
-    a.download='trade_signal_v0.01b_export.html';
+    a.download=fname||'trade_signal_v0.01b_export.html';
     document.body.appendChild(a);a.click();
     setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},1500);
   }catch(e){
@@ -2156,7 +2157,41 @@ function _dlFallback(html){
     catch(e2){alert('Download unavailable here — use the file attached in Claude Code.');}
   }
 }
-function showHelp(){alert('Trade Signal v0.01b\n\nFeatures:\n• Canvas 2D rendering — real drawCandles / drawLine / drawMA\n• ECharts 5.6 — full candlestick with sub-indicators, dataZoom\n• Overlay mode — candle + line at 50% alpha\n• calcSMA / calcEMA from source file\n• Backtest: SMA Crossover / RSI Reversal\n• USDC/USDT SVG panel with TradingView data\n• Live price simulation\n• + New Panel dynamically adds canvas panels\n• ⬇ Download saves this file\n• TV ↗ links open TradingView for each symbol');}
+// ── Container Export: rebuild clean standalone HTML from DOM parts ──
+function containerExport(){
+  try{
+    // Head: known meta + CDN script + all <style> blocks from document
+    var ecSrc='https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
+    var styles=Array.from(document.querySelectorAll('style')).map(function(s){
+      return '<style>'+s.textContent+'</style>';
+    }).join('\n');
+    var head='<meta charset="utf-8">\n'
+      +'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">\n'
+      +'<title>Trade Signal v0.01b — Live Preview</title>\n'
+      +'<script src="'+ecSrc+'" crossorigin="anonymous"><\/script>\n'
+      +styles;
+    // Body: clone, strip any artifact-runtime injections (claude.ai scripts)
+    var bodyClone=document.body.cloneNode(true);
+    Array.from(bodyClone.querySelectorAll('script[src]')).forEach(function(el){
+      var s=el.getAttribute('src')||'';
+      if(s.indexOf('claude.ai')!==-1||s.indexOf('anthropic')!==-1)el.remove();
+    });
+    var clean='<!DOCTYPE html>\n<html>\n<head>\n'+head+'\n</head>\n<body>\n'
+      +bodyClone.innerHTML+'\n</body>\n</html>';
+    var fname='trade_signal_v0.01b_standalone.html';
+    if(window.claude&&typeof window.claude.use==='function'){
+      window.claude.use('downloads').then(function(dl){
+        if(dl){
+          dl.save({filename:fname,data:clean})
+            .catch(function(e){if(e&&e.code!=='declined')_dlFallback(clean,fname);});
+        }else{_dlFallback(clean,fname);}
+      }).catch(function(){_dlFallback(clean,fname);});
+      return;
+    }
+    _dlFallback(clean,fname);
+  }catch(ex){alert('Container export failed: '+ex.message);}
+}
+function showHelp(){alert('Trade Signal v0.01b\n\nFeatures:\n• Canvas 2D rendering — real drawCandles / drawLine / drawMA\n• ECharts 5.6 — full candlestick with sub-indicators, dataZoom\n• Overlay mode — candle + line at 50% alpha\n• calcSMA / calcEMA from source file\n• Backtest: SMA Crossover / RSI Reversal\n• USDC/USDT SVG panel with TradingView data\n• Live price simulation\n• + New Panel dynamically adds canvas panels\n• ⬇ Download saves this file\n• 💾 Export saves clean standalone container HTML\n• TV ↗ links open TradingView for each symbol');}
 function termRun(e){
   if(e.key!=='Enter')return;
   var inp=document.getElementById('termIn');
