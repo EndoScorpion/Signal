@@ -2128,68 +2128,93 @@ function resetSize(panelId){
 function refreshVL(){var v=document.getElementById('vlS');if(v)v.textContent='Refreshing…';setTimeout(function(){if(v)v.textContent='BTCUSDT   $'+((43800+Math.random()*200).toFixed(2))+'   ▲+'+(2+Math.random()).toFixed(2)+'%';},800);}
 function setFont(sz,btn){document.getElementById('fontTog').querySelectorAll('button').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.body.className='chart-font-'+sz;}
 function toggleTerm(){document.getElementById('termBar').classList.toggle('show');}
-function downloadHTML(){
-  var html=document.documentElement.outerHTML;
-  // Use artifact downloads capability when inside claude.ai viewer
+// ── Unified save helper: artifact downloads → blob link → clipboard → modal ──
+function _trySave(html, fname){
+  // 1. Try artifact runtime downloads capability (works inside framed claude.ai viewer)
   if(window.claude&&typeof window.claude.use==='function'){
     window.claude.use('downloads').then(function(dl){
       if(dl){
-        dl.save({filename:'trade_signal_v0.01b_export.html',data:html})
-          .catch(function(e){if(e&&e.code!=='declined')alert('Save failed: '+(e.message||e.code));});
-      } else {
-        _dlFallback(html);
+        dl.save({filename:fname,data:html})
+          .then(function(){})
+          .catch(function(e){
+            if(e&&e.code==='declined')return; // user cancelled — fine
+            _blobDownload(html,fname); // any other error → blob fallback
+          });
+      }else{
+        _blobDownload(html,fname); // capability null (top-level view) → blob
       }
-    }).catch(function(){_dlFallback(html);});
+    }).catch(function(){_blobDownload(html,fname);});
     return;
   }
-  _dlFallback(html);
+  _blobDownload(html,fname);
 }
-function _dlFallback(html,fname){
+function _blobDownload(html,fname){
+  // 2. Standard blob <a download> — works in local/opened file context
   try{
     var b=new Blob([html],{type:'text/html'});
     var a=document.createElement('a');
     a.href=URL.createObjectURL(b);
-    a.download=fname||'trade_signal_v0.01b_export.html';
-    document.body.appendChild(a);a.click();
-    setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},1500);
-  }catch(e){
-    try{window.open('data:text/html;charset=utf-8,'+encodeURIComponent(html),'_blank');}
-    catch(e2){alert('Download unavailable here — use the file attached in Claude Code.');}
+    a.download=fname;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){try{URL.revokeObjectURL(a.href);document.body.removeChild(a);}catch(x){}},1500);
+    return;
+  }catch(e){}
+  // 3. Clipboard copy (works in top-level artifact view)
+  _clipCopy(html,fname);
+}
+function _clipCopy(html,fname){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(html).then(function(){
+      _saveToast('HTML copied to clipboard — paste into a .html file to save as <b>'+fname+'</b>');
+    }).catch(function(){_showCopyModal(html,fname);});
+  }else{
+    _showCopyModal(html,fname);
   }
 }
-// ── Container Export: rebuild clean standalone HTML from DOM parts ──
+function _saveToast(msg){
+  var t=document.createElement('div');
+  t.innerHTML=msg;
+  t.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#1a2a1a;color:#7f7;border:1px solid #3f3;border-radius:6px;padding:10px 18px;font-size:11px;font-family:monospace;z-index:99999;max-width:420px;text-align:center;line-height:1.5;';
+  document.body.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},5000);
+}
+function _showCopyModal(html,fname){
+  var old=document.getElementById('_dlModal');if(old)old.remove();
+  var m=document.createElement('div');
+  m.id='_dlModal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99998;display:flex;align-items:center;justify-content:center;';
+  m.innerHTML='<div style="background:#0e1117;border:1px solid #3f3;border-radius:8px;padding:18px 20px;width:min(480px,92vw);font-family:monospace;font-size:11px;color:#ccc;">'
+    +'<div style="color:#7f7;font-size:13px;font-weight:bold;margin-bottom:8px;">&#11015; Save as '+fname+'</div>'
+    +'<div style="color:#9aa;margin-bottom:8px;">Clipboard copy unavailable here. Select all below, copy, paste into a new .html file.</div>'
+    +'<textarea id="_dlTa" style="width:100%;height:120px;background:#060a0a;color:#7f7;border:1px solid #2a4a2a;border-radius:4px;font-family:monospace;font-size:9px;padding:6px;resize:vertical;" readonly></textarea>'
+    +'<div style="display:flex;gap:8px;margin-top:10px;">'
+    +'<button onclick="document.getElementById(\'_dlTa\').select();document.execCommand(\'copy\');this.textContent=\'✓ Copied\';" style="flex:1;background:#1a2a1a;color:#7f7;border:1px solid #3f3;border-radius:4px;padding:5px;cursor:pointer;font-family:monospace;">Copy All</button>'
+    +'<button onclick="document.getElementById(\'_dlModal\').remove();" style="background:#1a0000;color:#ef5350;border:1px solid #500;border-radius:4px;padding:5px 12px;cursor:pointer;font-family:monospace;">✕ Close</button>'
+    +'</div></div>';
+  document.body.appendChild(m);
+  document.getElementById('_dlTa').value=html;
+}
+function downloadHTML(){
+  _trySave(document.documentElement.outerHTML,'trade_signal_v0.01b_export.html');
+}
+// ── Container Export: clean standalone HTML from DOM parts ──
 function containerExport(){
   try{
-    // Head: known meta + CDN script + all <style> blocks from document
     var ecSrc='https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
-    var styles=Array.from(document.querySelectorAll('style')).map(function(s){
-      return '<style>'+s.textContent+'</style>';
-    }).join('\n');
+    var styles=Array.from(document.querySelectorAll('style')).map(function(s){return '<style>'+s.textContent+'</style>';}).join('\n');
     var head='<meta charset="utf-8">\n'
       +'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">\n'
       +'<title>Trade Signal v0.01b — Live Preview</title>\n'
-      +'<script src="'+ecSrc+'" crossorigin="anonymous"><\/script>\n'
-      +styles;
-    // Body: clone, strip any artifact-runtime injections (claude.ai scripts)
+      +'<script src="'+ecSrc+'" crossorigin="anonymous"><\/script>\n'+styles;
     var bodyClone=document.body.cloneNode(true);
     Array.from(bodyClone.querySelectorAll('script[src]')).forEach(function(el){
       var s=el.getAttribute('src')||'';
       if(s.indexOf('claude.ai')!==-1||s.indexOf('anthropic')!==-1)el.remove();
     });
-    var clean='<!DOCTYPE html>\n<html>\n<head>\n'+head+'\n</head>\n<body>\n'
-      +bodyClone.innerHTML+'\n</body>\n</html>';
-    var fname='trade_signal_v0.01b_standalone.html';
-    if(window.claude&&typeof window.claude.use==='function'){
-      window.claude.use('downloads').then(function(dl){
-        if(dl){
-          dl.save({filename:fname,data:clean})
-            .catch(function(e){if(e&&e.code!=='declined')_dlFallback(clean,fname);});
-        }else{_dlFallback(clean,fname);}
-      }).catch(function(){_dlFallback(clean,fname);});
-      return;
-    }
-    _dlFallback(clean,fname);
-  }catch(ex){alert('Container export failed: '+ex.message);}
+    var clean='<!DOCTYPE html>\n<html>\n<head>\n'+head+'\n</head>\n<body>\n'+bodyClone.innerHTML+'\n</body>\n</html>';
+    _trySave(clean,'trade_signal_v0.01b_standalone.html');
+  }catch(ex){alert('Container export error: '+ex.message);}
 }
 function showHelp(){alert('Trade Signal v0.01b\n\nFeatures:\n• Canvas 2D rendering — real drawCandles / drawLine / drawMA\n• ECharts 5.6 — full candlestick with sub-indicators, dataZoom\n• Overlay mode — candle + line at 50% alpha\n• calcSMA / calcEMA from source file\n• Backtest: SMA Crossover / RSI Reversal\n• USDC/USDT SVG panel with TradingView data\n• Live price simulation\n• + New Panel dynamically adds canvas panels\n• ⬇ Download saves this file\n• 💾 Export saves clean standalone container HTML\n• TV ↗ links open TradingView for each symbol');}
 function termRun(e){
