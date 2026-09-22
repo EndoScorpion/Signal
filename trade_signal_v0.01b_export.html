@@ -1125,7 +1125,7 @@ var panels = {
   btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false},
   eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false},
   sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false},
-  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'echarts',zx:1, zy:1, paused:false}
+  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg',    zx:1, zy:1, paused:false}
 };
 var usdc = {price:1.00095};
 
@@ -1804,21 +1804,19 @@ function refreshPanel(id){panels[id].base=panels[id].price;drawPanel(id);}
 function renderAll(){
   // Delay 300ms so flexbox/grid layout has settled and clientWidth is correct
   setTimeout(function(){
-    ['btc','eth','sol'].forEach(function(id){
+    ['btc','eth','sol','bnb'].forEach(function(id){
       var cv=document.getElementById('cv-'+id);
       if(cv)cv.style.display='none';
     });
-    // BNB starts in ECharts mode
-    if(typeof echarts!=='undefined') drawECharts('bnb');
     // Draw synthetic data SYNCHRONOUSLY on boot — chart is never blank from frame 1
-    ['btc','eth','sol'].forEach(function(id){
+    ['btc','eth','sol','bnb'].forEach(function(id){
       try{ drawSVG(id); }catch(e){ console.error('Boot drawSVG('+id+') failed:',e); }
     });
     // Then hydrate with live REST data in background (replaces synthetic if successful)
     setTimeout(function(){ fetchAndRefreshAll(); }, 500);
     // 1.2s health check: force-draw any panels that are still blank after boot+fetch
     setTimeout(function(){
-      ['btc','eth','sol'].forEach(function(id){
+      ['btc','eth','sol','bnb'].forEach(function(id){
         if(!document.getElementById('svgwrap-'+id)){
           console.warn('[healthcheck] '+id+' svgwrap missing — forcing redraw');
           try{ drawSVG(id); }catch(e){ console.error('Health drawSVG('+id+') failed:',e); }
@@ -1826,7 +1824,7 @@ function renderAll(){
       });
     },1200);
     // Set active button state for SVG panels
-    ['btc','eth','sol'].forEach(function(id){
+    ['btc','eth','sol','bnb'].forEach(function(id){
       var area=document.getElementById('ca-'+id);
       if(!area)return;
       var panel=area.closest('.panel');
@@ -1969,11 +1967,11 @@ setInterval(function(){
   }
 
   // Redraw panels (skip if paused)
-  ['btc','eth','sol'].forEach(function(id){
+  ['btc','eth','sol','bnb'].forEach(function(id){
     panels[id].base=panels[id].price;
     if(panels[id].paused) return;
     if(panels[id].mode==='svg') drawSVG(id);
-    else if(panels[id].mode!=='echarts') drawPanel(id);
+    else drawPanel(id);
   });
 },3000);
 
