@@ -191,10 +191,78 @@ svg{max-width:100%;height:auto;}
 .usdc-panel{margin:0 8px 8px;background:var(--panel);border:1px solid var(--grid);border-radius:4px;position:relative;}
 .tv-badge{display:inline-flex;align-items:center;gap:4px;background:#0a0f1a;border:1px solid #2a4060;border-radius:3px;padding:2px 7px;font-size:10px;color:#9db4ff;text-decoration:none;}
 .tv-badge:hover{border-color:#557;color:#7af;}
+/* ── MarketWatch menu bar ── */
+#mwBar{display:flex;align-items:center;background:#030402;border-bottom:1px solid #0a120a;padding:0 6px;gap:6px;}
+#mwBtn{background:none;border:none;cursor:pointer;font-family:'Times New Roman',Times,serif;color:#3ecf5e;font-size:14px;font-weight:bold;padding:4px 8px 4px 4px;letter-spacing:.4px;white-space:nowrap;}
+#mwBtn:hover{color:#5fff8f;}
+#mwMenu{display:none;position:absolute;top:100%;left:0;background:#0a0d14;border:1px solid #1e2228;border-radius:4px;min-width:215px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.85);margin-top:1px;}
+.mw-sec{color:#1a3a1a;font-size:8px;text-transform:uppercase;letter-spacing:.9px;padding:5px 10px 2px;font-family:monospace;}
+.mw-sep{border-top:1px solid #1a2228;margin:3px 0;}
+.mw-item{display:block;width:100%;text-align:left;background:none;border:none;color:#7a9a7a;font-size:10px;font-family:monospace;padding:5px 12px;cursor:pointer;transition:background .1s,color .1s;}
+.mw-item:hover{background:#0d1a0d;color:#3ecf5e;}
+/* ── Floating settings panel ── */
+#floatSettings{display:none;position:fixed;bottom:38px;left:50%;transform:translateX(-50%);width:min(520px,96vw);background:#080c08;border:1px solid #1a3a1a;border-radius:6px;z-index:9990;box-shadow:0 -4px 24px rgba(0,0,0,.85);font-family:monospace;}
+#fsHdr{display:flex;align-items:center;background:#0a0f08;border-bottom:1px solid #1a3a1a;padding:5px 10px;cursor:move;border-radius:6px 6px 0 0;}
+.fs-tabs{display:flex;background:#060a06;border-bottom:1px solid #1a3a1a;}
+.fs-tab{flex:1;padding:5px 2px;background:none;border:none;border-bottom:2px solid transparent;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;transition:color .1s;}
+.fs-tab.on{color:#3ecf5e;border-bottom-color:#3ecf5e;background:#040804;}
+.fs-body{padding:8px 10px;max-height:220px;overflow-y:auto;}
+.fs-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #0d180d;}
+.fs-label{color:#4a5570;font-size:10px;flex:1;}
+.bg-cycle{background:#001800;border:1px solid #1a4a2a;border-radius:3px;color:#3ecf5e;font-size:9px;cursor:pointer;padding:2px 8px;font-family:monospace;min-width:54px;}
+.bg-cycle.off{color:#3a4050;border-color:#2a2a2a;background:#080808;}
+/* ── Credit bar ── */
+#creditBar{background:#010201;border-bottom:1px solid #0a0f0a;padding:1px 8px;font-family:'IBM Plex Mono','Courier New',monospace;font-size:9px;display:flex;align-items:center;gap:0;white-space:nowrap;overflow:hidden;}
 </style><span class="font-label" style="color:#c7a8ff;">IBM Plex Mono</span><span class="font-label" style="color:#9db4ff;">Courier Prime</span>
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Source+Code+Pro:wght@400;600&family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- ═══ CREDIT BAR ═══ -->
+<div id="creditBar">
+  <span style="color:#c8a200;font-weight:bold;">Digital Nomad</span>
+  <span style="color:#5a4a00;">&nbsp;&ndash;&nbsp;</span>
+  <span style="color:#8a7200;">Beta Test v0.01b</span>
+  <span style="color:#3a3000;">&nbsp;&ndash;&nbsp;</span>
+  <span style="color:#6a5a00;">Copyright &copy; 2026 Nasif Hossain</span>
+  <span style="color:#3a3000;">&nbsp;|&nbsp;</span>
+  <span style="color:#5a4a00;">All rights reserved.</span>
+  <span style="color:#3a3000;">&nbsp;&nbsp;</span>
+  <span style="color:#4a5a30;">EndoScorpion@gmail.com</span>
+  <span style="flex:1;"></span>
+  <span style="color:#1a2a0a;font-size:8px;">trade_signal_v0.01b</span>
+</div>
+
+<!-- ═══ MARKETWATCH MENU BAR ═══ -->
+<div id="mwBar">
+  <div id="mwRoot" style="position:relative;">
+    <button id="mwBtn" onclick="toggleMWMenu(event)">MarketWatch &#9660;</button>
+    <div id="mwMenu">
+      <div class="mw-sec">Settings</div>
+      <button class="mw-item" onclick="openFloatSettings('bg');toggleMWMenu()">&#127912; Chart BG Colors</button>
+      <button class="mw-item" onclick="openFloatSettings('theme');toggleMWMenu()">&#127763; Theme / Colors</button>
+      <button class="mw-item" onclick="openFloatSettings('fonts');toggleMWMenu()">&#128288; Fonts</button>
+      <button class="mw-item" onclick="openFloatSettings('src');toggleMWMenu()">&#128225; Source Registry</button>
+      <div class="mw-sep"></div>
+      <div class="mw-sec">View</div>
+      <button class="mw-item" onclick="toggleNews();toggleMWMenu()">&#128240; News Bar</button>
+      <button class="mw-item" onclick="toggleVLPanel();toggleMWMenu()">&#128202; Volume Leaders</button>
+      <button class="mw-item" onclick="toggleTerm();toggleMWMenu()">&#9000; Terminal</button>
+      <div class="mw-sep"></div>
+      <div class="mw-sec">Diagnostics</div>
+      <button class="mw-item" onclick="toggleDiagPanel();toggleMWMenu()">&#128301; Diagnostics Panel</button>
+      <button class="mw-item" onclick="toggleFDP();fdpTab('repair');toggleMWMenu()">&#9889; Auto Repair</button>
+      <button class="mw-item" onclick="toggleFDP();fdpTab('bugs');toggleMWMenu()">&#128027; Bug Log</button>
+      <button class="mw-item" onclick="toggleFDP();fdpTab('info');toggleMWMenu()">&#8505; System Info</button>
+      <div class="mw-sep"></div>
+      <div class="mw-sec">File</div>
+      <button class="mw-item" onclick="downloadHTML();toggleMWMenu()">&#11015; Download Dashboard</button>
+      <button class="mw-item" onclick="containerExport();toggleMWMenu()">&#128190; Export Standalone</button>
+    </div>
+  </div>
+  <span style="color:#0d1a0d;font-size:12px;">|</span>
+  <span id="mwStatus" style="color:#1a3a1a;font-size:9.5px;font-family:monospace;">Trade Signal v0.01b &mdash; BTC &middot; ETH &middot; SOL &middot; BNB</span>
+</div>
 
 <!-- ═══ SIGNAL TRACKER WIDGET ═══ -->
 <div id="signalTracker" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:88888;width:310px;background:#0a0c12;border:1px solid #2a3a5a;border-radius:6px;box-shadow:0 4px 24px rgba(0,0,0,0.7);font-family:monospace;font-size:11px;user-select:none;">
@@ -678,6 +746,7 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn" onclick="this.classList.toggle('on')">Stoch</button>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn" onclick="this.classList.toggle('on')">CCI/ADX</button>
+      <button class="bg-cycle" id="bgbtn-btc" onclick="cycleStochBg('btc',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
       <span style="flex:1;"></span>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
@@ -728,6 +797,7 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn on" onclick="this.classList.toggle('on')">Stoch</button>
       <button class="ind-btn" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">CCI/ADX</button>
+      <button class="bg-cycle" id="bgbtn-eth" onclick="cycleStochBg('eth',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
       <span style="flex:1;"></span>
       <button class="ind-btn" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
@@ -798,6 +868,7 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn on" onclick="this.classList.toggle('on')">Stoch</button>
       <button class="ind-btn" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn" onclick="this.classList.toggle('on')">CCI/ADX</button>
+      <button class="bg-cycle" id="bgbtn-sol" onclick="cycleStochBg('sol',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
       <span style="flex:1;"></span>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
@@ -848,6 +919,7 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn" onclick="this.classList.toggle('on')">Stoch</button>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">CCI/ADX</button>
+      <button class="bg-cycle" id="bgbtn-bnb" onclick="cycleStochBg('bnb',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
       <span style="flex:1;"></span>
       <button class="ind-btn" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
@@ -1111,6 +1183,22 @@ svg{max-width:100%;height:auto;}
   <span class="fmt-svg" style="margin-left:auto;">100% SVG/Unicode</span>
 </div>
 
+<!-- ═══ FLOATING SETTINGS PANEL ═══ -->
+<div id="floatSettings">
+  <div id="fsHdr" onmousedown="startDragPanel('floatSettings',event)">
+    <span style="color:#3ecf5e;font-weight:bold;font-size:11px;">&#9881; Settings</span>
+    <span style="color:#2a4a2a;font-size:9px;margin-left:8px;font-family:monospace;">Trade Signal v0.01b</span>
+    <button onclick="closeFloatSettings()" style="margin-left:auto;background:none;border:none;color:#ef5350;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;">&#10005;</button>
+  </div>
+  <div class="fs-tabs">
+    <button class="fs-tab on" id="fstab-bg"    onclick="fsTab('bg')">&#127912; Chart BG</button>
+    <button class="fs-tab"    id="fstab-theme"  onclick="fsTab('theme')">&#127763; Theme</button>
+    <button class="fs-tab"    id="fstab-fonts"  onclick="fsTab('fonts')">&#128288; Fonts</button>
+    <button class="fs-tab"    id="fstab-src"    onclick="fsTab('src')">&#128225; Sources</button>
+  </div>
+  <div id="fsBody" class="fs-body"></div>
+</div>
+
 <!-- TERMINAL -->
 <div class="term-bar" id="termBar">
   <span style="color:#3f3;">$&gt;</span>
@@ -1122,11 +1210,17 @@ svg{max-width:100%;height:auto;}
 <script>
 // ── Shared state ──
 var panels = {
-  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false},
-  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false},
-  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false},
-  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg',    zx:1, zy:1, paused:false}
+  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false, stochBg:1},
+  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false, stochBg:1},
+  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1},
+  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1}
 };
+// ── Source activity log (most-recently-used first) ──
+var _srcLog=[
+  {ts:'boot',pid:'sys',src:'Synthetic gen',status:'ok',detail:'Initial data generated on load'},
+  {ts:'boot',pid:'sys',src:'Binance REST',status:'pending',detail:'api.binance.com/api/v3/klines'},
+  {ts:'boot',pid:'sys',src:'corsproxy.io',status:'pending',detail:'CORS proxy fallback for Binance'}
+];
 var usdc = {price:1.00095};
 
 // ── Clock ──
@@ -1404,8 +1498,10 @@ function drawSVG(id){
   });
 
   // ── Stoch K(5) zone background layer (behind chartG) ──
-  // red <=20 (oversold) | yellow 40-60 (neutral) | green >=80 (overbought)
+  // stochBg multiplier: 0=off, 0.5=dim, 1=normal, 2=bright
   (function(){
+    var bgM=typeof p.stochBg==='number'?p.stochBg:1;
+    if(bgM===0)return;
     var k5=data.map(function(d,i){
       if(i<4)return 50;
       var sl=data.slice(i-4,i+1);
@@ -1419,24 +1515,22 @@ function drawSVG(id){
       if(k>=40&&k<=60)return '#ffb400'; // neutral → yellow
       return null;
     }
-    // Full-chart overlay tint based on current (last) bar
     var curK=k5[k5.length-1];
     var curCol=zoneColor(curK);
     if(curCol){
       var ov=document.createElementNS(ns,'rect');
       ov.setAttribute('x',padL);ov.setAttribute('y',padT);
       ov.setAttribute('width',fullW-padL-padR);ov.setAttribute('height',plotH);
-      ov.setAttribute('fill',curCol);ov.setAttribute('opacity','0.07');
+      ov.setAttribute('fill',curCol);ov.setAttribute('opacity',String(Math.min(0.07*bgM,0.28)));
       svg.appendChild(ov);
     }
-    // Per-bar column highlights
     k5.forEach(function(k,i){
       var col=zoneColor(k);
       if(!col)return;
       var r=document.createElementNS(ns,'rect');
       r.setAttribute('x',padL+i*stepX);r.setAttribute('y',padT);
       r.setAttribute('width',Math.max(stepX,1));r.setAttribute('height',plotH);
-      r.setAttribute('fill',col);r.setAttribute('opacity','0.10');
+      r.setAttribute('fill',col);r.setAttribute('opacity',String(Math.min(0.10*bgM,0.38)));
       svg.appendChild(r);
     });
   })();
@@ -3518,14 +3612,15 @@ function fetchAndDrawSVG(pid){
   if(!sym){drawSVG(pid);return;} // stablecoins: just use synthetic
   _diagEntry(pid,'info','REST fetch → '+sym+' (5m ×120)…');
   fetchOHLCV(pid,'5m',120,function(err,data){
+    var ts=new Date().toLocaleTimeString();
     if(err||!data){
       _diagEntry(pid,'warn','REST failed ('+err+') — keeping existing chart; drawing synthetic if blank');
-      // Preserve the boot-draw chart — only draw synthetic if panel is genuinely blank
+      _srcLog.unshift({ts:ts,pid:pid,src:'Binance REST',status:'fail',detail:String(err||'no data')});
+      if(_srcLog.length>80)_srcLog.length=80;
       if(!document.getElementById('svgwrap-'+pid)){
         drawSVG(pid);
       }
     } else {
-      // Update live price from real data
       var last=data[data.length-1];
       p._liveData=data;
       if(last.close>0){
@@ -3537,6 +3632,8 @@ function fetchAndDrawSVG(pid){
         if(pl)pl.textContent='$'+last.close.toFixed(2);
       }
       _diagEntry(pid,'ok','REST: '+data.length+' bars, last close $'+last.close.toFixed(2));
+      _srcLog.unshift({ts:ts,pid:pid,src:'Binance REST',status:'ok',detail:data.length+' bars · last $'+last.close.toFixed(2)});
+      if(_srcLog.length>80)_srcLog.length=80;
       drawSVG(pid);
     }
   });
@@ -3768,6 +3865,133 @@ function _stopDiagWatch(){
 }
 
 // ══════════════════════════════════════════════════════
+// ── MarketWatch Menu ──
+// ══════════════════════════════════════════════════════
+function toggleMWMenu(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var m=document.getElementById('mwMenu');
+  if(!m)return;
+  m.style.display=m.style.display==='block'?'none':'block';
+}
+document.addEventListener('click',function(e){
+  var root=document.getElementById('mwRoot');
+  if(root&&!root.contains(e.target)){
+    var m=document.getElementById('mwMenu');
+    if(m)m.style.display='none';
+  }
+});
+
+// ══════════════════════════════════════════════════════
+// ── Stoch BG per-panel cycle ──
+// ══════════════════════════════════════════════════════
+var _bgStates=[0,0.5,1,2];
+var _bgLabels=['BG:off','BG:dim','BG:nrm','BG:hi'];
+function cycleStochBg(id,btn){
+  var p=panels[id]; if(!p)return;
+  var cur=typeof p.stochBg==='number'?p.stochBg:1;
+  var idx=_bgStates.indexOf(cur);
+  if(idx<0)idx=2; // default normal
+  idx=(idx+1)%_bgStates.length;
+  p.stochBg=_bgStates[idx];
+  if(btn){
+    btn.textContent=_bgLabels[idx];
+    if(p.stochBg===0){btn.classList.add('off');}else{btn.classList.remove('off');}
+  }
+  if(p.mode==='svg')drawSVG(id);
+  // refresh floating settings if open on bg tab
+  if(document.getElementById('floatSettings').style.display!=='none'&&_fsTab==='bg')fsRenderBg();
+}
+
+// ══════════════════════════════════════════════════════
+// ── Floating Settings Panel ──
+// ══════════════════════════════════════════════════════
+var _fsTab='bg';
+function openFloatSettings(tab){
+  var el=document.getElementById('floatSettings');
+  if(!el)return;
+  el.style.display='block';
+  fsTab(tab||'bg');
+}
+function closeFloatSettings(){
+  var el=document.getElementById('floatSettings');
+  if(el)el.style.display='none';
+}
+function fsTab(name){
+  _fsTab=name;
+  ['bg','theme','fonts','src'].forEach(function(t){
+    var b=document.getElementById('fstab-'+t);
+    if(!b)return;
+    b.classList.toggle('on',t===name);
+  });
+  if(name==='bg')     fsRenderBg();
+  else if(name==='theme')  fsRenderTheme();
+  else if(name==='fonts')  fsRenderFonts();
+  else if(name==='src')    fsRenderSrc();
+}
+function fsRenderBg(){
+  var body=document.getElementById('fsBody'); if(!body)return;
+  var rows=Object.keys(panels).map(function(pid){
+    var p=panels[pid];
+    var cur=typeof p.stochBg==='number'?p.stochBg:1;
+    var idx=_bgStates.indexOf(cur); if(idx<0)idx=2;
+    var lbl=_bgLabels[idx];
+    return '<div class="fs-row">'
+      +'<span class="fs-label"><b style="color:#7af;">'+pid.toUpperCase()+'</b> <span style="color:#3a4a3a;">'+p.sym+'</span></span>'
+      +'<span style="color:#4a5570;font-size:9px;margin-right:4px;">Stoch zone BG:</span>'
+      +'<button class="bg-cycle'+(cur===0?' off':'')+'" onclick="cycleStochBg(\''+pid+'\',this)">'+lbl+'</button>'
+      +'</div>';
+  }).join('');
+  body.innerHTML='<div style="color:#4a5570;font-size:9px;margin-bottom:6px;">Click a button to cycle: <span style="color:#3ecf5e;">BG:nrm</span> → <span style="color:#9db4ff;">BG:hi</span> → <span style="color:#3a4050;">BG:off</span> → <span style="color:#ffb400;">BG:dim</span> → …</div>'+rows;
+}
+function fsRenderTheme(){
+  var body=document.getElementById('fsBody'); if(!body)return;
+  body.innerHTML='<div style="font-size:9px;color:#4a5570;margin-bottom:6px;">Use the theme bar buttons in the toolbar above:</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;">'
+    +'<button class="mw-item" style="border:1px solid #1a2228;border-radius:3px;padding:4px 10px;" onclick="document.querySelector(\'.th-btn[onclick*=dark]\')&&document.querySelector(\'.th-btn[onclick*=dark]\').click()">&#127768; Dark</button>'
+    +'<button class="mw-item" style="border:1px solid #1a2228;border-radius:3px;padding:4px 10px;" onclick="document.querySelector(\'.th-btn[onclick*=forest]\')&&document.querySelector(\'.th-btn[onclick*=forest]\').click()">&#127807; Forest</button>'
+    +'<button class="mw-item" style="border:1px solid #1a2228;border-radius:3px;padding:4px 10px;" onclick="document.querySelector(\'.th-btn[onclick*=slate]\')&&document.querySelector(\'.th-btn[onclick*=slate]\').click()">&#9722; Slate</button>'
+    +'</div>'
+    +'<div style="color:#2a3a2a;font-size:8.5px;margin-top:8px;">Additional themes available in the &#127912; Colors section of the main toolbar.</div>';
+}
+function fsRenderFonts(){
+  var body=document.getElementById('fsBody'); if(!body)return;
+  body.innerHTML='<div style="font-size:9px;color:#4a5570;margin-bottom:6px;">Chart font size:</div>'
+    +'<div style="display:flex;gap:6px;margin-bottom:8px;">'
+    +'<button class="mw-item" style="border:1px solid #1a2228;border-radius:3px;padding:4px 14px;" onclick="setFont(\'small\',this)">S — Small</button>'
+    +'<button class="mw-item" style="border:1px solid #1a2228;border-radius:3px;padding:4px 14px;" onclick="setFont(\'medium\',this)">M — Medium</button>'
+    +'<button class="mw-item" style="border:1px solid #1a2228;border-radius:3px;padding:4px 14px;" onclick="setFont(\'large\',this)">L — Large</button>'
+    +'</div>'
+    +'<div style="font-size:9px;color:#4a5570;margin-bottom:4px;">Loaded faces:</div>'
+    +'<div style="font-size:9px;color:#9db4ff;line-height:1.8;">'
+    +'<div style="font-family:\'IBM Plex Mono\',monospace;">IBM Plex Mono — ABCDEF 0123 abcdef</div>'
+    +'<div style="font-family:\'Courier Prime\',monospace;">Courier Prime — ABCDEF 0123 abcdef</div>'
+    +'<div style="font-family:\'Source Code Pro\',monospace;">Source Code Pro — ABCDEF 0123 abcdef</div>'
+    +'<div style="font-family:\'Inconsolata\',monospace;">Inconsolata — ABCDEF 0123 abcdef</div>'
+    +'</div>';
+}
+function fsRenderSrc(){
+  var body=document.getElementById('fsBody'); if(!body)return;
+  var rows=_srcLog.slice(0,20).map(function(e){
+    var sc=e.status==='ok'?'#3ecf5e':e.status==='fail'?'#ef5350':'#ffb400';
+    var ic=e.status==='ok'?'✓':e.status==='fail'?'✗':'…';
+    return '<div style="display:flex;gap:5px;font-size:8.5px;padding:2px 0;border-bottom:1px solid #0d180d;align-items:center;">'
+      +'<span style="color:#2a3a2a;flex-shrink:0;width:50px;">'+e.ts+'</span>'
+      +'<span style="color:#4a5570;flex-shrink:0;width:26px;font-weight:bold;">'+(e.pid||'sys').toUpperCase()+'</span>'
+      +'<span style="color:'+sc+';flex-shrink:0;width:12px;">'+ic+'</span>'
+      +'<span style="color:#7a9a7a;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+e.src+'</span>'
+      +'<span style="color:#3a4a3a;flex-shrink:0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+e.detail+'</span>'
+      +'</div>';
+  }).join('');
+  body.innerHTML='<div style="color:#4a5570;font-size:9px;margin-bottom:4px;">Most recently used sources first. Old entries preserved up to 80.</div>'
+    +'<div style="font-size:9px;color:#4a5570;margin-bottom:6px;">'
+    +'<span style="color:#9db4ff;">Primary: </span>api.binance.com/api/v3/klines &nbsp;|&nbsp; '
+    +'<span style="color:#ffb400;">Proxy: </span>corsproxy.io &nbsp;|&nbsp; '
+    +'<span style="color:#3ecf5e;">WSS: </span>stream.binance.com:9443'
+    +'</div>'
+    +(rows||'<div style="color:#2a3a2a;font-size:8.5px;">No fetch attempts yet</div>');
+}
+
+// ══════════════════════════════════════════════════════
 // ── Floating Diagnostics Panel (FDP) ──
 // ══════════════════════════════════════════════════════
 var _fdpTab='log';
@@ -3933,6 +4157,50 @@ function fdpRenderInfo(){
   }).join('');
   var fixed=_bugRegistry.filter(function(b){return b.status==='fixed';}).length;
   var open=_bugRegistry.filter(function(b){return b.status!=='fixed';}).length;
+  // ── SVG renderer info ──
+  var svgEls=document.querySelectorAll('[id^="svgwrap-"]').length;
+  var canvEls=document.querySelectorAll('canvas.main-canvas').length;
+  var svgInfo='<div style="border-top:1px solid #1a2a0a;margin-top:6px;padding-top:6px;">'
+    +'<div style="color:#7af;font-size:9px;font-weight:bold;margin-bottom:4px;letter-spacing:.3px;">&#128202; SVG Renderer</div>'
+    +'<div style="font-size:9px;color:#4a5570;line-height:1.7;">'
+    +'<div><span style="color:#2a3a2a;">Engine: </span><span style="color:#9db4ff;">Custom inline SVG (no external lib)</span></div>'
+    +'<div><span style="color:#2a3a2a;">Active SVG wraps: </span><span style="color:#3ecf5e;">'+svgEls+'</span></div>'
+    +'<div><span style="color:#2a3a2a;">Canvas elements: </span><span style="color:#ffb400;">'+canvEls+' (hidden when SVG active)</span></div>'
+    +'<div><span style="color:#2a3a2a;">Stoch K(5) BG: </span><span style="color:#3ecf5e;">per-bar zone coloring (red≤20 / yellow 40-60 / green≥80)</span></div>'
+    +'<div><span style="color:#2a3a2a;">Indicators: </span><span style="color:#9db4ff;">SMA20·50·200, Bollinger Bands, OHLC candlesticks</span></div>'
+    +'</div></div>';
+  // ── REST API info ──
+  var srcRows=_srcLog.slice(0,12).map(function(e){
+    var sc=e.status==='ok'?'#3ecf5e':e.status==='fail'?'#ef5350':'#ffb400';
+    var ic=e.status==='ok'?'✓':e.status==='fail'?'✗':'…';
+    return '<div style="display:flex;gap:5px;font-size:8.5px;padding:1px 0;border-bottom:1px solid #0d1a0d;">'
+      +'<span style="color:#2a3a2a;width:52px;flex-shrink:0;">'+e.ts+'</span>'
+      +'<span style="color:#4a5570;width:28px;flex-shrink:0;font-weight:bold;">'+(e.pid||'sys').toUpperCase()+'</span>'
+      +'<span style="color:'+sc+';width:10px;flex-shrink:0;">'+ic+'</span>'
+      +'<span style="color:#7a9a7a;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;">'+e.src+' — '+e.detail+'</span>'
+      +'</div>';
+  }).join('');
+  var restInfo='<div style="border-top:1px solid #1a2a0a;margin-top:6px;padding-top:6px;">'
+    +'<div style="color:#7af;font-size:9px;font-weight:bold;margin-bottom:4px;letter-spacing:.3px;">&#128225; REST API / Source Log <span style="color:#2a3a2a;font-size:8px;font-weight:normal;">(most recent first)</span></div>'
+    +'<div style="font-size:9px;color:#4a5570;margin-bottom:4px;">'
+    +'Primary: <span style="color:#9db4ff;">api.binance.com/api/v3/klines</span> &nbsp;|&nbsp; '
+    +'Proxy: <span style="color:#ffb400;">corsproxy.io</span> &nbsp;|&nbsp; '
+    +'Symbols: <span style="color:#3ecf5e;">BTCUSDT ETHUSDT SOLUSDT BNBUSDT</span>'
+    +'</div>'
+    +(srcRows||'<div style="color:#2a3a2a;font-size:8.5px;">No fetch attempts yet — data is synthetic until first REST call</div>')
+    +'</div>';
+  // ── Inline JS info ──
+  var scriptLen=0;try{scriptLen=document.querySelector('script:not([src])').textContent.length;}catch(x){}
+  var fnCount=0;try{var m=document.querySelector('script:not([src])').textContent.match(/^function /mg);fnCount=m?m.length:0;}catch(x){}
+  var jsInfo='<div style="border-top:1px solid #1a2a0a;margin-top:6px;padding-top:6px;">'
+    +'<div style="color:#7af;font-size:9px;font-weight:bold;margin-bottom:4px;letter-spacing:.3px;">&#9889; Inline JS</div>'
+    +'<div style="font-size:9px;color:#4a5570;line-height:1.7;">'
+    +'<div><span style="color:#2a3a2a;">Architecture: </span><span style="color:#9db4ff;">100% self-contained single-file HTML</span></div>'
+    +'<div><span style="color:#2a3a2a;">Script size: </span><span style="color:#3ecf5e;">~'+(scriptLen>0?Math.round(scriptLen/1024)+'KB':'?')+'</span></div>'
+    +'<div><span style="color:#2a3a2a;">Top-level functions: </span><span style="color:#ffb400;">'+fnCount+'</span></div>'
+    +'<div><span style="color:#2a3a2a;">External libs: </span><span style="color:#7a9a7a;">ECharts 5.6 (optional, canvas fallback only)</span></div>'
+    +'<div><span style="color:#2a3a2a;">SVG charting: </span><span style="color:#3ecf5e;">Zero-dependency custom engine</span></div>'
+    +'</div></div>';
   body.innerHTML='<div style="color:#d4b800;font-weight:bold;font-size:10px;margin-bottom:5px;">Trade Signal v0.01b — System Status</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:8px;">'+prows+'</table>'
     +'<div style="font-size:9px;color:#4a5570;border-top:1px solid #1a2a0a;padding-top:6px;">'
@@ -3940,6 +4208,7 @@ function fdpRenderInfo(){
     +'<div><span style="color:#2a3a2a;">Bug Registry: </span><span style="color:#3ecf5e;">'+fixed+' fixed</span> / <span style="color:'+(open?'#ef5350':'#3ecf5e')+'">'+(open?open+' open':'0 open')+'</span></div>'
     +'<div><span style="color:#2a3a2a;">Session start: </span><span style="color:#7af;">'+new Date().toLocaleTimeString()+'</span></div>'
     +'</div>'
+    +svgInfo+restInfo+jsInfo
     +'<div style="border-top:1px solid #1a2a0a;margin-top:6px;padding-top:6px;">'
     +'<div style="color:#2a3a2a;font-size:8.5px;margin-bottom:3px;">Resolved in this build:</div>'
     +_bugRegistry.filter(function(b){return b.status==='fixed';}).map(function(b){
