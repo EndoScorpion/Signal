@@ -2133,13 +2133,26 @@ function _trySave(html, fname){
     window.claude.use('downloads').then(function(dl){
       if(dl){
         dl.save({filename:fname,data:html})
-          .then(function(){})
+          .then(function(r){
+            if(r&&r.status==='saved')
+              _saveToast('&#10003; Saved as <b>'+fname+'</b> — check your Downloads folder');
+          })
           .catch(function(e){
-            if(e&&e.code==='declined')return; // user cancelled — fine
-            _blobDownload(html,fname); // any other error → blob fallback
+            if(!e||e.code==='declined')return; // user cancelled — fine
+            if(e.code==='rate_limited'){
+              _saveToast('&#x26A0; A save prompt is already open — close it then try again');
+              return;
+            }
+            if(e.code==='too_large'){
+              _saveToast('&#x26A0; File too large for direct save — using clipboard fallback');
+              _clipCopy(html,fname); return;
+            }
+            // any other error in frame context: skip blob (CSP blocks it), go clipboard
+            _clipCopy(html,fname);
           });
       }else{
-        _blobDownload(html,fname); // capability null (top-level view) → blob
+        // capability null = top-level/standalone view → blob download works there
+        _blobDownload(html,fname);
       }
     }).catch(function(){_blobDownload(html,fname);});
     return;
@@ -2147,7 +2160,7 @@ function _trySave(html, fname){
   _blobDownload(html,fname);
 }
 function _blobDownload(html,fname){
-  // 2. Standard blob <a download> — works in local/opened file context
+  // 2. Standard blob <a download> — works in local/standalone file context
   try{
     var b=new Blob([html],{type:'text/html'});
     var a=document.createElement('a');
@@ -2156,9 +2169,10 @@ function _blobDownload(html,fname){
     document.body.appendChild(a);
     a.click();
     setTimeout(function(){try{URL.revokeObjectURL(a.href);document.body.removeChild(a);}catch(x){}},1500);
+    _saveToast('&#10003; Download triggered — check your Downloads folder');
     return;
   }catch(e){}
-  // 3. Clipboard copy (works in top-level artifact view)
+  // 3. Clipboard copy
   _clipCopy(html,fname);
 }
 function _clipCopy(html,fname){
