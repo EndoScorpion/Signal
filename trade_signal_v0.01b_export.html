@@ -220,8 +220,8 @@ svg{max-width:100%;height:auto;}
 /* ── Row collapse toggle ── */
 .rows-tog{background:#0a0f0a;color:#7a9a7a;border:1px solid #2a3a2a;border-radius:3px;padding:2px 6px;font-size:11px;cursor:pointer;font-family:monospace;line-height:1.4;}
 .rows-tog.on{color:#3ecf5e;border-color:#1a4a2a;background:#001800;}
-/* ctrl-row/ind-row docked inside chart area */
-.ctrl-row.top-docked,.ind-row.top-docked{position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(5,10,5,0.96);border-bottom:1px solid #1e2228;border-top:none;}
+/* ctrl-row/ind-row docked inside chart area — top is set by JS */
+.ctrl-row.top-docked,.ind-row.top-docked{position:absolute;left:0;right:0;z-index:5;background:rgba(5,10,5,0.96);border-bottom:1px solid #1e2228;border-top:none;box-shadow:0 2px 6px rgba(0,0,0,.55);}
 /* ── Memory / cache monitor bar ── */
 #memBar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:3px 10px;background:#040508;border-top:1px solid #0e0f18;font-family:monospace;font-size:9px;}
 .mem-lbl{color:#252840;}
@@ -2245,17 +2245,50 @@ function toggleBT(pid,btn){
   btn.title=collapsed?'Minimize backtest':'Expand backtest';
 }
 
-// ── Collapse / expand ctrl-row + ind-row ──
+// ── Collapse / snap / restore ctrl-row + ind-row (3-state cycle) ──
+// States: 'normal' → 'docked' (overlay at top of chart) → 'hidden' → 'normal'
 function toggleRows(pid,btn){
   var panel=document.getElementById('p-'+pid);
   if(!panel)return;
   var ctrl=panel.querySelector('.ctrl-row');
   var ind=panel.querySelector('.ind-row');
-  var wasOn=btn.classList.contains('on');
-  if(ctrl)ctrl.style.display=wasOn?'':'none';
-  if(ind)ind.style.display=wasOn?'':'none';
-  btn.classList.toggle('on',!wasOn);
-  btn.title=!wasOn?'Show control rows':'Collapse control rows';
+  var caEl=document.getElementById('ca-'+pid);
+  var state=btn.getAttribute('data-rowstate')||'normal';
+
+  function undock(el){if(el){el.classList.remove('top-docked');el.style.top='';}}
+
+  if(state==='normal'){
+    // → docked: rows float as overlay at top of chart area
+    var caTop=caEl?caEl.offsetTop:50;
+    if(ctrl){undock(ctrl);ctrl.style.display='';ctrl.classList.add('top-docked');ctrl.style.top=caTop+'px';}
+    var ctrlH=(ctrl&&ctrl.offsetHeight)||26;
+    if(ind){undock(ind);ind.style.display='';ind.classList.add('top-docked');ind.style.top=(caTop+ctrlH)+'px';}
+    btn.textContent='⊤'; // ⊤ top symbol
+    btn.style.color='#3ecf5e';
+    btn.title='Collapse rows (click again to hide)';
+    btn.setAttribute('data-rowstate','docked');
+    btn.classList.remove('on');
+  } else if(state==='docked'){
+    // → hidden
+    undock(ctrl);undock(ind);
+    if(ctrl)ctrl.style.display='none';
+    if(ind)ind.style.display='none';
+    btn.textContent='≡'; // ≡
+    btn.style.color='#ef8a50';
+    btn.title='Show rows';
+    btn.setAttribute('data-rowstate','hidden');
+    btn.classList.add('on');
+  } else {
+    // hidden → normal: restore natural flex position
+    undock(ctrl);undock(ind);
+    if(ctrl)ctrl.style.display='';
+    if(ind)ind.style.display='';
+    btn.textContent='≡'; // ≡
+    btn.style.color='';
+    btn.title='Snap rows to top of chart';
+    btn.setAttribute('data-rowstate','normal');
+    btn.classList.remove('on');
+  }
 }
 
 // ── Memory / cache monitor ──
