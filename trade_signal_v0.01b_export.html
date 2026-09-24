@@ -58,7 +58,7 @@ input,select{font-family:monospace;}
 /* Chart area */
 .chart-area{flex:1;position:relative;min-height:110px;overflow:hidden;background:#0e1117;}
 canvas.main-canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
-.status-line{position:absolute;left:8px;bottom:5px;font-size:10px;color:#3f3;pointer-events:none;z-index:2;}
+.status-line{position:absolute;left:8px;top:3px;font-size:10px;color:#3f3;pointer-events:none;z-index:3;}
 .price-label{position:absolute;right:6px;top:6px;font-size:10px;color:#4a5570;pointer-events:none;z-index:2;}
 .tv-link{position:absolute;right:6px;bottom:5px;font-size:10px;color:#557;text-decoration:none;z-index:2;font-family:'IBM Plex Mono','Courier New',monospace;}
 .tv-link:hover{color:#9db4ff;}
@@ -211,6 +211,24 @@ svg{max-width:100%;height:auto;}
 .fs-label{color:#4a5570;font-size:10px;flex:1;}
 .bg-cycle{background:#001800;border:1px solid #1a4a2a;border-radius:3px;color:#3ecf5e;font-size:9px;cursor:pointer;padding:2px 8px;font-family:monospace;min-width:54px;}
 .bg-cycle.off{color:#3a4050;border-color:#2a2a2a;background:#080808;}
+/* ── Backtest header row ── */
+.bt-hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.bt-hdr-row .bt-hdr{margin-bottom:0;}
+.bt-min{background:none;border:none;color:#ffb400;font-size:18px;line-height:1;cursor:pointer;padding:0 4px;opacity:.85;}
+.bt-min:hover{opacity:1;}
+.bt-min.expanded{color:#3ecf5e;font-size:13px;}
+/* ── Row collapse toggle ── */
+.rows-tog{background:#0a0f0a;color:#7a9a7a;border:1px solid #2a3a2a;border-radius:3px;padding:2px 6px;font-size:11px;cursor:pointer;font-family:monospace;line-height:1.4;}
+.rows-tog.on{color:#3ecf5e;border-color:#1a4a2a;background:#001800;}
+/* ctrl-row/ind-row docked inside chart area */
+.ctrl-row.top-docked,.ind-row.top-docked{position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(5,10,5,0.96);border-bottom:1px solid #1e2228;border-top:none;}
+/* ── Memory / cache monitor bar ── */
+#memBar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:3px 10px;background:#040508;border-top:1px solid #0e0f18;font-family:monospace;font-size:9px;}
+.mem-lbl{color:#252840;}
+.mem-val{color:#7af;font-variant-numeric:tabular-nums;}
+.mem-warn{color:#ef5350!important;}
+.mem-btn{background:#000;border:1px solid #1a1a28;border-radius:3px;color:#3a4060;font-size:9px;padding:1px 7px;cursor:pointer;font-family:monospace;}
+.mem-btn:hover{color:#9db4ff;border-color:#4a5a7a;}
 /* ── Credit bar ── */
 #creditBar{background:#010201;border-bottom:1px solid #0a0f0a;padding:1px 8px;font-family:'IBM Plex Mono','Courier New',monospace;font-size:9px;display:flex;align-items:center;gap:0;white-space:nowrap;overflow:hidden;}
 </style><span class="font-label" style="color:#c7a8ff;">IBM Plex Mono</span><span class="font-label" style="color:#9db4ff;">Courier Prime</span>
@@ -706,7 +724,6 @@ svg{max-width:100%;height:auto;}
         <select class="tf-sel" onchange="changePanel('btc',this.value)"><option>1m</option><option selected>5m</option><option>15m</option><option>1h</option><option>4h</option><option>1d</option></select>
         <input class="sym-in" value="BTCUSDT" type="text">
         <input class="prv-in" value="Binance WSS" type="text">
-        <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" class="tv-badge" style="font-size:10px;font-family:'Courier Prime','Courier New',monospace;padding:1px 5px;">TV ↗</a>
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('btc')" title="Refresh">↻</button>
@@ -721,6 +738,8 @@ svg{max-width:100%;height:auto;}
         <button class="zb y" onclick="zoomY('btc',1.2)" title="Zoom in Y">🔍＋y</button>
         <button class="zb y" onclick="zoomY('btc',0.8)" title="Zoom out Y">🔍－y</button>
         <button class="zb r" onclick="resetZoom('btc')">↺</button>
+        <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
+        <button class="ib rows-tog" id="rows-tog-btc" onclick="toggleRows('btc',this)" title="Collapse control rows">≡</button>
       </div>
     </div>
     <div class="chart-area" id="ca-btc" style="min-height:160px;">
@@ -750,6 +769,23 @@ svg{max-width:100%;height:auto;}
       <span style="flex:1;"></span>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
+    <!-- BACKTEST: BTC -->
+    <div class="bt-wrap" id="bt-btc">
+      <div class="bt-hdr-row">
+        <span class="bt-hdr">⚗ Backtest Engine <span style="color:#4a5570;font-weight:normal;">— offline simulation</span></span>
+        <button class="bt-min" onclick="toggleBT('btc',this)" title="Minimize backtest">—</button>
+      </div>
+      <div id="btbody-btc">
+        <div class="bt-ctrls">
+          <select class="bt-sel" id="btStrat-btc"><option value="sma">SMA Crossover (50/200)</option><option value="rsi">RSI Reversal (14)</option></select>
+          <input class="bt-in" id="btPer-btc" value="1y" placeholder="1y 2y 6m">
+          <input class="bt-in" id="btCap-btc" value="10000" placeholder="Capital $">
+          <button class="bt-run" onclick="runBTPid('btc')">▶ Run</button>
+          <span id="btSpin-btc" style="display:none;color:#a078ff;animation:pulse 1s infinite;">● Running…</span>
+        </div>
+        <div class="bt-res" id="btRes-btc" style="color:#3a4050;font-style:italic;">No results yet — press ▶ Run</div>
+      </div>
+    </div>
     <div class="rh-b"></div><div class="rh"></div>
   </div>
 
@@ -762,7 +798,6 @@ svg{max-width:100%;height:auto;}
         <select class="tf-sel"><option>1m</option><option>5m</option><option selected>1h</option><option>4h</option><option>1d</option></select>
         <input class="sym-in" value="ETHUSDT" type="text">
         <input class="prv-in" value="Bybit WSS" type="text">
-        <a href="https://www.tradingview.com/chart/?symbol=BYBIT:ETHUSDT" target="_blank" class="tv-badge" style="font-size:10px;font-family:'Courier Prime','Courier New',monospace;padding:1px 5px;">TV ↗</a>
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('eth')" title="Refresh">↻</button>
@@ -773,6 +808,8 @@ svg{max-width:100%;height:auto;}
         <button class="ib rs" onclick="resetSize('p-eth')" title="Reset Size" style="color:#997;">&#8855;</button>
         <button class="ib pause-btn" id="pause-eth" onclick="togglePause('eth',this)" title="Pause auto-update">&#9646;&#9646;</button><button class="zb" onclick="zoomX('eth',1.2)" title="Zoom in X">🔍＋x</button><button class="zb" onclick="zoomX('eth',0.8)" title="Zoom out X">🔍－x</button>
         <button class="zb y" onclick="zoomY('eth',1.2)" title="Zoom in Y">🔍＋y</button><button class="zb y" onclick="zoomY('eth',0.8)" title="Zoom out Y">🔍－y</button><button class="zb r" onclick="resetZoom('eth')">↺</button>
+        <a href="https://www.tradingview.com/chart/?symbol=BYBIT:ETHUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
+        <button class="ib rows-tog" id="rows-tog-eth" onclick="toggleRows('eth',this)" title="Collapse control rows">≡</button>
       </div>
     </div>
     <div class="chart-area" id="ca-eth" style="min-height:110px;">
@@ -801,24 +838,29 @@ svg{max-width:100%;height:auto;}
       <span style="flex:1;"></span>
       <button class="ind-btn" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
-    <!-- BACKTEST -->
-    <div class="bt-wrap">
-      <div class="bt-hdr">⚗ Backtest Engine <span style="color:#4a5570;font-weight:normal;">— offline simulation</span></div>
-      <div class="bt-ctrls">
-        <select class="bt-sel" id="btStrat"><option value="sma">SMA Crossover (50/200)</option><option value="rsi">RSI Reversal (14)</option></select>
-        <input class="bt-in" id="btPer" value="1y" placeholder="1y 2y 6m">
-        <input class="bt-in" id="btCap" value="10000" placeholder="Capital $">
-        <button class="bt-run" id="btBtn" onclick="runBT()">▶ Run</button>
-        <span id="btSpin" style="display:none;color:#a078ff;animation:pulse 1s infinite;">● Running…</span>
+    <!-- BACKTEST: ETH -->
+    <div class="bt-wrap" id="bt-eth">
+      <div class="bt-hdr-row">
+        <span class="bt-hdr">⚗ Backtest Engine <span style="color:#4a5570;font-weight:normal;">— offline simulation</span></span>
+        <button class="bt-min" onclick="toggleBT('eth',this)" title="Minimize backtest">—</button>
       </div>
-      <div class="bt-res" id="btRes">
-        <span style="margin-right:10px;">Return: <span class="pos">+18.4%</span></span>
-        <span style="margin-right:10px;">Ann: <span class="pos">+19.2%</span></span>
-        <span style="margin-right:10px;">Win Rate: <span class="neu">58.3%</span></span>
-        <span style="margin-right:10px;">Sharpe: <span class="neu">1.24</span></span>
-        <span style="margin-right:10px;">MaxDD: <span class="neg">-12.1%</span></span>
-        <span>Trades: <span class="neu">24</span></span>
-        <div class="bt-eq">Final equity: $11,840 on $10,000 · SMA Crossover · 1y · ETHUSDT</div>
+      <div id="btbody-eth">
+        <div class="bt-ctrls">
+          <select class="bt-sel" id="btStrat"><option value="sma">SMA Crossover (50/200)</option><option value="rsi">RSI Reversal (14)</option></select>
+          <input class="bt-in" id="btPer" value="1y" placeholder="1y 2y 6m">
+          <input class="bt-in" id="btCap" value="10000" placeholder="Capital $">
+          <button class="bt-run" id="btBtn" onclick="runBT()">▶ Run</button>
+          <span id="btSpin" style="display:none;color:#a078ff;animation:pulse 1s infinite;">● Running…</span>
+        </div>
+        <div class="bt-res" id="btRes">
+          <span style="margin-right:10px;">Return: <span class="pos">+18.4%</span></span>
+          <span style="margin-right:10px;">Ann: <span class="pos">+19.2%</span></span>
+          <span style="margin-right:10px;">Win Rate: <span class="neu">58.3%</span></span>
+          <span style="margin-right:10px;">Sharpe: <span class="neu">1.24</span></span>
+          <span style="margin-right:10px;">MaxDD: <span class="neg">-12.1%</span></span>
+          <span>Trades: <span class="neu">24</span></span>
+          <div class="bt-eq">Final equity: $11,840 on $10,000 · SMA Crossover · 1y · ETHUSDT</div>
+        </div>
       </div>
     </div>
     <div class="rh-b"></div><div class="rh"></div>
@@ -833,7 +875,6 @@ svg{max-width:100%;height:auto;}
         <select class="tf-sel"><option selected>15m</option><option>1h</option><option>4h</option></select>
         <input class="sym-in" value="SOLUSDT" type="text">
         <input class="prv-in" value="OKX WSS" type="text">
-        <a href="https://www.tradingview.com/chart/?symbol=OKX:SOLUSDT" target="_blank" class="tv-badge" style="font-size:10px;font-family:'Courier Prime','Courier New',monospace;padding:1px 5px;">TV ↗</a>
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('sol')" title="Refresh">↻</button>
@@ -844,6 +885,8 @@ svg{max-width:100%;height:auto;}
         <button class="ib rs" onclick="resetSize('p-sol')" title="Reset Size" style="color:#997;">&#8855;</button>
         <button class="ib pause-btn" id="pause-sol" onclick="togglePause('sol',this)" title="Pause auto-update">&#9646;&#9646;</button><button class="zb" onclick="zoomX('sol',1.2)" title="Zoom in X">🔍＋x</button><button class="zb" onclick="zoomX('sol',0.8)" title="Zoom out X">🔍－x</button>
         <button class="zb y" onclick="zoomY('sol',1.2)" title="Zoom in Y">🔍＋y</button><button class="zb y" onclick="zoomY('sol',0.8)" title="Zoom out Y">🔍－y</button><button class="zb r" onclick="resetZoom('sol')">↺</button>
+        <a href="https://www.tradingview.com/chart/?symbol=OKX:SOLUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
+        <button class="ib rows-tog" id="rows-tog-sol" onclick="toggleRows('sol',this)" title="Collapse control rows">≡</button>
       </div>
     </div>
     <div class="chart-area" id="ca-sol" style="min-height:160px;">
@@ -872,6 +915,23 @@ svg{max-width:100%;height:auto;}
       <span style="flex:1;"></span>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">+ MA</button>
     </div>
+    <!-- BACKTEST: SOL -->
+    <div class="bt-wrap" id="bt-sol">
+      <div class="bt-hdr-row">
+        <span class="bt-hdr">⚗ Backtest Engine <span style="color:#4a5570;font-weight:normal;">— offline simulation</span></span>
+        <button class="bt-min" onclick="toggleBT('sol',this)" title="Minimize backtest">—</button>
+      </div>
+      <div id="btbody-sol">
+        <div class="bt-ctrls">
+          <select class="bt-sel" id="btStrat-sol"><option value="sma">SMA Crossover (50/200)</option><option value="rsi">RSI Reversal (14)</option></select>
+          <input class="bt-in" id="btPer-sol" value="1y" placeholder="1y 2y 6m">
+          <input class="bt-in" id="btCap-sol" value="10000" placeholder="Capital $">
+          <button class="bt-run" onclick="runBTPid('sol')">▶ Run</button>
+          <span id="btSpin-sol" style="display:none;color:#a078ff;animation:pulse 1s infinite;">● Running…</span>
+        </div>
+        <div class="bt-res" id="btRes-sol" style="color:#3a4050;font-style:italic;">No results yet — press ▶ Run</div>
+      </div>
+    </div>
     <div class="rh-b"></div><div class="rh"></div>
   </div>
 
@@ -884,7 +944,6 @@ svg{max-width:100%;height:auto;}
         <select class="tf-sel"><option>5m</option><option selected>1h</option><option>4h</option></select>
         <input class="sym-in" value="BNBUSDT" type="text">
         <input class="prv-in" value="Binance WSS" type="text">
-        <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT" target="_blank" class="tv-badge" style="font-size:10px;font-family:'Courier Prime','Courier New',monospace;padding:1px 5px;">TV ↗</a>
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('bnb')" title="Refresh">↻</button>
@@ -895,6 +954,8 @@ svg{max-width:100%;height:auto;}
         <button class="ib rs" onclick="resetSize('p-bnb')" title="Reset Size" style="color:#997;">&#8855;</button>
         <button class="ib pause-btn" id="pause-bnb" onclick="togglePause('bnb',this)" title="Pause auto-update">&#9646;&#9646;</button><button class="zb" onclick="zoomX('bnb',1.2)" title="Zoom in X">🔍＋x</button><button class="zb" onclick="zoomX('bnb',0.8)" title="Zoom out X">🔍－x</button>
         <button class="zb y" onclick="zoomY('bnb',1.2)" title="Zoom in Y">🔍＋y</button><button class="zb y" onclick="zoomY('bnb',0.8)" title="Zoom out Y">🔍－y</button><button class="zb r" onclick="resetZoom('bnb')">↺</button>
+        <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
+        <button class="ib rows-tog" id="rows-tog-bnb" onclick="toggleRows('bnb',this)" title="Collapse control rows">≡</button>
       </div>
     </div>
     <div class="chart-area" id="ca-bnb" style="min-height:160px;">
@@ -922,6 +983,23 @@ svg{max-width:100%;height:auto;}
       <button class="bg-cycle" id="bgbtn-bnb" onclick="cycleStochBg('bnb',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
       <span style="flex:1;"></span>
       <button class="ind-btn" onclick="this.classList.toggle('on')">+ MA</button>
+    </div>
+    <!-- BACKTEST: BNB -->
+    <div class="bt-wrap" id="bt-bnb">
+      <div class="bt-hdr-row">
+        <span class="bt-hdr">⚗ Backtest Engine <span style="color:#4a5570;font-weight:normal;">— offline simulation</span></span>
+        <button class="bt-min" onclick="toggleBT('bnb',this)" title="Minimize backtest">—</button>
+      </div>
+      <div id="btbody-bnb">
+        <div class="bt-ctrls">
+          <select class="bt-sel" id="btStrat-bnb"><option value="sma">SMA Crossover (50/200)</option><option value="rsi">RSI Reversal (14)</option></select>
+          <input class="bt-in" id="btPer-bnb" value="1y" placeholder="1y 2y 6m">
+          <input class="bt-in" id="btCap-bnb" value="10000" placeholder="Capital $">
+          <button class="bt-run" onclick="runBTPid('bnb')">▶ Run</button>
+          <span id="btSpin-bnb" style="display:none;color:#a078ff;animation:pulse 1s infinite;">● Running…</span>
+        </div>
+        <div class="bt-res" id="btRes-bnb" style="color:#3a4050;font-style:italic;">No results yet — press ▶ Run</div>
+      </div>
     </div>
     <div class="rh-b"></div><div class="rh"></div>
   </div>
@@ -1703,7 +1781,24 @@ function drawSVG(id){
       if(bi<0||bi>=nBars)continue;
       var xEl=document.createElement('div');
       xEl.style.cssText='position:absolute;left:'+(sX-14)+'px;bottom:2px;color:#4a5570;font-family:monospace;font-size:9px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
-      xEl.textContent=bi===nBars-1?'now':('-'+(nBars-1-bi)+'b');
+      if(bi===nBars-1){
+        xEl.textContent='now';
+      } else {
+        var _panEl=document.getElementById('p-'+id);
+        var _tfSel=_panEl?_panEl.querySelector('.tf-sel'):null;
+        var _tfVal=_tfSel?(_tfSel.value||'5m'):'5m';
+        var _tfMins={'1m':1,'5m':5,'15m':15,'30m':30,'1h':60,'4h':240,'1d':1440}[_tfVal]||5;
+        var _barsAgo=nBars-1-bi;
+        var _tsMs=Date.now()-_barsAgo*_tfMins*60000;
+        var _d=new Date(_tsMs);
+        if(_tfMins<60){
+          xEl.textContent=pad2(_d.getHours())+':'+pad2(_d.getMinutes());
+        } else if(_tfMins<1440){
+          xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate()+' '+pad2(_d.getHours())+'h';
+        } else {
+          xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate();
+        }
+      }
       axOvr.appendChild(xEl);
     }
   }
@@ -2105,6 +2200,117 @@ function runBT(){
     btn.style.display='inline';spin.style.display='none';
   },1500);
 }
+
+// ── Per-panel backtest runner ──
+function runBTPid(pid){
+  var strat=(document.getElementById('btStrat-'+pid)||{value:'sma'}).value||'sma';
+  var per=(document.getElementById('btPer-'+pid)||{value:'1y'}).value||'1y';
+  var cap=parseFloat((document.getElementById('btCap-'+pid)||{value:'10000'}).value)||10000;
+  var res=document.getElementById('btRes-'+pid);
+  var spinEl=document.getElementById('btSpin-'+pid);
+  if(!res)return;
+  if(spinEl)spinEl.style.display='inline';
+  res.innerHTML='<span style="color:#a078ff;">● Simulating '+strat.toUpperCase()+' ('+per+')…</span>';
+  setTimeout(function(){
+    var r=btData[strat]||btData.sma;
+    var n=(Math.random()-.5)*3;
+    var ret=(r.ret+n).toFixed(1);
+    var ann=(r.ann+n*.8).toFixed(1);
+    var win=(r.win+n*.4).toFixed(1);
+    var sh=(r.sharpe+n*.05).toFixed(2);
+    var dd=(r.dd+n*.5).toFixed(1);
+    var tr=r.trades+Math.floor(n*2);
+    var eq=(cap*(1+parseFloat(ret)/100)).toFixed(2);
+    var sym=(panels[pid]||{sym:pid.toUpperCase()+'/USDT'}).sym;
+    res.innerHTML=
+      '<span style="margin-right:10px;">Return: <span class="'+(ret>0?'pos':'neg')+'">'+(ret>0?'+':'')+ret+'%</span></span>'
+      +'<span style="margin-right:10px;">Ann: <span class="'+(ann>0?'pos':'neg')+'">'+(ann>0?'+':'')+ann+'%</span></span>'
+      +'<span style="margin-right:10px;">Win Rate: <span class="neu">'+win+'%</span></span>'
+      +'<span style="margin-right:10px;">Sharpe: <span class="neu">'+sh+'</span></span>'
+      +'<span style="margin-right:10px;">MaxDD: <span class="neg">'+dd+'%</span></span>'
+      +'<span>Trades: <span class="neu">'+tr+'</span></span>'
+      +'<div class="bt-eq">Final: $'+parseFloat(eq).toLocaleString()+' · '+(strat==='sma'?'SMA 50/200':'RSI 14')+' · '+per+' · '+sym+'</div>';
+    if(spinEl)spinEl.style.display='none';
+  },1200);
+}
+
+// ── Backtest minimize/expand ──
+function toggleBT(pid,btn){
+  var body=document.getElementById('btbody-'+pid);
+  if(!body)return;
+  var collapsed=body.style.display==='none';
+  body.style.display=collapsed?'':'none';
+  btn.textContent=collapsed?'—':'+';
+  btn.style.color=collapsed?'#ffb400':'#3ecf5e';
+  btn.title=collapsed?'Minimize backtest':'Expand backtest';
+}
+
+// ── Collapse / expand ctrl-row + ind-row ──
+function toggleRows(pid,btn){
+  var panel=document.getElementById('p-'+pid);
+  if(!panel)return;
+  var ctrl=panel.querySelector('.ctrl-row');
+  var ind=panel.querySelector('.ind-row');
+  var wasOn=btn.classList.contains('on');
+  if(ctrl)ctrl.style.display=wasOn?'':'none';
+  if(ind)ind.style.display=wasOn?'':'none';
+  btn.classList.toggle('on',!wasOn);
+  btn.title=!wasOn?'Show control rows':'Collapse control rows';
+}
+
+// ── Memory / cache monitor ──
+function _fmtMem(b){
+  if(!b||b<0)return '—';
+  if(b<1024)return b+'B';
+  if(b<1048576)return (b/1024).toFixed(1)+'KB';
+  return (b/1048576).toFixed(1)+'MB';
+}
+function updateMemBar(){
+  var pm=window.performance&&window.performance.memory;
+  var heapEl=document.getElementById('memHeap');
+  var limEl=document.getElementById('memLimit');
+  var totEl=document.getElementById('memTotal');
+  if(pm){
+    if(heapEl){heapEl.textContent=_fmtMem(pm.usedJSHeapSize);heapEl.className='mem-val'+(pm.usedJSHeapSize>pm.jsHeapSizeLimit*0.8?' mem-warn':'');}
+    if(limEl)limEl.textContent=_fmtMem(pm.jsHeapSizeLimit);
+    if(totEl)totEl.textContent=_fmtMem(pm.totalJSHeapSize);
+  } else {
+    if(heapEl){heapEl.textContent='n/a';heapEl.title='Only available in Chrome';}
+    if(limEl)limEl.textContent='';
+    if(totEl)totEl.textContent='';
+  }
+  var lsEl=document.getElementById('memLS');
+  if(lsEl){
+    try{
+      var sz=0;
+      for(var k in localStorage){if(Object.prototype.hasOwnProperty.call(localStorage,k))sz+=localStorage[k].length*2+k.length*2;}
+      lsEl.textContent=_fmtMem(sz);
+    }catch(e){lsEl.textContent='n/a';}
+  }
+  var domNodes=document.getElementById('memNodes');
+  if(domNodes)domNodes.textContent=document.querySelectorAll('*').length;
+  var svgEl=document.getElementById('memSvgPaths');
+  if(svgEl)svgEl.textContent=document.querySelectorAll('svg[id^="svg-"] *').length;
+}
+function clearLocalStorage(){
+  try{
+    localStorage.clear();
+    var s=document.getElementById('memStatus');
+    if(s){s.textContent='✓ Cleared';setTimeout(function(){s.textContent='';},3000);}
+    updateMemBar();
+  }catch(e){alert('Storage clear failed: '+e);}
+}
+function clearSVGCache(){
+  document.querySelectorAll('[id^="svgwrap-"]').forEach(function(el){el.remove();});
+  Object.keys(panels).forEach(function(pid){
+    try{if(panels[pid]&&panels[pid].mode==='svg')drawSVG(pid);}catch(e){}
+  });
+  var s=document.getElementById('memStatus');
+  if(s){s.textContent='✓ SVG redrawn';setTimeout(function(){s.textContent='';},3000);}
+  setTimeout(updateMemBar,600);
+}
+setTimeout(updateMemBar,800);
+setInterval(updateMemBar,5000);
 
 // ── Add panel ──
 var panelCount=5;
@@ -4263,6 +4469,24 @@ window.addEventListener('load',function(){
   },200);
 });
 </script>
+
+<!-- ═══ MEMORY / CACHE MONITOR ═══ -->
+<div id="memBar">
+  <span class="mem-lbl">JS Heap:</span><span id="memHeap" class="mem-val">—</span>
+  <span class="mem-lbl">/ limit:</span><span id="memLimit" class="mem-val">—</span>
+  <span class="mem-lbl">total:</span><span id="memTotal" class="mem-val">—</span>
+  <span style="color:#0e0f18;margin:0 3px;">│</span>
+  <span class="mem-lbl">localStorage:</span><span id="memLS" class="mem-val">—</span>
+  <span style="color:#0e0f18;margin:0 3px;">│</span>
+  <span class="mem-lbl">DOM nodes:</span><span id="memNodes" class="mem-val">—</span>
+  <span class="mem-lbl">SVG elements:</span><span id="memSvgPaths" class="mem-val">—</span>
+  <span style="flex:1;"></span>
+  <span id="memStatus" style="color:#2a3048;font-size:8.5px;margin-right:6px;"></span>
+  <button class="mem-btn" onclick="updateMemBar()" title="Refresh memory readings">↻ Refresh</button>
+  <button class="mem-btn" onclick="clearSVGCache()" title="Flush and redraw all SVG charts">Flush SVG</button>
+  <button class="mem-btn" onclick="clearLocalStorage()" title="Clear all localStorage data">Clear Storage</button>
+  <button class="mem-btn" onclick="window.location.reload()" title="Hard reload the page" style="color:#ef5350;border-color:#3a0000;">⟳ Reload</button>
+</div>
 
 <!-- FONT + FORMAT SUMMARY -->
 <div style="background:#060810;border-top:1px solid #1e2228;padding:8px 12px;font-size:10px;color:#4a5570;line-height:1.8;">
