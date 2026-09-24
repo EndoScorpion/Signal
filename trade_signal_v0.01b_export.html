@@ -222,6 +222,17 @@ svg{max-width:100%;height:auto;}
 .rows-tog.on{color:#3ecf5e;border-color:#1a4a2a;background:#001800;}
 /* ctrl-row/ind-row docked inside chart area — top is set by JS */
 .ctrl-row.top-docked,.ind-row.top-docked{position:absolute;left:0;right:0;z-index:5;background:rgba(5,10,5,0.96);border-bottom:1px solid #1e2228;border-top:none;box-shadow:0 2px 6px rgba(0,0,0,.55);}
+/* ── Chart control bar (inside chart-area, top-right overlay) ── */
+.ccb{position:absolute;top:3px;right:4px;display:flex;gap:2px;align-items:center;z-index:8;background:rgba(5,10,5,0.78);border:1px solid #1a2a1a;border-radius:4px;padding:1px 4px;backdrop-filter:blur(2px);}
+.ccb-btn{background:none;border:1px solid #222c22;border-radius:3px;color:#3a5a3a;font-size:9px;padding:1px 5px;cursor:pointer;font-family:monospace;line-height:1.3;}
+.ccb-btn:hover{color:#7afa7a;border-color:#3a5a3a;}
+.ccb-btn.on{color:#3ecf5e;border-color:#1a4a2a;background:rgba(0,30,0,0.4);}
+.ccb-btn.frozen{color:#ef5350;border-color:#5a1a1a;background:rgba(40,0,0,0.35);}
+.ccb-btn.dim{color:#2a3a2a;border-color:#1a1e1a;}
+.ccb-sm{background:none;border:1px solid #1a2a1a;border-radius:2px;color:#3a5a3a;font-size:9px;padding:0 4px;cursor:pointer;font-family:monospace;line-height:1.3;min-width:14px;}
+.ccb-sm:hover{color:#7afa7a;}
+.ccb-pct{color:#4a7a4a;font-size:9px;font-family:monospace;min-width:24px;text-align:center;}
+.ccb-sep{color:#1a2a1a;font-size:9px;margin:0 1px;}
 /* ── Memory / cache monitor bar ── */
 #memBar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:3px 10px;background:#040508;border-top:1px solid #0e0f18;font-family:monospace;font-size:9px;}
 .mem-lbl{color:#252840;}
@@ -279,7 +290,7 @@ svg{max-width:100%;height:auto;}
     </div>
   </div>
   <span style="color:#0d1a0d;font-size:12px;">|</span>
-  <span id="mwStatus" style="color:#1a3a1a;font-size:9.5px;font-family:monospace;">Trade Signal v0.01b &mdash; BTC &middot; ETH &middot; SOL &middot; BNB</span>
+  <span id="mwStatus" style="color:#7a8a6a;font-size:9.5px;font-family:'Times New Roman',serif;letter-spacing:.2px;">Trade Signal (Beta Test) v0.01b &mdash; Copyright &copy; 2026 Nasif Hossain &nbsp;|&nbsp; All rights reserved. &nbsp;EndoScorpion@gmail.com</span>
 </div>
 
 <!-- ═══ SIGNAL TRACKER WIDGET ═══ -->
@@ -481,11 +492,6 @@ svg{max-width:100%;height:auto;}
   <button onclick="cpApply()" style="width:100%;background:#1a0a30;color:#c7a8ff;border:1px solid #5a2a8a;border-radius:4px;padding:5px 0;font-family:monospace;font-size:11px;cursor:pointer;font-weight:bold;">&#10003; Apply Color</button>
 </div>
 
-<!-- COPYRIGHT -->
-<div style="width:100%;text-align:center;color:#bbb;font-size:11px;font-family:'Times New Roman',serif;padding:3px 0;border-bottom:1px solid #1e2228;background:#060810;letter-spacing:.3px;">
-  Trade Signal (Beta Test) v0.01b &mdash; Copyright &copy; 2026 Nasif Hossain. All rights reserved. EndoScorpion@gmail.com
-  
-</div>
 
 <!-- VOLUME LEADER BAR -->
 <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:3px 10px;border-bottom:1px solid #1a2a1a;font-size:11px;background:#070b07;min-height:22px;gap:8px;">
@@ -748,6 +754,22 @@ svg{max-width:100%;height:auto;}
       <div class="status-line" id="sl-btc">● LIVE &nbsp; $43,821.50 &nbsp;+2.14% &nbsp; Vol: 2,847 BTC</div>
       <div class="price-label" id="pl-btc">H: $44,120 &nbsp; L: $43,510</div>
       <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
+      <div class="ccb" id="ccb-btc">
+        <button class="ccb-btn on" id="ccb-shift-btc" onclick="toggleChartShift('btc',this)" title="Auto-shift: pad right so latest bar doesn't overlap Y-axis">⇐</button>
+        <button class="ccb-sm" onclick="adjustShift('btc',-2)" title="Less shift">-</button>
+        <span class="ccb-pct" id="ccb-pct-btc">8%</span>
+        <button class="ccb-sm" onclick="adjustShift('btc',2)" title="More shift">+</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn on" id="ccb-auto-btc" onclick="toggleAutoScroll('btc',this)" title="Auto-scroll: snap to latest tick on each update">↻</button>
+        <button class="ccb-btn" id="ccb-frz-btc" onclick="toggleFreeze('btc',this)" title="Freeze view (overrides shift & scroll)">🔒</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn" id="ccb-yl-btc" onclick="toggleYAxis('btc','L',this)" title="Toggle left Y-axis labels">Y←</button>
+        <button class="ccb-btn on" id="ccb-yr-btc" onclick="toggleYAxis('btc','R',this)" title="Toggle right Y-axis labels">Y→</button>
+        <span class="ccb-sep">|</span>
+        <span class="ccb-pct dim" id="ccb-fut-btc" title="Future scroll range (enabled when shift+scroll off)">⟶auto</span>
+        <button class="ccb-sm dim" id="ccb-futm-btc" onclick="adjustFuture('btc',-5)" title="Less future space">-</button>
+        <button class="ccb-sm dim" id="ccb-futp-btc" onclick="adjustFuture('btc',5)" title="More future space">+</button>
+      </div>
     </div>
     <div class="ctrl-row">
       <button class="cb on-candle" onclick="setMode('btc','candle',this)" title="Candles">Candles</button>
@@ -817,6 +839,22 @@ svg{max-width:100%;height:auto;}
       <div class="ec-container" id="ec-eth"></div>
       <div class="status-line" id="sl-eth">● LIVE &nbsp; $2,284.30 &nbsp;-0.72% &nbsp; Vol: 18,420 ETH</div>
       <a href="https://www.tradingview.com/chart/?symbol=BYBIT:ETHUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
+      <div class="ccb" id="ccb-eth">
+        <button class="ccb-btn on" id="ccb-shift-eth" onclick="toggleChartShift('eth',this)" title="Auto-shift: pad right">⇐</button>
+        <button class="ccb-sm" onclick="adjustShift('eth',-2)">-</button>
+        <span class="ccb-pct" id="ccb-pct-eth">8%</span>
+        <button class="ccb-sm" onclick="adjustShift('eth',2)">+</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn on" id="ccb-auto-eth" onclick="toggleAutoScroll('eth',this)" title="Auto-scroll to latest tick">↻</button>
+        <button class="ccb-btn" id="ccb-frz-eth" onclick="toggleFreeze('eth',this)" title="Freeze view">🔒</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn" id="ccb-yl-eth" onclick="toggleYAxis('eth','L',this)" title="Left Y-axis">Y←</button>
+        <button class="ccb-btn on" id="ccb-yr-eth" onclick="toggleYAxis('eth','R',this)" title="Right Y-axis">Y→</button>
+        <span class="ccb-sep">|</span>
+        <span class="ccb-pct dim" id="ccb-fut-eth">⟶auto</span>
+        <button class="ccb-sm dim" id="ccb-futm-eth" onclick="adjustFuture('eth',-5)">-</button>
+        <button class="ccb-sm dim" id="ccb-futp-eth" onclick="adjustFuture('eth',5)">+</button>
+      </div>
     </div>
     <div class="ctrl-row">
       <button class="cb" onclick="setMode('eth','candle',this)" title="Candles">Candles</button>
@@ -894,6 +932,22 @@ svg{max-width:100%;height:auto;}
       <div class="ec-container" id="ec-sol"></div>
       <div class="status-line" id="sl-sol">● LIVE &nbsp; $98.47 &nbsp;+1.83% &nbsp; Vol: 451K SOL</div>
       <a href="https://www.tradingview.com/chart/?symbol=OKX:SOLUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
+      <div class="ccb" id="ccb-sol">
+        <button class="ccb-btn on" id="ccb-shift-sol" onclick="toggleChartShift('sol',this)" title="Auto-shift: pad right">⇐</button>
+        <button class="ccb-sm" onclick="adjustShift('sol',-2)">-</button>
+        <span class="ccb-pct" id="ccb-pct-sol">8%</span>
+        <button class="ccb-sm" onclick="adjustShift('sol',2)">+</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn on" id="ccb-auto-sol" onclick="toggleAutoScroll('sol',this)" title="Auto-scroll to latest tick">↻</button>
+        <button class="ccb-btn" id="ccb-frz-sol" onclick="toggleFreeze('sol',this)" title="Freeze view">🔒</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn" id="ccb-yl-sol" onclick="toggleYAxis('sol','L',this)" title="Left Y-axis">Y←</button>
+        <button class="ccb-btn on" id="ccb-yr-sol" onclick="toggleYAxis('sol','R',this)" title="Right Y-axis">Y→</button>
+        <span class="ccb-sep">|</span>
+        <span class="ccb-pct dim" id="ccb-fut-sol">⟶auto</span>
+        <button class="ccb-sm dim" id="ccb-futm-sol" onclick="adjustFuture('sol',-5)">-</button>
+        <button class="ccb-sm dim" id="ccb-futp-sol" onclick="adjustFuture('sol',5)">+</button>
+      </div>
     </div>
     <div class="ctrl-row">
       <button class="cb on-candle" onclick="setMode('sol','candle',this)" title="Candles">Candles</button>
@@ -963,6 +1017,22 @@ svg{max-width:100%;height:auto;}
       <div class="ec-container" id="ec-bnb"></div>
       <div class="status-line" id="sl-bnb" style="color:#ef5350;">● STALE &nbsp; $312.80 &nbsp;-0.41% &nbsp; Vol: 89K BNB</div>
       <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
+      <div class="ccb" id="ccb-bnb">
+        <button class="ccb-btn on" id="ccb-shift-bnb" onclick="toggleChartShift('bnb',this)" title="Auto-shift: pad right">⇐</button>
+        <button class="ccb-sm" onclick="adjustShift('bnb',-2)">-</button>
+        <span class="ccb-pct" id="ccb-pct-bnb">8%</span>
+        <button class="ccb-sm" onclick="adjustShift('bnb',2)">+</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn on" id="ccb-auto-bnb" onclick="toggleAutoScroll('bnb',this)" title="Auto-scroll to latest tick">↻</button>
+        <button class="ccb-btn" id="ccb-frz-bnb" onclick="toggleFreeze('bnb',this)" title="Freeze view">🔒</button>
+        <span class="ccb-sep">|</span>
+        <button class="ccb-btn" id="ccb-yl-bnb" onclick="toggleYAxis('bnb','L',this)" title="Left Y-axis">Y←</button>
+        <button class="ccb-btn on" id="ccb-yr-bnb" onclick="toggleYAxis('bnb','R',this)" title="Right Y-axis">Y→</button>
+        <span class="ccb-sep">|</span>
+        <span class="ccb-pct dim" id="ccb-fut-bnb">⟶auto</span>
+        <button class="ccb-sm dim" id="ccb-futm-bnb" onclick="adjustFuture('bnb',-5)">-</button>
+        <button class="ccb-sm dim" id="ccb-futp-bnb" onclick="adjustFuture('bnb',5)">+</button>
+      </div>
     </div>
     <div class="ctrl-row">
       <button class="cb" onclick="setMode('bnb','candle',this)" title="Candles">Candles</button>
@@ -1288,10 +1358,14 @@ svg{max-width:100%;height:auto;}
 <script>
 // ── Shared state ──
 var panels = {
-  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false, stochBg:1},
-  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false, stochBg:1},
-  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1},
-  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1}
+  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:false, showYRight:true, futureBars:null},
+  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:false, showYRight:true, futureBars:null},
+  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:false, showYRight:true, futureBars:null},
+  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:false, showYRight:true, futureBars:null}
 };
 // ── Source activity log (most-recently-used first) ──
 var _srcLog=[
@@ -1764,40 +1838,72 @@ function drawSVG(id){
   function drawAxes(s){
     axOvr.innerHTML='';
     var cw2=area.clientWidth||w,ch2=area.clientHeight||h;
+    // ── Future area: if the SVG right edge is left of viewport right edge ──
+    var svgRightPx=fullW*s.sx+s.tx; // screen X of SVG right edge
+    var viewRight=cw2-padR;
+    if(svgRightPx<viewRight-2){
+      var futX=Math.max(padL,svgRightPx);
+      var futWd=viewRight-futX;
+      if(futWd>4){
+        var futBg=document.createElement('div');
+        futBg.style.cssText='position:absolute;left:'+futX+'px;top:'+padT+'px;width:'+futWd+'px;height:'+(ch2-padT-padB)+'px;background:rgba(28,32,38,0.72);pointer-events:none;border-left:1px dashed #2a3040;';
+        axOvr.appendChild(futBg);
+        var futLbl=document.createElement('div');
+        futLbl.textContent='future';
+        futLbl.style.cssText='position:absolute;left:'+(futX+Math.max(4,futWd/2-18))+'px;top:'+(padT+Math.round((ch2-padT-padB)*0.3))+'px;color:#111;font-family:monospace;font-size:11px;font-weight:bold;letter-spacing:2px;pointer-events:none;';
+        axOvr.appendChild(futLbl);
+      }
+    }
+    // ── Y-axis labels ──
     for(var yi=0;yi<=4;yi++){
       var sY=padT+(ch2-padT-padB)*(yi/4);
       var svgY=(sY-s.ty)/s.sy;
       var price=minP+(1-(svgY-padT)/plotH)*rng;
       if(price<minP*0.4||price>maxP*1.4)continue;
-      var el=document.createElement('div');
-      el.style.cssText='position:absolute;right:2px;top:'+(sY-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
-      el.textContent=fmt(price);
-      axOvr.appendChild(el);
+      var priceStr=fmt(price);
+      if(p.showYRight!==false){
+        var el=document.createElement('div');
+        el.style.cssText='position:absolute;right:2px;top:'+(sY-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
+        el.textContent=priceStr;
+        axOvr.appendChild(el);
+      }
+      if(p.showYLeft){
+        var el2=document.createElement('div');
+        el2.style.cssText='position:absolute;left:2px;top:'+(sY-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
+        el2.textContent=priceStr;
+        axOvr.appendChild(el2);
+      }
     }
+    // ── X-axis time labels ──
     for(var xi=0;xi<=5;xi++){
       var sX=padL+(cw2-padL-padR)*(xi/5);
       var svgX=(sX-s.tx)/s.sx;
       var bi=Math.round((svgX-padL)/stepX);
-      if(bi<0||bi>=nBars)continue;
+      if(bi<0||bi>=nBars+50)continue; // allow future labels up to 50 bars
       var xEl=document.createElement('div');
       xEl.style.cssText='position:absolute;left:'+(sX-14)+'px;bottom:2px;color:#4a5570;font-family:monospace;font-size:9px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
+      var _panEl=document.getElementById('p-'+id);
+      var _tfSel=_panEl?_panEl.querySelector('.tf-sel'):null;
+      var _tfVal=_tfSel?(_tfSel.value||'5m'):'5m';
+      var _tfMins={'1m':1,'5m':5,'15m':15,'30m':30,'1h':60,'4h':240,'1d':1440}[_tfVal]||5;
       if(bi===nBars-1){
         xEl.textContent='now';
+        xEl.style.color='#3ecf5e';
+      } else if(bi>nBars-1){
+        // future bar: compute projected timestamp
+        var _fwdMs=Date.now()+(bi-(nBars-1))*_tfMins*60000;
+        var _fd=new Date(_fwdMs);
+        if(_tfMins<60){xEl.textContent=pad2(_fd.getHours())+':'+pad2(_fd.getMinutes());}
+        else if(_tfMins<1440){xEl.textContent=(_fd.getMonth()+1)+'/'+_fd.getDate()+' '+pad2(_fd.getHours())+'h';}
+        else{xEl.textContent=(_fd.getMonth()+1)+'/'+_fd.getDate();}
+        xEl.style.color='#2a3040'; // dim for future
       } else {
-        var _panEl=document.getElementById('p-'+id);
-        var _tfSel=_panEl?_panEl.querySelector('.tf-sel'):null;
-        var _tfVal=_tfSel?(_tfSel.value||'5m'):'5m';
-        var _tfMins={'1m':1,'5m':5,'15m':15,'30m':30,'1h':60,'4h':240,'1d':1440}[_tfVal]||5;
         var _barsAgo=nBars-1-bi;
         var _tsMs=Date.now()-_barsAgo*_tfMins*60000;
         var _d=new Date(_tsMs);
-        if(_tfMins<60){
-          xEl.textContent=pad2(_d.getHours())+':'+pad2(_d.getMinutes());
-        } else if(_tfMins<1440){
-          xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate()+' '+pad2(_d.getHours())+'h';
-        } else {
-          xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate();
-        }
+        if(_tfMins<60){xEl.textContent=pad2(_d.getHours())+':'+pad2(_d.getMinutes());}
+        else if(_tfMins<1440){xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate()+' '+pad2(_d.getHours())+'h';}
+        else{xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate();}
       }
       axOvr.appendChild(xEl);
     }
@@ -1816,19 +1922,47 @@ function drawSVG(id){
 
   // ── Interaction state ──
   var st=getSVGState(id);
-  // Start at right edge (most recent candles) — reset any time width changes meaningfully
-  if(!st._initW || Math.abs(st._initW-w)>30){
-    st.tx=-(fullW-w);
+
+  // Compute default future bars from timeframe if not user-set
+  if(p.futureBars==null){
+    var _tfEl2=document.getElementById('p-'+id);
+    var _tfSel2=_tfEl2?_tfEl2.querySelector('.tf-sel'):null;
+    var _tfVal2=_tfSel2?(_tfSel2.value||'5m'):'5m';
+    var _tfMins2={'1m':1,'5m':5,'15m':15,'30m':30,'1h':60,'4h':240,'1d':1440}[_tfVal2]||5;
+    p._defFutureBars=Math.max(10,Math.round(1440/_tfMins2));
+  }
+
+  // Auto-scroll tx: right-align + optional right-pad shift
+  var shiftEnabled=p.shiftEnabled!==false;
+  var shiftPx=shiftEnabled?(w*(p.shiftPct!=null?p.shiftPct:8)/100):0;
+  var autoTx=-(fullW*st.sx-w)-shiftPx;
+
+  if(p.frozen){
+    // keep existing tx (user locked the view)
+  } else if(!st._initW||Math.abs(st._initW-w)>30||p.autoScroll){
+    st.tx=autoTx;
     st._initW=w;
   }
+
   var dragging=false,dragStartX=0,dragStartY=0,dragTx=0,dragTy=0;
 
   function applyTransform(){
     var svgW=fullW*st.sx,svgH=h*st.sy;
-    st.tx=Math.min(0,Math.max(w-svgW,st.tx));
+    // Allow future scrolling only when BOTH autoScroll and shiftEnabled are off, or when frozen
+    var allowFuture=p.frozen||(!p.autoScroll&&!p.shiftEnabled);
+    var _fb=p.futureBars!=null?p.futureBars:(p._defFutureBars||10);
+    var maxTx=allowFuture?(-(fullW*st.sx-w)+_fb*stepX*st.sx):-(fullW*st.sx-w);
+    st.tx=Math.min(maxTx,Math.max(w-svgW,st.tx));
     st.ty=Math.min(0,Math.max(h-svgH,st.ty));
     svg.style.transform='translate('+st.tx.toFixed(1)+'px,'+st.ty.toFixed(1)+'px) scale('+st.sx.toFixed(3)+','+st.sy.toFixed(3)+')';
     svg.style.cursor=dragging?'grabbing':'grab';
+    // Update future controls visual state
+    var _futActive=allowFuture;
+    ['fut','futm','futp'].forEach(function(k){
+      var el=document.getElementById('ccb-'+k+'-'+id);
+      if(!el)return;
+      if(_futActive){el.classList.remove('dim');} else {el.classList.add('dim');}
+    });
     drawAxes(st);
   }
   applyTransform();
