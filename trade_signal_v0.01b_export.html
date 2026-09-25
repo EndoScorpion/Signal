@@ -499,19 +499,19 @@ svg{max-width:100%;height:auto;}
   <!-- Broker bar at top (full width) -->
   <div id="brokerBar" style="display:flex;align-items:center;padding:2px 10px;border-bottom:1px solid #0d150d;gap:8px;overflow-x:auto;min-height:18px;font-size:9.5px;background:#060a06;flex-wrap:nowrap;">
     <span style="color:#3a5a3a;white-space:nowrap;flex-shrink:0;">Exchange 24h Vol:</span>
-    <span id="brkBinance" style="white-space:nowrap;flex-shrink:0;">Binance <b style="color:#f0b90b;">47.2%</b> <span style="color:#6a9a3a;">$18.4B</span></span>
+    <span id="brkBinance" data-broker="Binance" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">Binance <b style="color:#f0b90b;">47.2%</b> <span style="color:#6a9a3a;">$18.4B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span id="brkCoinbase" style="white-space:nowrap;flex-shrink:0;">Coinbase <b style="color:#3a8fd4;">12.1%</b> <span style="color:#4a6a8a;">$4.7B</span></span>
+    <span id="brkCoinbase" data-broker="Coinbase" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">Coinbase <b style="color:#3a8fd4;">12.1%</b> <span style="color:#4a6a8a;">$4.7B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span id="brkOkx" style="white-space:nowrap;flex-shrink:0;">OKX <b style="color:#7a9fff;">8.4%</b> <span style="color:#3a4a7a;">$3.3B</span></span>
+    <span id="brkOkx" data-broker="OKX" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">OKX <b style="color:#7a9fff;">8.4%</b> <span style="color:#3a4a7a;">$3.3B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span id="brkBybit" style="white-space:nowrap;flex-shrink:0;">Bybit <b style="color:#ffb060;">7.1%</b> <span style="color:#7a5a3a;">$2.8B</span></span>
+    <span id="brkBybit" data-broker="Bybit" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">Bybit <b style="color:#ffb060;">7.1%</b> <span style="color:#7a5a3a;">$2.8B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span id="brkKraken" style="white-space:nowrap;flex-shrink:0;">Kraken <b style="color:#b070ff;">5.3%</b> <span style="color:#5a3a7a;">$2.1B</span></span>
+    <span id="brkKraken" data-broker="Kraken" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">Kraken <b style="color:#b070ff;">5.3%</b> <span style="color:#5a3a7a;">$2.1B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span id="brkBitfinex" style="white-space:nowrap;flex-shrink:0;">Bitfinex <b style="color:#d4b030;">3.2%</b> <span style="color:#6a5a2a;">$1.2B</span></span>
+    <span id="brkBitfinex" data-broker="Bitfinex" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">Bitfinex <b style="color:#d4b030;">3.2%</b> <span style="color:#6a5a2a;">$1.2B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span id="brkOthers" style="white-space:nowrap;flex-shrink:0;">Others <b style="color:#6a7a6a;">16.7%</b> <span style="color:#3a4a3a;">$6.5B</span></span>
+    <span id="brkOthers" data-broker="Others" style="white-space:nowrap;flex-shrink:0;cursor:pointer;">Others <b style="color:#6a7a6a;">16.7%</b> <span style="color:#3a4a3a;">$6.5B</span></span>
     <span style="color:#1e2e1e;flex-shrink:0;margin-left:4px;">│</span>
     <span id="brkTotal" style="white-space:nowrap;flex-shrink:0;font-size:9px;">Total: <b style="color:#3ecf5e;">$39.0B</b></span>
     <span style="margin-left:auto;flex-shrink:0;">
@@ -532,14 +532,14 @@ svg{max-width:100%;height:auto;}
     <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:3px 10px;gap:3px;min-width:0;">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
         <span style="color:#5b6270;white-space:nowrap;font-size:10px;">Highest vol — Stablecoin:</span>
-        <span id="vlS" style="color:#3ecf5e;font-weight:bold;">BTCUSDT &nbsp;$43,821 &nbsp;▲+2.14%</span>
+        <span id="vlS" data-sym="BTCUSDT" style="color:#3ecf5e;font-weight:bold;cursor:pointer;">BTCUSDT &nbsp;$43,821 &nbsp;▲+2.14%</span>
         <a id="vlSL" href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" style="color:#3ecf5e;font-size:10px;">↗ TV chart</a>
         <span style="color:#1e2e1e;">│</span>
         <span id="vlSBrk" style="color:#4a6a4a;font-size:9.5px;white-space:nowrap;">Binance $8.6B · Coinbase $2.2B · OKX $1.6B</span>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
         <span style="color:#5b6270;white-space:nowrap;font-size:10px;">Non-stablecoin:</span>
-        <span id="vlN" style="color:#9db4ff;font-weight:bold;">ETHBTC &nbsp;0.05312 &nbsp;▼-0.38%</span>
+        <span id="vlN" data-sym="ETHBTC" style="color:#9db4ff;font-weight:bold;cursor:pointer;">ETHBTC &nbsp;0.05312 &nbsp;▼-0.38%</span>
         <a id="vlNL" href="https://www.tradingview.com/chart/?symbol=BINANCE:ETHBTC" target="_blank" style="color:#9db4ff;font-size:10px;">↗ TV chart</a>
         <span style="color:#1e2e1e;">│</span>
         <span id="vlNBrk" style="color:#4a4a6a;font-size:9.5px;white-space:nowrap;">Binance $1.5B · OKX $0.4B · Bybit $0.3B</span>
@@ -2696,10 +2696,11 @@ function refreshBrokers(){
   var tot=document.getElementById('brkTotal');
   if(tot)tot.innerHTML='Total: <b style="color:#3ecf5e;">'+_fmtB(total)+'</b>';
   var top3=brokerData.slice(0,3);
+  function _brkSpan(b,vol){return '<span data-broker="'+b.id+'" style="cursor:pointer;color:#4a6a4a;">'+b.id+'</span> <span style="color:#3a4a3a;">'+_fmtB(vol)+'</span>';}
   var vlSBrk=document.getElementById('vlSBrk');
-  if(vlSBrk)vlSBrk.textContent=top3.map(function(b){return b.id+' '+_fmtB(b.vol*.47);}).join(' · ');
+  if(vlSBrk)vlSBrk.innerHTML=top3.map(function(b){return _brkSpan(b,b.vol*.47);}).join('<span style="color:#2a3a2a;"> · </span>');
   var vlNBrk=document.getElementById('vlNBrk');
-  if(vlNBrk)vlNBrk.textContent=top3.map(function(b){return b.id+' '+_fmtB(b.vol*.082);}).join(' · ');
+  if(vlNBrk)vlNBrk.innerHTML=top3.map(function(b){return _brkSpan(b,b.vol*.082);}).join('<span style="color:#2a3a2a;"> · </span>');
 }
 // init news ticker and broker refresh on load
 (function(){
@@ -4949,6 +4950,217 @@ window.addEventListener('load',function(){
     layout/text is SVG-able, dynamic updates need JS
   </div>
 </div>
+
+<!-- ── Broker/Symbol context menu ── -->
+<div id="symCtxMenu" style="display:none;position:fixed;z-index:99999;background:#080c08;border:1px solid #2a4a2a;border-radius:5px;box-shadow:0 4px 20px rgba(0,0,0,.85);font-family:monospace;font-size:11px;min-width:190px;overflow:hidden;pointer-events:auto;">
+  <div id="symCtxTitle" style="background:#050a05;color:#3ecf5e;padding:5px 10px;border-bottom:1px solid #0d1a0d;font-size:10px;display:flex;align-items:center;gap:6px;">
+    <span id="symCtxIcon">📊</span><span id="symCtxLabel">—</span>
+  </div>
+  <div style="padding:3px 0;">
+    <button id="symCtxIntBtn" onclick="symCtxIntChart()" style="display:block;width:100%;background:none;border:none;color:#8adf8a;text-align:left;padding:5px 12px;cursor:pointer;font-family:monospace;font-size:10px;line-height:1.4;" onmouseover="this.style.background='#0a180a'" onmouseout="this.style.background='none'">📊 Popup internal chart</button>
+    <button id="symCtxExtBtn" onclick="symCtxExternal()" style="display:block;width:100%;background:none;border:none;color:#7aafff;text-align:left;padding:5px 12px;cursor:pointer;font-family:monospace;font-size:10px;line-height:1.4;" onmouseover="this.style.background='#0a0a18'" onmouseout="this.style.background='none'">↗ External chart</button>
+    <button id="symCtxTVBtn" onclick="symCtxTV()" style="display:none;width:100%;background:none;border:none;color:#7aafff;text-align:left;padding:5px 12px;cursor:pointer;font-family:monospace;font-size:10px;line-height:1.4;" onmouseover="this.style.background='#0a0a18'" onmouseout="this.style.background='none'">↗ TradingView chart</button>
+  </div>
+</div>
+
+<!-- ── Broker fee tooltip ── -->
+<div id="brokerFeeTip" style="display:none;position:fixed;z-index:100000;background:#060c06;border:1px solid #1a3a1a;border-radius:4px;padding:6px 10px;font-family:monospace;font-size:10px;pointer-events:none;box-shadow:0 3px 12px rgba(0,0,0,.8);min-width:170px;">
+  <div id="bftTitle" style="color:#3ecf5e;font-weight:bold;margin-bottom:4px;font-size:10px;border-bottom:1px solid #0d1a0d;padding-bottom:2px;"></div>
+  <div style="display:flex;gap:12px;">
+    <div>
+      <div style="color:#4a6a4a;font-size:9px;margin-bottom:1px;">Maker</div>
+      <div id="bftMaker" style="font-size:12px;font-weight:bold;"></div>
+    </div>
+    <div>
+      <div style="color:#4a6a4a;font-size:9px;margin-bottom:1px;">Taker</div>
+      <div id="bftTaker" style="font-size:12px;font-weight:bold;"></div>
+    </div>
+  </div>
+  <div id="bftNote" style="color:#3a4a3a;font-size:8.5px;margin-top:3px;"></div>
+</div>
+
+<!-- ── Float chart popup ── -->
+<div id="floatChartPop" style="display:none;position:fixed;top:100px;left:50%;transform:translateX(-50%);z-index:9998;width:480px;max-width:95vw;background:#080c08;border:1px solid #2a4a2a;border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,.85);font-family:monospace;font-size:11px;overflow:hidden;">
+  <div id="floatChartHead" style="background:#050a05;padding:5px 10px;display:flex;align-items:center;border-bottom:1px solid #0d1a0d;cursor:move;user-select:none;">
+    <span id="floatChartTitle" style="color:#3ecf5e;font-weight:bold;flex:1;font-size:11px;">Chart</span>
+    <a id="floatChartTV" href="#" target="_blank" style="color:#7aafff;font-size:9.5px;margin-right:8px;text-decoration:none;">↗ TradingView</a>
+    <button onclick="document.getElementById('floatChartPop').style.display='none'" style="background:none;border:none;color:#ef5350;cursor:pointer;font-size:13px;line-height:1;">✕</button>
+  </div>
+  <div id="floatChartBody" style="padding:10px 12px;"></div>
+</div>
+
+<script>
+// ── Broker / Symbol context popup system ──
+var _ctx={type:'',name:'',extUrl:'',tvUrl:''};
+var _brokerUrls={
+  Binance:'https://www.binance.com/en/trade/',
+  Coinbase:'https://www.coinbase.com/advanced-trade/',
+  OKX:'https://www.okx.com/trade-spot/',
+  Bybit:'https://www.bybit.com/en/trade/spot/',
+  Kraken:'https://www.kraken.com/prices/',
+  Bitfinex:'https://trading.bitfinex.com/t/',
+  Others:'https://coinmarketcap.com/rankings/exchanges/'
+};
+var _tvBase='https://www.tradingview.com/chart/?symbol=BINANCE:';
+var _tvUrls={BTCUSDT:'BTCUSDT',ETHBTC:'ETHBTC',ETHUSDT:'ETHUSDT',SOLUSDT:'SOLUSDT',BNBUSDT:'BNBUSDT',XRPUSDT:'XRPUSDT',ADAUSDT:'ADAUSDT',DOTUSDT:'DOTUSDT',MATICUSDT:'MATICUSDT'};
+var _brokerTopPair={Binance:'BTCUSDT',Coinbase:'BTCUSDT',OKX:'BTCUSDT',Bybit:'BTCUSDT',Kraken:'XBTUSDT',Bitfinex:'BTCUSDT',Others:'BTCUSDT'};
+var _panelMap={BTCUSDT:'btc',ETHUSDT:'eth',ETHBTC:'eth',SOLUSDT:'sol',BNBUSDT:'bnb'};
+
+// Maker/taker fee table — nonzero shown as red negative; zero as lime green 0
+var _brokerFees={
+  Binance:{maker:0.1000,taker:0.1000,note:'BNB rebate -25%. VIP tiers available.'},
+  Coinbase:{maker:0.4000,taker:0.6000,note:'Advanced Trade. Lower with higher volume.'},
+  OKX:{maker:0.0800,taker:0.1000,note:'Standard tier. Futures lower.'},
+  Bybit:{maker:0.1000,taker:0.1000,note:'Spot. Futures maker 0.02%.'},
+  Kraken:{maker:0.2500,taker:0.4000,note:'Starter tier. Pro: maker 0.14%.'},
+  Bitfinex:{maker:0.1000,taker:0.2000,note:'On volume <$500K/30d.'},
+  Others:{maker:0,taker:0,note:'Varies by exchange.'}
+};
+function _fmtFee(v){
+  if(v===0)return '<span style="color:#7fff00;font-weight:bold;">0</span>';
+  return '<span style="color:#ef5350;font-weight:bold;">-'+v.toFixed(4)+'%</span>';
+}
+function _posCtxMenu(e){
+  var m=document.getElementById('symCtxMenu');
+  if(!m)return;
+  var mx=e.clientX,my=e.clientY;
+  m.style.left=(mx+6)+'px';m.style.top=(my+4)+'px';m.style.display='block';
+  requestAnimationFrame(function(){
+    var r=m.getBoundingClientRect();
+    if(r.right>window.innerWidth-4)m.style.left=(mx-r.width-4)+'px';
+    if(r.bottom>window.innerHeight-4)m.style.top=(my-r.height-4)+'px';
+  });
+}
+function symCtxClose(){var m=document.getElementById('symCtxMenu');if(m)m.style.display='none';}
+
+function showSymCtx(e,type,name){
+  e.stopPropagation();
+  _ctx.type=type;_ctx.name=name;
+  var lbl=document.getElementById('symCtxLabel');
+  var icon=document.getElementById('symCtxIcon');
+  var extBtn=document.getElementById('symCtxExtBtn');
+  var tvBtn=document.getElementById('symCtxTVBtn');
+  var intBtn=document.getElementById('symCtxIntBtn');
+  if(type==='broker'){
+    icon.textContent='🏦';
+    lbl.textContent=name;
+    extBtn.textContent='↗ Visit '+name+' exchange';
+    extBtn.style.display='block';
+    tvBtn.textContent='↗ TradingView — '+name+' pairs';
+    tvBtn.style.display='block';
+    intBtn.textContent='📊 Internal chart — '+(_brokerTopPair[name]||'BTC');
+    _ctx.tvUrl=_tvBase+(_tvUrls[_brokerTopPair[name]]||'BTCUSDT');
+    _ctx.extUrl=_brokerUrls[name]||'https://www.google.com/search?q='+name+'+exchange';
+  } else {
+    icon.textContent='📈';
+    lbl.textContent=name;
+    var tvSym=_tvUrls[name]||name;
+    _ctx.tvUrl=_tvBase+tvSym;
+    _ctx.extUrl=_tvBase+tvSym;
+    extBtn.textContent='↗ TradingView chart — '+name;
+    extBtn.style.display='block';
+    tvBtn.style.display='none';
+    intBtn.textContent='📊 Popup internal chart — '+name;
+  }
+  _posCtxMenu(e);
+}
+function symCtxExternal(){window.open(_ctx.extUrl,'_blank');symCtxClose();}
+function symCtxTV(){window.open(_ctx.tvUrl,'_blank');symCtxClose();}
+function symCtxIntChart(){
+  symCtxClose();
+  var sym=_ctx.type==='broker'?(_brokerTopPair[_ctx.name]||'BTCUSDT'):_ctx.name;
+  var pid=_panelMap[sym]||'btc';
+  var p=panels&&panels[pid];
+  var pop=document.getElementById('floatChartPop');
+  var title=document.getElementById('floatChartTitle');
+  var tvLink=document.getElementById('floatChartTV');
+  var body=document.getElementById('floatChartBody');
+  if(!pop)return;
+  title.textContent='📊 '+sym+' — Live';
+  tvLink.href=_ctx.tvUrl||(_tvBase+(sym||'BTCUSDT'));
+  pop.style.display='block';
+  pop.style.left='50%';pop.style.top='100px';pop.style.transform='translateX(-50%)';
+  if(!pop._dragInit){_initFloatDrag(pop);pop._dragInit=true;}
+  var price=p?p.price:0,base=p?p.base:price;
+  var chg=base>0?((price-base)/base*100):0;
+  var col=chg>=0?'#3ecf5e':'#ef5350';
+  var prStr=price>100?'$'+price.toFixed(2):'$'+price.toFixed(4);
+  body.innerHTML='<div style="display:flex;gap:14px;align-items:flex-start;">'
+    +'<div style="flex:1;">'
+    +'<div style="color:#3a5a3a;font-size:9px;margin-bottom:6px;">'+sym+' · Real-time feed</div>'
+    +'<div style="font-size:24px;font-weight:bold;color:'+col+';letter-spacing:-.5px;">'+prStr+'</div>'
+    +'<div style="font-size:11px;color:'+col+';margin-top:2px;">'+(chg>=0?'▲+':'▼')+Math.abs(chg).toFixed(2)+'%</div>'
+    +'<div style="margin-top:10px;font-size:9.5px;color:#3a5a3a;">Panels — click to jump:</div>'
+    +'<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">'
+    +Object.keys(panels||{}).map(function(k){var pp=panels[k];return '<button onclick="document.getElementById(\'p-'+k+'\').scrollIntoView({behavior:\'smooth\'});document.getElementById(\'floatChartPop\').style.display=\'none\';" style="background:#050a05;border:1px solid #1a3a1a;border-radius:3px;color:#5a9a5a;font-size:9px;padding:1px 7px;cursor:pointer;font-family:monospace;">'+pp.sym+'</button>';}).join('')
+    +'</div></div>'
+    +'<canvas id="floatMini" width="260" height="120" style="border:1px solid #0d1a0d;border-radius:3px;background:#050a05;display:block;"></canvas>'
+    +'</div>';
+  _drawFloatMini(pid,p);
+}
+function _drawFloatMini(pid,p){
+  requestAnimationFrame(function(){
+    var c=document.getElementById('floatMini');if(!c)return;
+    var ctx=c.getContext('2d'),w=c.width,h=c.height;
+    ctx.clearRect(0,0,w,h);
+    var prices=[p?p.base:43800];
+    for(var i=1;i<80;i++)prices.push(prices[i-1]*(1+(Math.random()-.48)*.004));
+    if(p)prices[prices.length-1]=p.price;
+    var mn=Math.min.apply(null,prices),mx=Math.max.apply(null,prices),rng=mx-mn||1;
+    var last=prices[prices.length-1],col=last>=prices[0]?'#3ecf5e':'#ef5350';
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();
+    prices.forEach(function(v,i){var x=i/(prices.length-1)*w,y=h-4-(v-mn)/rng*(h-8);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.stroke();
+    ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+    ctx.fillStyle=col==='#3ecf5e'?'rgba(62,207,94,.07)':'rgba(239,83,80,.07)';ctx.fill();
+  });
+}
+function _initFloatDrag(pop){
+  var head=document.getElementById('floatChartHead');
+  var dx=0,dy=0,drag=false;
+  head.addEventListener('mousedown',function(e){drag=true;pop.style.transform='none';dx=e.clientX-pop.offsetLeft;dy=e.clientY-pop.offsetTop;});
+  document.addEventListener('mousemove',function(e){if(drag){pop.style.left=(e.clientX-dx)+'px';pop.style.top=(e.clientY-dy)+'px';}});
+  document.addEventListener('mouseup',function(){drag=false;});
+}
+
+// ── Event delegation for broker/symbol click and hover ──
+document.addEventListener('click',function(e){
+  if(e.target.closest('#symCtxMenu'))return;
+  var el=e.target.closest('[data-broker],[data-sym]');
+  if(!el){symCtxClose();return;}
+  var b=el.getAttribute('data-broker'),s=el.getAttribute('data-sym');
+  if(b)showSymCtx(e,'broker',b);
+  else if(s)showSymCtx(e,'symbol',s);
+},true);
+
+// Broker fee tooltip
+var _ftHide;
+document.addEventListener('mouseover',function(e){
+  var el=e.target.closest('[data-broker]');
+  if(!el)return;
+  clearTimeout(_ftHide);
+  var name=el.getAttribute('data-broker');
+  var f=_brokerFees[name];
+  if(!f)return;
+  var tip=document.getElementById('brokerFeeTip');
+  if(!tip)return;
+  document.getElementById('bftTitle').textContent=name+' — Fees';
+  document.getElementById('bftMaker').innerHTML=_fmtFee(f.maker);
+  document.getElementById('bftTaker').innerHTML=_fmtFee(f.taker);
+  document.getElementById('bftNote').textContent=f.note||'';
+  var r=el.getBoundingClientRect();
+  tip.style.left=(r.left)+'px';
+  tip.style.top=(r.bottom+4)+'px';
+  tip.style.display='block';
+  var rr=tip.getBoundingClientRect();
+  if(rr.right>window.innerWidth-4)tip.style.left=(window.innerWidth-rr.width-6)+'px';
+  if(rr.bottom>window.innerHeight-4)tip.style.top=(r.top-rr.height-4)+'px';
+});
+document.addEventListener('mouseout',function(e){
+  var el=e.target.closest('[data-broker]');
+  if(el)_ftHide=setTimeout(function(){var t=document.getElementById('brokerFeeTip');if(t)t.style.display='none';},200);
+});
+</script>
 
 </body>
 </html>
