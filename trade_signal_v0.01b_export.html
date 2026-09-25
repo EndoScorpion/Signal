@@ -493,27 +493,95 @@ svg{max-width:100%;height:auto;}
 </div>
 
 
-<!-- VOLUME LEADER BAR -->
-<div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:3px 10px;border-bottom:1px solid #1a2a1a;font-size:11px;background:#070b07;min-height:22px;gap:8px;">
-  <div style="display:flex;align-items:center;gap:6px;flex:1;">
-    <span style="color:#5b6270;white-space:nowrap;">Highest live trade volume — Stablecoin pair:</span>
-    <span id="vlS" style="color:#3ecf5e;font-weight:bold;">BTCUSDT &nbsp;$43,821 &nbsp;▲+2.14%</span>
-    <a id="vlSL" href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" style="color:#3ecf5e;font-size:10px;">↗ TV chart</a>
-  </div>
-  <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end;">
-    <span style="color:#5b6270;white-space:nowrap;">Non-stablecoin pair:</span>
-    <span id="vlN" style="color:#9db4ff;font-weight:bold;">ETHBTC &nbsp;0.05312 &nbsp;▼-0.38%</span>
-    <a id="vlNL" href="https://www.tradingview.com/chart/?symbol=BINANCE:ETHBTC" target="_blank" style="color:#9db4ff;font-size:10px;">↗ TV chart</a>
-    <button class="tb-btn" onclick="refreshVL()" style="padding:1px 6px;">↻</button>
+<!-- VOLUME + CLOCK AREA -->
+<div id="volClockArea" style="width:100%;border-bottom:1px solid #1a2a1a;background:#070b07;font-size:11px;position:relative;">
 
+  <!-- Broker bar at top (full width) -->
+  <div id="brokerBar" style="display:flex;align-items:center;padding:2px 10px;border-bottom:1px solid #0d150d;gap:8px;overflow-x:auto;min-height:18px;font-size:9.5px;background:#060a06;flex-wrap:nowrap;">
+    <span style="color:#3a5a3a;white-space:nowrap;flex-shrink:0;">Exchange 24h Vol:</span>
+    <span id="brkBinance" style="white-space:nowrap;flex-shrink:0;">Binance <b style="color:#f0b90b;">47.2%</b> <span style="color:#6a9a3a;">$18.4B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span id="brkCoinbase" style="white-space:nowrap;flex-shrink:0;">Coinbase <b style="color:#3a8fd4;">12.1%</b> <span style="color:#4a6a8a;">$4.7B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span id="brkOkx" style="white-space:nowrap;flex-shrink:0;">OKX <b style="color:#7a9fff;">8.4%</b> <span style="color:#3a4a7a;">$3.3B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span id="brkBybit" style="white-space:nowrap;flex-shrink:0;">Bybit <b style="color:#ffb060;">7.1%</b> <span style="color:#7a5a3a;">$2.8B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span id="brkKraken" style="white-space:nowrap;flex-shrink:0;">Kraken <b style="color:#b070ff;">5.3%</b> <span style="color:#5a3a7a;">$2.1B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span id="brkBitfinex" style="white-space:nowrap;flex-shrink:0;">Bitfinex <b style="color:#d4b030;">3.2%</b> <span style="color:#6a5a2a;">$1.2B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span id="brkOthers" style="white-space:nowrap;flex-shrink:0;">Others <b style="color:#6a7a6a;">16.7%</b> <span style="color:#3a4a3a;">$6.5B</span></span>
+    <span style="color:#1e2e1e;flex-shrink:0;margin-left:4px;">│</span>
+    <span id="brkTotal" style="white-space:nowrap;flex-shrink:0;font-size:9px;">Total: <b style="color:#3ecf5e;">$39.0B</b></span>
+    <span style="margin-left:auto;flex-shrink:0;">
+      <button onclick="refreshBrokers()" style="background:none;border:1px solid #1a3a1a;border-radius:2px;color:#2a5a2a;font-size:9px;padding:0 4px;cursor:pointer;font-family:monospace;line-height:1.4;" title="Refresh broker data">↻</button>
+    </span>
   </div>
+
+  <!-- Main row: clock/date LEFT + volume leaders RIGHT -->
+  <div style="display:flex;align-items:stretch;">
+
+    <!-- LEFT: clock + date -->
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 12px;border-right:1px solid #0d150d;min-width:88px;flex-shrink:0;gap:2px;">
+      <span id="clock" style="color:#8f8;font-size:12px;font-family:monospace;white-space:nowrap;letter-spacing:.5px;">--:--:-- EDT</span>
+      <span id="dateLine" style="color:#5a8a5a;font-size:9.5px;font-family:monospace;white-space:nowrap;">-- --- ----</span>
+    </div>
+
+    <!-- RIGHT: volume leader rows -->
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:3px 10px;gap:3px;min-width:0;">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span style="color:#5b6270;white-space:nowrap;font-size:10px;">Highest vol — Stablecoin:</span>
+        <span id="vlS" style="color:#3ecf5e;font-weight:bold;">BTCUSDT &nbsp;$43,821 &nbsp;▲+2.14%</span>
+        <a id="vlSL" href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" style="color:#3ecf5e;font-size:10px;">↗ TV chart</a>
+        <span style="color:#1e2e1e;">│</span>
+        <span id="vlSBrk" style="color:#4a6a4a;font-size:9.5px;white-space:nowrap;">Binance $8.6B · Coinbase $2.2B · OKX $1.6B</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span style="color:#5b6270;white-space:nowrap;font-size:10px;">Non-stablecoin:</span>
+        <span id="vlN" style="color:#9db4ff;font-weight:bold;">ETHBTC &nbsp;0.05312 &nbsp;▼-0.38%</span>
+        <a id="vlNL" href="https://www.tradingview.com/chart/?symbol=BINANCE:ETHBTC" target="_blank" style="color:#9db4ff;font-size:10px;">↗ TV chart</a>
+        <span style="color:#1e2e1e;">│</span>
+        <span id="vlNBrk" style="color:#4a4a6a;font-size:9.5px;white-space:nowrap;">Binance $1.5B · OKX $0.4B · Bybit $0.3B</span>
+        <button class="tb-btn" onclick="refreshVL()" style="padding:1px 6px;margin-left:4px;">↻</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS BAR: full-width strip under the clock/volume row -->
+  <div id="newsBar" style="display:flex;align-items:center;gap:6px;padding:2px 8px;border-top:1px solid #1a0a1a;background:#080508;overflow:hidden;min-height:20px;position:relative;">
+    <!-- Trending chip -->
+    <button id="trendingChip" onclick="toggleTrendingPopup()" style="background:none;border:1px solid #1a3a1a;border-radius:3px;color:#3ecf5e;font-size:9px;padding:0 5px;cursor:pointer;font-family:monospace;white-space:nowrap;flex-shrink:0;line-height:1.6;" title="Click for trending news by category">&#8599; Trending: <span id="trendingText" style="color:#9adf9a;">Loading…</span></button>
+    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+    <span style="color:#755;flex:none;font-size:11px;">&#128240;</span>
+    <select id="newsSrc" onchange="switchNewsSource(this.value)" style="background:#0a050a;color:#9070b0;border:1px solid #3a1a3a;border-radius:3px;font-size:9px;padding:0 3px;cursor:pointer;font-family:monospace;flex-shrink:0;" title="Select news source">
+      <option value="coindesk">CoinDesk</option>
+      <option value="cointelegraph">CoinTelegraph</option>
+      <option value="theblock">The Block</option>
+      <option value="cryptopanic">CryptoPanic</option>
+      <option value="decrypt">Decrypt</option>
+    </select>
+    <div style="overflow:hidden;flex:1;position:relative;">
+      <span id="newsTicker" class="news-inner"></span>
+    </div>
+    <button onclick="toggleNews()" style="background:none;border:none;color:#755;cursor:pointer;flex:none;font-size:12px;line-height:1;">✕</button>
+  </div>
+
+  <!-- Trending popup -->
+  <div id="trendingPopup" style="display:none;position:absolute;left:0;right:0;z-index:50;background:#080c08;border:1px solid #1a3a1a;border-top:none;padding:6px 10px;font-size:10px;font-family:monospace;box-shadow:0 6px 18px rgba(0,0,0,.7);">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;border-bottom:1px solid #0d1a0d;padding-bottom:3px;">
+      <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">&#8599; Trending Now</span>
+      <span style="color:#333;font-size:9px;">— updated every 5 min</span>
+      <button onclick="toggleTrendingPopup()" style="margin-left:auto;background:none;border:none;color:#555;cursor:pointer;font-size:11px;line-height:1;">✕</button>
+    </div>
+    <div id="trendingPopupBody" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+  </div>
+
 </div>
 
 <!-- STATUS ROW -->
 <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:2px 8px;border-bottom:1px solid #1a2a1a;background:#050505;min-height:20px;gap:8px;">
   <div style="display:flex;align-items:center;gap:6px;">
-    <span id="clock" style="color:#8f8;white-space:nowrap;font-size:11px;">--:--:-- EDT</span>
-    <span style="color:#333;">|</span>
     <svg width="9" height="9" viewBox="0 0 9 9" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="4.5" cy="4.5" r="4" fill="#3ecf5e"><animate attributeName="r" values="3.5;4.5;3.5" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0.6;1" dur="2s" repeatCount="indefinite"/></circle></svg>
     <span id="wssText" style="color:#3ecf5e;font-size:10px;">WSS Live — BTCUSDT · ETHUSDT · SOLUSDT</span>
     <span style="color:#333;margin:0 2px;">|</span>
@@ -569,14 +637,7 @@ svg{max-width:100%;height:auto;}
   <button class="tb-btn" id="fdpBtn" onclick="toggleFDP()" style="color:#d4b800;border-color:#3a3000;font-size:12px;font-weight:bold;letter-spacing:0;" title="Floating Diagnostics Panel — bugs, auto-repair, info">&#9889;</button>
 </div>
 
-<!-- NEWS BAR -->
-<div id="newsBar" style="background:#0a050a;border-bottom:1px solid #3a1a3a;padding:3px 8px;display:flex;align-items:center;gap:8px;overflow:hidden;">
-  <span style="color:#755;flex:none;">&#128240;</span>
-  <div style="overflow:hidden;flex:1;">
-    <span class="news-inner">BTCUSDT breaks $43,800 resistance — volume surge detected &nbsp;│&nbsp; ETH/USDT Stoch oversold at 28, RSI turning — reversal signal &nbsp;│&nbsp; USDC/USDT: +0.095 bps from peg, technicals NEUTRAL (TradingView) &nbsp;│&nbsp; USDT depegging event: whale 0x3356 deposits 52.5M USDC, borrows 40M USDT on Aave &nbsp;│&nbsp; SMA50 crossing above SMA200 on BTC 4H — Golden Cross forming &nbsp;│&nbsp; SOL breaks $100 — bullish momentum continues &nbsp;│&nbsp; SVB collapse: Circle confirms $3.3B USDC reserves frozen — depeg to 0.9985</span>
-  </div>
-  <button onclick="toggleNews()" style="background:none;border:none;color:#755;cursor:pointer;flex:none;">✕</button>
-</div>
+<!-- NEWS BAR moved into #volClockArea above -->
 
 <!-- SNAPSHOT BAR -->
 <div class="snap-bar">
@@ -1376,11 +1437,15 @@ var _srcLog=[
 var usdc = {price:1.00095};
 
 // ── Clock ──
+var _months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function _ordSfx(d){if(d>3&&d<21)return 'th';switch(d%10){case 1:return 'st';case 2:return 'nd';case 3:return 'rd';default:return 'th';}}
 function tick(){
   var n=new Date(),h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
   var tz=(n.getMonth()>=2&&n.getMonth()<=10)?'EDT':'EST';
-  document.getElementById('clock').textContent=
-    pad(h)+':'+pad(m)+':'+pad(s)+' '+tz;
+  var clk=document.getElementById('clock');
+  if(clk)clk.textContent=pad(h)+':'+pad(m)+':'+pad(s)+' '+tz;
+  var dl=document.getElementById('dateLine');
+  if(dl){var d=n.getDate();dl.textContent=d+_ordSfx(d)+' '+_months[n.getMonth()]+', '+n.getFullYear();}
 }
 function pad(v){return String(v).padStart(2,'0');}
 tick();setInterval(tick,1000);
@@ -2532,7 +2597,208 @@ function addPanel(){
 
 // ── Misc ──
 var newsOn=true;
-function toggleNews(){newsOn=!newsOn;document.getElementById('newsBar').style.display=newsOn?'flex':'none';}
+function toggleNews(){newsOn=!newsOn;var nb=document.getElementById('newsBar');if(nb)nb.style.display=newsOn?'flex':'none';}
+
+// ── News sources ──
+var newsSources={
+  coindesk:{name:'CoinDesk',items:[
+    {t:'Bitcoin ETF Inflows Hit Weekly Record as Institutional Demand Surges',u:'https://www.coindesk.com/markets/'},
+    {t:'Ethereum Layer-2 Transactions Surpass Mainnet for First Time',u:'https://www.coindesk.com/tech/'},
+    {t:'Fed Rate Decision Sends BTC Down 3%, Recovers Above Key Level',u:'https://www.coindesk.com/markets/'},
+    {t:'Solana DEX Volume Tops $12B in 24 Hours on Memecoin Surge',u:'https://www.coindesk.com/markets/'},
+    {t:'BNB Chain Rolls Out v3 Upgrade — EVM Compatibility Enhanced',u:'https://www.coindesk.com/tech/'},
+    {t:'Tether Reports Record Quarterly Profit on US Treasury Holdings',u:'https://www.coindesk.com/business/'},
+    {t:'Grayscale Adds SOL and XRP to Institutional Product Suite',u:'https://www.coindesk.com/business/'}
+  ]},
+  cointelegraph:{name:'CoinTelegraph',items:[
+    {t:'BTC Open Interest Soars Past $35B — Liquidation Cascade Risk Ahead',u:'https://cointelegraph.com/tags/bitcoin'},
+    {t:'Ethereum EIP-7702 Adopted — Smart Accounts Now Live on Mainnet',u:'https://cointelegraph.com/tags/ethereum'},
+    {t:'Whale Moves $500M in BTC to Cold Storage — Bullish Signal or Distribution?',u:'https://cointelegraph.com/tags/whale-watching'},
+    {t:'Coinbase Institutional Opens 24/7 Weekend Desk for Crypto Prime',u:'https://cointelegraph.com/tags/coinbase'},
+    {t:'Stablecoin Total Market Cap Crosses $250B for First Time',u:'https://cointelegraph.com/tags/stablecoins'},
+    {t:'Solana Mobile Chapter 2 Sells Out in 48 Hours — SOL Pumps 12%',u:'https://cointelegraph.com/tags/solana'},
+    {t:'BlackRock IBIT Leads Spot ETF Pack with $2.1B Weekly Inflow',u:'https://cointelegraph.com/tags/bitcoin-etf'}
+  ]},
+  theblock:{name:'The Block',items:[
+    {t:'Binance Spot Volume Reaches $22B Daily — Highest Since Bull Run Peak',u:'https://www.theblock.co/category/crypto-markets'},
+    {t:'Circle Files for IPO at $12B Valuation as USDC Marketcap Hits $58B',u:'https://www.theblock.co/category/policy-and-regulation'},
+    {t:'DeFi TVL Reclaims $200B as Yields Spike on Curve and Aave',u:'https://www.theblock.co/category/defi'},
+    {t:'Crypto VCs Deploy $4.2B in Q3 — Infra and Layer-2 Lead Investment',u:'https://www.theblock.co/category/funding-rounds'},
+    {t:'Bybit Surpasses Coinbase in Monthly Derivatives Volume',u:'https://www.theblock.co/category/crypto-markets'},
+    {t:'Uniswap v5 Launches Concentrated Liquidity Across 8 Chains',u:'https://www.theblock.co/category/defi'},
+    {t:'MicroStrategy Buys Additional 15,000 BTC — Total Holdings Grow',u:'https://www.theblock.co/category/crypto-markets'}
+  ]},
+  cryptopanic:{name:'CryptoPanic',items:[
+    {t:'BTC/USDT Volume Alert: 3.2x Surge on Binance Spot in Last 4 Hours',u:'https://cryptopanic.com/news/bitcoin/'},
+    {t:'ETH Staking Yield Drops to 3.1% as Validator Queue Hits 180K',u:'https://cryptopanic.com/news/ethereum/'},
+    {t:'Binance Lists 4 New AI Tokens — Launchpool Oversubscribed 400%',u:'https://cryptopanic.com/news/binance/'},
+    {t:'XRP/USD Testing 2024 ATH — Regulatory Clarity Boosts Sentiment',u:'https://cryptopanic.com/news/ripple/'},
+    {t:'SOL Funding Rate Flips Positive on All Exchanges — Longers In Control',u:'https://cryptopanic.com/news/solana/'},
+    {t:'Tether Freezes $34M USDT Linked to Exchange Hack Recovery',u:'https://cryptopanic.com/news/tether/'},
+    {t:'BNB Chain Gas Fees Hit 1-Year Low After Opcode Optimization',u:'https://cryptopanic.com/news/bnb/'}
+  ]},
+  decrypt:{name:'Decrypt',items:[
+    {t:'How Bitcoin ETFs Changed Wall Street\'s Relationship With Crypto',u:'https://decrypt.co/category/bitcoin'},
+    {t:'Ethereum Surpasses Visa in Daily Settlement Volume — Again',u:'https://decrypt.co/category/ethereum'},
+    {t:'Solana NFTs Stage Comeback as New Collection Hits $200M Floor',u:'https://decrypt.co/category/nft'},
+    {t:'GameFi Is Back — Web3 Games Hit 5M Daily Active Wallets',u:'https://decrypt.co/category/gaming'},
+    {t:'Crypto Industry Employment Tops 500,000 Globally in 2026',u:'https://decrypt.co/category/features'},
+    {t:'This DeFi Protocol Offers 22% APY — But Is It Sustainable?',u:'https://decrypt.co/category/defi'},
+    {t:'Circle CEO: USDC Hitting $100B Market Cap Is "Matter of When"',u:'https://decrypt.co/category/business'}
+  ]}
+};
+function buildNewsTicker(src){
+  var s=newsSources[src]||newsSources.coindesk;
+  return s.items.map(function(i){
+    return '<a href="'+i.u+'" target="_blank" style="color:#c89af0;text-decoration:none;" onmouseover="this.style.color=\'#f0e0ff\'" onmouseout="this.style.color=\'#c89af0\'">'+i.t+'</a>';
+  }).join('&nbsp;&nbsp;<span style="color:#4a2a4a;">│</span>&nbsp;&nbsp;')+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+}
+function switchNewsSource(src){
+  var el=document.getElementById('newsTicker');
+  if(!el)return;
+  el.innerHTML=buildNewsTicker(src);
+  el.style.animation='none';
+  void el.offsetHeight;
+  el.style.animation='ticker 60s linear infinite';
+}
+
+// ── Broker volume data ──
+var brokerData=[
+  {id:'Binance',pct:47.2,vol:18.4,elId:'brkBinance',pctColor:'#f0b90b',volColor:'#6a9a3a'},
+  {id:'Coinbase',pct:12.1,vol:4.7,elId:'brkCoinbase',pctColor:'#3a8fd4',volColor:'#4a6a8a'},
+  {id:'OKX',pct:8.4,vol:3.3,elId:'brkOkx',pctColor:'#7a9fff',volColor:'#3a4a7a'},
+  {id:'Bybit',pct:7.1,vol:2.8,elId:'brkBybit',pctColor:'#ffb060',volColor:'#7a5a3a'},
+  {id:'Kraken',pct:5.3,vol:2.1,elId:'brkKraken',pctColor:'#b070ff',volColor:'#5a3a7a'},
+  {id:'Bitfinex',pct:3.2,vol:1.2,elId:'brkBitfinex',pctColor:'#d4b030',volColor:'#6a5a2a'},
+  {id:'Others',pct:16.7,vol:6.5,elId:'brkOthers',pctColor:'#6a7a6a',volColor:'#3a4a3a'}
+];
+function _fmtB(v){return v>=1?'$'+v.toFixed(1)+'B':'$'+(v*1000).toFixed(0)+'M';}
+function refreshBrokers(){
+  var total=0;
+  brokerData.forEach(function(b){b.vol=Math.max(0.1,b.vol+(Math.random()-.5)*.4);total+=b.vol;});
+  brokerData.forEach(function(b){b.pct=b.vol/total*100;});
+  brokerData.sort(function(a,b){return b.vol-a.vol;});
+  brokerData.forEach(function(b){
+    var el=document.getElementById(b.elId);
+    if(!el)return;
+    el.innerHTML=b.id+' <b style="color:'+b.pctColor+'">'+b.pct.toFixed(1)+'%</b> <span style="color:'+b.volColor+'">'+_fmtB(b.vol)+'</span>';
+  });
+  var tot=document.getElementById('brkTotal');
+  if(tot)tot.innerHTML='Total: <b style="color:#3ecf5e;">'+_fmtB(total)+'</b>';
+  var top3=brokerData.slice(0,3);
+  var vlSBrk=document.getElementById('vlSBrk');
+  if(vlSBrk)vlSBrk.textContent=top3.map(function(b){return b.id+' '+_fmtB(b.vol*.47);}).join(' · ');
+  var vlNBrk=document.getElementById('vlNBrk');
+  if(vlNBrk)vlNBrk.textContent=top3.map(function(b){return b.id+' '+_fmtB(b.vol*.082);}).join(' · ');
+}
+// init news ticker and broker refresh on load
+(function(){
+  switchNewsSource('coindesk');
+  setInterval(refreshBrokers,300000);
+})();
+
+// ── Trending news data (simulated — in production, replace with live RSS proxy) ──
+var trendingData={
+  crypto:{label:'Crypto',color:'#3ecf5e',items:[
+    {t:'Bitcoin ETF Sees Record $2.8B Weekly Inflow — Institutions Leading',u:'https://www.coindesk.com/markets/'},
+    {t:'Ethereum Staking Crosses 35% of Supply — Decentralization Concerns Raised',u:'https://cointelegraph.com/tags/ethereum'},
+    {t:'Solana DeFi TVL Hits All-Time High as Memecoin Season Returns',u:'https://www.theblock.co/category/defi'},
+    {t:'BNB Chain Records Lowest Gas Fee in 18 Months After Upgrade',u:'https://cryptopanic.com/news/bnb/'},
+    {t:'XRP Breaks $0.70 — Lawsuit Resolution Drives Volume Spike',u:'https://decrypt.co/category/ripple'}
+  ]},
+  stocks:{label:'US Stocks',color:'#9db4ff',items:[
+    {t:'S&P 500 Hits 5,900 — Tech Earnings Beat Estimates for Q3',u:'https://www.cnbc.com/markets/'},
+    {t:'NVDA Surges 8% on AI Chip Demand; Semis Lead Market Higher',u:'https://finance.yahoo.com/topic/stock-market-news/'},
+    {t:'Treasury Yields Fall as Jobs Data Disappoints — Bonds Rally',u:'https://www.marketwatch.com/markets/stocks/'},
+    {t:'VIX Drops to 14 — Options Market Pricing in Low Near-Term Volatility',u:'https://www.cboe.com/tradable_products/vix/'},
+    {t:'Dow Jones Closes Up 1.2% on Positive Housing Data',u:'https://www.wsj.com/market-data'}
+  ]},
+  bonds:{label:'US Bonds',color:'#ffd580',items:[
+    {t:'10-Year Treasury Yield Dips to 4.21% as Inflation Data Cools',u:'https://www.treasurydirect.gov/'},
+    {t:'Fed Minutes Signal One More Rate Cut Possible in 2026',u:'https://www.federalreserve.gov/newsevents/'},
+    {t:'30-Year Mortgage Rate Falls to 6.45% — Lowest Since March',u:'https://www.freddiemac.com/pmms'},
+    {t:'2Y/10Y Spread Turns Positive — Recession Risk Gauge Eases',u:'https://fred.stlouisfed.org/'},
+    {t:'Investment-Grade Corporate Bond Spreads Tighten on Risk-On Mood',u:'https://www.wsj.com/market-data'}
+  ]},
+  commodities:{label:'Commodities',color:'#ffb060',items:[
+    {t:'Gold Hits $2,780/oz — Record High as Dollar Weakens',u:'https://www.kitco.com/news/gold/'},
+    {t:'WTI Crude Falls Below $72 — OPEC+ Output Increase Confirmed',u:'https://www.oilprice.com/Energy/Crude-Oil/'},
+    {t:'Silver Breaks $33/oz — Industrial Demand from Solar Panels Surges',u:'https://www.kitco.com/news/silver/'},
+    {t:'Natural Gas Jumps 9% on LNG Export Terminal Reopening',u:'https://www.eia.gov/naturalgas/'},
+    {t:'Wheat Futures Drop 4% — Ukraine Grain Deal Extended Another 6 Months',u:'https://www.cmegroup.com/markets/agriculture/'}
+  ]},
+  equity:{label:'Equity Markets',color:'#b0e0ff',items:[
+    {t:'Nasdaq Composite Reaches New All-Time High Above 20,000',u:'https://www.nasdaq.com/market-activity/quotes/nasdaq-market-activity'},
+    {t:'Russell 2000 Small-Caps Outperform — Rate Cut Hopes Fuel Rally',u:'https://www.spglobal.com/spdji/en/indices/equity/sp-600/'},
+    {t:'MSCI World Index Up 2.1% — Global Equity Risk Appetite Returns',u:'https://www.msci.com/indexes'},
+    {t:'Emerging Markets ETF (EEM) Surges as Dollar Index Weakens',u:'https://finance.yahoo.com/topic/stock-market-news/'},
+    {t:'Value vs Growth: Value Stocks Outperform for Third Consecutive Month',u:'https://www.cnbc.com/markets/'}
+  ]},
+  fed:{label:'Fed / Econ',color:'#ff9999',items:[
+    {t:'Fed Chair Powell: "Inflation Returning to Target" — September Statement',u:'https://www.federalreserve.gov/newsevents/pressreleases/'},
+    {t:'US CPI Rises 2.4% YoY — Core Inflation Steady at 2.8%',u:'https://www.bls.gov/news.release/cpi.toc.htm'},
+    {t:'US GDP Growth Q2 Revised Up to 2.9% — Consumer Spending Strong',u:'https://www.bea.gov/news/'},
+    {t:'Unemployment Rate Holds at 4.0% — Labor Market Remains Resilient',u:'https://www.bls.gov/news.release/empsit.toc.htm'},
+    {t:'US Debt Ceiling Suspension Extended to March 2027 by Congress',u:'https://fiscaldata.treasury.gov/'}
+  ]}
+};
+var _trendIdx={};Object.keys(trendingData).forEach(function(k){_trendIdx[k]=0;});
+var _trendCat=Object.keys(trendingData);
+var _trendCatCursor=0;
+function _rotateTrending(){
+  var cat=_trendCat[_trendCatCursor%_trendCat.length];
+  var d=trendingData[cat];
+  var idx=_trendIdx[cat]%d.items.length;
+  var chip=document.getElementById('trendingText');
+  if(chip){
+    var item=d.items[idx];
+    chip.innerHTML='<span style="color:'+d.color+';font-size:9px;">['+d.label+']</span> '+item.t.slice(0,55)+(item.t.length>55?'…':'');
+  }
+  _trendIdx[cat]=(idx+1)%d.items.length;
+  _trendCatCursor++;
+}
+function _buildTrendingPopup(){
+  var body=document.getElementById('trendingPopupBody');
+  if(!body)return;
+  body.innerHTML='';
+  Object.keys(trendingData).forEach(function(k){
+    var d=trendingData[k];
+    var col=document.createElement('div');
+    col.style.cssText='background:#060c06;border:1px solid #0d1a0d;border-radius:3px;padding:4px 6px;';
+    var hdr=document.createElement('div');
+    hdr.style.cssText='color:'+d.color+';font-weight:bold;font-size:9.5px;margin-bottom:3px;border-bottom:1px solid #0d1a0d;padding-bottom:2px;';
+    hdr.textContent='▸ '+d.label;
+    col.appendChild(hdr);
+    d.items.forEach(function(item){
+      var a=document.createElement('a');
+      a.href=item.u;
+      a.target='_blank';
+      a.style.cssText='display:block;color:#7a9a7a;font-size:9px;text-decoration:none;padding:1px 0;line-height:1.4;';
+      a.textContent='• '+item.t;
+      a.onmouseover=function(){this.style.color='#aadaaa';};
+      a.onmouseout=function(){this.style.color='#7a9a7a';};
+      col.appendChild(a);
+    });
+    body.appendChild(col);
+  });
+}
+var _trendPopupOpen=false;
+function toggleTrendingPopup(){
+  _trendPopupOpen=!_trendPopupOpen;
+  var p=document.getElementById('trendingPopup');
+  if(!p)return;
+  if(_trendPopupOpen){_buildTrendingPopup();p.style.display='block';}
+  else{p.style.display='none';}
+}
+// init: rotate through categories every 8s, full refresh every 5min
+_rotateTrending();
+setInterval(_rotateTrending,8000);
+setInterval(function(){
+  // Simulate new trending data (in production: fetch RSS)
+  Object.keys(_trendIdx).forEach(function(k){_trendIdx[k]=Math.floor(Math.random()*trendingData[k].items.length);});
+  _rotateTrending();
+  if(_trendPopupOpen)_buildTrendingPopup();
+},300000);
 var snapOn=false;
 function toggleSnap(){snapOn=!snapOn;var b=document.getElementById('snapTog');b.textContent=snapOn?'Auto: On ▶':'Auto: Off';b.style.color=snapOn?'#3f3':'#9f9';document.getElementById('snapStatus').textContent=snapOn?'Next in 5 min':'';}
 function snapAll(){document.getElementById('snapStatus').textContent='Snapshot taken: '+new Date().toLocaleTimeString();}
@@ -2590,7 +2856,7 @@ function resetSize(panelId){
   var minBtn=panel.querySelector('.min-btn');
   if(minBtn){minBtn.innerHTML='&mdash;';minBtn.classList.remove('minimized-restore');}
 }
-function refreshVL(){var v=document.getElementById('vlS');if(v)v.textContent='Refreshing…';setTimeout(function(){if(v)v.textContent='BTCUSDT   $'+((43800+Math.random()*200).toFixed(2))+'   ▲+'+(2+Math.random()).toFixed(2)+'%';},800);}
+function refreshVL(){var v=document.getElementById('vlS');if(v)v.textContent='Refreshing…';setTimeout(function(){if(v)v.textContent='BTCUSDT   $'+((43800+Math.random()*200).toFixed(2))+'   ▲+'+(2+Math.random()).toFixed(2)+'%';refreshBrokers();},800);}
 function setFont(sz,btn){document.getElementById('fontTog').querySelectorAll('button').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.body.className='chart-font-'+sz;}
 function toggleTerm(){document.getElementById('termBar').classList.toggle('show');}
 // ── Unified save helper: artifact downloads → blob link → clipboard → modal ──
