@@ -1785,6 +1785,27 @@ function getSVGState(id){
   return svgState[id];
 }
 
+// Deoverlap an array of {x,y,anchorY} points along the Y axis.
+// direction: negative = push upward first (BUY arrows), positive = push downward (SELL arrows)
+function _deoverlapPts(pts,direction){
+  if(!pts||pts.length<2)return;
+  var MIN_GAP=12;
+  pts.sort(function(a,b){return direction<0?b.y-a.y:a.y-b.y;});
+  for(var pass=0;pass<10;pass++){
+    var moved=false;
+    for(var i=0;i<pts.length-1;i++){
+      var gap=direction<0?pts[i].y-pts[i+1].y:pts[i+1].y-pts[i].y;
+      if(gap<MIN_GAP){
+        var push=MIN_GAP-gap;
+        if(direction<0){pts[i].y+=push*0.4;pts[i+1].y-=push*0.6;}
+        else            {pts[i].y-=push*0.4;pts[i+1].y+=push*0.6;}
+        moved=true;
+      }
+    }
+    if(!moved)break;
+  }
+}
+
 function drawSVG(id){
   var p=panels[id];
   var area=document.getElementById('ca-'+id);
@@ -2037,18 +2058,29 @@ function drawSVG(id){
   // ── Buy/Sell signal arrows ──
   try{
     var _sigs=genBarSignals(data);
+    // Collect all BUY/SELL positions, then deoverlap per direction
+    var _buyPts=[],_sellPts=[];
     _sigs.forEach(function(s){
       var x=padL+s.i*stepX+stepX/2;
+      if(s.type==='BUY') _buyPts.push({x:x,anchorY:toY(data[s.i].low)-5,y:toY(data[s.i].low)-5,fill:'#26a69a',glyph:'▲'});
+      else               _sellPts.push({x:x,anchorY:toY(data[s.i].high)+13,y:toY(data[s.i].high)+13,fill:'#ef5350',glyph:'▼'});
+    });
+    _deoverlapPts(_buyPts,-12);   // BUY: push upward when crowded
+    _deoverlapPts(_sellPts,12);   // SELL: push downward when crowded
+    _buyPts.concat(_sellPts).forEach(function(pt){
+      if(Math.abs(pt.y-pt.anchorY)>3){
+        var ln=document.createElementNS(ns,'line');
+        ln.setAttribute('x1',pt.x);ln.setAttribute('y1',pt.anchorY);
+        ln.setAttribute('x2',pt.x);ln.setAttribute('y2',pt.y+(pt.glyph==='▲'?8:-8));
+        ln.setAttribute('stroke',pt.fill);ln.setAttribute('stroke-width','0.6');
+        ln.setAttribute('stroke-dasharray','2,3');ln.setAttribute('opacity','0.5');
+        chartG.appendChild(ln);
+      }
       var arw=document.createElementNS(ns,'text');
       arw.setAttribute('font-family','monospace');arw.setAttribute('font-size','11');
       arw.setAttribute('text-anchor','middle');arw.setAttribute('font-weight','bold');
-      if(s.type==='BUY'){
-        arw.setAttribute('x',x);arw.setAttribute('y',toY(data[s.i].low)-5);
-        arw.setAttribute('fill','#26a69a');arw.textContent='▲';
-      } else {
-        arw.setAttribute('x',x);arw.setAttribute('y',toY(data[s.i].high)+13);
-        arw.setAttribute('fill','#ef5350');arw.textContent='▼';
-      }
+      arw.setAttribute('x',pt.x);arw.setAttribute('y',pt.y);
+      arw.setAttribute('fill',pt.fill);arw.textContent=pt.glyph;
       chartG.appendChild(arw);
     });
   }catch(e){ console.warn('[drawSVG] signal arrows skipped:',e); }
@@ -2120,26 +2152,55 @@ function drawSVG(id){
         axOvr.appendChild(futLbl);
       }
     }
-    // ── Y-axis labels ──
+    // ── Y-axis labels — collect, deoverlap, then draw with dotted leaders ──
+    var _yLabels=[];
     for(var yi=0;yi<=4;yi++){
       var sY=padT+(ch2-padT-padB)*(yi/4);
       var svgY=(sY-s.ty)/s.sy;
       var price=minP+(1-(svgY-padT)/plotH)*rng;
       if(price<minP*0.4||price>maxP*1.4)continue;
-      var priceStr=fmt(price);
+      _yLabels.push({anchorY:sY,y:sY,price:price,priceStr:fmt(price)});
+    }
+    // Deoverlap: sort by screen Y, iteratively push apart until no collisions
+    _yLabels.sort(function(a,b){return a.y-b.y;});
+    var _MIN_YGAP=13;
+    for(var _pass=0;_pass<8;_pass++){
+      var _moved=false;
+      for(var _li=0;_li<_yLabels.length-1;_li++){
+        var _gap=_yLabels[_li+1].y-_yLabels[_li].y;
+        if(_gap<_MIN_YGAP){
+          var _push=(_MIN_YGAP-_gap)/2;
+          _yLabels[_li].y-=_push;
+          _yLabels[_li+1].y+=_push;
+          _moved=true;
+        }
+      }
+      if(!_moved)break;
+    }
+    // Draw each label; add dotted SVG leader when shifted more than 3px
+    _yLabels.forEach(function(yl){
+      var shifted=Math.abs(yl.y-yl.anchorY)>3;
       if(p.showYRight!==false){
         var el=document.createElement('div');
-        el.style.cssText='position:absolute;right:2px;top:'+(sY-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
-        el.textContent=priceStr;
+        el.style.cssText='position:absolute;right:2px;top:'+(yl.y-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.82);padding:0 2px;border-radius:2px;';
+        el.textContent=yl.priceStr;
         axOvr.appendChild(el);
+        if(shifted){
+          var ln=document.createElementNS(ns,'line');
+          ln.setAttribute('x1',fullW-padR+1);ln.setAttribute('x2',fullW-padR+1);
+          ln.setAttribute('y1',yl.anchorY);ln.setAttribute('y2',yl.y);
+          ln.setAttribute('stroke','#5a8a6a');ln.setAttribute('stroke-width','0.7');
+          ln.setAttribute('stroke-dasharray','2,3');ln.setAttribute('opacity','0.6');
+          svg.appendChild(ln);
+        }
       }
       if(p.showYLeft){
         var el2=document.createElement('div');
-        el2.style.cssText='position:absolute;left:2px;top:'+(sY-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.75);padding:0 2px;';
-        el2.textContent=priceStr;
+        el2.style.cssText='position:absolute;left:2px;top:'+(yl.y-6)+'px;color:#8fa;font-family:monospace;font-size:10px;white-space:nowrap;background:rgba(14,17,23,0.82);padding:0 2px;border-radius:2px;';
+        el2.textContent=yl.priceStr;
         axOvr.appendChild(el2);
       }
-    }
+    });
     // ── X-axis time labels ──
     for(var xi=0;xi<=5;xi++){
       var sX=padL+(cw2-padL-padR)*(xi/5);
