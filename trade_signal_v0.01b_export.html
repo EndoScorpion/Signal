@@ -883,30 +883,34 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- ═══ TOP PERFORMERS ═══ -->
-<div id="topPerfBar" style="background:#030a03;border-top:1px solid #0a1f0a;border-bottom:1px solid #0d2a0d;padding:5px 8px;font-family:monospace;font-size:9px;display:block;">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-    <span style="color:#aaff44;font-weight:bold;font-size:10px;">&#9733; Top Performers</span>
-    <span style="color:#1a3a1a;font-size:8.5px;">Stoch signals ≥51% win rate after fees &amp; US tax · all TFs &amp; K periods</span>
-    <span id="topPerfCount" style="color:#3ecf5e;font-size:8.5px;"></span>
+<div id="topPerfBar" style="background:#040e04;border-top:2px solid #1a4a1a;border-bottom:1px solid #0d2a0d;padding:7px 10px;font-family:monospace;font-size:10px;display:block;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;">
+    <span style="color:#aaff44;font-weight:bold;font-size:11px;">&#9733; Top Performers</span>
+    <span style="color:#3a7a3a;font-size:9px;">Stoch signals ≥35% win rate after fees &amp; US tax · all TFs &amp; K periods</span>
+    <span id="topPerfCount" style="color:#3ecf5e;font-size:9px;font-weight:bold;"></span>
+    <span id="topPerfStatus" style="color:#ffb400;font-size:8.5px;display:none;">&#8987; Computing…</span>
+    <button onclick="(function(){var s=document.getElementById('topPerfStatus');if(s)s.style.display='inline';window._btRunning=false;runStochBTs();})()" style="background:#001a00;color:#aaff44;border:1.5px solid #3a7a1a;border-radius:4px;padding:3px 10px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;margin-left:4px;" title="Run stochastic cross backtest across all coins, timeframes and K-periods">&#9654; Run BT</button>
   </div>
   <div id="topPerfBody" style="overflow-x:auto;">
-    <table id="topPerfTable" style="border-collapse:collapse;font-size:9px;white-space:nowrap;min-width:100%;">
+    <table id="topPerfTable" style="border-collapse:collapse;font-size:10px;white-space:nowrap;min-width:100%;">
       <thead>
-        <tr style="color:#1a4a1a;border-bottom:1px solid #0d2a0d;">
-          <th style="text-align:left;padding:2px 8px 2px 5px;">Symbol</th>
-          <th style="text-align:left;padding:2px 5px;">TF</th>
-          <th style="text-align:left;padding:2px 5px;">K</th>
-          <th style="text-align:left;padding:2px 8px 2px 5px;">Signal</th>
-          <th style="text-align:right;padding:2px 8px;">Win%</th>
-          <th style="text-align:right;padding:2px 8px;">#</th>
-          <th style="text-align:right;padding:2px 8px;">Gross</th>
-          <th style="text-align:right;padding:2px 8px;">−Fees</th>
-          <th style="text-align:right;padding:2px 8px;">−Tax</th>
-          <th style="text-align:right;padding:2px 8px;">Bars</th>
-          <th style="text-align:right;padding:2px 5px;">RndTrip</th>
+        <tr style="color:#5a9a5a;border-bottom:1px solid #1a3a1a;background:#020a02;">
+          <th style="text-align:left;padding:3px 10px 3px 6px;">Symbol</th>
+          <th style="text-align:left;padding:3px 6px;">TF</th>
+          <th style="text-align:left;padding:3px 6px;">K</th>
+          <th style="text-align:left;padding:3px 10px 3px 6px;">Signal</th>
+          <th style="text-align:right;padding:3px 10px;">Win%</th>
+          <th style="text-align:right;padding:3px 10px;">#</th>
+          <th style="text-align:right;padding:3px 10px;">Gross</th>
+          <th style="text-align:right;padding:3px 10px;">−Fees</th>
+          <th style="text-align:right;padding:3px 10px;">−Tax</th>
+          <th style="text-align:right;padding:3px 10px;">Bars</th>
+          <th style="text-align:right;padding:3px 6px;">RndTrip</th>
         </tr>
       </thead>
-      <tbody id="topPerfRows"></tbody>
+      <tbody id="topPerfRows">
+        <tr><td colspan="11" style="color:#4a7a4a;padding:8px 6px;font-size:9px;">&#8987; Initializing backtest engine…</td></tr>
+      </tbody>
     </table>
   </div>
 </div>
@@ -927,7 +931,7 @@ svg{max-width:100%;height:auto;}
         <input class="prv-in" value="Binance WSS" type="text" onchange="updateFeeDisplay('btc')">
       </div>
       <div class="pbtns">
-        <button class="ib" onclick="refreshPanel('btc')" title="Refresh">↻</button>
+        <button class="ib" onclick="refreshPanel('btc')" title="Refresh chart data" style="font-size:9px;padding:2px 5px;">↻ Ref</button>
         <button class="ib" onclick="snapPanel('btc')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('btc')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-btc',this)" title="Expand" style="color:#aaf;">&#10562;</button>
@@ -1018,7 +1022,7 @@ svg{max-width:100%;height:auto;}
         <input class="prv-in" value="Bybit WSS" type="text" onchange="updateFeeDisplay('eth')">
       </div>
       <div class="pbtns">
-        <button class="ib" onclick="refreshPanel('eth')" title="Refresh">↻</button>
+        <button class="ib" onclick="refreshPanel('eth')" title="Refresh chart data" style="font-size:9px;padding:2px 5px;">↻ Ref</button>
         <button class="ib" onclick="snapPanel('eth')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('eth')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-eth',this)" title="Expand" style="color:#aaf;">&#10562;</button>
@@ -1116,7 +1120,7 @@ svg{max-width:100%;height:auto;}
         <input class="prv-in" value="OKX WSS" type="text" onchange="updateFeeDisplay('sol')">
       </div>
       <div class="pbtns">
-        <button class="ib" onclick="refreshPanel('sol')" title="Refresh">↻</button>
+        <button class="ib" onclick="refreshPanel('sol')" title="Refresh chart data" style="font-size:9px;padding:2px 5px;">↻ Ref</button>
         <button class="ib" onclick="snapPanel('sol')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('sol')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-sol',this)" title="Expand" style="color:#aaf;">&#10562;</button>
@@ -1206,7 +1210,7 @@ svg{max-width:100%;height:auto;}
         <input class="prv-in" value="Binance WSS" type="text" onchange="updateFeeDisplay('bnb')">
       </div>
       <div class="pbtns">
-        <button class="ib" onclick="refreshPanel('bnb')" title="Refresh">↻</button>
+        <button class="ib" onclick="refreshPanel('bnb')" title="Refresh chart data" style="font-size:9px;padding:2px 5px;">↻ Ref</button>
         <button class="ib" onclick="snapPanel('bnb')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('bnb')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-bnb',this)" title="Expand" style="color:#aaf;">&#10562;</button>
@@ -1299,7 +1303,7 @@ svg{max-width:100%;height:auto;}
       <a href="https://www.tradingview.com/chart/?symbol=BINANCE:USDCUSDT" target="_blank" class="tv-badge">&#128200; Full Chart &#8599;</a>
     </div>
     <div class="pbtns">
-      <button class="ib" onclick="refreshPanel('usdc')" title="Refresh">↻</button>
+      <button class="ib" onclick="refreshPanel('usdc')" title="Refresh chart data" style="font-size:9px;padding:2px 5px;">↻ Ref</button>
       <button class="ib" onclick="snapPanel('usdc')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
       <button class="ib" onclick="restorePanel('usdc')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
       <button class="ib min-btn" onclick="minimizePanel('p-usdc',this)" title="Minimize">&mdash;</button>
@@ -6093,7 +6097,7 @@ function _collectTopHits(id,tfLabel,kPeriod,results,costInfo){
     var d=results[sig];
     if(!d||d.n<2)return;
     var wr=d.wins/d.n*100;
-    if(wr<45)return;
+    if(wr<35)return;
     hits.push({id:id,tf:tfLabel,kp:kPeriod,key:sig,wr:wr,d:d,rtCostPct:costInfo.rtCostPct});
   });
   return hits;
@@ -6174,7 +6178,7 @@ function renderTopPerformers(allHits){
   bar.style.display='block';
   if(allHits.length===0){
     if(cntEl)cntEl.textContent='';
-    rows.innerHTML='<tr><td colspan="11" style="color:#4a9a4a;padding:6px 5px;font-size:8.5px;">No signals ≥45% win rate yet — awaiting more data or click ↻ Run</td></tr>';
+    rows.innerHTML='<tr><td colspan="11" style="color:#4a9a4a;padding:8px 6px;font-size:9px;">No signals ≥35% win rate yet — click <b style="color:#aaff44;">▶ Run BT</b> to compute</td></tr>';
     return;
   }
   bar.style.display='block';
@@ -6212,6 +6216,10 @@ var _btRunning=false;
 function runStochBTs(){
   if(_btRunning)return; // re-entrancy guard: prevents overlapping invocations from rapid tax/state changes
   _btRunning=true;
+  // Safety: force-reset after 12s in case async fetches never call back
+  setTimeout(function(){_btRunning=false;},12000);
+  var _tpStatus=document.getElementById('topPerfStatus');
+  if(_tpStatus)_tpStatus.style.display='inline';
   var body=document.getElementById('stochBTBody');
   if(!body){_btRunning=false;return;}
   var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
@@ -6318,7 +6326,7 @@ function runStochBTs(){
         allTopHits=allTopHits.concat(h);
       });
     });
-    if(m15done){renderTopPerformers(allTopHits);_btRunning=false;}
+    if(m15done){renderTopPerformers(allTopHits);_btRunning=false;var s=document.getElementById('topPerfStatus');if(s)s.style.display='none';}
   }
   var m15done=false;
 
@@ -6335,7 +6343,7 @@ function runStochBTs(){
       });
     });
     m15done=true;
-    if(pending1m===0){renderTopPerformers(allTopHits);_btRunning=false;}
+    if(pending1m===0){renderTopPerformers(allTopHits);_btRunning=false;var s=document.getElementById('topPerfStatus');if(s)s.style.display='none';}
   }
 
   ['btc','eth','sol','bnb'].forEach(function(id){
@@ -6365,7 +6373,7 @@ function runStochBTs(){
   });
 }
 
-setTimeout(runStochBTs,1500); // fallback: live data debounce usually fires first
+setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
 </script>
 
 <!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
