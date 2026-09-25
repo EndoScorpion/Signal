@@ -5496,7 +5496,9 @@ var _assetSpreads={btc:0.0001,eth:0.00015,sol:0.0003,bnb:0.0002};
 function _runStochBTForPanel(id){
   var p=panels[id];
   if(!p)return null;
-  var data=(p._liveData&&p._liveData.length>=10)?p._liveData:genOHLC(p.base||43000,120,p.base*0.014);
+  // Only run on real REST/live snapshot data — never synthetic
+  if(!p._liveData||p._liveData.length<10)return{id:id,noLive:true};
+  var data=p._liveData;
   var panEl=document.getElementById('p-'+id);
   var prvIn=panEl?panEl.querySelector('.prv-in'):null;
   var broker=_getBrokerFromProvider(prvIn?prvIn.value:'');
@@ -5555,7 +5557,14 @@ function runStochBTs(){
   body.innerHTML='';
   ['btc','eth','sol','bnb'].forEach(function(id){
     var bt=_runStochBTForPanel(id);
-    if(!bt){body.innerHTML+='<div style="color:#2a3a2a;font-size:9px;">'+id+': no data</div>';return;}
+    if(!bt||bt.noLive){
+      body.innerHTML+='<div style="background:#040d04;border:1px solid #0d1f0d;border-radius:4px;padding:8px 10px;color:#1a3a1a;font-size:9px;">'
+        +'<span style="color:#3ecf5e;font-weight:bold;">'+names[id]+'</span>'
+        +' &nbsp;<span style="color:#1a4a2a;">&#9202; Awaiting live REST data&hellip;</span>'
+        +' <span style="color:#112a11;font-size:8px;">Backtest runs only on real OHLCV history, not synthetic data.</span>'
+        +'</div>';
+      return;
+    }
     var rows='';
     ['up20','up50','up80','dn20','dn50','dn80'].forEach(function(k){
       var d=bt.res[k];
@@ -5628,6 +5637,14 @@ function renderTopPerformers(allResults){
   });
   // Sort best win% first
   hits.sort(function(a,b){return b.wr-a.wr;});
+  // Check if any panels have live data at all
+  var anyLive=allResults.some(function(bt){return bt&&!bt.noLive;});
+  if(!anyLive){
+    bar.style.display='block';
+    if(cntEl)cntEl.textContent='';
+    rows.innerHTML='<tr><td colspan="10" style="color:#1a3a1a;padding:6px 5px;font-size:8.5px;">&#9202; Awaiting live REST data — top performers will appear here once real OHLCV history loads.</td></tr>';
+    return;
+  }
   if(hits.length===0){bar.style.display='none';return;}
   bar.style.display='block';
   if(cntEl)cntEl.textContent='('+hits.length+' signal'+(hits.length!==1?'s':'')+')';
