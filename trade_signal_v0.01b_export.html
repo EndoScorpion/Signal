@@ -6092,7 +6092,7 @@ function _collectTopHits(id,tfLabel,kPeriod,results,costInfo){
     var d=results[sig];
     if(!d||d.n<2)return;
     var wr=d.wins/d.n*100;
-    if(wr<51)return;
+    if(wr<45)return;
     hits.push({id:id,tf:tfLabel,kp:kPeriod,key:sig,wr:wr,d:d,rtCostPct:costInfo.rtCostPct});
   });
   return hits;
@@ -6170,8 +6170,10 @@ function renderTopPerformers(allHits){
   var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
   var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
   allHits.sort(function(a,b){return b.wr-a.wr;});
+  bar.style.display='block';
   if(allHits.length===0){
-    bar.style.display='none';
+    if(cntEl)cntEl.textContent='';
+    rows.innerHTML='<tr><td colspan="11" style="color:#1a4a2a;padding:6px 5px;font-size:8.5px;">No signals ≥45% win rate yet — awaiting more data or click ↻ Run</td></tr>';
     return;
   }
   bar.style.display='block';
