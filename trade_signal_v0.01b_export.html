@@ -42,16 +42,16 @@ input,select{font-family:monospace;}
 .tf-sel{background:#000;color:#9db4ff;border:1px solid var(--grid);font-size:10px;border-radius:3px;padding:1px 3px;}
 .sym-in{background:#000;color:#e0e6ff;border:1px solid #2a4060;border-radius:3px;font-size:10px;padding:1px 5px;width:86px;}
 .prv-in{background:#000;color:#b0c8ff;border:1px solid #2a4060;border-radius:3px;font-size:10px;padding:1px 5px;width:110px;}
-.pbtns{display:flex;gap:2px;flex-wrap:wrap;}
-.ib{background:#000;color:#9aa;border:1px solid #2a2e39;border-radius:3px;padding:2px 6px;font-size:12px;line-height:1.4;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:22px;font-family:monospace;}
+.pbtns{display:flex;gap:2px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;}
+.ib{background:#000;color:#9aa;border:1px solid #2a2e39;border-radius:3px;padding:2px 6px;font-size:12px;line-height:1.4;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:22px;font-family:monospace;white-space:nowrap;}
 .ib:hover{background:#1a1e29;color:#cee;}
 .ib.rs{background:#000;color:#997;border-color:#554;}
-.ib.min-btn{background:#000;color:#ff0;border-color:#554;font-size:14px;font-weight:bold;padding:1px 7px;}
-.ib.min-btn:hover{background:#111;}
 .ib.pause-btn{background:#000;color:#ffb400;border-color:#664400;font-size:11px;padding:2px 7px;}
 .ib.pause-btn:hover{background:#1a1000;}
 .ib.pause-btn.paused{color:#ef5350;border-color:#660000;animation:pulse 1.5s infinite;}
 .ib.minimized-restore{color:#4f4;border-color:#2a5;}
+.panel-min-btn{position:absolute;top:2px;right:3px;z-index:15;background:#0a0a00;color:#aa9900;border:1px solid #443300;border-radius:3px;padding:0 5px;font-size:13px;cursor:pointer;line-height:1.5;font-weight:bold;font-family:monospace;}
+.panel-min-btn:hover{background:#1a1600;color:#ffdd00;}
 .zb{background:#0a1a2a;color:#7af;border:1px solid #2a3a4a;border-radius:3px;padding:1px 5px;font-size:11px;font-family:'Courier Prime','Courier New',monospace;}
 .zb.y{color:#aff;}.zb.r{color:#fa8;}
 
@@ -141,12 +141,12 @@ svg{max-width:100%;height:auto;}
 .snap-bar,.ctrl-row,.ind-row{flex-wrap:wrap;}
 @media (max-width:1100px){
   .panel{width:calc(100% - 8px) !important;min-width:unset;}
-  .pbtns{flex-wrap:wrap;gap:2px;}
+  .pbtns{flex-wrap:nowrap;gap:2px;}
   .zb{padding:1px 3px;font-size:10px;}
 }
 @media (max-width:860px){
   .panel{width:calc(100% - 8px) !important;min-width:unset;}
-  .pbtns{flex-wrap:wrap;gap:2px;}
+  .pbtns{flex-wrap:nowrap;gap:2px;}
   .sym-in{width:74px;}.prv-in{width:90px;}
 }
 @media (max-width:560px){
@@ -223,16 +223,16 @@ svg{max-width:100%;height:auto;}
 /* ctrl-row/ind-row docked inside chart area — top is set by JS */
 .ctrl-row.top-docked,.ind-row.top-docked{position:absolute;left:0;right:0;z-index:5;background:rgba(5,10,5,0.96);border-bottom:1px solid #1e2228;border-top:none;box-shadow:0 2px 6px rgba(0,0,0,.55);}
 /* ── Chart control bar (inside chart-area, top-right overlay) ── */
-.ccb{position:absolute;top:3px;right:4px;display:flex;gap:2px;align-items:center;z-index:8;background:rgba(5,10,5,0.78);border:1px solid #1a2a1a;border-radius:4px;padding:1px 4px;backdrop-filter:blur(2px);}
-.ccb-btn{background:none;border:1px solid #222c22;border-radius:3px;color:#3a5a3a;font-size:9px;padding:1px 5px;cursor:pointer;font-family:monospace;line-height:1.3;}
-.ccb-btn:hover{color:#7afa7a;border-color:#3a5a3a;}
-.ccb-btn.on{color:#3ecf5e;border-color:#1a4a2a;background:rgba(0,30,0,0.4);}
-.ccb-btn.frozen{color:#ef5350;border-color:#5a1a1a;background:rgba(40,0,0,0.35);}
-.ccb-btn.dim{color:#2a3a2a;border-color:#1a1e1a;}
-.ccb-sm{background:none;border:1px solid #1a2a1a;border-radius:2px;color:#3a5a3a;font-size:9px;padding:0 4px;cursor:pointer;font-family:monospace;line-height:1.3;min-width:14px;}
-.ccb-sm:hover{color:#7afa7a;}
+.ccb{position:absolute;top:3px;right:4px;display:flex;gap:2px;align-items:center;z-index:8;background:rgba(0,0,0,0.85);border:1px solid #2a3a2a;border-radius:4px;padding:2px 4px;backdrop-filter:blur(3px);}
+.ccb-btn{background:#0a0a0a;border:1px solid #2a3a2a;border-radius:3px;color:#4a6a4a;font-size:9px;padding:2px 4px;cursor:pointer;font-family:monospace;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:16px;}
+.ccb-btn:hover{color:#9afa9a;border-color:#3a5a3a;background:#111;}
+.ccb-btn.on{color:#3ecf5e;border-color:#2a6a3a;background:#001a00;}
+.ccb-btn.frozen{color:#ef5350;border-color:#5a1a1a;background:#1a0000;}
+.ccb-btn.dim{color:#2a3a2a;border-color:#1a1e1a;background:#0a0a0a;}
+.ccb-sm{background:#0a0a0a;border:1px solid #1e2e1e;border-radius:2px;color:#3a5a3a;font-size:9px;padding:1px 4px;cursor:pointer;font-family:monospace;line-height:1;min-width:14px;height:16px;display:inline-flex;align-items:center;justify-content:center;}
+.ccb-sm:hover{color:#7afa7a;background:#111;}
 .ccb-pct{color:#4a7a4a;font-size:9px;font-family:monospace;min-width:24px;text-align:center;}
-.ccb-sep{color:#1a2a1a;font-size:9px;margin:0 1px;}
+.ccb-sep{color:#2a3a2a;font-size:9px;margin:0 1px;}
 /* ── Memory / cache monitor bar ── */
 #memBar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:3px 10px;background:#040508;border-top:1px solid #0e0f18;font-family:monospace;font-size:9px;}
 .mem-lbl{color:#252840;}
@@ -380,6 +380,39 @@ svg{max-width:100%;height:auto;}
 </div>
 <div id="rdOverlay" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.4);" onclick="toggleReminderModal()"></div>
 
+<!-- ═══ AUTO-DIAG POPUP ═══ -->
+<div id="autoDiagPopup" style="display:none;position:fixed;bottom:14px;left:14px;z-index:97000;width:300px;background:#06080a;border:1px solid #2a1a00;border-radius:6px;box-shadow:0 4px 24px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;">
+  <div onmousedown="startDragPanel('autoDiagPopup',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0c0a04;border-radius:6px 6px 0 0;padding:5px 8px;border-bottom:1px solid #2a1a00;">
+    <span style="color:#ffb400;font-weight:bold;font-size:10px;">⚠ Auto-Diag: Data Recovery</span>
+    <button onclick="closeDiagPopup()" style="background:none;border:none;color:#4a5570;cursor:pointer;font-size:12px;">✕</button>
+  </div>
+  <div id="diagPopupBody" style="padding:6px 8px;max-height:200px;overflow-y:auto;"></div>
+  <div style="border-top:1px solid #1a1500;padding:4px 8px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="color:#4a5570;font-size:8.5px;">Auto-retrying stale sources…</span>
+    <button onclick="document.getElementById('diagFetchLogWrap').style.display=document.getElementById('diagFetchLogWrap').style.display==='none'?'block':'none'" style="background:#0a0a00;color:#9db4ff;border:1px solid #1a2a3a;border-radius:3px;padding:1px 6px;font-size:9px;cursor:pointer;">📋 Log</button>
+  </div>
+</div>
+
+<!-- ═══ FETCH FAILURE LOG (collapsible) ═══ -->
+<div id="diagFetchLogWrap" style="display:none;position:fixed;bottom:14px;left:320px;z-index:97001;width:420px;max-height:260px;background:#05080a;border:1px solid #1a2a3a;border-radius:6px;box-shadow:0 4px 24px rgba(0,0,0,0.9);font-family:monospace;font-size:9px;">
+  <div onmousedown="startDragPanel('diagFetchLogWrap',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#080c10;border-radius:6px 6px 0 0;padding:5px 8px;border-bottom:1px solid #1a2a3a;">
+    <span style="color:#9db4ff;font-weight:bold;font-size:10px;">📋 Fetch Log</span>
+    <div style="display:flex;gap:4px;align-items:center;">
+      <button onclick="_diagLog=[];_renderDiagLog();" style="background:none;border:1px solid #2a3a2a;border-radius:3px;color:#4a5570;padding:0 5px;font-size:8.5px;cursor:pointer;">Clear</button>
+      <button onclick="document.getElementById('diagFetchLogWrap').style.display='none'" style="background:none;border:none;color:#4a5570;cursor:pointer;font-size:12px;">✕</button>
+    </div>
+  </div>
+  <div style="padding:3px 0;display:flex;gap:6px;background:#060809;border-bottom:1px solid #111;padding:3px 8px;">
+    <span style="color:#3ecf5e;font-size:8px;">● OK</span>
+    <span style="color:#ffb400;font-size:8px;">● Warn</span>
+    <span style="color:#ef5350;font-size:8px;">● Fail</span>
+    <span style="color:#4a5570;font-size:8px;margin-left:auto;">source · IP · delay · fallback → result</span>
+  </div>
+  <div id="diagFetchLog" style="padding:4px 8px;overflow-y:auto;max-height:200px;line-height:1.5;">
+    <span style="color:#2a3a2a;">No events yet.</span>
+  </div>
+</div>
+
 <!-- ═══ DIAGNOSTICS PANEL ═══ -->
 <div id="diagPanel" style="display:none;position:fixed;bottom:12px;right:12px;z-index:88000;width:340px;max-height:320px;background:#080b0f;border:1px solid #1a3a2a;border-radius:6px;box-shadow:0 4px 24px rgba(0,0,0,0.8);font-family:monospace;font-size:10px;display:none;flex-direction:column;">
   <div id="diagHead" onmousedown="startDragPanel('diagPanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0a0e14;padding:4px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #1a2a1a;flex-shrink:0;">
@@ -436,9 +469,27 @@ svg{max-width:100%;height:auto;}
 
 <!-- ═══ COLOR PICKER POPUP ═══ -->
 <div id="cpModal" style="display:none;position:fixed;top:44px;right:12px;z-index:99999;background:#0d0f14;border:1px solid #3a2a5a;border-radius:8px;padding:12px 14px;width:288px;box-shadow:0 8px 40px rgba(0,0,0,0.85);font-family:monospace;font-size:11px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <span style="color:#ff9ef5;font-weight:bold;font-size:12px;">&#127912; Color Picker</span>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <span style="color:#ff9ef5;font-weight:bold;font-size:12px;">&#127912; Colors &amp; Theme</span>
     <button onclick="toggleColorPicker()" style="background:none;border:none;color:#666;font-size:14px;cursor:pointer;padding:0 2px;">&#10005;</button>
+  </div>
+  <!-- ── Theme Presets ── -->
+  <div style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #1e1e2e;">
+    <div style="color:#4a5570;font-size:9px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Theme Presets</div>
+    <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;">
+      <button class="th-btn active-theme" data-theme="dark"   onclick="applyTheme('dark')"   style="color:#3ecf5e;border-color:#1a4a2a;"><span class="th-swatch" style="background:#0b0c10;"></span>Dark</button>
+      <button class="th-btn"              data-theme="blue"   onclick="applyTheme('blue')"   style="color:#4a9aff;border-color:#1a2a4a;"><span class="th-swatch" style="background:#07090e;border-color:#1e3060;"></span>Blue</button>
+      <button class="th-btn"              data-theme="forest" onclick="applyTheme('forest')" style="color:#4ecf7a;border-color:#1a4a28;"><span class="th-swatch" style="background:#060e08;border-color:#1a3820;"></span>Forest</button>
+      <button class="th-btn"              data-theme="slate"  onclick="applyTheme('slate')"  style="color:#9db4ff;border-color:#2a3060;"><span class="th-swatch" style="background:#0c0d12;border-color:#2a3060;"></span>Slate</button>
+      <button class="th-btn"              data-theme="ember"  onclick="applyTheme('ember')"  style="color:#ff8a50;border-color:#4a2010;"><span class="th-swatch" style="background:#0f0908;border-color:#3a1c08;"></span>Ember</button>
+      <button class="th-btn"              data-theme="violet" onclick="applyTheme('violet')" style="color:#c7a8ff;border-color:#3a2060;"><span class="th-swatch" style="background:#090812;border-color:#2e1a50;"></span>Violet</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <button class="th-btn" onclick="backupTheme()"  style="color:#ffb400;border-color:#553300;">&#128190; Backup</button>
+      <button class="th-btn" onclick="restoreTheme()" style="color:#9db4ff;border-color:#334466;">&#8635; Restore</button>
+      <span style="color:#4a5570;font-size:9.5px;margin-left:2px;">Vol Bar:</span>
+      <input type="color" value="#9b59b6" title="Volume bar color" style="width:22px;height:18px;border:1px solid #3a5a3a;border-radius:3px;cursor:pointer;padding:1px;background:#000;vertical-align:middle;" oninput="window._volBarColor=this.value;Object.keys(panels).forEach(function(id){if(panels[id]&&panels[id].mode==='svg')drawSVG(id);});">
+    </div>
   </div>
   <!-- Canvas: hue wheel + SV square -->
   <canvas id="cpWheel" width="180" height="180" style="display:block;margin:0 auto 8px;border-radius:50%;cursor:crosshair;border:1px solid #2a2a3a;"></canvas>
@@ -785,27 +836,23 @@ svg{max-width:100%;height:auto;}
 
   <!-- PANEL 1: BTC/USDT — Canvas + ECharts -->
   <div class="panel" id="p-btc">
+    <button class="panel-min-btn" onclick="minimizePanel('p-btc',this)" title="Minimize panel">—</button>
     <div class="panel-head">
-      <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;flex-wrap:wrap;">
-        <span class="ptitle">BTC/USDT</span><span style="font-size:9px;color:#5b6270;margin-left:4px;white-space:nowrap;"><span style="color:#26a69a;" id="bid-btc">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-btc">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-btc">Spd:--</span><span style="color:#557;margin-left:3px;">Fee:0.1%</span></span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="4" cy="4" r="3.5" fill="#3ecf5e"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+      <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
+        <span class="ptitle">BTC/USDT</span>
+        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#3ecf5e"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+        <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-btc">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-btc">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-btc">Spd:--</span><span id="fee-btc" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel" onchange="changePanel('btc',this.value)"><option>1m</option><option selected>5m</option><option>15m</option><option>1h</option><option>4h</option><option>1d</option></select>
         <input class="sym-in" value="BTCUSDT" type="text">
-        <input class="prv-in" value="Binance WSS" type="text">
+        <input class="prv-in" value="Binance WSS" type="text" onchange="updateFeeDisplay('btc')">
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('btc')" title="Refresh">↻</button>
         <button class="ib" onclick="snapPanel('btc')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('btc')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
-        <button class="ib min-btn" onclick="minimizePanel('p-btc',this)" title="Minimize">&mdash;</button>
         <button class="ib" onclick="expandPanel('p-btc',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-btc')" title="Reset Size" style="color:#997;">&#8855;</button>
         <button class="ib pause-btn" id="pause-btc" onclick="togglePause('btc',this)" title="Pause auto-update">&#9646;&#9646;</button>
-        <button class="zb" onclick="zoomX('btc',1.2)" title="Zoom in X">🔍＋x</button>
-        <button class="zb" onclick="zoomX('btc',0.8)" title="Zoom out X">🔍－x</button>
-        <button class="zb y" onclick="zoomY('btc',1.2)" title="Zoom in Y">🔍＋y</button>
-        <button class="zb y" onclick="zoomY('btc',0.8)" title="Zoom out Y">🔍－y</button>
-        <button class="zb r" onclick="resetZoom('btc')">↺</button>
         <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-btc" onclick="toggleRows('btc',this)" title="Collapse control rows">≡</button>
       </div>
@@ -817,12 +864,12 @@ svg{max-width:100%;height:auto;}
       <div class="price-label" id="pl-btc">H: $44,120 &nbsp; L: $43,510</div>
       <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
       <div class="ccb" id="ccb-btc">
-        <button class="ccb-btn on" id="ccb-shift-btc" onclick="toggleChartShift('btc',this)" title="Auto-shift: pad right so latest bar doesn't overlap Y-axis">⇐</button>
+        <button class="ccb-btn on" id="ccb-shift-btc" onclick="toggleChartShift('btc',this)" title="Auto-shift: pad right so latest bar doesn't overlap Y-axis"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><rect x="1" y="6" width="2" height="5" fill="currentColor" rx="0.5"/><rect x="4" y="3.5" width="2" height="7.5" fill="currentColor" rx="0.5"/><rect x="7" y="5" width="2" height="6" fill="currentColor" rx="0.5"/><path d="M10,4.5 L12,6 L10,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-sm" onclick="adjustShift('btc',-2)" title="Less shift">-</button>
         <span class="ccb-pct" id="ccb-pct-btc">8%</span>
         <button class="ccb-sm" onclick="adjustShift('btc',2)" title="More shift">+</button>
         <span class="ccb-sep">|</span>
-        <button class="ccb-btn on" id="ccb-auto-btc" onclick="toggleAutoScroll('btc',this)" title="Auto-scroll: snap to latest tick on each update">↻</button>
+        <button class="ccb-btn on" id="ccb-auto-btc" onclick="toggleAutoScroll('btc',this)" title="Auto-scroll: snap to latest tick on each update"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><path d="M1,9 L3.5,5.5 L6,7.5 L9,3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5,3 L12,5.5 L9.5,8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-btn" id="ccb-frz-btc" onclick="toggleFreeze('btc',this)" title="Freeze view (overrides shift & scroll)">🔒</button>
         <span class="ccb-sep">|</span>
         <button class="ccb-btn" id="ccb-yl-btc" onclick="toggleYAxis('btc','L',this)" title="Toggle left Y-axis labels">Y←</button>
@@ -873,25 +920,25 @@ svg{max-width:100%;height:auto;}
     <div class="rh-b"></div><div class="rh"></div>
   </div>
 
-  <!-- PANEL 2: ETH/USDT + BACKTEST -->
+  <!-- PANEL 2: ETH — ETH/USDT + BACKTEST -->
   <div class="panel" id="p-eth">
+    <button class="panel-min-btn" onclick="minimizePanel('p-eth',this)" title="Minimize panel">—</button>
     <div class="panel-head">
-      <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;flex-wrap:wrap;">
-        <span class="ptitle">ETH/USDT</span><span style="font-size:9px;color:#5b6270;margin-left:4px;white-space:nowrap;"><span style="color:#26a69a;" id="bid-eth">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-eth">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-eth">Spd:--</span><span style="color:#557;margin-left:3px;">Fee:0.1%</span></span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="4" cy="4" r="3.5" fill="#ffb400"/></svg>
+      <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
+        <span class="ptitle">ETH/USDT</span>
+        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#ffb400"/></svg>
+        <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-eth">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-eth">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-eth">Spd:--</span><span id="fee-eth" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel"><option>1m</option><option>5m</option><option selected>1h</option><option>4h</option><option>1d</option></select>
         <input class="sym-in" value="ETHUSDT" type="text">
-        <input class="prv-in" value="Bybit WSS" type="text">
+        <input class="prv-in" value="Bybit WSS" type="text" onchange="updateFeeDisplay('eth')">
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('eth')" title="Refresh">↻</button>
         <button class="ib" onclick="snapPanel('eth')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('eth')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
-        <button class="ib min-btn" onclick="minimizePanel('p-eth',this)" title="Minimize">&mdash;</button>
         <button class="ib" onclick="expandPanel('p-eth',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-eth')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-eth" onclick="togglePause('eth',this)" title="Pause auto-update">&#9646;&#9646;</button><button class="zb" onclick="zoomX('eth',1.2)" title="Zoom in X">🔍＋x</button><button class="zb" onclick="zoomX('eth',0.8)" title="Zoom out X">🔍－x</button>
-        <button class="zb y" onclick="zoomY('eth',1.2)" title="Zoom in Y">🔍＋y</button><button class="zb y" onclick="zoomY('eth',0.8)" title="Zoom out Y">🔍－y</button><button class="zb r" onclick="resetZoom('eth')">↺</button>
+        <button class="ib pause-btn" id="pause-eth" onclick="togglePause('eth',this)" title="Pause auto-update">&#9646;&#9646;</button>
         <a href="https://www.tradingview.com/chart/?symbol=BYBIT:ETHUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-eth" onclick="toggleRows('eth',this)" title="Collapse control rows">≡</button>
       </div>
@@ -902,12 +949,12 @@ svg{max-width:100%;height:auto;}
       <div class="status-line" id="sl-eth">● LIVE &nbsp; $2,284.30 &nbsp;-0.72% &nbsp; Vol: 18,420 ETH</div>
       <a href="https://www.tradingview.com/chart/?symbol=BYBIT:ETHUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
       <div class="ccb" id="ccb-eth">
-        <button class="ccb-btn on" id="ccb-shift-eth" onclick="toggleChartShift('eth',this)" title="Auto-shift: pad right">⇐</button>
+        <button class="ccb-btn on" id="ccb-shift-eth" onclick="toggleChartShift('eth',this)" title="Auto-shift: pad right"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><rect x="1" y="6" width="2" height="5" fill="currentColor" rx="0.5"/><rect x="4" y="3.5" width="2" height="7.5" fill="currentColor" rx="0.5"/><rect x="7" y="5" width="2" height="6" fill="currentColor" rx="0.5"/><path d="M10,4.5 L12,6 L10,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-sm" onclick="adjustShift('eth',-2)">-</button>
         <span class="ccb-pct" id="ccb-pct-eth">8%</span>
         <button class="ccb-sm" onclick="adjustShift('eth',2)">+</button>
         <span class="ccb-sep">|</span>
-        <button class="ccb-btn on" id="ccb-auto-eth" onclick="toggleAutoScroll('eth',this)" title="Auto-scroll to latest tick">↻</button>
+        <button class="ccb-btn on" id="ccb-auto-eth" onclick="toggleAutoScroll('eth',this)" title="Auto-scroll to latest tick"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><path d="M1,9 L3.5,5.5 L6,7.5 L9,3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5,3 L12,5.5 L9.5,8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-btn" id="ccb-frz-eth" onclick="toggleFreeze('eth',this)" title="Freeze view">🔒</button>
         <span class="ccb-sep">|</span>
         <button class="ccb-btn" id="ccb-yl-eth" onclick="toggleYAxis('eth','L',this)" title="Left Y-axis">Y←</button>
@@ -968,23 +1015,23 @@ svg{max-width:100%;height:auto;}
 
   <!-- PANEL 3: SOL -->
   <div class="panel" id="p-sol">
+    <button class="panel-min-btn" onclick="minimizePanel('p-sol',this)" title="Minimize panel">—</button>
     <div class="panel-head">
-      <div style="display:flex;align-items:center;gap:4px;flex:1;flex-wrap:wrap;">
-        <span class="ptitle">SOL/USDT</span><span style="font-size:9px;color:#5b6270;margin-left:4px;white-space:nowrap;"><span style="color:#26a69a;" id="bid-sol">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-sol">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-sol">Spd:--</span><span style="color:#557;margin-left:3px;">Fee:0.1%</span></span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="4" cy="4" r="3.5" fill="#3ecf5e"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+      <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
+        <span class="ptitle">SOL/USDT</span>
+        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#3ecf5e"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+        <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-sol">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-sol">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-sol">Spd:--</span><span id="fee-sol" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel"><option selected>15m</option><option>1h</option><option>4h</option></select>
         <input class="sym-in" value="SOLUSDT" type="text">
-        <input class="prv-in" value="OKX WSS" type="text">
+        <input class="prv-in" value="OKX WSS" type="text" onchange="updateFeeDisplay('sol')">
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('sol')" title="Refresh">↻</button>
         <button class="ib" onclick="snapPanel('sol')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('sol')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
-        <button class="ib min-btn" onclick="minimizePanel('p-sol',this)" title="Minimize">&mdash;</button>
         <button class="ib" onclick="expandPanel('p-sol',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-sol')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-sol" onclick="togglePause('sol',this)" title="Pause auto-update">&#9646;&#9646;</button><button class="zb" onclick="zoomX('sol',1.2)" title="Zoom in X">🔍＋x</button><button class="zb" onclick="zoomX('sol',0.8)" title="Zoom out X">🔍－x</button>
-        <button class="zb y" onclick="zoomY('sol',1.2)" title="Zoom in Y">🔍＋y</button><button class="zb y" onclick="zoomY('sol',0.8)" title="Zoom out Y">🔍－y</button><button class="zb r" onclick="resetZoom('sol')">↺</button>
+        <button class="ib pause-btn" id="pause-sol" onclick="togglePause('sol',this)" title="Pause auto-update">&#9646;&#9646;</button>
         <a href="https://www.tradingview.com/chart/?symbol=OKX:SOLUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-sol" onclick="toggleRows('sol',this)" title="Collapse control rows">≡</button>
       </div>
@@ -995,12 +1042,12 @@ svg{max-width:100%;height:auto;}
       <div class="status-line" id="sl-sol">● LIVE &nbsp; $98.47 &nbsp;+1.83% &nbsp; Vol: 451K SOL</div>
       <a href="https://www.tradingview.com/chart/?symbol=OKX:SOLUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
       <div class="ccb" id="ccb-sol">
-        <button class="ccb-btn on" id="ccb-shift-sol" onclick="toggleChartShift('sol',this)" title="Auto-shift: pad right">⇐</button>
+        <button class="ccb-btn on" id="ccb-shift-sol" onclick="toggleChartShift('sol',this)" title="Auto-shift: pad right"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><rect x="1" y="6" width="2" height="5" fill="currentColor" rx="0.5"/><rect x="4" y="3.5" width="2" height="7.5" fill="currentColor" rx="0.5"/><rect x="7" y="5" width="2" height="6" fill="currentColor" rx="0.5"/><path d="M10,4.5 L12,6 L10,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-sm" onclick="adjustShift('sol',-2)">-</button>
         <span class="ccb-pct" id="ccb-pct-sol">8%</span>
         <button class="ccb-sm" onclick="adjustShift('sol',2)">+</button>
         <span class="ccb-sep">|</span>
-        <button class="ccb-btn on" id="ccb-auto-sol" onclick="toggleAutoScroll('sol',this)" title="Auto-scroll to latest tick">↻</button>
+        <button class="ccb-btn on" id="ccb-auto-sol" onclick="toggleAutoScroll('sol',this)" title="Auto-scroll to latest tick"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><path d="M1,9 L3.5,5.5 L6,7.5 L9,3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5,3 L12,5.5 L9.5,8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-btn" id="ccb-frz-sol" onclick="toggleFreeze('sol',this)" title="Freeze view">🔒</button>
         <span class="ccb-sep">|</span>
         <button class="ccb-btn" id="ccb-yl-sol" onclick="toggleYAxis('sol','L',this)" title="Left Y-axis">Y←</button>
@@ -1053,23 +1100,23 @@ svg{max-width:100%;height:auto;}
 
   <!-- PANEL 4: BNB -->
   <div class="panel" id="p-bnb">
+    <button class="panel-min-btn" onclick="minimizePanel('p-bnb',this)" title="Minimize panel">—</button>
     <div class="panel-head">
-      <div style="display:flex;align-items:center;gap:4px;flex:1;flex-wrap:wrap;">
-        <span class="ptitle">BNB/USDT</span><span style="font-size:9px;color:#5b6270;margin-left:4px;white-space:nowrap;"><span style="color:#26a69a;" id="bid-bnb">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-bnb">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-bnb">Spd:--</span><span style="color:#557;margin-left:3px;">Fee:0.1%</span></span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="4" cy="4" r="3.5" fill="#ef5350"/></svg>
+      <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
+        <span class="ptitle">BNB/USDT</span>
+        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#ef5350"/></svg>
+        <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-bnb">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-bnb">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-bnb">Spd:--</span><span id="fee-bnb" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel"><option>5m</option><option selected>1h</option><option>4h</option></select>
         <input class="sym-in" value="BNBUSDT" type="text">
-        <input class="prv-in" value="Binance WSS" type="text">
+        <input class="prv-in" value="Binance WSS" type="text" onchange="updateFeeDisplay('bnb')">
       </div>
       <div class="pbtns">
         <button class="ib" onclick="refreshPanel('bnb')" title="Refresh">↻</button>
         <button class="ib" onclick="snapPanel('bnb')" title="Backup" style="color:#7af;font-size:10px;">Bk</button>
         <button class="ib" onclick="restorePanel('bnb')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
-        <button class="ib min-btn" onclick="minimizePanel('p-bnb',this)" title="Minimize">&mdash;</button>
         <button class="ib" onclick="expandPanel('p-bnb',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-bnb')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-bnb" onclick="togglePause('bnb',this)" title="Pause auto-update">&#9646;&#9646;</button><button class="zb" onclick="zoomX('bnb',1.2)" title="Zoom in X">🔍＋x</button><button class="zb" onclick="zoomX('bnb',0.8)" title="Zoom out X">🔍－x</button>
-        <button class="zb y" onclick="zoomY('bnb',1.2)" title="Zoom in Y">🔍＋y</button><button class="zb y" onclick="zoomY('bnb',0.8)" title="Zoom out Y">🔍－y</button><button class="zb r" onclick="resetZoom('bnb')">↺</button>
+        <button class="ib pause-btn" id="pause-bnb" onclick="togglePause('bnb',this)" title="Pause auto-update">&#9646;&#9646;</button>
         <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-bnb" onclick="toggleRows('bnb',this)" title="Collapse control rows">≡</button>
       </div>
@@ -1080,12 +1127,12 @@ svg{max-width:100%;height:auto;}
       <div class="status-line" id="sl-bnb" style="color:#ef5350;">● STALE &nbsp; $312.80 &nbsp;-0.41% &nbsp; Vol: 89K BNB</div>
       <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT" target="_blank" class="tv-link">&#128200; TradingView</a>
       <div class="ccb" id="ccb-bnb">
-        <button class="ccb-btn on" id="ccb-shift-bnb" onclick="toggleChartShift('bnb',this)" title="Auto-shift: pad right">⇐</button>
+        <button class="ccb-btn on" id="ccb-shift-bnb" onclick="toggleChartShift('bnb',this)" title="Auto-shift: pad right"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><rect x="1" y="6" width="2" height="5" fill="currentColor" rx="0.5"/><rect x="4" y="3.5" width="2" height="7.5" fill="currentColor" rx="0.5"/><rect x="7" y="5" width="2" height="6" fill="currentColor" rx="0.5"/><path d="M10,4.5 L12,6 L10,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-sm" onclick="adjustShift('bnb',-2)">-</button>
         <span class="ccb-pct" id="ccb-pct-bnb">8%</span>
         <button class="ccb-sm" onclick="adjustShift('bnb',2)">+</button>
         <span class="ccb-sep">|</span>
-        <button class="ccb-btn on" id="ccb-auto-bnb" onclick="toggleAutoScroll('bnb',this)" title="Auto-scroll to latest tick">↻</button>
+        <button class="ccb-btn on" id="ccb-auto-bnb" onclick="toggleAutoScroll('bnb',this)" title="Auto-scroll to latest tick"><svg width="13" height="12" viewBox="0 0 13 12" fill="none"><path d="M1,9 L3.5,5.5 L6,7.5 L9,3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5,3 L12,5.5 L9.5,8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ccb-btn" id="ccb-frz-bnb" onclick="toggleFreeze('bnb',this)" title="Freeze view">🔒</button>
         <span class="ccb-sep">|</span>
         <button class="ccb-btn" id="ccb-yl-bnb" onclick="toggleYAxis('bnb','L',this)" title="Left Y-axis">Y←</button>
@@ -2299,6 +2346,16 @@ setInterval(function(){
     document.querySelectorAll('.rh').forEach(setupCorner);
     document.querySelectorAll('.rh-b').forEach(setupBottom);
     document.querySelectorAll('.panel-head').forEach(setupDrag);
+    if(typeof initFeeDisplays==='function')initFeeDisplays();
+    // Initial stale check after 2 seconds
+    setTimeout(function(){
+      ['btc','eth','sol','bnb'].forEach(function(id){
+        var sl=document.getElementById('sl-'+id);
+        if(sl&&sl.style.color==='#ef5350'){
+          reportDataStale(id,'Source stale on load — no data received',null,null,null);
+        }
+      });
+    },2000);
   }
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initAll);}
   else{setTimeout(initAll,0);}
@@ -2325,9 +2382,11 @@ setInterval(function(){
 
   function fmt(n,d){return n.toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
   var sl;
-  sl=document.getElementById('sl-btc');if(sl)sl.textContent='● LIVE   $'+fmt(panels.btc.price,2)+'   Vol: '+Math.floor(2700+Math.random()*300)+' BTC';
-  sl=document.getElementById('sl-eth');if(sl)sl.textContent='● LIVE   $'+fmt(panels.eth.price,2)+'   Vol: '+Math.floor(18000+Math.random()*800)+' ETH';
-  sl=document.getElementById('sl-sol');if(sl)sl.textContent='● LIVE   $'+fmt(panels.sol.price,2)+'   Vol: '+Math.floor(440+Math.random()*20)+'K SOL';
+  sl=document.getElementById('sl-btc');if(sl){sl.textContent='● LIVE   $'+fmt(panels.btc.price,2)+'   Vol: '+Math.floor(2700+Math.random()*300)+' BTC';sl.style.color='';_stopAutoDiag('btc');}
+  sl=document.getElementById('sl-eth');if(sl){sl.textContent='● LIVE   $'+fmt(panels.eth.price,2)+'   Vol: '+Math.floor(18000+Math.random()*800)+' ETH';sl.style.color='';_stopAutoDiag('eth');}
+  sl=document.getElementById('sl-sol');if(sl){sl.textContent='● LIVE   $'+fmt(panels.sol.price,2)+'   Vol: '+Math.floor(440+Math.random()*20)+'K SOL';sl.style.color='';_stopAutoDiag('sol');}
+  // BNB has no live feed — check and trigger diag if stale
+  (function(){var bsl=document.getElementById('sl-bnb');if(bsl&&bsl.style.color==='#ef5350'){reportDataStale('bnb','No live data — BNB source offline','wss://stream.binance.com','Bybit fallback',null);}})();
 
   var usdcEl=document.getElementById('usdcPx');
   if(usdcEl)usdcEl.textContent=usdc.price.toFixed(5);
@@ -5020,6 +5079,181 @@ function _fmtFee(v){
   if(v===0)return '<span style="color:#7fff00;font-weight:bold;">0</span>';
   return '<span style="color:#ef5350;font-weight:bold;">-'+v.toFixed(4)+'%</span>';
 }
+function _getBrokerFromProvider(prv){
+  var p=(prv||'').toLowerCase();
+  if(p.indexOf('binance')>=0)return 'Binance';
+  if(p.indexOf('coinbase')>=0)return 'Coinbase';
+  if(p.indexOf('okx')>=0)return 'OKX';
+  if(p.indexOf('bybit')>=0)return 'Bybit';
+  if(p.indexOf('kraken')>=0)return 'Kraken';
+  if(p.indexOf('bitfinex')>=0)return 'Bitfinex';
+  return 'Others';
+}
+function _fmtFeeInfo(broker){
+  var f=_brokerFees[broker]||_brokerFees.Others;
+  var m=f.maker,t=f.taker;
+  var mStr=(m===0)?'<span style="color:#7fff00;font-weight:bold;">0</span>':'<span style="color:#ef5350;font-weight:bold;">-'+m.toFixed(4)+'%</span>';
+  var tStr=(t===0)?'<span style="color:#7fff00;font-weight:bold;">0</span>':'<span style="color:#ef5350;font-weight:bold;">-'+t.toFixed(4)+'%</span>';
+  var bStyle=(m===0&&t===0)?'color:#7fff00':'color:#ef5350';
+  return '<span style="'+bStyle+';font-size:8.5px;font-weight:bold;">'+broker+'</span>'
+    +' <span style="color:#4a5570;font-size:8px;">M:</span>'+mStr
+    +' <span style="color:#4a5570;font-size:8px;">T:</span>'+tStr;
+}
+function updateFeeDisplay(id){
+  var el=document.getElementById('fee-'+id);
+  if(!el)return;
+  var panel=document.getElementById('p-'+id);
+  if(!panel)return;
+  var prvIn=panel.querySelector('.prv-in');
+  var broker=_getBrokerFromProvider(prvIn?prvIn.value:'');
+  el.innerHTML=_fmtFeeInfo(broker);
+}
+function initFeeDisplays(){['btc','eth','sol','bnb'].forEach(updateFeeDisplay);}
+
+// ── Auto-Diagnostic System ──
+var _diagLog=[];
+var _diagMaxLog=200;
+var _diagTimers={};
+var _diagPollCount={};
+
+function _addDiagLog(entry){
+  var ts=new Date();
+  var h=ts.getHours(),m=ts.getMinutes(),s=ts.getSeconds();
+  var pad=function(n){return n<10?'0'+n:n;};
+  entry.ts=pad(h)+':'+pad(m)+':'+pad(s);
+  _diagLog.unshift(entry);
+  if(_diagLog.length>_diagMaxLog)_diagLog.length=_diagMaxLog;
+  _renderDiagLog();
+}
+function _renderDiagLog(){
+  var el=document.getElementById('diagFetchLog');
+  if(!el||!_diagLog.length)return;
+  var html='';
+  for(var i=0;i<Math.min(_diagLog.length,80);i++){
+    var e=_diagLog[i];
+    var col=e.ok?'#3ecf5e':e.warn?'#ffb400':'#ef5350';
+    html+='<div style="border-bottom:1px solid #111;padding:2px 0;">'
+      +'<span style="color:#4a5570;">'+e.ts+'</span> '
+      +'<span style="color:#9db4ff;">'+_esc(e.source||'?')+'</span> '
+      +(e.ip?'<span style="color:#4a5570;font-size:8px;">'+_esc(e.ip)+'</span> ':'')
+      +'<span style="color:'+col+';">'+_esc(e.msg)+'</span>'
+      +(e.delay?'<span style="color:#4a5570;"> '+e.delay+'ms</span>':'')
+      +(e.tried?'<span style="color:#7af;font-size:8px;"> → tried: '+_esc(e.tried)+'</span>':'')
+      +'</div>';
+  }
+  el.innerHTML=html||'<span style="color:#2a3a2a;">No events yet.</span>';
+}
+function _esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Call this when a data source goes yellow/red or fetch fails
+function reportDataStale(id,reason,sourceUrl,fallbackTried,delayMs){
+  var panel=document.getElementById('p-'+id);
+  var prvVal=panel?((panel.querySelector('.prv-in')||{}).value||id):'unknown';
+  _addDiagLog({source:prvVal,msg:reason||'Stale data',delay:delayMs||null,tried:fallbackTried||null,ok:false,warn:false,ip:'live.exchange'});
+  _startAutoDiag(id,reason);
+}
+function reportDataOk(id,sourceLabel,delayMs){
+  _addDiagLog({source:sourceLabel||id,msg:'Data OK',delay:delayMs||null,ok:true,warn:false});
+  _stopAutoDiag(id);
+}
+function reportFetchFail(sourceLabel,url,errorMsg,fallbackTried,delayMs){
+  var ip=url?(url.replace(/https?:\/\//,'').split('/')[0]):'?';
+  _addDiagLog({source:sourceLabel,ip:ip,msg:'FAIL: '+errorMsg,delay:delayMs||null,tried:fallbackTried||null,ok:false,warn:false});
+}
+
+function _startAutoDiag(id,reason){
+  if(_diagTimers[id])return; // already running
+  _diagPollCount[id]=0;
+  showDiagPopup(id,reason);
+  _diagStep(id,reason);
+}
+function _stopAutoDiag(id){
+  if(!_diagTimers[id])return;
+  clearTimeout(_diagTimers[id]);delete _diagTimers[id];
+  delete _diagPollCount[id];
+  _updateDiagStatus(id,'Recovered','#3ecf5e');
+  hideDiagPopupIfOk();
+}
+function _diagStep(id,reason){
+  var count=_diagPollCount[id]||0;
+  _diagPollCount[id]=count+1;
+  var delay;
+  if(count<5)delay=2000; // first 10 seconds: every 2s
+  else if(count<11)delay=5000; // up to 30s: every 5s
+  else delay=10000; // after 30s: every 10s
+  var status='Retry #'+(count+1)+' for '+id.toUpperCase();
+  _updateDiagStatus(id,status,'#ffb400');
+  _diagTimers[id]=setTimeout(function(){
+    // simulate retry attempt and check panel status
+    var slEl=document.getElementById('sl-'+id);
+    var isStale=slEl&&slEl.style.color==='#ef5350'; // red=stale
+    if(!isStale){
+      _stopAutoDiag(id);
+      _addDiagLog({source:id.toUpperCase(),msg:'Recovered — data live again',ok:true,warn:false});
+      hideDiagPopupIfOk();
+    }else{
+      var msg='Attempt #'+(count+2)+': '+(count<5?'fast poll':'slow poll')+' — still stale';
+      if(count===4)msg='Switching to 5s interval after 10s without data';
+      if(count===10)msg='Switching to 10s interval after 30s without data';
+      _addDiagLog({source:id.toUpperCase(),msg:msg,tried:'alt endpoints',ok:false,warn:false});
+      _updateDiagStatus(id,msg,'#ffb400');
+      _diagStep(id,reason);
+    }
+  },delay);
+}
+function _updateDiagStatus(id,msg,col){
+  var el=document.getElementById('diagStatus-'+id);
+  if(el){el.textContent=msg;el.style.color=col||'#ffb400';}
+  var pop=document.getElementById('autoDiagPopup');
+  if(pop&&pop.style.display!=='none'){
+    var body=document.getElementById('diagPopupBody');
+    if(body)_renderDiagPopupBody();
+  }
+}
+function showDiagPopup(id,reason){
+  var pop=document.getElementById('autoDiagPopup');
+  if(!pop)return;
+  pop.style.display='block';
+  _renderDiagPopupBody();
+}
+function hideDiagPopupIfOk(){
+  // hide only when all diags stopped
+  if(Object.keys(_diagTimers).length===0){
+    var pop=document.getElementById('autoDiagPopup');
+    if(pop)pop.style.display='none';
+  }
+}
+function _renderDiagPopupBody(){
+  var body=document.getElementById('diagPopupBody');
+  if(!body)return;
+  var ids=['btc','eth','sol','bnb'];
+  var html='';
+  ids.forEach(function(id){
+    var slEl=document.getElementById('sl-'+id);
+    var isStale=slEl&&slEl.style.color==='#ef5350';
+    var isWarn=slEl&&slEl.style.color==='#ffb400';
+    var active=!!_diagTimers[id];
+    if(isStale||isWarn||active){
+      var col=isStale?'#ef5350':isWarn?'#ffb400':'#3ecf5e';
+      var panel=document.getElementById('p-'+id);
+      var prv=(panel&&panel.querySelector('.prv-in'))?panel.querySelector('.prv-in').value:'?';
+      html+='<div style="border:1px solid #2a2a2a;border-radius:3px;padding:4px 6px;margin-bottom:4px;background:#050505;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">'
+        +'<span style="color:'+col+';font-weight:bold;">'+id.toUpperCase()+'/USDT</span>'
+        +'<span style="color:#4a5570;font-size:9px;">'+prv+'</span>'
+        +'</div>'
+        +'<div id="diagStatus-'+id+'" style="color:#ffb400;font-size:10px;">'+(active?'Retrying…':'Checking…')+'</div>'
+        +'<div style="color:#4a5570;font-size:8.5px;margin-top:2px;">'
+        +(isStale?'❌ Data source returned stale/no data':isWarn?'⚠ Data delayed':active?'🔄 Auto-retry in progress':'✅ Recovering')
+        +'</div>'
+        +'</div>';
+    }
+  });
+  if(!html)html='<div style="color:#3ecf5e;font-size:10px;text-align:center;padding:6px;">✅ All sources responding</div>';
+  body.innerHTML=html;
+}
+function closeDiagPopup(){var p=document.getElementById('autoDiagPopup');if(p)p.style.display='none';}
+
 function _posCtxMenu(e){
   var m=document.getElementById('symCtxMenu');
   if(!m)return;
