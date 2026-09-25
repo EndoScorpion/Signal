@@ -4454,6 +4454,9 @@ function fetchAndDrawSVG(pid){
     } else {
       var last=data[data.length-1];
       p._liveData=data;
+      // Re-trigger backtest tables once live data arrives (debounced so it only fires once after all panels load)
+      clearTimeout(window._btDebounce);
+      window._btDebounce=setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},1500);
       if(last.close>0){
         p.base=last.close;
         p.price=last.close;
@@ -5941,7 +5944,7 @@ function runStochBTs(){
   });
 }
 
-setTimeout(runStochBTs,500);
+setTimeout(runStochBTs,8000); // fallback: live data debounce usually fires first
 </script>
 
 <!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
