@@ -5077,7 +5077,7 @@ var _brokerFees={
 };
 function _fmtFee(v){
   if(v===0)return '<span style="color:#7fff00;font-weight:bold;">0</span>';
-  return '<span style="color:#ef5350;font-weight:bold;">-'+v.toFixed(4)+'%</span>';
+  return '<span style="color:#ef5350;font-weight:bold;">-'+parseFloat(v.toFixed(4))+'%</span>';
 }
 function _getBrokerFromProvider(prv){
   var p=(prv||'').toLowerCase();
@@ -5092,8 +5092,8 @@ function _getBrokerFromProvider(prv){
 function _fmtFeeInfo(broker){
   var f=_brokerFees[broker]||_brokerFees.Others;
   var m=f.maker,t=f.taker;
-  var mStr=(m===0)?'<span style="color:#7fff00;font-weight:bold;">0</span>':'<span style="color:#ef5350;font-weight:bold;">-'+m.toFixed(4)+'%</span>';
-  var tStr=(t===0)?'<span style="color:#7fff00;font-weight:bold;">0</span>':'<span style="color:#ef5350;font-weight:bold;">-'+t.toFixed(4)+'%</span>';
+  var mStr=(m===0)?'<span style="color:#7fff00;font-weight:bold;">0</span>':'<span style="color:#ef5350;font-weight:bold;">-'+parseFloat(m.toFixed(4))+'%</span>';
+  var tStr=(t===0)?'<span style="color:#7fff00;font-weight:bold;">0</span>':'<span style="color:#ef5350;font-weight:bold;">-'+parseFloat(t.toFixed(4))+'%</span>';
   var bStyle=(m===0&&t===0)?'color:#7fff00':'color:#ef5350';
   return '<span style="'+bStyle+';font-size:8.5px;font-weight:bold;">'+broker+'</span>'
     +' <span style="color:#4a5570;font-size:8px;">M:</span>'+mStr
