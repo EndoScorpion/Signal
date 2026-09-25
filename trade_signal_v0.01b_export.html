@@ -1699,6 +1699,15 @@ function drawSVG(id){
   var padL=50,padR=50,padT=10,padB=22;
   var plotW=w-padL-padR, plotH=h-padT-padB;
 
+  // Stable time anchor — only resets when timeframe changes, never on each redraw tick
+  (function(){
+    var panEl=document.getElementById('p-'+id);
+    var tfSel=panEl?panEl.querySelector('.tf-sel'):null;
+    var tfNow=tfSel?(tfSel.value||'5m'):'5m';
+    if(!p._refTime||p._refTf!==tfNow){p._refTime=Date.now();p._refTf=tfNow;}
+  })();
+  var _drawRefTime=p._refTime;
+
   // Generate ~120 bars at full resolution; viewport clips/zooms
   var nBars=120;
   // Use cached live REST data if available, otherwise synthetic
@@ -2033,8 +2042,8 @@ function drawSVG(id){
         xEl.textContent='now';
         xEl.style.color='#3ecf5e';
       } else if(bi>nBars-1){
-        // future bar: compute projected timestamp
-        var _fwdMs=Date.now()+(bi-(nBars-1))*_tfMins*60000;
+        // future bar: compute projected timestamp from stable anchor
+        var _fwdMs=_drawRefTime+(bi-(nBars-1))*_tfMins*60000;
         var _fd=new Date(_fwdMs);
         if(_tfMins<60){xEl.textContent=pad2(_fd.getHours())+':'+pad2(_fd.getMinutes());}
         else if(_tfMins<1440){xEl.textContent=(_fd.getMonth()+1)+'/'+_fd.getDate()+' '+pad2(_fd.getHours())+'h';}
@@ -2042,7 +2051,7 @@ function drawSVG(id){
         xEl.style.color='#2a3040'; // dim for future
       } else {
         var _barsAgo=nBars-1-bi;
-        var _tsMs=Date.now()-_barsAgo*_tfMins*60000;
+        var _tsMs=_drawRefTime-_barsAgo*_tfMins*60000;
         var _d=new Date(_tsMs);
         if(_tfMins<60){xEl.textContent=pad2(_d.getHours())+':'+pad2(_d.getMinutes());}
         else if(_tfMins<1440){xEl.textContent=(_d.getMonth()+1)+'/'+_d.getDate()+' '+pad2(_d.getHours())+'h';}
