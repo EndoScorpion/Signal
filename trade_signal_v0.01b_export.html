@@ -831,6 +831,34 @@ svg{max-width:100%;height:auto;}
   </div>
 </div>
 
+<!-- ═══ TOP PERFORMERS ═══ -->
+<div id="topPerfBar" style="background:#030a03;border-top:1px solid #0a1f0a;border-bottom:1px solid #0d2a0d;padding:5px 8px;font-family:monospace;font-size:9px;display:none;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+    <span style="color:#aaff44;font-weight:bold;font-size:10px;">&#9733; Top Performers</span>
+    <span style="color:#1a3a1a;font-size:8.5px;">Stoch5 signals ≥51% win rate after fees &amp; US tax</span>
+    <span id="topPerfCount" style="color:#3ecf5e;font-size:8.5px;"></span>
+  </div>
+  <div id="topPerfBody" style="overflow-x:auto;">
+    <table id="topPerfTable" style="border-collapse:collapse;font-size:9px;white-space:nowrap;min-width:100%;">
+      <thead>
+        <tr style="color:#1a4a1a;border-bottom:1px solid #0d2a0d;">
+          <th style="text-align:left;padding:2px 8px 2px 5px;">Symbol</th>
+          <th style="text-align:left;padding:2px 8px 2px 5px;">Signal</th>
+          <th style="text-align:right;padding:2px 8px;">Win%</th>
+          <th style="text-align:right;padding:2px 8px;">#</th>
+          <th style="text-align:right;padding:2px 8px;">Gross</th>
+          <th style="text-align:right;padding:2px 8px;">−Fees</th>
+          <th style="text-align:right;padding:2px 8px;">−Tax</th>
+          <th style="text-align:right;padding:2px 8px;">Bars</th>
+          <th style="text-align:left;padding:2px 5px;">Broker</th>
+          <th style="text-align:right;padding:2px 5px;">RndTrip</th>
+        </tr>
+      </thead>
+      <tbody id="topPerfRows"></tbody>
+    </table>
+  </div>
+</div>
+
 <!-- ═══ PANELS ═══ -->
 <div class="panels" id="panelsArea">
 
@@ -5579,6 +5607,66 @@ function runStochBTs(){
       +'</div>';
   });
 }
+function renderTopPerformers(allResults){
+  var bar=document.getElementById('topPerfBar');
+  var rows=document.getElementById('topPerfRows');
+  var cntEl=document.getElementById('topPerfCount');
+  if(!bar||!rows)return;
+  var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
+  var lbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
+  // Collect all signals ≥51% win rate
+  var hits=[];
+  allResults.forEach(function(bt){
+    if(!bt)return;
+    Object.keys(bt.res).forEach(function(k){
+      var d=bt.res[k];
+      if(!d||d.n<2)return;
+      var wr=d.wins/d.n*100;
+      if(wr<51)return;
+      hits.push({id:bt.id,key:k,wr:wr,d:d,bt:bt});
+    });
+  });
+  // Sort best win% first
+  hits.sort(function(a,b){return b.wr-a.wr;});
+  if(hits.length===0){bar.style.display='none';return;}
+  bar.style.display='block';
+  if(cntEl)cntEl.textContent='('+hits.length+' signal'+(hits.length!==1?'s':'')+')';
+  rows.innerHTML='';
+  hits.forEach(function(h){
+    var d=h.d,bt=h.bt,k=h.key;
+    var isUp=k.indexOf('up')===0;
+    var sigC=isUp?'#26a69a':'#ef5350';
+    var wr=h.wr.toFixed(0);
+    var wrC=wr>=65?'#aaff44':wr>=55?'#3ecf5e':'#ffb400';
+    var avg_g=d.grossSum/d.n, avg_n=d.netSum/d.n, avg_t=d.taxSum/d.n;
+    var nC=avg_n>=0?'#3ecf5e':'#ef5350';
+    var tC=avg_t>=0?'#aaff44':'#ef5350';
+    var s=function(v){return (v>=0?'+':'')+v.toFixed(3)+'%';};
+    var tr=document.createElement('tr');
+    tr.style.borderBottom='1px solid #050d05';
+    tr.innerHTML=''
+      +'<td style="color:#3ecf5e;font-weight:bold;padding:2px 8px 2px 5px;">'+names[h.id]+'</td>'
+      +'<td style="color:'+sigC+';font-weight:bold;padding:2px 8px 2px 5px;">'+lbls[k]+'</td>'
+      +'<td style="color:'+wrC+';text-align:right;padding:2px 8px;font-weight:bold;">'+wr+'%</td>'
+      +'<td style="color:#2a4a3a;text-align:right;padding:2px 8px;">'+d.n+'</td>'
+      +'<td style="color:#4a5a4a;text-align:right;padding:2px 8px;">'+s(avg_g)+'</td>'
+      +'<td style="color:'+nC+';text-align:right;padding:2px 8px;">'+s(avg_n)+'</td>'
+      +'<td style="color:'+tC+';text-align:right;padding:2px 8px;font-weight:bold;">'+s(avg_t)+'</td>'
+      +'<td style="color:#1a3a2a;text-align:right;padding:2px 8px;">'+(d.barsSum/d.n).toFixed(1)+'b</td>'
+      +'<td style="color:#1a4a2a;padding:2px 5px;">'+bt.broker+'</td>'
+      +'<td style="color:#2a3a2a;text-align:right;padding:2px 5px;">−'+bt.rtCost.toFixed(3)+'%</td>';
+    rows.appendChild(tr);
+  });
+}
+
+// Patch runStochBTs to also populate top performers
+var _origRunStochBTs=runStochBTs;
+runStochBTs=function(){
+  _origRunStochBTs();
+  // Gather results from each panel and pass to top performers
+  var allBT=['btc','eth','sol','bnb'].map(function(id){return _runStochBTForPanel(id);});
+  renderTopPerformers(allBT);
+};
 setTimeout(runStochBTs,500);
 </script>
 
