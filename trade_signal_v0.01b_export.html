@@ -835,7 +835,7 @@ svg{max-width:100%;height:auto;}
 <div id="topPerfBar" style="background:#030a03;border-top:1px solid #0a1f0a;border-bottom:1px solid #0d2a0d;padding:5px 8px;font-family:monospace;font-size:9px;display:none;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
     <span style="color:#aaff44;font-weight:bold;font-size:10px;">&#9733; Top Performers</span>
-    <span style="color:#1a3a1a;font-size:8.5px;">Stoch5 signals ≥51% win rate after fees &amp; US tax</span>
+    <span style="color:#1a3a1a;font-size:8.5px;">Stoch signals ≥51% win rate after fees &amp; US tax · all TFs &amp; K periods</span>
     <span id="topPerfCount" style="color:#3ecf5e;font-size:8.5px;"></span>
   </div>
   <div id="topPerfBody" style="overflow-x:auto;">
@@ -843,6 +843,8 @@ svg{max-width:100%;height:auto;}
       <thead>
         <tr style="color:#1a4a1a;border-bottom:1px solid #0d2a0d;">
           <th style="text-align:left;padding:2px 8px 2px 5px;">Symbol</th>
+          <th style="text-align:left;padding:2px 5px;">TF</th>
+          <th style="text-align:left;padding:2px 5px;">K</th>
           <th style="text-align:left;padding:2px 8px 2px 5px;">Signal</th>
           <th style="text-align:right;padding:2px 8px;">Win%</th>
           <th style="text-align:right;padding:2px 8px;">#</th>
@@ -850,7 +852,6 @@ svg{max-width:100%;height:auto;}
           <th style="text-align:right;padding:2px 8px;">−Fees</th>
           <th style="text-align:right;padding:2px 8px;">−Tax</th>
           <th style="text-align:right;padding:2px 8px;">Bars</th>
-          <th style="text-align:left;padding:2px 5px;">Broker</th>
           <th style="text-align:right;padding:2px 5px;">RndTrip</th>
         </tr>
       </thead>
@@ -925,8 +926,13 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn on" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn" onclick="this.classList.toggle('on')">CCI/ADX</button>
       <button class="bg-cycle" id="bgbtn-btc" onclick="cycleStochBg('btc',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
-      <span style="flex:1;"></span>
-      <button class="ind-btn on" onclick="this.classList.toggle('on')">+ MA</button>
+      <span class="ccb-sep">|</span>
+      <button class="ind-btn on" id="sma2-btn-btc" onclick="toggleSMALine('btc','SMA2',this)" title="SMA 2 — dotted pink" style="color:#ff6b9d;">S2</button>
+      <button class="ind-btn on" id="sma5-btn-btc" onclick="toggleSMALine('btc','SMA5',this)" title="SMA 5 — dotted cyan" style="color:#00e5ff;">S5</button>
+      <button class="ind-btn on" id="sma10-btn-btc" onclick="toggleSMALine('btc','SMA10',this)" title="SMA 10 — dotted lime" style="color:#b9f6ca;">S10</button>
+      <button class="ind-btn on" id="ma20-btn-btc" onclick="toggleSMALine('btc','MA20',this)" title="MA 20 — dashed amber" style="color:#ffb400;">M20</button>
+      <button class="ind-btn on" id="ma50-btn-btc" onclick="toggleSMALine('btc','MA50',this)" title="MA 50 — dashed blue" style="color:#7af;">M50</button>
+      <input type="range" min="5" max="100" value="75" title="SMA/MA line opacity" style="width:44px;height:10px;vertical-align:middle;cursor:pointer;accent-color:#9db4ff;margin-left:2px;" oninput="setSMAOpacity('btc',this.value/100)">
     </div>
     <!-- BACKTEST: BTC -->
     <div class="bt-wrap" id="bt-btc">
@@ -1010,8 +1016,13 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">CCI/ADX</button>
       <button class="bg-cycle" id="bgbtn-eth" onclick="cycleStochBg('eth',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
-      <span style="flex:1;"></span>
-      <button class="ind-btn" onclick="this.classList.toggle('on')">+ MA</button>
+      <span class="ccb-sep">|</span>
+      <button class="ind-btn on" id="sma2-btn-eth" onclick="toggleSMALine('eth','SMA2',this)" title="SMA 2" style="color:#ff6b9d;">S2</button>
+      <button class="ind-btn on" id="sma5-btn-eth" onclick="toggleSMALine('eth','SMA5',this)" title="SMA 5" style="color:#00e5ff;">S5</button>
+      <button class="ind-btn on" id="sma10-btn-eth" onclick="toggleSMALine('eth','SMA10',this)" title="SMA 10" style="color:#b9f6ca;">S10</button>
+      <button class="ind-btn on" id="ma20-btn-eth" onclick="toggleSMALine('eth','MA20',this)" title="MA 20" style="color:#ffb400;">M20</button>
+      <button class="ind-btn on" id="ma50-btn-eth" onclick="toggleSMALine('eth','MA50',this)" title="MA 50" style="color:#7af;">M50</button>
+      <input type="range" min="5" max="100" value="75" title="SMA/MA opacity" style="width:44px;height:10px;vertical-align:middle;cursor:pointer;accent-color:#9db4ff;margin-left:2px;" oninput="setSMAOpacity('eth',this.value/100)">
     </div>
     <!-- BACKTEST: ETH -->
     <div class="bt-wrap" id="bt-eth">
@@ -1103,8 +1114,13 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn" onclick="this.classList.toggle('on')">CCI/ADX</button>
       <button class="bg-cycle" id="bgbtn-sol" onclick="cycleStochBg('sol',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
-      <span style="flex:1;"></span>
-      <button class="ind-btn on" onclick="this.classList.toggle('on')">+ MA</button>
+      <span class="ccb-sep">|</span>
+      <button class="ind-btn on" id="sma2-btn-sol" onclick="toggleSMALine('sol','SMA2',this)" title="SMA 2" style="color:#ff6b9d;">S2</button>
+      <button class="ind-btn on" id="sma5-btn-sol" onclick="toggleSMALine('sol','SMA5',this)" title="SMA 5" style="color:#00e5ff;">S5</button>
+      <button class="ind-btn on" id="sma10-btn-sol" onclick="toggleSMALine('sol','SMA10',this)" title="SMA 10" style="color:#b9f6ca;">S10</button>
+      <button class="ind-btn on" id="ma20-btn-sol" onclick="toggleSMALine('sol','MA20',this)" title="MA 20" style="color:#ffb400;">M20</button>
+      <button class="ind-btn on" id="ma50-btn-sol" onclick="toggleSMALine('sol','MA50',this)" title="MA 50" style="color:#7af;">M50</button>
+      <input type="range" min="5" max="100" value="75" title="SMA/MA opacity" style="width:44px;height:10px;vertical-align:middle;cursor:pointer;accent-color:#9db4ff;margin-left:2px;" oninput="setSMAOpacity('sol',this.value/100)">
     </div>
     <!-- BACKTEST: SOL -->
     <div class="bt-wrap" id="bt-sol">
@@ -1188,8 +1204,13 @@ svg{max-width:100%;height:auto;}
       <button class="ind-btn on" onclick="this.classList.toggle('on')">Range</button>
       <button class="ind-btn on" onclick="this.classList.toggle('on')">CCI/ADX</button>
       <button class="bg-cycle" id="bgbtn-bnb" onclick="cycleStochBg('bnb',this)" title="Stoch zone BG: cycle Off / Dim / Normal / Bright">BG:nrm</button>
-      <span style="flex:1;"></span>
-      <button class="ind-btn" onclick="this.classList.toggle('on')">+ MA</button>
+      <span class="ccb-sep">|</span>
+      <button class="ind-btn on" id="sma2-btn-bnb" onclick="toggleSMALine('bnb','SMA2',this)" title="SMA 2" style="color:#ff6b9d;">S2</button>
+      <button class="ind-btn on" id="sma5-btn-bnb" onclick="toggleSMALine('bnb','SMA5',this)" title="SMA 5" style="color:#00e5ff;">S5</button>
+      <button class="ind-btn on" id="sma10-btn-bnb" onclick="toggleSMALine('bnb','SMA10',this)" title="SMA 10" style="color:#b9f6ca;">S10</button>
+      <button class="ind-btn on" id="ma20-btn-bnb" onclick="toggleSMALine('bnb','MA20',this)" title="MA 20" style="color:#ffb400;">M20</button>
+      <button class="ind-btn on" id="ma50-btn-bnb" onclick="toggleSMALine('bnb','MA50',this)" title="MA 50" style="color:#7af;">M50</button>
+      <input type="range" min="5" max="100" value="75" title="SMA/MA opacity" style="width:44px;height:10px;vertical-align:middle;cursor:pointer;accent-color:#9db4ff;margin-left:2px;" oninput="setSMAOpacity('bnb',this.value/100)">
     </div>
     <!-- BACKTEST: BNB -->
     <div class="bt-wrap" id="bt-bnb">
@@ -1496,13 +1517,17 @@ svg{max-width:100%;height:auto;}
 // ── Shared state ──
 var panels = {
   btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
-       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null},
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
+       showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75},
   eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
-       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null},
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
+       showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75},
   sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
-       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null},
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
+       showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75},
   bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
-       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null}
+       autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
+       showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75}
 };
 // ── Source activity log (most-recently-used first) ──
 var _srcLog=[
@@ -1891,39 +1916,49 @@ function drawSVG(id){
     chartG.appendChild(sr);
   });
 
-  // MA20
-  var ma20=calcSMA(closes,20);
-  var maPath='';var first20=true;
-  ma20.forEach(function(v,i){
-    if(v==null)return;
-    var x=padL+i*stepX+stepX/2,y=toY(v);
-    maPath+=(first20?'M':'L')+x.toFixed(1)+','+y.toFixed(1)+' ';
-    first20=false;
-  });
-  if(maPath){
-    var maEl=document.createElementNS(ns,'path');
-    maEl.setAttribute('d',maPath);maEl.setAttribute('fill','none');
-    maEl.setAttribute('stroke','#ffb400');maEl.setAttribute('stroke-width','1');
-    maEl.setAttribute('stroke-dasharray','4,3');maEl.setAttribute('opacity','0.85');
-    chartG.appendChild(maEl);
+  // SMA helper: build SVG path string
+  function _smaPath(arr){var s='';var f=true;arr.forEach(function(v,i){if(v==null)return;var x=padL+i*stepX+stepX/2,y=toY(v);s+=(f?'M':'L')+x.toFixed(1)+','+y.toFixed(1)+' ';f=false;});return s;}
+  function _drawSMALine(pathStr,stroke,width,dash,opacity){if(!pathStr)return;var el=document.createElementNS(ns,'path');el.setAttribute('d',pathStr);el.setAttribute('fill','none');el.setAttribute('stroke',stroke);el.setAttribute('stroke-width',width);el.setAttribute('stroke-dasharray',dash);el.setAttribute('opacity',String(opacity));chartG.appendChild(el);}
+
+  var _smaOp=p.smaOpacity!=null?p.smaOpacity:0.75;
+
+  // SMA 2 — short-term (dotted pink)
+  if(p.showSMA2!==false){_drawSMALine(_smaPath(calcSMA(closes,2)),'#ff6b9d','0.8','2,2',_smaOp);}
+  // SMA 5 — short-term (dotted cyan)
+  if(p.showSMA5!==false){_drawSMALine(_smaPath(calcSMA(closes,5)),'#00e5ff','1','3,2',_smaOp);}
+  // SMA 10 — medium-short (dotted lime)
+  if(p.showSMA10!==false){_drawSMALine(_smaPath(calcSMA(closes,10)),'#b9f6ca','1','4,2',_smaOp);}
+
+  // MA20 (conditional)
+  if(p.showMA20!==false){
+    var ma20=calcSMA(closes,20);
+    _drawSMALine(_smaPath(ma20),'#ffb400','1','4,3',0.85);
   }
 
-  // MA50
-  var ma50=calcSMA(closes,50);
-  var ma50Path='';var first50=true;
-  ma50.forEach(function(v,i){
-    if(v==null)return;
-    var x=padL+i*stepX+stepX/2,y=toY(v);
-    ma50Path+=(first50?'M':'L')+x.toFixed(1)+','+y.toFixed(1)+' ';
-    first50=false;
-  });
-  if(ma50Path){
-    var ma50El=document.createElementNS(ns,'path');
-    ma50El.setAttribute('d',ma50Path);ma50El.setAttribute('fill','none');
-    ma50El.setAttribute('stroke','#7af');ma50El.setAttribute('stroke-width','1');
-    ma50El.setAttribute('stroke-dasharray','6,4');ma50El.setAttribute('opacity','0.7');
-    chartG.appendChild(ma50El);
+  // MA50 (conditional)
+  if(p.showMA50!==false){
+    var ma50=calcSMA(closes,50);
+    _drawSMALine(_smaPath(ma50),'#7af','1','6,4',0.70);
   }
+
+  // SMA/MA legend (fixed top-right corner of SVG, outside chartG transform)
+  (function(){
+    var lx=fullW-padR-2, ly=padT+2;
+    var items=[];
+    if(p.showSMA2!==false)items.push({lbl:'S2',clr:'#ff6b9d'});
+    if(p.showSMA5!==false)items.push({lbl:'S5',clr:'#00e5ff'});
+    if(p.showSMA10!==false)items.push({lbl:'S10',clr:'#b9f6ca'});
+    if(p.showMA20!==false)items.push({lbl:'M20',clr:'#ffb400'});
+    if(p.showMA50!==false)items.push({lbl:'M50',clr:'#7af'});
+    items.forEach(function(it,idx){
+      var t=document.createElementNS(ns,'text');
+      t.setAttribute('x',lx);t.setAttribute('y',ly+idx*10);
+      t.setAttribute('text-anchor','end');t.setAttribute('font-family','monospace');
+      t.setAttribute('font-size','7');t.setAttribute('fill',it.clr);t.setAttribute('opacity','0.75');
+      t.textContent=it.lbl;
+      svg.appendChild(t);
+    });
+  })();
 
   // Candlesticks — no try/catch so errors surface to console
   data.forEach(function(d,i){
@@ -4698,6 +4733,19 @@ function cycleStochBg(id,btn){
   if(document.getElementById('floatSettings').style.display!=='none'&&_fsTab==='bg')fsRenderBg();
 }
 
+function toggleSMALine(id,which,btn){
+  var p=panels[id]; if(!p)return;
+  var key='show'+which;
+  p[key]=(p[key]===false)?true:false;
+  if(btn)btn.classList.toggle('on',p[key]!==false);
+  if(p.mode==='svg')drawSVG(id);
+}
+function setSMAOpacity(id,val){
+  var p=panels[id]; if(!p)return;
+  p.smaOpacity=Math.max(0.05,Math.min(1,parseFloat(val)||0.75));
+  if(p.mode==='svg')drawSVG(id);
+}
+
 // ══════════════════════════════════════════════════════
 // ── Floating Settings Panel ──
 // ══════════════════════════════════════════════════════
@@ -5482,71 +5530,259 @@ document.addEventListener('mouseout',function(e){
   if(el)_ftHide=setTimeout(function(){var t=document.getElementById('brokerFeeTip');if(t)t.style.display='none';},200);
 });
 
-// ── Stoch5 Crossover Backtest (US tax-aware) ──
+// ── Multi-Period Stoch Cross Backtest (US tax-aware) ──
 // US short-term capital gains = ordinary income (held < 1 year)
-// Brackets 2024: 10/12/22/24/32/35/37%
-// NIIT (Net Investment Income Tax) 3.8% if MAGI > $200K single / $250K joint
-var _btTaxRate=22;   // federal ordinary income rate
-var _btStateTax=0;   // state income tax rate (CA=13.3, NY=10.9, TX/FL=0, etc.)
-var _btNIIT=false;   // +3.8% NIIT checkbox
-var _btSlippage=0.0001; // 0.01% per side execution slippage
-// Estimated % spread per asset (tight liquid pairs on major exchanges)
+// NIIT 3.8% if MAGI > $200K single / $250K joint
+var _btTaxRate=22;
+var _btStateTax=0;
+var _btNIIT=false;
+var _btSlippage=0.0001;
 var _assetSpreads={btc:0.0001,eth:0.00015,sol:0.0003,bnb:0.0002};
+var _btFetching={};
 
-function _runStochBTForPanel(id){
-  var p=panels[id];
-  if(!p)return null;
-  // Only run on real REST/live snapshot data — never synthetic
-  if(!p._liveData||p._liveData.length<10)return{id:id,noLive:true};
-  var data=p._liveData;
+function _fetchBTData(pid,interval,limit,cb){
+  var key=pid+'_'+interval;
+  if(_btFetching[key]){cb('fetch in progress',null);return;}
+  var sym=_restSym[pid];
+  if(!sym){cb('no symbol',null);return;}
+  _btFetching[key]=true;
+  var params='?symbol='+sym+'&interval='+interval+'&limit='+limit;
+  function tryURL(url,fallback){
+    try{
+      fetch(url)
+        .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+        .then(function(arr){_btFetching[key]=false;var d=_parseKlines(arr);if(!d){cb('empty',null);}else{cb(null,d);}})
+        .catch(function(err){if(fallback){fallback();}else{_btFetching[key]=false;cb(err.message||String(err),null);}});
+    }catch(e){if(fallback){fallback();}else{_btFetching[key]=false;cb(String(e),null);}}
+  }
+  tryURL(_restDirect+params,function(){tryURL(_restProxy+params,function(){_btFetching[key]=false;cb('both failed',null);});});
+}
+
+function _calcStochArr(data,kPeriod){
+  var n=kPeriod-1;
+  return data.map(function(d,i){
+    if(i<n)return null;
+    var lo=Math.min.apply(null,data.slice(i-n,i+1).map(function(b){return b.low;}));
+    var hi=Math.max.apply(null,data.slice(i-n,i+1).map(function(b){return b.high;}));
+    return hi===lo?50:(d.close-lo)/(hi-lo)*100;
+  });
+}
+
+// Compute pre-signal context metrics for context filter
+// Returns {slopeS, slopeM, slopeL, atrS, atrM, volRatio}
+function _preCtx(data,idx){
+  if(idx<10)return null;
+  function slope(n){
+    var end=idx-1, start=Math.max(0,end-n+1);
+    return (data[end].close-data[start].close)/(data[start].close||1)*100/n;
+  }
+  function atr(n){
+    var sum=0,cnt=0;
+    for(var j=Math.max(1,idx-n);j<=idx-1;j++){
+      sum+=Math.max(data[j].high-data[j].low,Math.abs(data[j].high-data[j-1].close),Math.abs(data[j].low-data[j-1].close));
+      cnt++;
+    }
+    return cnt>0?sum/cnt:0;
+  }
+  var avgVol20=0,vc=0;
+  for(var j=Math.max(0,idx-20);j<idx;j++){avgVol20+=(data[j].volume||0);vc++;}
+  avgVol20=vc>0?avgVol20/vc:1;
+  var sigVol=data[idx].volume||0;
+  return{
+    slopeS:slope(3),  // 3-bar slope
+    slopeM:slope(7),  // 7-bar slope
+    slopeL:slope(12), // 12-bar slope
+    atrS:atr(5),
+    atrM:atr(10),
+    volRatio:avgVol20>0?sigVol/avgVol20:1
+  };
+}
+
+function _ctxBucket(ctx){
+  if(!ctx)return'na';
+  // bucket: flat-low / flat-high / steep-low / steep-high (slope × ATR combo)
+  var flatSlope=Math.abs(ctx.slopeM)<0.05; // < 0.05% per bar = flat
+  var lowATR=ctx.atrS<(ctx.atrM*0.85);     // ATR contracting
+  var lowVol=ctx.volRatio<0.7;
+  var highVol=ctx.volRatio>1.4;
+  if(flatSlope&&lowATR)return'flat-low';
+  if(flatSlope&&!lowATR)return'flat-norm';
+  if(!flatSlope&&lowATR)return'steep-low';
+  return'steep-norm';
+}
+
+function _runBTForPeriod(data,kPeriod,rtCost,effTax){
+  var stoch=_calcStochArr(data,kPeriod);
+  var sigs=['up20','up50','up80','dn20','dn50','dn80'];
+  var res={};
+  sigs.forEach(function(k){res[k]={n:0,wins:0,grossSum:0,netSum:0,taxSum:0,barsSum:0,
+    ctx:{}}; // ctx: {bucketKey: {n,wins}}
+  });
+  for(var i=kPeriod+1;i<data.length;i++){
+    var kv=stoch[i],pkv=stoch[i-1];
+    if(kv===null||pkv===null)continue;
+    [20,50,80].forEach(function(lv){
+      var upX=(pkv<lv&&kv>=lv), dnX=(pkv>lv&&kv<=lv);
+      if(!upX&&!dnX)return;
+      var dir=upX?'up':'dn';
+      var key=dir+lv;
+      var ei=i+1;
+      if(ei>=data.length-1)return;
+      var entry=data[ei].open;
+      var isLong=(dir==='up');
+      var exitI=Math.min(ei+8,data.length-1);
+      var exPr=data[exitI].close;
+      var gross=isLong?(exPr-entry)/entry:(entry-exPr)/entry;
+      var net=gross-rtCost;
+      var afterTax=net>0?net*(1-effTax):net;
+      var r=res[key];
+      r.n++;r.grossSum+=gross*100;r.netSum+=net*100;r.taxSum+=afterTax*100;
+      r.barsSum+=(exitI-ei);
+      if(afterTax>0)r.wins++;
+      // Context bucket
+      var ctx=_preCtx(data,i);
+      var bkt=_ctxBucket(ctx);
+      if(!r.ctx[bkt])r.ctx[bkt]={n:0,wins:0};
+      r.ctx[bkt].n++;
+      if(afterTax>0)r.ctx[bkt].wins++;
+    });
+  }
+  return res;
+}
+
+function _getPanelCostInfo(id){
   var panEl=document.getElementById('p-'+id);
   var prvIn=panEl?panEl.querySelector('.prv-in'):null;
   var broker=_getBrokerFromProvider(prvIn?prvIn.value:'');
   var feeInfo=_brokerFees[broker]||_brokerFees.Others;
   var taker=feeInfo.taker/100;
   var spd=_assetSpreads[id]||0.0002;
-  // Round-trip cost: taker in + taker out + full spread + 2x slippage
   var rtCost=taker*2+spd+_btSlippage*2;
-  // Effective US tax rate
   var effTax=(_btTaxRate/100)+(_btStateTax/100)+(_btNIIT?0.038:0);
-  // Stoch5 %K
-  var stoch=data.map(function(d,i){
-    if(i<4)return null;
-    var lo=Math.min.apply(null,data.slice(i-4,i+1).map(function(b){return b.low;}));
-    var hi=Math.max.apply(null,data.slice(i-4,i+1).map(function(b){return b.high;}));
-    return hi===lo?50:(d.close-lo)/(hi-lo)*100;
+  return{broker:broker,feeInfo:feeInfo,spd:spd*100,rtCost:rtCost,rtCostPct:rtCost*100,effTax:effTax,effTaxPct:effTax*100};
+}
+
+function _collectTopHits(id,tfLabel,kPeriod,results,costInfo){
+  var hits=[];
+  if(!results)return hits;
+  Object.keys(results).forEach(function(sig){
+    var d=results[sig];
+    if(!d||d.n<2)return;
+    var wr=d.wins/d.n*100;
+    if(wr<51)return;
+    hits.push({id:id,tf:tfLabel,kp:kPeriod,key:sig,wr:wr,d:d,rtCostPct:costInfo.rtCostPct});
   });
-  // Collect crossing signals
-  var signals=[];
-  for(var i=5;i<data.length;i++){
-    var k=stoch[i],pk=stoch[i-1];
-    if(k===null||pk===null)continue;
-    [20,50,80].forEach(function(lv){
-      if(pk<lv&&k>=lv)signals.push({i:i,level:lv,dir:'up'});
-      if(pk>lv&&k<=lv)signals.push({i:i,level:lv,dir:'dn'});
-    });
+  return hits;
+}
+
+// Best context bucket for a signal result (must show ≥5% differential to report)
+function _bestCtxNote(res){
+  var note='';
+  var base=res.n>0?res.wins/res.n:0;
+  var best=null, bestDiff=0.05; // min +5% to report
+  Object.keys(res.ctx).forEach(function(bkt){
+    var c=res.ctx[bkt];
+    if(c.n<3)return;
+    var wr=c.wins/c.n;
+    var diff=wr-base;
+    if(diff>bestDiff){bestDiff=diff;best={bkt:bkt,wr:wr,n:c.n};}
+  });
+  if(best){
+    var bktLabels={'flat-low':'flat+low ATR','flat-norm':'flat slope','steep-low':'steep+low ATR','steep-norm':'steep slope'};
+    note='▲ctx:'+(bktLabels[best.bkt]||best.bkt)+' '+(best.wr*100).toFixed(0)+'%w/'+best.n;
   }
-  var keys=['up20','up50','up80','dn20','dn50','dn80'];
-  var res={};
-  keys.forEach(function(k){res[k]={n:0,wins:0,grossSum:0,netSum:0,taxSum:0,barsSum:0};});
-  signals.forEach(function(sig){
-    var key=sig.dir+sig.level;
-    var ei=sig.i+1;
-    if(ei>=data.length-1)return;
-    var entry=data[ei].open;
-    var isLong=(sig.dir==='up');
-    // Exit: 8 bars or end of data
-    var exitI=Math.min(ei+8,data.length-1);
-    var exit=data[exitI].close;
-    var gross=isLong?(exit-entry)/entry:(entry-exit)/entry;
-    var net=gross-rtCost;
-    var afterTax=net>0?net*(1-effTax):net;
-    var r=res[key];
-    r.n++;r.grossSum+=gross*100;r.netSum+=net*100;r.taxSum+=afterTax*100;
-    r.barsSum+=(exitI-ei);
-    if(afterTax>0)r.wins++;
+  return note;
+}
+
+function _renderCompactTable(containerId,tfLabel,periods,allPeriodData){
+  var el=document.getElementById(containerId);
+  if(!el)return;
+  var names={btc:'BTC',eth:'ETH',sol:'SOL',bnb:'BNB'};
+  var sigs=['up20','up50','up80','dn20','dn50','dn80'];
+  var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
+  var hasAnyLive=allPeriodData.some(function(d){return d&&d.results;});
+  if(!hasAnyLive){
+    el.innerHTML='<div style="color:#1a3a1a;font-size:8.5px;padding:4px;">⏲ Awaiting live '+tfLabel+' data…</div>';
+    return;
+  }
+  var h='<table style="border-collapse:collapse;font-size:8px;width:auto;">';
+  h+='<thead><tr style="color:#1a3a2a;border-bottom:1px solid #0d1f0d;">';
+  h+='<th style="padding:2px 5px;text-align:left;color:#3ecf5e;">Sym</th>';
+  h+='<th style="padding:2px 5px;text-align:left;">Sig</th>';
+  periods.forEach(function(kp){h+='<th style="padding:2px 5px;text-align:right;">K'+kp+'</th>';});
+  h+='<th style="padding:2px 5px;text-align:left;color:#1a3a2a;">ctx</th>';
+  h+='</tr></thead><tbody>';
+  ['btc','eth','sol','bnb'].forEach(function(id){
+    var pd=null;
+    for(var di=0;di<allPeriodData.length;di++){if(allPeriodData[di]&&allPeriodData[di].id===id){pd=allPeriodData[di];break;}}
+    sigs.forEach(function(sig,si){
+      var isUp=sig.indexOf('up')===0;
+      var sigC=isUp?'#26a69a':'#ef5350';
+      h+='<tr style="border-bottom:1px solid #040d04;">';
+      if(si===0){h+='<td style="color:#3ecf5e;font-weight:bold;padding:2px 5px;vertical-align:top;" rowspan="6">'+names[id]+'</td>';}
+      h+='<td style="color:'+sigC+';padding:2px 5px;white-space:nowrap;">'+sigLbls[sig]+'</td>';
+      var bestCtxNote='';
+      periods.forEach(function(kp){
+        if(!pd||!pd.results||!pd.results[kp]){h+='<td style="color:#1a2a1a;text-align:right;padding:2px 5px;">—</td>';return;}
+        var d=pd.results[kp][sig];
+        if(!d||d.n<2){h+='<td style="color:#1a2a1a;text-align:right;padding:2px 5px;">—</td>';return;}
+        var wr=d.wins/d.n*100;
+        var wrC=wr>=65?'#aaff44':wr>=55?'#3ecf5e':wr>=51?'#ffb400':wr>=40?'#4a5a4a':'#2a1a1a';
+        var bld=(wr>=51)?'font-weight:bold;':'';
+        h+='<td style="color:'+wrC+';text-align:right;padding:2px 5px;'+bld+'">'+wr.toFixed(0)+'%</td>';
+        if(!bestCtxNote)bestCtxNote=_bestCtxNote(d);
+      });
+      h+='<td style="color:#1a4a2a;padding:2px 5px;font-size:7px;white-space:nowrap;">'+bestCtxNote+'</td>';
+      h+='</tr>';
+    });
   });
-  return{id:id,broker:broker,feeInfo:feeInfo,spd:spd*100,rtCost:rtCost*100,effTax:effTax*100,res:res};
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
+function renderTopPerformers(allHits){
+  var bar=document.getElementById('topPerfBar');
+  var rows=document.getElementById('topPerfRows');
+  var cntEl=document.getElementById('topPerfCount');
+  if(!bar||!rows)return;
+  var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
+  var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
+  allHits.sort(function(a,b){return b.wr-a.wr;});
+  if(allHits.length===0){
+    var anyLive=['btc','eth','sol','bnb'].some(function(id){var p=panels[id];return p&&p._liveData&&p._liveData.length>=10;});
+    bar.style.display=anyLive?'none':'block';
+    if(!anyLive){if(cntEl)cntEl.textContent='';rows.innerHTML='<tr><td colspan="11" style="color:#1a3a1a;padding:6px 5px;font-size:8.5px;">⏲ Awaiting live REST data…</td></tr>';}
+    return;
+  }
+  bar.style.display='block';
+  if(cntEl)cntEl.textContent='('+allHits.length+' signal'+(allHits.length!==1?'s':'')+')';
+  rows.innerHTML='';
+  allHits.forEach(function(h){
+    var d=h.d;
+    var isUp=h.key.indexOf('up')===0;
+    var sigC=isUp?'#26a69a':'#ef5350';
+    var wr=h.wr.toFixed(0);
+    var wrC=wr>=65?'#aaff44':wr>=55?'#3ecf5e':'#ffb400';
+    var avg_g=d.grossSum/d.n,avg_n=d.netSum/d.n,avg_t=d.taxSum/d.n;
+    var nC=avg_n>=0?'#3ecf5e':'#ef5350';
+    var tC=avg_t>=0?'#aaff44':'#ef5350';
+    var s=function(v){return (v>=0?'+':'')+v.toFixed(3)+'%';};
+    var tr=document.createElement('tr');
+    tr.style.borderBottom='1px solid #050d05';
+    tr.innerHTML=''
+      +'<td style="color:#3ecf5e;font-weight:bold;padding:2px 8px 2px 5px;">'+names[h.id]+'</td>'
+      +'<td style="color:#1a4a2a;padding:2px 5px;">'+h.tf+'</td>'
+      +'<td style="color:#2a3a1a;padding:2px 5px;">K'+h.kp+'</td>'
+      +'<td style="color:'+sigC+';font-weight:bold;padding:2px 8px 2px 5px;">'+sigLbls[h.key]+'</td>'
+      +'<td style="color:'+wrC+';text-align:right;padding:2px 8px;font-weight:bold;">'+wr+'%</td>'
+      +'<td style="color:#2a4a3a;text-align:right;padding:2px 8px;">'+d.n+'</td>'
+      +'<td style="color:#4a5a4a;text-align:right;padding:2px 8px;">'+s(avg_g)+'</td>'
+      +'<td style="color:'+nC+';text-align:right;padding:2px 8px;">'+s(avg_n)+'</td>'
+      +'<td style="color:'+tC+';text-align:right;padding:2px 8px;font-weight:bold;">'+s(avg_t)+'</td>'
+      +'<td style="color:#1a3a2a;text-align:right;padding:2px 8px;">'+(d.barsSum/d.n).toFixed(1)+'b</td>'
+      +'<td style="color:#2a3a2a;text-align:right;padding:2px 5px;">−'+h.rtCostPct.toFixed(3)+'%</td>';
+    rows.appendChild(tr);
+  });
 }
 
 function runStochBTs(){
@@ -5554,32 +5790,39 @@ function runStochBTs(){
   if(!body)return;
   var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
   var lbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
+  var allTopHits=[];
   body.innerHTML='';
+
+  // ── M5 K5 detail tables ──
   ['btc','eth','sol','bnb'].forEach(function(id){
-    var bt=_runStochBTForPanel(id);
-    if(!bt||bt.noLive){
+    var p=panels[id];
+    if(!p||!p._liveData||p._liveData.length<10){
       body.innerHTML+='<div style="background:#040d04;border:1px solid #0d1f0d;border-radius:4px;padding:8px 10px;color:#1a3a1a;font-size:9px;">'
         +'<span style="color:#3ecf5e;font-weight:bold;">'+names[id]+'</span>'
-        +' &nbsp;<span style="color:#1a4a2a;">&#9202; Awaiting live REST data&hellip;</span>'
-        +' <span style="color:#112a11;font-size:8px;">Backtest runs only on real OHLCV history, not synthetic data.</span>'
-        +'</div>';
+        +' &nbsp;<span style="color:#1a4a2a;">⏲ Awaiting live REST data…</span>'
+        +' <span style="color:#112a11;font-size:8px;">Backtest runs only on real OHLCV history.</span></div>';
       return;
     }
+    var ci=_getPanelCostInfo(id);
+    var res5=_runBTForPeriod(p._liveData,5,ci.rtCost,ci.effTax);
+    var mStr=parseFloat(ci.feeInfo.maker.toFixed(4));
+    var tStr=parseFloat(ci.feeInfo.taker.toFixed(4));
     var rows='';
     ['up20','up50','up80','dn20','dn50','dn80'].forEach(function(k){
-      var d=bt.res[k];
+      var d=res5[k];
       if(!d||d.n===0){
-        rows+='<tr><td style="color:#1a2a1a;padding:2px 5px;">'+lbls[k]+'</td><td colspan="6" style="color:#1a2a1a;text-align:center;padding:2px 5px;">—</td></tr>';
+        rows+='<tr><td style="color:#1a2a1a;padding:2px 5px;">'+lbls[k]+'</td><td colspan="7" style="color:#1a2a1a;text-align:center;padding:2px 5px;">—</td></tr>';
         return;
       }
       var isUp=k.indexOf('up')===0;
       var sigC=isUp?'#26a69a':'#ef5350';
       var wr=(d.wins/d.n*100).toFixed(0);
       var wrC=wr>=55?'#3ecf5e':wr>=40?'#ffb400':'#ef5350';
-      var avg_g=(d.grossSum/d.n),avg_n=(d.netSum/d.n),avg_t=(d.taxSum/d.n);
+      var avg_g=d.grossSum/d.n,avg_n=d.netSum/d.n,avg_t=d.taxSum/d.n;
       var nC=avg_n>=0?'#3ecf5e':'#ef5350';
       var tC=avg_t>=0?'#aaff44':'#ef5350';
       var s=function(v){return (v>=0?'+':'')+v.toFixed(3)+'%';};
+      var ctxNote=_bestCtxNote(d);
       rows+='<tr style="border-bottom:1px solid #050d05;">'
         +'<td style="color:'+sigC+';font-weight:bold;padding:2px 5px;">'+lbls[k]+'</td>'
         +'<td style="color:#2a4a3a;text-align:right;padding:2px 5px;">'+d.n+'</td>'
@@ -5588,18 +5831,17 @@ function runStochBTs(){
         +'<td style="color:'+nC+';text-align:right;padding:2px 5px;">'+s(avg_n)+'</td>'
         +'<td style="color:'+tC+';text-align:right;padding:2px 5px;font-weight:bold;">'+s(avg_t)+'</td>'
         +'<td style="color:#1a3a2a;text-align:right;padding:2px 5px;">'+(d.barsSum/d.n).toFixed(1)+'b</td>'
+        +'<td style="color:#1a4a2a;padding:2px 5px;font-size:7.5px;">'+ctxNote+'</td>'
         +'</tr>';
     });
-    var mStr=parseFloat(bt.feeInfo.maker.toFixed(4));
-    var tStr=parseFloat(bt.feeInfo.taker.toFixed(4));
     body.innerHTML+='<div style="background:#040d04;border:1px solid #0d1f0d;border-radius:4px;padding:6px 8px;">'
       +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;">'
       +'<span style="color:#3ecf5e;font-weight:bold;font-size:10px;">'+names[id]+'</span>'
-      +'<span style="color:#1a4a2a;font-size:8.5px;">'+bt.broker+'</span>'
+      +'<span style="color:#1a4a2a;font-size:8.5px;">'+ci.broker+'</span>'
       +'<span style="color:#1a3a4a;font-size:8.5px;">M:'+mStr+'% T:'+tStr+'%</span>'
-      +'<span style="color:#1a4a3a;font-size:8.5px;">Spd:'+bt.spd.toFixed(3)+'%</span>'
-      +'<span style="color:#2a4a2a;font-size:8.5px;">RndTrip:−'+bt.rtCost.toFixed(3)+'%</span>'
-      +'<span style="color:#3a3a1a;font-size:8.5px;">Tax:'+bt.effTax.toFixed(1)+'%</span>'
+      +'<span style="color:#1a4a3a;font-size:8.5px;">Spd:'+ci.spd.toFixed(3)+'%</span>'
+      +'<span style="color:#2a4a2a;font-size:8.5px;">RndTrip:−'+ci.rtCostPct.toFixed(3)+'%</span>'
+      +'<span style="color:#3a3a1a;font-size:8.5px;">Tax:'+ci.effTaxPct.toFixed(1)+'%</span>'
       +'</div>'
       +'<table style="width:100%;border-collapse:collapse;font-size:9px;">'
       +'<thead><tr style="color:#1a3a2a;font-size:8.5px;border-bottom:1px solid #0d1f0d;">'
@@ -5610,87 +5852,102 @@ function runStochBTs(){
       +'<th style="text-align:right;padding:2px 5px;">−Fees</th>'
       +'<th style="text-align:right;padding:2px 5px;">−Tax</th>'
       +'<th style="text-align:right;padding:2px 5px;">Bars</th>'
+      +'<th style="text-align:left;padding:2px 5px;">ctx</th>'
       +'</tr></thead>'
-      +'<tbody>'+rows+'</tbody>'
-      +'</table>'
-      +'</div>';
+      +'<tbody>'+rows+'</tbody></table></div>';
+    // Collect top hits from K5 M5
+    var hitsM5=_collectTopHits(id,'M5',5,res5,ci);
+    allTopHits=allTopHits.concat(hitsM5);
   });
-}
-function renderTopPerformers(allResults){
-  var bar=document.getElementById('topPerfBar');
-  var rows=document.getElementById('topPerfRows');
-  var cntEl=document.getElementById('topPerfCount');
-  if(!bar||!rows)return;
-  var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
-  var lbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
-  // Collect all signals ≥51% win rate
-  var hits=[];
-  allResults.forEach(function(bt){
-    if(!bt)return;
-    Object.keys(bt.res).forEach(function(k){
-      var d=bt.res[k];
-      if(!d||d.n<2)return;
-      var wr=d.wins/d.n*100;
-      if(wr<51)return;
-      hits.push({id:bt.id,key:k,wr:wr,d:d,bt:bt});
+
+  // ── M5 compact combined table (K5–K20) — data already in p._liveData ──
+  var M5_PERIODS=[5,10,15,20];
+  var m5Data=[];
+  ['btc','eth','sol','bnb'].forEach(function(id){
+    var p=panels[id];
+    if(!p||!p._liveData||p._liveData.length<10)return;
+    var ci=_getPanelCostInfo(id);
+    var results={};
+    M5_PERIODS.forEach(function(kp){
+      results[kp]=_runBTForPeriod(p._liveData,kp,ci.rtCost,ci.effTax);
+      // Collect K10–K20 top hits (K5 already collected above)
+      if(kp!==5){var h=_collectTopHits(id,'M5',kp,results[kp],ci);allTopHits=allTopHits.concat(h);}
+    });
+    m5Data.push({id:id,results:results,costInfo:ci});
+  });
+  _renderCompactTable('btCompactM5','M5',M5_PERIODS,m5Data);
+
+  // Initial render of top performers with M5 data
+  renderTopPerformers(allTopHits.slice());
+
+  // ── M1 compact combined table (K5–K30) — async fetch ──
+  var M1_PERIODS=[5,10,15,20,25,30];
+  var m1Data=[], pending1m=['btc','eth','sol','bnb'].length;
+  function onM1Done(){
+    if(--pending1m>0)return;
+    _renderCompactTable('btCompactM1','M1',M1_PERIODS,m1Data);
+    m1Data.forEach(function(pd){
+      M1_PERIODS.forEach(function(kp){
+        var h=_collectTopHits(pd.id,'M1',kp,pd.results&&pd.results[kp],pd.costInfo);
+        allTopHits=allTopHits.concat(h);
+      });
+    });
+    if(m15done)renderTopPerformers(allTopHits);
+  }
+  var m15done=false;
+
+  // ── M15 compact combined table (K5–K20) — async fetch ──
+  var M15_PERIODS=[5,10,15,20];
+  var m15Data=[], pending15m=['btc','eth','sol','bnb'].length;
+  function onM15Done(){
+    if(--pending15m>0)return;
+    _renderCompactTable('btCompactM15','M15',M15_PERIODS,m15Data);
+    m15Data.forEach(function(pd){
+      M15_PERIODS.forEach(function(kp){
+        var h=_collectTopHits(pd.id,'M15',kp,pd.results&&pd.results[kp],pd.costInfo);
+        allTopHits=allTopHits.concat(h);
+      });
+    });
+    m15done=true;
+    if(pending1m===0)renderTopPerformers(allTopHits);
+  }
+
+  ['btc','eth','sol','bnb'].forEach(function(id){
+    var p=panels[id];
+    if(!p){pending1m--;onM1Done();return;}
+    _fetchBTData(id,'1m',500,function(err,data){
+      if(!err&&data&&data.length>=10){
+        var ci=_getPanelCostInfo(id);
+        var results={};
+        M1_PERIODS.forEach(function(kp){results[kp]=_runBTForPeriod(data,kp,ci.rtCost,ci.effTax);});
+        m1Data.push({id:id,results:results,costInfo:ci});
+      }
+      onM1Done();
     });
   });
-  // Sort best win% first
-  hits.sort(function(a,b){return b.wr-a.wr;});
-  // Check if any panels have live data at all
-  var anyLive=allResults.some(function(bt){return bt&&!bt.noLive;});
-  if(!anyLive){
-    bar.style.display='block';
-    if(cntEl)cntEl.textContent='';
-    rows.innerHTML='<tr><td colspan="10" style="color:#1a3a1a;padding:6px 5px;font-size:8.5px;">&#9202; Awaiting live REST data — top performers will appear here once real OHLCV history loads.</td></tr>';
-    return;
-  }
-  if(hits.length===0){bar.style.display='none';return;}
-  bar.style.display='block';
-  if(cntEl)cntEl.textContent='('+hits.length+' signal'+(hits.length!==1?'s':'')+')';
-  rows.innerHTML='';
-  hits.forEach(function(h){
-    var d=h.d,bt=h.bt,k=h.key;
-    var isUp=k.indexOf('up')===0;
-    var sigC=isUp?'#26a69a':'#ef5350';
-    var wr=h.wr.toFixed(0);
-    var wrC=wr>=65?'#aaff44':wr>=55?'#3ecf5e':'#ffb400';
-    var avg_g=d.grossSum/d.n, avg_n=d.netSum/d.n, avg_t=d.taxSum/d.n;
-    var nC=avg_n>=0?'#3ecf5e':'#ef5350';
-    var tC=avg_t>=0?'#aaff44':'#ef5350';
-    var s=function(v){return (v>=0?'+':'')+v.toFixed(3)+'%';};
-    var tr=document.createElement('tr');
-    tr.style.borderBottom='1px solid #050d05';
-    tr.innerHTML=''
-      +'<td style="color:#3ecf5e;font-weight:bold;padding:2px 8px 2px 5px;">'+names[h.id]+'</td>'
-      +'<td style="color:'+sigC+';font-weight:bold;padding:2px 8px 2px 5px;">'+lbls[k]+'</td>'
-      +'<td style="color:'+wrC+';text-align:right;padding:2px 8px;font-weight:bold;">'+wr+'%</td>'
-      +'<td style="color:#2a4a3a;text-align:right;padding:2px 8px;">'+d.n+'</td>'
-      +'<td style="color:#4a5a4a;text-align:right;padding:2px 8px;">'+s(avg_g)+'</td>'
-      +'<td style="color:'+nC+';text-align:right;padding:2px 8px;">'+s(avg_n)+'</td>'
-      +'<td style="color:'+tC+';text-align:right;padding:2px 8px;font-weight:bold;">'+s(avg_t)+'</td>'
-      +'<td style="color:#1a3a2a;text-align:right;padding:2px 8px;">'+(d.barsSum/d.n).toFixed(1)+'b</td>'
-      +'<td style="color:#1a4a2a;padding:2px 5px;">'+bt.broker+'</td>'
-      +'<td style="color:#2a3a2a;text-align:right;padding:2px 5px;">−'+bt.rtCost.toFixed(3)+'%</td>';
-    rows.appendChild(tr);
+
+  ['btc','eth','sol','bnb'].forEach(function(id){
+    var p=panels[id];
+    if(!p){pending15m--;onM15Done();return;}
+    _fetchBTData(id,'15m',200,function(err,data){
+      if(!err&&data&&data.length>=10){
+        var ci=_getPanelCostInfo(id);
+        var results={};
+        M15_PERIODS.forEach(function(kp){results[kp]=_runBTForPeriod(data,kp,ci.rtCost,ci.effTax);});
+        m15Data.push({id:id,results:results,costInfo:ci});
+      }
+      onM15Done();
+    });
   });
 }
 
-// Patch runStochBTs to also populate top performers
-var _origRunStochBTs=runStochBTs;
-runStochBTs=function(){
-  _origRunStochBTs();
-  // Gather results from each panel and pass to top performers
-  var allBT=['btc','eth','sol','bnb'].map(function(id){return _runStochBTForPanel(id);});
-  renderTopPerformers(allBT);
-};
 setTimeout(runStochBTs,500);
 </script>
 
-<!-- ═══ STOCH5 BACKTEST PANEL ═══ -->
+<!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
 <div id="stochBTPanel" style="background:#030603;border-top:1px solid #0d1f0d;padding:6px 8px;font-family:monospace;">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-    <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">&#9654; Stoch5 Cross Backtest</span>
+    <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">&#9654; Stoch Cross Backtest — Multi-Period</span>
     <span style="color:#1a2a1a;font-size:8.5px;">US Short-Term Tax (Ord. Income):</span>
     <select id="btTaxSel" onchange="_btTaxRate=parseInt(this.value);runStochBTs();" style="background:#000;color:#4ecf7a;border:1px solid #1a3a1a;border-radius:2px;font-size:8.5px;font-family:monospace;padding:1px 4px;cursor:pointer;">
       <option value="10">10%</option>
@@ -5711,9 +5968,40 @@ setTimeout(runStochBTs,500);
     <button onclick="runStochBTs()" style="background:#050d05;color:#3ecf5e;border:1px solid #1a3a1a;border-radius:3px;font-size:8.5px;padding:2px 7px;cursor:pointer;font-family:monospace;">&#8635; Run</button>
     <span style="color:#1a2a1a;font-size:7.5px;">8-bar exit · round-trip = taker×2 + spread + slippage×2</span>
   </div>
+  <!-- M5 K5 detail tables (per-symbol) -->
+  <div style="color:#1a4a2a;font-size:8.5px;margin:4px 0 2px;">▸ M5 · K5 — per-symbol detail</div>
   <div id="stochBTBody" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:6px;"></div>
+
+  <!-- M1 compact combined table: K 5/10/15/20/25/30 -->
+  <div style="margin-top:8px;">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+      <span style="color:#3ecf5e;font-size:9px;font-weight:bold;">M1 — 1-Minute</span>
+      <span style="color:#1a3a1a;font-size:8px;">K periods 5 · 10 · 15 · 20 · 25 · 30</span>
+      <span style="color:#0d2a0d;font-size:7.5px;">(win% after fees &amp; tax · bold = ≥51%)</span>
+    </div>
+    <div id="btCompactM1" style="overflow-x:auto;"></div>
+  </div>
+
+  <!-- M5 compact combined table: K 5/10/15/20 -->
+  <div style="margin-top:8px;">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+      <span style="color:#3ecf5e;font-size:9px;font-weight:bold;">M5 — 5-Minute</span>
+      <span style="color:#1a3a1a;font-size:8px;">K periods 5 · 10 · 15 · 20</span>
+    </div>
+    <div id="btCompactM5" style="overflow-x:auto;"></div>
+  </div>
+
+  <!-- M15 compact combined table: K 5/10/15/20 -->
+  <div style="margin-top:8px;">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+      <span style="color:#3ecf5e;font-size:9px;font-weight:bold;">M15 — 15-Minute</span>
+      <span style="color:#1a3a1a;font-size:8px;">K periods 5 · 10 · 15 · 20</span>
+    </div>
+    <div id="btCompactM15" style="overflow-x:auto;"></div>
+  </div>
+
   <div style="margin-top:5px;padding-top:4px;border-top:1px solid #050d05;color:#112211;font-size:7.5px;line-height:1.6;">
-    <b style="color:#1a3a1a;">Signal key:</b> K↑/↓ = %K cross direction &nbsp;·&nbsp; 20/50/80 = stoch level &nbsp;·&nbsp; <b style="color:#1a3a1a;">Gross</b> = raw price return &nbsp;·&nbsp; <b style="color:#1a3a1a;">−Fees</b> = after taker×2 + bid-ask spread + slippage &nbsp;·&nbsp; <b style="color:#1a3a1a;">−Tax</b> = final after US short-term capital gains (ordinary income, held &lt;1yr) &nbsp;·&nbsp; NIIT 3.8% applies if MAGI &gt;$200K single / $250K joint &nbsp;·&nbsp; State default 0% &nbsp;·&nbsp; Wash-sale rules do NOT apply to crypto under current US law (may change) &nbsp;·&nbsp; <span style="color:#112211;">Not financial or tax advice — consult a CPA.</span>
+    <b style="color:#1a3a1a;">Signal key:</b> K↑/↓ = %K cross direction &nbsp;·&nbsp; 20/50/80 = stoch level &nbsp;·&nbsp; bold Win% = ≥51% top performer &nbsp;·&nbsp; <b style="color:#1a3a1a;">−Tax</b> = after US short-term cap gains (ordinary income, &lt;1yr) &nbsp;·&nbsp; NIIT 3.8% applies if MAGI &gt;$200K single / $250K joint &nbsp;·&nbsp; <span style="color:#112211;">Not financial or tax advice — consult a CPA.</span>
   </div>
 </div>
 
