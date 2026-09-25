@@ -883,7 +883,7 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- ═══ TOP PERFORMERS ═══ -->
-<div id="topPerfBar" style="background:#030a03;border-top:1px solid #0a1f0a;border-bottom:1px solid #0d2a0d;padding:5px 8px;font-family:monospace;font-size:9px;display:none;">
+<div id="topPerfBar" style="background:#030a03;border-top:1px solid #0a1f0a;border-bottom:1px solid #0d2a0d;padding:5px 8px;font-family:monospace;font-size:9px;display:block;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
     <span style="color:#aaff44;font-weight:bold;font-size:10px;">&#9733; Top Performers</span>
     <span style="color:#1a3a1a;font-size:8.5px;">Stoch signals ≥51% win rate after fees &amp; US tax · all TFs &amp; K periods</span>
@@ -4269,6 +4269,7 @@ function refreshAll(btn){
   if(btn){var t=btn.textContent;btn.textContent='⏳…';btn.disabled=true;
     setTimeout(function(){btn.textContent=t;btn.disabled=false;},2500);}
   fetchAndRefreshAll();
+  setTimeout(function(){if(typeof runStochBTs==='function'&&!window._btRunning)runStochBTs();},600);
 }
 
 // ── Repair Charts (REST API → synthetic fallback + diag) ──
@@ -6173,7 +6174,7 @@ function renderTopPerformers(allHits){
   bar.style.display='block';
   if(allHits.length===0){
     if(cntEl)cntEl.textContent='';
-    rows.innerHTML='<tr><td colspan="11" style="color:#1a4a2a;padding:6px 5px;font-size:8.5px;">No signals ≥45% win rate yet — awaiting more data or click ↻ Run</td></tr>';
+    rows.innerHTML='<tr><td colspan="11" style="color:#4a9a4a;padding:6px 5px;font-size:8.5px;">No signals ≥45% win rate yet — awaiting more data or click ↻ Run</td></tr>';
     return;
   }
   bar.style.display='block';
@@ -6193,8 +6194,8 @@ function renderTopPerformers(allHits){
     tr.style.borderBottom='1px solid #050d05';
     tr.innerHTML=''
       +'<td style="color:#3ecf5e;font-weight:bold;padding:2px 8px 2px 5px;">'+names[h.id]+'</td>'
-      +'<td style="color:#1a4a2a;padding:2px 5px;">'+h.tf+'</td>'
-      +'<td style="color:#2a3a1a;padding:2px 5px;">K'+h.kp+'</td>'
+      +'<td style="color:#3a7a3a;padding:2px 5px;">'+h.tf+'</td>'
+      +'<td style="color:#3a5a2a;padding:2px 5px;">K'+h.kp+'</td>'
       +'<td style="color:'+sigC+';font-weight:bold;padding:2px 8px 2px 5px;">'+sigLbls[h.key]+'</td>'
       +'<td style="color:'+wrC+';text-align:right;padding:2px 8px;font-weight:bold;">'+wr+'%</td>'
       +'<td style="color:#2a4a3a;text-align:right;padding:2px 8px;">'+d.n+'</td>'
@@ -6364,7 +6365,7 @@ function runStochBTs(){
   });
 }
 
-setTimeout(runStochBTs,8000); // fallback: live data debounce usually fires first
+setTimeout(runStochBTs,1500); // fallback: live data debounce usually fires first
 </script>
 
 <!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
