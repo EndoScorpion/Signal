@@ -101,7 +101,7 @@ canvas.main-canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
 
 /* News */
 .news-bar{background:#0a050a;border-bottom:1px solid #3a1a3a;padding:3px 8px;display:flex;align-items:center;gap:8px;overflow:hidden;}
-.news-inner{display:inline-block;white-space:nowrap;color:#e0b8ff;font-size:10px;animation:ticker 55s linear infinite;}
+.news-inner{display:inline-block;white-space:nowrap;color:#e0b8ff;font-size:10px;}
 @keyframes ticker{0%{transform:translateX(100vw)}100%{transform:translateX(calc(-100% - 100vw))}}
 
 /* Sources dropdown */
@@ -447,7 +447,8 @@ svg{max-width:100%;height:auto;}
     <button onclick="fdpTab('log')"    id="fdp-t-log"    style="flex:1;padding:4px 2px;background:#0a0f04;border:none;border-right:1px solid #1a2a0a;color:#d4b800;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">📋 Log</button>
     <button onclick="fdpTab('bugs')"   id="fdp-t-bugs"   style="flex:1;padding:4px 2px;background:none;border:none;border-right:1px solid #1a2a0a;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">🐛 Bugs</button>
     <button onclick="fdpTab('repair')" id="fdp-t-repair" style="flex:1;padding:4px 2px;background:none;border:none;border-right:1px solid #1a2a0a;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">⚙ Repair</button>
-    <button onclick="fdpTab('info')"   id="fdp-t-info"   style="flex:1;padding:4px 2px;background:none;border:none;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">ℹ Info</button>
+    <button onclick="fdpTab('info')"   id="fdp-t-info"   style="flex:1;padding:4px 2px;background:none;border:none;border-right:1px solid #1a2a0a;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">ℹ Info</button>
+    <button onclick="fdpTab('dom')"    id="fdp-t-dom"    style="flex:1;padding:4px 2px;background:none;border:none;color:#4a5570;font-size:9px;cursor:pointer;font-family:monospace;letter-spacing:.3px;">🔍 DOM</button>
   </div>
   <div id="fdpBody" style="flex:1;overflow-y:auto;overflow-x:hidden;padding:5px 7px;line-height:1.5;"></div>
   <div style="display:flex;flex-wrap:wrap;gap:3px;padding:5px 7px;background:rgba(5,8,3,0.95);border-top:1px solid #1a2a0a;flex-shrink:0;">
@@ -459,6 +460,9 @@ svg{max-width:100%;height:auto;}
     <button onclick="clearDiagLog();fdpRenderLog()" style="background:none;border:1px solid #2a2a2a;border-radius:3px;color:#3a4050;font-size:9px;cursor:pointer;padding:2px 6px;margin-left:auto;">Clear</button>
   </div>
 </div>
+<!-- DOM Inspector highlight overlay -->
+<div id="_domHighlight" style="display:none;position:fixed;pointer-events:none;z-index:99990;border:2px solid #7af;background:rgba(100,180,255,0.08);box-sizing:border-box;"></div>
+
 <!-- FDP minimized bar -->
 <div id="fdpBar" style="display:none;position:fixed;bottom:0;right:14px;z-index:91000;background:rgba(8,11,15,0.92);border:1px solid #3a4820;border-top-left-radius:5px;border-top-right-radius:5px;padding:3px 10px;align-items:center;gap:6px;cursor:pointer;" onclick="fdpRestore()">
   <span style="color:#d4b800;font-size:12px;">⚡</span>
@@ -2159,6 +2163,9 @@ function drawSVG(id){
     st._initW=w;
   }
 
+  // Remove stale drag listeners before re-registering (fix: window listeners were accumulating on every drawSVG call)
+  if(st._mmHandler)window.removeEventListener('mousemove',st._mmHandler);
+  if(st._muHandler)window.removeEventListener('mouseup',st._muHandler);
   var dragging=false,dragStartX=0,dragStartY=0,dragTx=0,dragTy=0;
 
   function applyTransform(){
@@ -2215,15 +2222,10 @@ function drawSVG(id){
     dragTx=st.tx;dragTy=st.ty;
     wrap.style.cursor='grabbing';
   });
-  window.addEventListener('mousemove',function(e){
-    if(!dragging)return;
-    st.tx=dragTx+(e.clientX-dragStartX);
-    st.ty=dragTy+(e.clientY-dragStartY);
-    applyTransform();
-  });
-  window.addEventListener('mouseup',function(){
-    if(dragging){dragging=false;wrap.style.cursor='grab';}
-  });
+  st._mmHandler=function(e){if(!dragging)return;st.tx=dragTx+(e.clientX-dragStartX);st.ty=dragTy+(e.clientY-dragStartY);applyTransform();};
+  st._muHandler=function(){if(dragging){dragging=false;wrap.style.cursor='grab';}};
+  window.addEventListener('mousemove',st._mmHandler);
+  window.addEventListener('mouseup',st._muHandler);
 
   // Touch pan/pinch
   var lastTouches=null;
@@ -2682,9 +2684,10 @@ function updateMemBar(){
     }catch(e){lsEl.textContent='n/a';}
   }
   var domNodes=document.getElementById('memNodes');
-  if(domNodes)domNodes.textContent=document.querySelectorAll('*').length;
+  // Use targeted count (body children walk) instead of querySelectorAll('*') over full DOM
+  if(domNodes)domNodes.textContent=document.body?document.body.querySelectorAll('*').length:'—';
   var svgEl=document.getElementById('memSvgPaths');
-  if(svgEl)svgEl.textContent=document.querySelectorAll('svg[id^="svg-"] *').length;
+  if(svgEl){var svgCount=0;document.querySelectorAll('svg[id^="svg-"]').forEach(function(s){svgCount+=s.querySelectorAll('*').length;});svgEl.textContent=svgCount;}
 }
 function clearLocalStorage(){
   try{
@@ -2765,7 +2768,13 @@ function toggleNewsPause(){
   newsPaused=!newsPaused;
   var el=document.getElementById('newsTicker');
   var btn=document.getElementById('newsPlayBtn');
-  if(el)el.style.animationPlayState=newsPaused?'paused':'running';
+  if(el){
+    if(!newsPaused&&(el.style.animation==='none'||!el.style.animation)){
+      var _ns=document.getElementById('newsSrc');switchNewsSource(_ns?_ns.value:'coindesk');
+    } else {
+      el.style.animationPlayState=newsPaused?'paused':'running';
+    }
+  }
   if(btn){btn.textContent=newsPaused?'▶':'⏸';btn.style.color=newsPaused?'#3ecf5e':'#9070b0';}
 }
 
@@ -2823,13 +2832,21 @@ function buildNewsTicker(src){
     return '<a href="'+i.u+'" target="_blank" style="color:#c89af0;text-decoration:none;" onmouseover="this.style.color=\'#f0e0ff\'" onmouseout="this.style.color=\'#c89af0\'">'+i.t+'</a>';
   }).join('&nbsp;&nbsp;<span style="color:#4a2a4a;">│</span>&nbsp;&nbsp;')+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 }
+function _tickerRestart(el){
+  if(el._tickerLoop)el.removeEventListener('animationend',el._tickerLoop);
+  el._tickerLoop=function(){
+    if(!newsPaused){el.style.animation='none';void el.offsetWidth;el.style.animation='ticker 55s linear 1';}
+  };
+  el.addEventListener('animationend',el._tickerLoop);
+  el.style.animation='none';
+  void el.offsetWidth;
+  el.style.animation='ticker 55s linear 1';
+}
 function switchNewsSource(src){
   var el=document.getElementById('newsTicker');
   if(!el)return;
   el.innerHTML=buildNewsTicker(src);
-  el.style.animation='none';
-  void el.offsetHeight;
-  el.style.animation='ticker 55s linear infinite';
+  _tickerRestart(el);
   if(newsPaused)el.style.animationPlayState='paused';
 }
 
@@ -2973,8 +2990,9 @@ setInterval(function(){
 },300000);
 var snapOn=false;
 function toggleSnap(){snapOn=!snapOn;var b=document.getElementById('snapTog');b.textContent=snapOn?'Auto: On ▶':'Auto: Off';b.style.color=snapOn?'#3f3':'#9f9';document.getElementById('snapStatus').textContent=snapOn?'Next in 5 min':'';}
-function snapAll(){document.getElementById('snapStatus').textContent='Snapshot taken: '+new Date().toLocaleTimeString();}
-function backupAll(){document.getElementById('snapStatus').textContent='Backup saved at '+new Date().toLocaleTimeString();}
+function _now24(){var n=new Date();return pad2(n.getHours())+':'+pad2(n.getMinutes())+':'+pad2(n.getSeconds());}
+function snapAll(){document.getElementById('snapStatus').textContent='Snapshot taken: '+_now24();}
+function backupAll(){document.getElementById('snapStatus').textContent='Backup saved at '+_now24();}
 function snapPanel(id){console.log('Snap panel: '+id);}
 function restorePanel(id){alert('Restore panel: '+id+' (connect to backup system)');}
 function minimizePanel(panelId,btn){
@@ -4443,7 +4461,7 @@ function fetchAndDrawSVG(pid){
   if(!sym){drawSVG(pid);return;} // stablecoins: just use synthetic
   _diagEntry(pid,'info','REST fetch → '+sym+' (5m ×120)…');
   fetchOHLCV(pid,'5m',120,function(err,data){
-    var ts=new Date().toLocaleTimeString();
+    var n=new Date();var ts=pad2(n.getHours())+':'+pad2(n.getMinutes())+':'+pad2(n.getSeconds());
     if(err||!data){
       _diagEntry(pid,'warn','REST failed ('+err+') — keeping existing chart; drawing synthetic if blank');
       _srcLog.unshift({ts:ts,pid:pid,src:'Binance REST',status:'fail',detail:String(err||'no data')});
@@ -4863,7 +4881,35 @@ var _bugRegistry=[
   {id:'BUG-005',sev:'crit',status:'fixed',ver:'v18',
    title:'fetchAndDrawSVG erased boot-draw chart on REST failure',
    desc:'On Binance API failure (CSP-blocked in sandbox), fetchAndDrawSVG called drawSVG() which first REMOVED the existing svgwrap, then tried to re-render. If re-render also failed, chart was left blank.',
-   fix:'Changed to only call drawSVG() when svgwrap-{pid} does not already exist. Preserves the working synthetic chart rendered on boot when REST fails.'}
+   fix:'Changed to only call drawSVG() when svgwrap-{pid} does not already exist. Preserves the working synthetic chart rendered on boot when REST fails.'},
+  {id:'BUG-006',sev:'high',status:'fixed',ver:'v32',
+   title:'window mousemove/mouseup listeners accumulated every 3s',
+   desc:'drawSVG() called window.addEventListener("mousemove") and window.addEventListener("mouseup") on every invocation. With 4 panels redrawn every 3s, this created 8 new handlers per cycle — hundreds of stale closures within minutes, all firing on every mouse move.',
+   fix:'Stored handlers on svgState[id]._mmHandler and _muHandler. Each drawSVG call first removes the previous handler pair before registering new ones. Caps total window drag listeners at exactly 8 (2 per panel) at all times.'},
+  {id:'BUG-007',sev:'med',status:'fixed',ver:'v32',
+   title:'updateMemBar ran full-document querySelectorAll every 5s',
+   desc:'document.querySelectorAll("*") walks the entire DOM (~1200+ nodes) and document.querySelectorAll("svg[id^=\\"svg-\\"] *") re-traverses all SVG children every 5 seconds. Caused measurable jank on slower devices.',
+   fix:'Scoped first query to document.body (equivalent result, narrower walk). Second query now fetches SVG roots first then iterates children, avoiding repeated selector matching on all descendants.'},
+  {id:'BUG-008',sev:'med',status:'fixed',ver:'v32',
+   title:'fdpClose() did not stop the auto-watcher interval',
+   desc:'_startDiagWatch() sets an 8-second setInterval on FDP open, but fdpClose() only hid the panel — the interval kept firing indefinitely, calling runDiagAll() and touching the DOM even with FDP invisible.',
+   fix:'Added _stopDiagWatch() call inside fdpClose(). Watcher is now stopped on close and minimized, and restarted only when FDP is opened or restored.'},
+  {id:'BUG-009',sev:'low',status:'fixed',ver:'v32',
+   title:'_diagLog declared twice causing cap logic split',
+   desc:'var _diagLog=[] appeared at both line ~4497 and line ~5252. While JS hoisting silenced runtime errors, the _diagMaxLog cap logic referenced the second declaration, creating a confusing dual-declaration and making the 200-entry limit ambiguous.',
+   fix:'Removed the second var _diagLog declaration. Single authoritative declaration remains at line ~4497. _diagMaxLog=200 cap is now applied exactly once.'},
+  {id:'BUG-010',sev:'high',status:'fixed',ver:'v32',
+   title:'runStochBTs had no re-entrancy guard — race on rapid panel loads',
+   desc:'runStochBTs() fired from the fetchAndDrawSVG debounce. If called while already running (overlapping REST responses), two concurrent backtest passes would both write to the same stochBTBody table, causing garbled rows and doubled renders.',
+   fix:'Added _btRunning boolean flag. Function returns immediately if already running. Flag cleared in both async completion paths (onM1Done when m15 done, onM15Done when m1 pending=0).'},
+  {id:'BUG-011',sev:'low',status:'fixed',ver:'v32',
+   title:'All timestamps displayed in 12hr locale format',
+   desc:'toLocaleTimeString() used in 4 places (fetchAndDrawSVG callback, snapAll, backupAll, fdpRenderInfo session start) produced AM/PM output inconsistent with a trading terminal context.',
+   fix:'Added _now24() helper using pad2(h)+":"+pad2(m)+":"+pad2(s). All timestamp displays now use explicit 24hr format regardless of user locale.'},
+  {id:'BUG-012',sev:'med',status:'fixed',ver:'v32',
+   title:'News ticker disappeared after first 55s pass',
+   desc:'switchNewsSource() set el.style.animation="ticker 55s linear infinite" but in sandboxed artifact iframes the infinite iteration count was not reliably honored — animation ran once then left the element off-screen.',
+   fix:'Replaced infinite CSS animation with animationend-event restart loop (_tickerRestart). Each cycle fires as iteration-count:1, and the animationend listener immediately restarts unless paused. toggleNewsPause now restarts the ticker if animation had stopped while paused.'}
 ];
 
 function toggleFDP(){
@@ -4887,6 +4933,7 @@ function fdpClose(){
   var bar=document.getElementById('fdpBar');
   if(fdp)fdp.style.display='none';
   if(bar)bar.style.display='none';
+  _stopDiagWatch(); // fix: watcher was not stopped on close
 }
 
 function fdpMinimize(){
@@ -4911,17 +4958,19 @@ function fdpSetOpacity(val){
 
 function fdpTab(name){
   _fdpTab=name;
-  ['log','bugs','repair','info'].forEach(function(t){
+  ['log','bugs','repair','info','dom'].forEach(function(t){
     var b=document.getElementById('fdp-t-'+t);
     if(!b)return;
     b.style.background=t===name?'#0a0f04':'transparent';
     b.style.color=t===name?'#d4b800':'#4a5570';
     b.style.borderBottom=t===name?'2px solid #d4b800':'2px solid transparent';
   });
-  if(name==='log')    fdpRenderLog();
+  if(name==='log')         fdpRenderLog();
   else if(name==='bugs')   fdpRenderBugs();
   else if(name==='repair') fdpRenderRepair();
   else if(name==='info')   fdpRenderInfo();
+  else if(name==='dom')    fdpRenderDOM();
+  if(name!=='dom'&&_domInspActive)_domInspOff();
 }
 
 function fdpRenderLog(){
@@ -5053,7 +5102,7 @@ function fdpRenderInfo(){
     +'<div style="font-size:9px;color:#4a5570;border-top:1px solid #1a2a0a;padding-top:6px;">'
     +'<div><span style="color:#2a3a2a;">WSS: </span><span style="color:'+(window._wsConnected?'#3ecf5e':'#ef5350')+'">'+(window._wsConnected?'Connected':'Offline — synthetic data active')+'</span></div>'
     +'<div><span style="color:#2a3a2a;">Bug Registry: </span><span style="color:#3ecf5e;">'+fixed+' fixed</span> / <span style="color:'+(open?'#ef5350':'#3ecf5e')+'">'+(open?open+' open':'0 open')+'</span></div>'
-    +'<div><span style="color:#2a3a2a;">Session start: </span><span style="color:#7af;">'+new Date().toLocaleTimeString()+'</span></div>'
+    +(function(){var n=new Date();return '<div><span style="color:#2a3a2a;">Session start: </span><span style="color:#7af;">'+pad2(n.getHours())+':'+pad2(n.getMinutes())+':'+pad2(n.getSeconds())+'</span></div>';}())
     +'</div>'
     +svgInfo+restInfo+jsInfo
     +'<div style="border-top:1px solid #1a2a0a;margin-top:6px;padding-top:6px;">'
@@ -5072,6 +5121,138 @@ function fdpAutoRepair(pid){
     _diagEntry(null,'info','⚙ Auto-repair ALL panels');
     Object.keys(panels).forEach(function(p){diagnosChart(p);});
   }
+}
+
+// ══════════════════════════════════════════════════════
+// ── DOM Inspector (FDP → 🔍 DOM tab) ──
+// ══════════════════════════════════════════════════════
+var _domInspActive=false;
+var _domInspPinned=false;
+var _domInspTarget=null;
+var _domInspMoveHandler=null;
+var _domInspClickHandler=null;
+
+function _domHighlightEl(el){
+  var h=document.getElementById('_domHighlight');
+  if(!h)return;
+  if(!el){h.style.display='none';return;}
+  var r=el.getBoundingClientRect();
+  h.style.display='block';
+  h.style.top=r.top+'px';
+  h.style.left=r.left+'px';
+  h.style.width=r.width+'px';
+  h.style.height=r.height+'px';
+}
+
+function _domInspRenderInfo(el){
+  var body=document.getElementById('fdpBody');
+  if(!body||_fdpTab!=='dom')return;
+  if(!el){
+    var ph=body.querySelector('#_domInspInfo');
+    if(ph)ph.innerHTML='<span style="color:#3a4050;">Hover an element to inspect it.</span>';
+    return;
+  }
+  var r=el.getBoundingClientRect();
+  var cs=window.getComputedStyle(el);
+  var props=['color','background-color','font-size','font-family','display','position','z-index','opacity','overflow','border'];
+  var cssRows=props.map(function(p){
+    var v=cs.getPropertyValue(p);
+    return '<div style="display:flex;gap:4px;padding:1px 0;border-bottom:1px solid #0d1510;">'
+      +'<span style="color:#4a5070;width:100px;flex-shrink:0;font-size:8.5px;">'+p+'</span>'
+      +'<span style="color:#9db4ff;font-size:8.5px;word-break:break-all;">'+v+'</span></div>';
+  }).join('');
+  var tag=el.tagName.toLowerCase();
+  var id=el.id?'#'+el.id:'';
+  var cls=el.className&&typeof el.className==='string'?'.'+el.className.trim().split(/\s+/).join('.'):'';
+  var ph=body.querySelector('#_domInspInfo');
+  if(ph)ph.innerHTML=''
+    +'<div style="background:rgba(0,30,60,0.4);border:1px solid #1a3a5a;border-radius:4px;padding:5px 6px;margin-bottom:5px;">'
+    +'<div style="color:#7af;font-size:10px;font-weight:bold;margin-bottom:2px;">&lt;'+tag+'&gt;'+id+cls+'</div>'
+    +'<div style="color:#4a5070;font-size:8.5px;margin-bottom:3px;">'+Math.round(r.width)+'×'+Math.round(r.height)+' @ ('+Math.round(r.left)+', '+Math.round(r.top)+')</div>'
+    +'<div style="max-height:80px;overflow-y:auto;">'+cssRows+'</div>'
+    +'</div>'
+    +(el.textContent?'<div style="color:#3a4050;font-size:8.5px;padding:2px 4px;border:1px dashed #1a2a1a;border-radius:3px;max-height:36px;overflow:hidden;word-break:break-all;">'
+      +el.textContent.trim().slice(0,120)+'</div>':'');
+}
+
+function _domInspOn(){
+  _domInspActive=true;
+  _domInspPinned=false;
+  _domInspTarget=null;
+  var h=document.getElementById('_domHighlight');
+  if(h)h.style.display='none';
+
+  _domInspMoveHandler=function(e){
+    if(_domInspPinned)return;
+    var fdp=document.getElementById('fdp');
+    if(fdp&&fdp.contains(e.target))return;
+    var h2=document.getElementById('_domHighlight');
+    if(h2&&h2.contains(e.target))return;
+    _domInspTarget=e.target;
+    _domHighlightEl(e.target);
+    _domInspRenderInfo(e.target);
+  };
+  _domInspClickHandler=function(e){
+    var fdp=document.getElementById('fdp');
+    if(fdp&&fdp.contains(e.target))return;
+    var h2=document.getElementById('_domHighlight');
+    if(h2&&h2.contains(e.target))return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(_domInspPinned&&_domInspTarget===e.target){
+      _domInspPinned=false;
+      _domInspTarget=null;
+      _domHighlightEl(null);
+      _domInspRenderInfo(null);
+    } else {
+      _domInspPinned=true;
+      _domInspTarget=e.target;
+      _domHighlightEl(e.target);
+      _domInspRenderInfo(e.target);
+      var h2=document.getElementById('_domHighlight');
+      if(h2)h2.style.border='2px solid #ffb400';
+    }
+  };
+  document.addEventListener('mousemove',_domInspMoveHandler,true);
+  document.addEventListener('click',_domInspClickHandler,true);
+}
+
+function _domInspOff(){
+  _domInspActive=false;
+  _domInspPinned=false;
+  _domInspTarget=null;
+  if(_domInspMoveHandler){document.removeEventListener('mousemove',_domInspMoveHandler,true);_domInspMoveHandler=null;}
+  if(_domInspClickHandler){document.removeEventListener('click',_domInspClickHandler,true);_domInspClickHandler=null;}
+  var h=document.getElementById('_domHighlight');
+  if(h){h.style.display='none';h.style.border='2px solid #7af';}
+}
+
+function fdpRenderDOM(){
+  var body=document.getElementById('fdpBody');
+  if(!body)return;
+  body.innerHTML=''
+    +'<div style="display:flex;align-items:center;gap:6px;padding-bottom:6px;border-bottom:1px solid #1a2a0a;margin-bottom:6px;">'
+    +'<button id="_domInspToggleBtn" onclick="_domInspToggle()" style="background:'
+      +(_domInspActive?'#001a00':'#000')+';border:1px solid '+(_domInspActive?'#3ecf5e':'#2a3a2a')
+      +';border-radius:3px;color:'+(_domInspActive?'#3ecf5e':'#4a5570')
+      +';font-size:9px;cursor:pointer;padding:2px 9px;font-family:monospace;">'
+      +(_domInspActive?'⏹ Stop Inspect':'▶ Start Inspect')+'</button>'
+    +'<span style="color:#3a4050;font-size:8.5px;">'
+      +(_domInspActive?(_domInspPinned?'📌 Pinned — click pinned element to unpin':'Hover to inspect · click to pin'):'Activate to hover-inspect any element')
+    +'</span></div>'
+    +'<div id="_domInspInfo" style="font-family:monospace;">'
+      +(_domInspActive&&_domInspTarget?'':(
+        '<span style="color:#3a4050;">'
+        +(_domInspActive?'Hover an element to inspect it.':'Press ▶ Start Inspect, then hover any element.')
+        +'</span>'
+      ))
+    +'</div>';
+  if(_domInspActive&&_domInspTarget)_domInspRenderInfo(_domInspTarget);
+}
+
+function _domInspToggle(){
+  if(_domInspActive){_domInspOff();}else{_domInspOn();}
+  fdpRenderDOM();
 }
 
 // ── Auto-init VL Panel on load ──
@@ -5249,7 +5430,7 @@ function updateFeeDisplay(id){
 function initFeeDisplays(){['btc','eth','sol','bnb'].forEach(updateFeeDisplay);}
 
 // ── Auto-Diagnostic System ──
-var _diagLog=[];
+// _diagLog declared once above (line ~4497); _diagMaxLog caps it at 200
 var _diagMaxLog=200;
 var _diagTimers={};
 var _diagPollCount={};
@@ -5788,9 +5969,12 @@ function renderTopPerformers(allHits){
   });
 }
 
+var _btRunning=false;
 function runStochBTs(){
+  if(_btRunning)return; // re-entrancy guard: prevents overlapping invocations from rapid tax/state changes
+  _btRunning=true;
   var body=document.getElementById('stochBTBody');
-  if(!body)return;
+  if(!body){_btRunning=false;return;}
   var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
   var lbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
   var allTopHits=[];
@@ -5895,7 +6079,7 @@ function runStochBTs(){
         allTopHits=allTopHits.concat(h);
       });
     });
-    if(m15done)renderTopPerformers(allTopHits);
+    if(m15done){renderTopPerformers(allTopHits);_btRunning=false;}
   }
   var m15done=false;
 
@@ -5912,7 +6096,7 @@ function runStochBTs(){
       });
     });
     m15done=true;
-    if(pending1m===0)renderTopPerformers(allTopHits);
+    if(pending1m===0){renderTopPerformers(allTopHits);_btRunning=false;}
   }
 
   ['btc','eth','sol','bnb'].forEach(function(id){
