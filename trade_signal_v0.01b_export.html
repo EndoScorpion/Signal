@@ -260,6 +260,7 @@ svg{max-width:100%;height:auto;}
   <span style="color:#4a5a30;">EndoScorpion@gmail.com</span>
   <span style="flex:1;"></span>
   <span style="color:#1a2a0a;font-size:8px;">trade_signal_v0.01b</span>
+  <button onclick="toggleColorPicker()" id="cpTopBtn" title="Color Picker" style="width:18px;height:18px;border-radius:50%;padding:0;border:2px solid #5a1a5a;cursor:pointer;background:conic-gradient(red 0deg,yellow 60deg,lime 120deg,cyan 180deg,blue 240deg,magenta 300deg,red 360deg);flex-shrink:0;box-shadow:0 0 5px rgba(200,100,255,0.4);margin-left:6px;" aria-label="Open Color Picker"></button>
 </div>
 
 <!-- ═══ MARKETWATCH MENU BAR ═══ -->
@@ -472,7 +473,7 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- ═══ COLOR PICKER POPUP ═══ -->
-<div id="cpModal" style="display:none;position:fixed;top:44px;right:12px;z-index:99999;background:#0d0f14;border:1px solid #3a2a5a;border-radius:8px;padding:12px 14px;width:288px;box-shadow:0 8px 40px rgba(0,0,0,0.85);font-family:monospace;font-size:11px;">
+<div id="cpModal" style="display:none;position:fixed;top:44px;right:12px;z-index:99999;background:#0d0f14;border:1px solid #3a2a5a;border-radius:10px;padding:12px 14px;width:296px;box-shadow:0 8px 48px rgba(0,0,0,0.92);font-family:monospace;font-size:11px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
     <span style="color:#ff9ef5;font-weight:bold;font-size:12px;">&#127912; Colors &amp; Theme</span>
     <button onclick="toggleColorPicker()" style="background:none;border:none;color:#666;font-size:14px;cursor:pointer;padding:0 2px;">&#10005;</button>
@@ -495,29 +496,73 @@ svg{max-width:100%;height:auto;}
       <input type="color" value="#9b59b6" title="Volume bar color" style="width:22px;height:18px;border:1px solid #3a5a3a;border-radius:3px;cursor:pointer;padding:1px;background:#000;vertical-align:middle;" oninput="window._volBarColor=this.value;Object.keys(panels).forEach(function(id){if(panels[id]&&panels[id].mode==='svg')drawSVG(id);});">
     </div>
   </div>
-  <!-- Canvas: hue wheel + SV square -->
-  <canvas id="cpWheel" width="180" height="180" style="display:block;margin:0 auto 8px;border-radius:50%;cursor:crosshair;border:1px solid #2a2a3a;"></canvas>
-  <!-- SV square overlay inside wheel is drawn on cpWheel -->
-  <canvas id="cpSV" width="120" height="120" style="display:block;margin:0 auto 8px;border-radius:4px;cursor:crosshair;border:1px solid #3a2a5a;"></canvas>
-  <!-- Preview + HEX -->
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-    <div id="cpPreview" style="width:36px;height:36px;border-radius:4px;border:1px solid #3a3a4a;background:#ff0000;flex-shrink:0;"></div>
-    <div style="flex:1;">
-      <div style="color:#4a5570;font-size:9px;margin-bottom:2px;">HEX</div>
-      <input id="cpHex" type="text" value="#FF0000" maxlength="7" style="width:100%;background:#000;color:#fff;border:1px solid #3a2a5a;border-radius:3px;padding:2px 5px;font-family:monospace;font-size:11px;outline:none;" oninput="cpFromHex(this.value)">
+
+  <!-- ── Circular Color Wheel ── -->
+  <div style="position:relative;width:220px;height:220px;margin:0 auto 10px;border-radius:50%;box-shadow:0 0 18px rgba(180,100,255,0.18);">
+    <canvas id="cpWheel" width="220" height="220" style="display:block;border-radius:50%;cursor:crosshair;"></canvas>
+    <!-- Crosshair cursor dot -->
+    <div id="cpWheelDot" style="position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 3px #000;pointer-events:none;transform:translate(-50%,-50%);top:50%;left:50%;box-sizing:border-box;"></div>
+  </div>
+
+  <!-- ── Brightness slider ── -->
+  <div style="margin-bottom:6px;">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+      <span style="color:#4a5570;font-size:9px;text-transform:uppercase;letter-spacing:.5px;width:64px;">Brightness</span>
+      <input id="cpVNum" type="number" min="0" max="100" value="100" style="width:44px;background:#000;color:#ddd;border:1px solid #2a2a3a;border-radius:3px;padding:1px 3px;font-family:monospace;font-size:10px;outline:none;text-align:right;" oninput="cpFromVNum()">
+      <span style="color:#3a4050;font-size:9px;">%</span>
+    </div>
+    <div style="position:relative;height:12px;border-radius:6px;overflow:hidden;cursor:pointer;" id="cpVTrack" onmousedown="cpSliderDown(event,'v')">
+      <div id="cpVBg" style="position:absolute;inset:0;border-radius:6px;"></div>
+      <div id="cpVThumb" style="position:absolute;top:1px;width:10px;height:10px;border-radius:50%;background:#fff;border:1px solid #555;box-shadow:0 0 3px rgba(0,0,0,0.7);transform:translateX(-50%);left:100%;pointer-events:none;"></div>
     </div>
   </div>
-  <!-- RGB -->
+
+  <!-- ── Alpha / Transparency slider ── -->
+  <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #1e1e2e;">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+      <span style="color:#4a5570;font-size:9px;text-transform:uppercase;letter-spacing:.5px;width:64px;">Opacity</span>
+      <input id="cpANum" type="number" min="0" max="100" value="100" style="width:44px;background:#000;color:#ddd;border:1px solid #2a2a3a;border-radius:3px;padding:1px 3px;font-family:monospace;font-size:10px;outline:none;text-align:right;" oninput="cpFromANum()">
+      <span style="color:#3a4050;font-size:9px;">%</span>
+    </div>
+    <div style="position:relative;height:12px;border-radius:6px;overflow:hidden;cursor:pointer;background:repeating-conic-gradient(#333 0% 25%, #111 0% 50%) 0 0 / 10px 10px;" id="cpATrack" onmousedown="cpSliderDown(event,'a')">
+      <div id="cpABg" style="position:absolute;inset:0;border-radius:6px;"></div>
+      <div id="cpAThumb" style="position:absolute;top:1px;width:10px;height:10px;border-radius:50%;background:#fff;border:1px solid #555;box-shadow:0 0 3px rgba(0,0,0,0.7);transform:translateX(-50%);left:100%;pointer-events:none;"></div>
+    </div>
+  </div>
+
+  <!-- ── Preview + HEX ── -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+    <div style="position:relative;width:36px;height:36px;border-radius:5px;flex-shrink:0;overflow:hidden;border:1px solid #3a3a4a;">
+      <div style="position:absolute;inset:0;background:repeating-conic-gradient(#333 0% 25%, #111 0% 50%) 0 0 / 10px 10px;border-radius:4px;"></div>
+      <div id="cpPreview" style="position:absolute;inset:0;border-radius:4px;background:#ff0000;"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+      <div style="display:flex;gap:4px;">
+        <div style="flex:1;">
+          <div style="color:#4a5570;font-size:8px;margin-bottom:1px;">HEX</div>
+          <input id="cpHex" type="text" value="#FF0000" maxlength="7" style="width:100%;background:#000;color:#fff;border:1px solid #3a2a5a;border-radius:3px;padding:2px 4px;font-family:monospace;font-size:10px;outline:none;" oninput="cpFromHex(this.value)">
+        </div>
+        <div style="width:54px;">
+          <div style="color:#4a5570;font-size:8px;margin-bottom:1px;">HEX+A</div>
+          <input id="cpHexA" type="text" value="#FF0000FF" maxlength="9" style="width:100%;background:#000;color:#c7a8ff;border:1px solid #3a2a5a;border-radius:3px;padding:2px 4px;font-family:monospace;font-size:9px;outline:none;" oninput="cpFromHexA(this.value)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RGB + A ── -->
   <div style="margin-bottom:6px;">
-    <div style="color:#4a5570;font-size:9px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;">RGB</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+    <div style="color:#4a5570;font-size:9px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;">RGB + Alpha</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;">
       <div><div style="color:#ef5350;font-size:8px;margin-bottom:1px;">R</div><input id="cpR" type="number" min="0" max="255" value="255" style="width:100%;background:#000;color:#ef5350;border:1px solid #3a1a1a;border-radius:3px;padding:2px 3px;font-family:monospace;font-size:10px;outline:none;" oninput="cpFromRGB()"></div>
       <div><div style="color:#3ecf5e;font-size:8px;margin-bottom:1px;">G</div><input id="cpG" type="number" min="0" max="255" value="0" style="width:100%;background:#000;color:#3ecf5e;border:1px solid #1a3a1a;border-radius:3px;padding:2px 3px;font-family:monospace;font-size:10px;outline:none;" oninput="cpFromRGB()"></div>
       <div><div style="color:#4a9aff;font-size:8px;margin-bottom:1px;">B</div><input id="cpB" type="number" min="0" max="255" value="0" style="width:100%;background:#000;color:#4a9aff;border:1px solid #1a2a4a;border-radius:3px;padding:2px 3px;font-family:monospace;font-size:10px;outline:none;" oninput="cpFromRGB()"></div>
+      <div><div style="color:#aaa;font-size:8px;margin-bottom:1px;">A%</div><input id="cpARgb" type="number" min="0" max="100" value="100" style="width:100%;background:#000;color:#aaa;border:1px solid #2a2a3a;border-radius:3px;padding:2px 3px;font-family:monospace;font-size:10px;outline:none;" oninput="_cp.a=Math.max(0,Math.min(1,(+this.value)/100));cpSyncAll()"></div>
     </div>
   </div>
-  <!-- CMYK -->
-  <div style="margin-bottom:8px;">
+
+  <!-- ── CMYK ── -->
+  <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #1e1e2e;">
     <div style="color:#4a5570;font-size:9px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;">CMYK</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;">
       <div><div style="color:#4af;font-size:8px;margin-bottom:1px;">C%</div><input id="cpC" type="number" min="0" max="100" value="0" style="width:100%;background:#000;color:#4af;border:1px solid #1a2a3a;border-radius:3px;padding:2px 2px;font-family:monospace;font-size:10px;outline:none;" oninput="cpFromCMYK()"></div>
@@ -526,24 +571,26 @@ svg{max-width:100%;height:auto;}
       <div><div style="color:#aaa;font-size:8px;margin-bottom:1px;">K%</div><input id="cpK" type="number" min="0" max="100" value="0" style="width:100%;background:#000;color:#aaa;border:1px solid #2a2a2a;border-radius:3px;padding:2px 2px;font-family:monospace;font-size:10px;outline:none;" oninput="cpFromCMYK()"></div>
     </div>
   </div>
-  <!-- Apply target -->
+
+  <!-- ── Color Field Selector (searchable) ── -->
   <div style="margin-bottom:8px;">
-    <div style="color:#4a5570;font-size:9px;margin-bottom:3px;">Apply to:</div>
-    <select id="cpTarget" style="width:100%;background:#000;color:#c7a8ff;border:1px solid #3a2a5a;border-radius:3px;padding:3px 5px;font-family:monospace;font-size:10px;outline:none;">
-      <option value="volBar">Volume Bar Color</option>
-      <option value="css_up">Theme — Up candle</option>
-      <option value="css_down">Theme — Down candle</option>
-      <option value="css_bg">Theme — Background</option>
-      <option value="css_panel">Theme — Panel</option>
-      <option value="css_grid">Theme — Grid lines</option>
-      <option value="css_accent">Theme — Accent text</option>
-    </select>
+    <div style="color:#4a5570;font-size:9px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;">Apply to field:</div>
+    <div style="position:relative;">
+      <input id="cpTargetSearch" type="text" placeholder="Search color field…" autocomplete="off"
+        style="width:100%;background:#000;color:#c7a8ff;border:1px solid #3a2a5a;border-radius:3px;padding:3px 5px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;"
+        oninput="cpFilterFields(this.value)" onfocus="cpShowFields()" onblur="setTimeout(cpHideFields,150)">
+      <div id="cpFieldDropdown" style="display:none;position:absolute;left:0;right:0;top:100%;margin-top:2px;background:#0d0f14;border:1px solid #3a2a5a;border-radius:4px;max-height:140px;overflow-y:auto;z-index:100001;"></div>
+    </div>
+    <div id="cpTargetLabel" style="color:#7a5aaa;font-size:9px;margin-top:3px;padding:2px 4px;background:#0a0010;border-radius:3px;min-height:14px;"></div>
   </div>
-  <!-- Palette swatches (common palette) -->
+  <input type="hidden" id="cpTarget" value="volBar">
+
+  <!-- ── Palette swatches ── -->
   <div style="margin-bottom:8px;">
     <div style="color:#4a5570;font-size:9px;margin-bottom:3px;">Palette:</div>
     <div id="cpSwatches" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
   </div>
+
   <button onclick="cpApply()" style="width:100%;background:#1a0a30;color:#c7a8ff;border:1px solid #5a2a8a;border-radius:4px;padding:5px 0;font-family:monospace;font-size:11px;cursor:pointer;font-weight:bold;">&#10003; Apply Color</button>
 </div>
 
@@ -3880,14 +3927,35 @@ function toggleVLHistGrid(axis){
 }
 
 // ── Color Picker ──
-var _cp={h:0,s:1,v:1,open:false};
+var _cp={h:0,s:1,v:1,a:1,open:false};
+var _cpFields=[
+  {value:'volBar',       label:'Volume Bar Color'},
+  {value:'css_up',       label:'Theme — Up candle'},
+  {value:'css_down',     label:'Theme — Down candle'},
+  {value:'css_bg',       label:'Theme — Background'},
+  {value:'css_panel',    label:'Theme — Panel'},
+  {value:'css_grid',     label:'Theme — Grid lines'},
+  {value:'css_accent',   label:'Theme — Accent text'},
+  {value:'css_up_wick',  label:'Theme — Up wick'},
+  {value:'css_dn_wick',  label:'Theme — Down wick'},
+  {value:'css_label',    label:'Theme — Price labels'},
+  {value:'css_vol',      label:'Theme — Volume bars'},
+  {value:'css_btc',      label:'Panel — BTC border'},
+  {value:'css_eth',      label:'Panel — ETH border'},
+  {value:'css_sol',      label:'Panel — SOL border'},
+  {value:'css_bnb',      label:'Panel — BNB border'},
+  {value:'css_clock',    label:'UI — Clock color'},
+  {value:'css_newsbar',  label:'UI — News bar text'},
+  {value:'css_ticker',   label:'UI — Ticker text'},
+];
+var _cpSelectedField=_cpFields[0];
 var _cpSwatchColors=['#ef5350','#ff7043','#ffb400','#ffee58','#a5d632','#26a69a','#29b6f6','#5c6bc0','#ab47bc','#ec407a','#ffffff','#9db4ff','#c7a8ff','#ff9ef5','#3ecf5e','#7af','#000000','#131722','#1a1e29','#0b0c10'];
 function toggleColorPicker(){
   var m=document.getElementById('cpModal');
   if(!m)return;
   _cp.open=!_cp.open;
   m.style.display=_cp.open?'block':'none';
-  if(_cp.open){cpInitWheel();cpInitSV();cpInitSwatches();cpSyncAll();}
+  if(_cp.open){cpInitWheel();cpInitSwatches();cpInitFields();cpSyncAll();}
 }
 function cpInitSwatches(){
   var c=document.getElementById('cpSwatches');if(!c)return;
@@ -3902,59 +3970,144 @@ function cpInitSwatches(){
 }
 function cpInitWheel(){
   var c=document.getElementById('cpWheel');if(!c)return;
+  cpDrawWheel();
+  function _pickFromEvent(e){
+    var rect=c.getBoundingClientRect();
+    var cx=c.width/2,cy=c.height/2,r=cx-4;
+    var x=e.clientX-rect.left-cx,y=e.clientY-rect.top-cy;
+    var dist=Math.sqrt(x*x+y*y);
+    if(dist>r+4)return false;
+    var angle=Math.atan2(y,x)*180/Math.PI;
+    if(angle<0)angle+=360;
+    _cp.h=angle;_cp.s=Math.min(dist/r,1);
+    cpSyncAll();
+    return true;
+  }
+  c.onmousedown=function(e){
+    if(_pickFromEvent(e)){
+      var mm=function(ev){_pickFromEvent(ev);};
+      var mu=function(){document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);};
+      document.addEventListener('mousemove',mm);
+      document.addEventListener('mouseup',mu);
+    }
+  };
+}
+function cpDrawWheel(){
+  var c=document.getElementById('cpWheel');if(!c)return;
   var ctx=c.getContext('2d');
-  var cx=c.width/2,cy=c.height/2,r=cx-2;
+  var cx=c.width/2,cy=c.height/2,r=cx-4;
   ctx.clearRect(0,0,c.width,c.height);
+  // Draw hue ring with saturation gradient
   for(var a=0;a<360;a++){
     var startA=(a-1)*Math.PI/180,endA=(a+1)*Math.PI/180;
     var grad=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
-    grad.addColorStop(0,'#ffffff');
-    grad.addColorStop(1,'hsl('+a+',100%,50%)');
+    // Center = white, outer = full saturation hue, darkened by brightness
+    var lum=50*_cp.v;
+    grad.addColorStop(0,'hsl(0,0%,'+(Math.round(100*_cp.v))+'%)');
+    grad.addColorStop(1,'hsl('+a+',100%,'+Math.round(lum)+'%)');
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,startA,endA);ctx.closePath();
     ctx.fillStyle=grad;ctx.fill();
   }
-  // Click handler
-  c.onmousedown=function(e){
-    var rect=c.getBoundingClientRect();
-    var x=e.clientX-rect.left-cx,y=e.clientY-rect.top-cy;
-    var dist=Math.sqrt(x*x+y*y);
-    if(dist>r)return;
-    var angle=Math.atan2(y,x)*180/Math.PI;
-    if(angle<0)angle+=360;
-    var sat=Math.min(dist/r,1);
-    _cp.h=angle;_cp.s=sat;
-    cpSyncAll();
-  };
+  // Clip to circle
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();
+  // Update dot position
+  var dotEl=document.getElementById('cpWheelDot');
+  if(dotEl){
+    var angle=_cp.h*Math.PI/180;
+    var dist=_cp.s*(r);
+    var dx=cx+dist*Math.cos(angle);
+    var dy=cy+dist*Math.sin(angle);
+    dotEl.style.left=dx+'px';dotEl.style.top=dy+'px';
+    var rgb=hsvToRgb(_cp.h,_cp.s,_cp.v);
+    var contrast=(rgb[0]*299+rgb[1]*587+rgb[2]*114)/1000;
+    dotEl.style.borderColor=contrast>128?'#000':'#fff';
+    dotEl.style.background='rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  }
 }
-function cpInitSV(){
-  var c=document.getElementById('cpSV');if(!c)return;
-  c.onmousedown=function(e){
-    var rect=c.getBoundingClientRect();
-    var x=Math.max(0,Math.min(e.clientX-rect.left,c.width));
-    var y=Math.max(0,Math.min(e.clientY-rect.top,c.height));
-    _cp.s=x/c.width;_cp.v=1-y/c.height;
+
+/* ── Slider drag ── */
+function cpSliderDown(e,which){
+  e.preventDefault();
+  function update(ev){
+    var track=document.getElementById(which==='v'?'cpVTrack':'cpATrack');
+    if(!track)return;
+    var rect=track.getBoundingClientRect();
+    var pct=Math.max(0,Math.min(1,(ev.clientX-rect.left)/rect.width));
+    if(which==='v'){_cp.v=pct;}
+    else{_cp.a=pct;}
     cpSyncAll();
-  };
+  }
+  update(e);
+  var mm=function(ev){update(ev);};
+  var mu=function(){document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);};
+  document.addEventListener('mousemove',mm);
+  document.addEventListener('mouseup',mu);
 }
-function cpDrawSV(){
-  var c=document.getElementById('cpSV');if(!c)return;
-  var ctx=c.getContext('2d');
-  var w=c.width,h=c.height;
-  ctx.clearRect(0,0,w,h);
-  // White to hue gradient
-  var gH=ctx.createLinearGradient(0,0,w,0);
-  gH.addColorStop(0,'#ffffff');
-  gH.addColorStop(1,'hsl('+_cp.h+',100%,50%)');
-  ctx.fillStyle=gH;ctx.fillRect(0,0,w,h);
-  // Transparent to black overlay
-  var gV=ctx.createLinearGradient(0,0,0,h);
-  gV.addColorStop(0,'rgba(0,0,0,0)');
-  gV.addColorStop(1,'#000000');
-  ctx.fillStyle=gV;ctx.fillRect(0,0,w,h);
-  // Cursor
-  var px=_cp.s*w,py=(1-_cp.v)*h;
-  ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
-  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+function cpUpdateVSlider(){
+  var bg=document.getElementById('cpVBg'),th=document.getElementById('cpVThumb'),n=document.getElementById('cpVNum');
+  if(!bg||!th)return;
+  var rgb0=hsvToRgb(_cp.h,_cp.s,0),rgb1=hsvToRgb(_cp.h,_cp.s,1);
+  var c0='rgb('+rgb0[0]+','+rgb0[1]+','+rgb0[2]+')';
+  var c1='rgb('+rgb1[0]+','+rgb1[1]+','+rgb1[2]+')';
+  bg.style.background='linear-gradient(to right,'+c0+','+c1+')';
+  th.style.left=(_cp.v*100)+'%';
+  if(n)n.value=Math.round(_cp.v*100);
+}
+function cpUpdateASlider(){
+  var bg=document.getElementById('cpABg'),th=document.getElementById('cpAThumb'),n=document.getElementById('cpANum');
+  if(!bg||!th)return;
+  var rgb=hsvToRgb(_cp.h,_cp.s,_cp.v);
+  bg.style.background='linear-gradient(to right,rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0),rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+'))';
+  th.style.left=(_cp.a*100)+'%';
+  if(n)n.value=Math.round(_cp.a*100);
+}
+function cpFromVNum(){var n=document.getElementById('cpVNum');if(!n)return;_cp.v=Math.max(0,Math.min(1,(+n.value)/100));cpSyncAll();}
+function cpFromANum(){var n=document.getElementById('cpANum');if(!n)return;_cp.a=Math.max(0,Math.min(1,(+n.value)/100));cpSyncAll();}
+
+/* ── Searchable field selector ── */
+function cpInitFields(){
+  var inp=document.getElementById('cpTargetSearch');
+  var lbl=document.getElementById('cpTargetLabel');
+  if(!inp)return;
+  inp.value=_cpSelectedField.label;
+  if(lbl)lbl.textContent='→ '+_cpSelectedField.label;
+  document.getElementById('cpTarget').value=_cpSelectedField.value;
+}
+function cpFilterFields(q){
+  var dd=document.getElementById('cpFieldDropdown');if(!dd)return;
+  var lower=q.toLowerCase();
+  var matches=_cpFields.filter(function(f){return f.label.toLowerCase().indexOf(lower)>=0||f.value.toLowerCase().indexOf(lower)>=0;});
+  cpRenderFieldList(matches);
+  dd.style.display='block';
+}
+function cpShowFields(){
+  var inp=document.getElementById('cpTargetSearch');
+  cpFilterFields(inp?inp.value:'');
+}
+function cpHideFields(){var dd=document.getElementById('cpFieldDropdown');if(dd)dd.style.display='none';}
+function cpRenderFieldList(fields){
+  var dd=document.getElementById('cpFieldDropdown');if(!dd)return;
+  dd.innerHTML='';
+  fields.forEach(function(f){
+    var div=document.createElement('div');
+    div.textContent=f.label;
+    div.style.cssText='padding:4px 7px;cursor:pointer;font-size:10px;color:#c7a8ff;border-bottom:1px solid #1a1a2a;';
+    div.onmouseenter=function(){this.style.background='#1a0a30';};
+    div.onmouseleave=function(){this.style.background='';};
+    div.onmousedown=function(e){
+      e.preventDefault();
+      _cpSelectedField=f;
+      var inp=document.getElementById('cpTargetSearch');
+      var lbl=document.getElementById('cpTargetLabel');
+      var tgt=document.getElementById('cpTarget');
+      if(inp)inp.value=f.label;
+      if(lbl)lbl.textContent='→ '+f.label;
+      if(tgt)tgt.value=f.value;
+      cpHideFields();
+    };
+    dd.appendChild(div);
+  });
+  if(!fields.length){var d=document.createElement('div');d.style.cssText='padding:4px 7px;color:#4a5570;font-size:10px;';d.textContent='No matches';dd.appendChild(d);}
 }
 function hsvToRgb(h,s,v){
   var r,g,b;
@@ -3977,15 +4130,24 @@ function cmykToRgb(c,m,y,k){c/=100;m/=100;y/=100;k/=100;return[Math.round(255*(1
 function cpSyncAll(){
   var rgb=hsvToRgb(_cp.h,_cp.s,_cp.v);
   var hex=rgbToHex(rgb[0],rgb[1],rgb[2]);
+  var aHex=Math.round(_cp.a*255).toString(16);if(aHex.length<2)aHex='0'+aHex;
   var cmyk=rgbToCmyk(rgb[0],rgb[1],rgb[2]);
   var r=document.getElementById('cpR'),g=document.getElementById('cpG'),b=document.getElementById('cpB');
   var ci=document.getElementById('cpC'),mi=document.getElementById('cpM'),yi=document.getElementById('cpY'),ki=document.getElementById('cpK');
-  var hx=document.getElementById('cpHex'),pv=document.getElementById('cpPreview');
+  var hx=document.getElementById('cpHex'),hxa=document.getElementById('cpHexA'),pv=document.getElementById('cpPreview');
+  var arn=document.getElementById('cpARgb');
   if(r)r.value=rgb[0];if(g)g.value=rgb[1];if(b)b.value=rgb[2];
+  if(arn)arn.value=Math.round(_cp.a*100);
   if(ci)ci.value=cmyk[0];if(mi)mi.value=cmyk[1];if(yi)yi.value=cmyk[2];if(ki)ki.value=cmyk[3];
   if(hx)hx.value=hex.toUpperCase();
-  if(pv)pv.style.background=hex;
-  cpDrawSV();
+  if(hxa)hxa.value=(hex+aHex).toUpperCase();
+  if(pv)pv.style.background='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+_cp.a.toFixed(3)+')';
+  // Update credit bar wheel button to show current color
+  var btn=document.getElementById('cpTopBtn');
+  if(btn)btn.style.background='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+_cp.a.toFixed(3)+')';
+  cpDrawWheel();
+  cpUpdateVSlider();
+  cpUpdateASlider();
 }
 function cpFromRGB(){
   var r=+document.getElementById('cpR').value,g=+document.getElementById('cpG').value,b=+document.getElementById('cpB').value;
@@ -4000,13 +4162,26 @@ function cpFromHex(hex){
   if(!/^#[0-9a-fA-F]{6}$/.test(hex))return;
   var rgb=hexToRgb(hex);var hsv=rgbToHsv(rgb[0],rgb[1],rgb[2]);_cp.h=hsv[0];_cp.s=hsv[1];_cp.v=hsv[2];cpSyncAll();
 }
+function cpFromHexA(hexa){
+  hexa=hexa.replace(/[^0-9a-fA-F#]/g,'');
+  if(/^#[0-9a-fA-F]{8}$/.test(hexa)){
+    var rgb=hexToRgb(hexa.slice(0,7));
+    var a=parseInt(hexa.slice(7,9),16)/255;
+    var hsv=rgbToHsv(rgb[0],rgb[1],rgb[2]);
+    _cp.h=hsv[0];_cp.s=hsv[1];_cp.v=hsv[2];_cp.a=a;cpSyncAll();
+  } else if(/^#[0-9a-fA-F]{6}$/.test(hexa)){
+    cpFromHex(hexa);
+  }
+}
 function cpSetHex(hex){
   var hx=document.getElementById('cpHex');if(hx)hx.value=hex.toUpperCase();
   cpFromHex(hex);
 }
 function cpApply(){
-  var hex=document.getElementById('cpHex')&&document.getElementById('cpHex').value.toLowerCase();
-  if(!hex)return;
+  var rgb=hsvToRgb(_cp.h,_cp.s,_cp.v);
+  var hex=rgbToHex(rgb[0],rgb[1],rgb[2]);
+  var rgba='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+_cp.a.toFixed(3)+')';
+  var colorVal=_cp.a<1?rgba:hex;
   var tgt=document.getElementById('cpTarget')&&document.getElementById('cpTarget').value;
   if(tgt==='volBar'){
     window._volBarColor=hex;
@@ -4014,11 +4189,14 @@ function cpApply(){
     Object.keys(panels).forEach(function(id){if(panels[id]&&panels[id].mode==='svg')drawSVG(id);});
   } else if(tgt&&tgt.indexOf('css_')===0){
     var key=tgt.replace('css_','');
-    var map={up:'--up',down:'--down',bg:'--bg',panel:'--panel',grid:'--grid',accent:'--acc'};
+    var map={up:'--up',down:'--down',bg:'--bg',panel:'--panel',grid:'--grid',accent:'--acc',
+             up_wick:'--up-wick',dn_wick:'--dn-wick',label:'--lbl',vol:'--vol',
+             btc:'--btc-border',eth:'--eth-border',sol:'--sol-border',bnb:'--bnb-border',
+             clock:'--clock-color',newsbar:'--news-bg',ticker:'--ticker-color'};
     var v=map[key];if(v){
       var s=document.getElementById('themeVars');
       if(!s){s=document.createElement('style');s.id='themeVars';document.head.appendChild(s);}
-      s.textContent=(s.textContent||'')+'\n:root{'+v+':'+hex+';}';
+      s.textContent=(s.textContent||'')+'\n:root{'+v+':'+colorVal+';}';
     }
   }
   // Flash preview
@@ -5884,9 +6062,8 @@ function _renderCompactTable(containerId,tfLabel,periods,allPeriodData){
   var names={btc:'BTC',eth:'ETH',sol:'SOL',bnb:'BNB'};
   var sigs=['up20','up50','up80','dn20','dn50','dn80'];
   var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
-  var hasAnyLive=allPeriodData.some(function(d){return d&&d.results;});
-  if(!hasAnyLive){
-    el.innerHTML='<div style="color:#1a3a1a;font-size:8.5px;padding:4px;">⏲ Awaiting live '+tfLabel+' data…</div>';
+  if(!allPeriodData||!allPeriodData.length){
+    el.innerHTML='<div style="color:#1a3a1a;font-size:8.5px;padding:4px;">No data for '+tfLabel+'…</div>';
     return;
   }
   var h='<table style="border-collapse:collapse;font-size:8px;width:auto;">';
@@ -5933,9 +6110,7 @@ function renderTopPerformers(allHits){
   var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
   allHits.sort(function(a,b){return b.wr-a.wr;});
   if(allHits.length===0){
-    var anyLive=['btc','eth','sol','bnb'].some(function(id){var p=panels[id];return p&&p._liveData&&p._liveData.length>=10;});
-    bar.style.display=anyLive?'none':'block';
-    if(!anyLive){if(cntEl)cntEl.textContent='';rows.innerHTML='<tr><td colspan="11" style="color:#1a3a1a;padding:6px 5px;font-size:8.5px;">⏲ Awaiting live REST data…</td></tr>';}
+    bar.style.display='none';
     return;
   }
   bar.style.display='block';
@@ -5980,18 +6155,17 @@ function runStochBTs(){
   var allTopHits=[];
   body.innerHTML='';
 
+  var _btBasePrices={btc:43000,eth:2400,sol:140,bnb:280};
+  var _btVols={btc:0.025,eth:0.03,sol:0.04,bnb:0.025};
+  function _btSynth(id){return genOHLC(_btBasePrices[id]||43000,120,_btVols[id]||0.025);}
+
   // ── M5 K5 detail tables ──
   ['btc','eth','sol','bnb'].forEach(function(id){
     var p=panels[id];
-    if(!p||!p._liveData||p._liveData.length<10){
-      body.innerHTML+='<div style="background:#040d04;border:1px solid #0d1f0d;border-radius:4px;padding:8px 10px;color:#1a3a1a;font-size:9px;">'
-        +'<span style="color:#3ecf5e;font-weight:bold;">'+names[id]+'</span>'
-        +' &nbsp;<span style="color:#1a4a2a;">⏲ Awaiting live REST data…</span>'
-        +' <span style="color:#112a11;font-size:8px;">Backtest runs only on real OHLCV history.</span></div>';
-      return;
-    }
+    var isSynth=!p||!p._liveData||p._liveData.length<10;
+    var btData=isSynth?_btSynth(id):p._liveData;
     var ci=_getPanelCostInfo(id);
-    var res5=_runBTForPeriod(p._liveData,5,ci.rtCost,ci.effTax);
+    var res5=_runBTForPeriod(btData,5,ci.rtCost,ci.effTax);
     var mStr=parseFloat(ci.feeInfo.maker.toFixed(4));
     var tStr=parseFloat(ci.feeInfo.taker.toFixed(4));
     var rows='';
@@ -6024,6 +6198,7 @@ function runStochBTs(){
     body.innerHTML+='<div style="background:#040d04;border:1px solid #0d1f0d;border-radius:4px;padding:6px 8px;">'
       +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;">'
       +'<span style="color:#3ecf5e;font-weight:bold;font-size:10px;">'+names[id]+'</span>'
+      +(isSynth?'<span style="color:#ffb400;font-size:8px;border:1px solid #554400;border-radius:2px;padding:0 3px;background:#1a1000;">SYNTH</span>':'')
       +'<span style="color:#1a4a2a;font-size:8.5px;">'+ci.broker+'</span>'
       +'<span style="color:#1a3a4a;font-size:8.5px;">M:'+mStr+'% T:'+tStr+'%</span>'
       +'<span style="color:#1a4a3a;font-size:8.5px;">Spd:'+ci.spd.toFixed(3)+'%</span>'
@@ -6047,16 +6222,16 @@ function runStochBTs(){
     allTopHits=allTopHits.concat(hitsM5);
   });
 
-  // ── M5 compact combined table (K5–K20) — data already in p._liveData ──
+  // ── M5 compact combined table (K5–K20) — data already in p._liveData or synthetic ──
   var M5_PERIODS=[5,10,15,20];
   var m5Data=[];
   ['btc','eth','sol','bnb'].forEach(function(id){
     var p=panels[id];
-    if(!p||!p._liveData||p._liveData.length<10)return;
+    var btData5=(p&&p._liveData&&p._liveData.length>=10)?p._liveData:_btSynth(id);
     var ci=_getPanelCostInfo(id);
     var results={};
     M5_PERIODS.forEach(function(kp){
-      results[kp]=_runBTForPeriod(p._liveData,kp,ci.rtCost,ci.effTax);
+      results[kp]=_runBTForPeriod(btData5,kp,ci.rtCost,ci.effTax);
       // Collect K10–K20 top hits (K5 already collected above)
       if(kp!==5){var h=_collectTopHits(id,'M5',kp,results[kp],ci);allTopHits=allTopHits.concat(h);}
     });
@@ -6103,12 +6278,11 @@ function runStochBTs(){
     var p=panels[id];
     if(!p){pending1m--;onM1Done();return;}
     _fetchBTData(id,'1m',500,function(err,data){
-      if(!err&&data&&data.length>=10){
-        var ci=_getPanelCostInfo(id);
-        var results={};
-        M1_PERIODS.forEach(function(kp){results[kp]=_runBTForPeriod(data,kp,ci.rtCost,ci.effTax);});
-        m1Data.push({id:id,results:results,costInfo:ci});
-      }
+      var btData1=((!err)&&data&&data.length>=10)?data:_btSynth(id);
+      var ci=_getPanelCostInfo(id);
+      var results={};
+      M1_PERIODS.forEach(function(kp){results[kp]=_runBTForPeriod(btData1,kp,ci.rtCost,ci.effTax);});
+      m1Data.push({id:id,results:results,costInfo:ci});
       onM1Done();
     });
   });
@@ -6117,12 +6291,11 @@ function runStochBTs(){
     var p=panels[id];
     if(!p){pending15m--;onM15Done();return;}
     _fetchBTData(id,'15m',200,function(err,data){
-      if(!err&&data&&data.length>=10){
-        var ci=_getPanelCostInfo(id);
-        var results={};
-        M15_PERIODS.forEach(function(kp){results[kp]=_runBTForPeriod(data,kp,ci.rtCost,ci.effTax);});
-        m15Data.push({id:id,results:results,costInfo:ci});
-      }
+      var btData15=((!err)&&data&&data.length>=10)?data:_btSynth(id);
+      var ci=_getPanelCostInfo(id);
+      var results={};
+      M15_PERIODS.forEach(function(kp){results[kp]=_runBTForPeriod(btData15,kp,ci.rtCost,ci.effTax);});
+      m15Data.push({id:id,results:results,costInfo:ci});
       onM15Done();
     });
   });
