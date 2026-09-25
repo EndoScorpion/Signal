@@ -1930,6 +1930,36 @@ function drawSVG(id){
     });
   }catch(e){ console.warn('[drawSVG] signal arrows skipped:',e); }
 
+  // ── Stoch5 cross arrows (green ▲ below candle, red ▼ above) ──
+  try{
+    var _stkArrows=genStochCrossArrows(data);
+    var _stkUpCol={20:'#26a69a',50:'#3ecf5e',80:'#aaff44'};
+    var _stkDnCol={20:'#c05050',50:'#ef5350',80:'#ff8080'};
+    var _stkUpOff={},_stkDnOff={};
+    _stkArrows.forEach(function(s){
+      var x=padL+s.i*stepX+stepX/2;
+      if(s.dir==='up'){
+        var slot=_stkUpOff[s.i]||0; _stkUpOff[s.i]=slot+1;
+        var arw=document.createElementNS(ns,'text');
+        arw.setAttribute('x',x); arw.setAttribute('y',toY(data[s.i].low)+6+slot*8);
+        arw.setAttribute('font-family','monospace'); arw.setAttribute('font-size','7');
+        arw.setAttribute('text-anchor','middle');
+        arw.setAttribute('fill',_stkUpCol[s.level]||'#3ecf5e');
+        arw.setAttribute('opacity','0.9'); arw.textContent='▲';
+        chartG.appendChild(arw);
+      } else {
+        var slot=_stkDnOff[s.i]||0; _stkDnOff[s.i]=slot+1;
+        var arw=document.createElementNS(ns,'text');
+        arw.setAttribute('x',x); arw.setAttribute('y',toY(data[s.i].high)-3-slot*8);
+        arw.setAttribute('font-family','monospace'); arw.setAttribute('font-size','7');
+        arw.setAttribute('text-anchor','middle');
+        arw.setAttribute('fill',_stkDnCol[s.level]||'#ef5350');
+        arw.setAttribute('opacity','0.9'); arw.textContent='▼';
+        chartG.appendChild(arw);
+      }
+    });
+  }catch(e){ console.warn('[drawSVG] stoch cross arrows skipped:',e); }
+
   // Last price line (not clipped — spans full width)
   var lastY=toY(data[data.length-1].close);
   var lastLine=document.createElementNS(ns,'line');
@@ -3329,6 +3359,26 @@ function genBarSignals(data){
     else if((r>65||k>=80)&&falling){sigs.push({i:i,type:'SELL'});last=i;}
   }
   return sigs;
+}
+
+// ── Stoch5 level crossover arrows ──
+function genStochCrossArrows(data){
+  var stoch=data.map(function(d,i){
+    if(i<4)return null;
+    var lo=Math.min.apply(null,data.slice(i-4,i+1).map(function(b){return b.low;}));
+    var hi=Math.max.apply(null,data.slice(i-4,i+1).map(function(b){return b.high;}));
+    return hi===lo?50:(d.close-lo)/(hi-lo)*100;
+  });
+  var arrows=[];
+  for(var i=5;i<data.length;i++){
+    var k=stoch[i],pk=stoch[i-1];
+    if(k===null||pk===null)continue;
+    [20,50,80].forEach(function(lv){
+      if(pk<lv&&k>=lv) arrows.push({i:i,level:lv,dir:'up'});
+      if(pk>lv&&k<=lv) arrows.push({i:i,level:lv,dir:'dn'});
+    });
+  }
+  return arrows;
 }
 
 // ── Theme system ──
