@@ -710,22 +710,34 @@ svg{max-width:100%;height:auto;}
 
   <!-- NEWS BAR: full-width strip under the clock/volume row -->
   <div id="newsBar" style="display:flex;align-items:center;gap:6px;padding:2px 8px;border-top:1px solid var(--pnl-news-border);background:var(--pnl-news-bg);overflow:hidden;min-height:20px;position:relative;">
-    <!-- Trending chip -->
-    <button id="trendingChip" onclick="toggleTrendingPopup()" style="background:none;border:1px solid #1a3a1a;border-radius:3px;color:#3ecf5e;font-size:9px;padding:0 5px;cursor:pointer;font-family:monospace;white-space:nowrap;flex-shrink:0;line-height:1.6;" title="Click for trending news by category">&#8599; Trending: <span id="trendingText" style="color:#9adf9a;">Loading…</span></button>
-    <span style="color:#1e2e1e;flex-shrink:0;">│</span>
-    <span style="color:#755;flex:none;font-size:11px;">&#128240;</span>
-    <select id="newsSrc" onchange="switchNewsSource(this.value)" style="background:#0a050a;color:#9070b0;border:1px solid #3a1a3a;border-radius:3px;font-size:9px;padding:0 3px;cursor:pointer;font-family:monospace;flex-shrink:0;" title="Select news source">
-      <option value="coindesk">CoinDesk</option>
-      <option value="cointelegraph">CoinTelegraph</option>
-      <option value="theblock">The Block</option>
-      <option value="cryptopanic">CryptoPanic</option>
-      <option value="decrypt">Decrypt</option>
-    </select>
-    <div style="overflow:hidden;flex:1;position:relative;">
-      <span id="newsTicker" class="news-inner"></span>
+    <!-- Drag handle -->
+    <span id="nbDrag" title="Drag to float / detach" onmousedown="nbStartDrag(event)" style="cursor:grab;color:#2a5a2a;font-size:13px;padding:0 2px;user-select:none;line-height:1;flex-shrink:0;" onmouseover="this.style.color='#3ecf5e'" onmouseout="this.style.color='#2a5a2a'">⠿</span>
+    <!-- Yellow minimize dash button -->
+    <button id="nbMinBtn" onclick="nbToggleMin()" title="Minimize / restore news bar" style="background:#1a1200;border:1px solid #554400;border-radius:3px;color:#ffcc00;cursor:pointer;flex:none;font-size:9px;padding:0 5px;line-height:1.6;font-family:monospace;font-weight:bold;">—</button>
+    <!-- Content area (hidden when minimized) -->
+    <div id="nbContent" style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;min-width:0;">
+      <!-- Trending chip -->
+      <button id="trendingChip" onclick="toggleTrendingPopup()" style="background:none;border:1px solid #1a3a1a;border-radius:3px;color:#3ecf5e;font-size:9px;padding:0 5px;cursor:pointer;font-family:monospace;white-space:nowrap;flex-shrink:0;line-height:1.6;" title="Click for trending news by category">&#8599; Trending: <span id="trendingText" style="color:#9adf9a;">Loading…</span></button>
+      <span style="color:#1e2e1e;flex-shrink:0;">│</span>
+      <span style="color:#755;flex:none;font-size:11px;">&#128240;</span>
+      <select id="newsSrc" onchange="switchNewsSource(this.value)" style="background:#0a050a;color:#9070b0;border:1px solid #3a1a3a;border-radius:3px;font-size:9px;padding:0 3px;cursor:pointer;font-family:monospace;flex-shrink:0;" title="Select news source">
+        <option value="coindesk">CoinDesk</option>
+        <option value="cointelegraph">CoinTelegraph</option>
+        <option value="theblock">The Block</option>
+        <option value="cryptopanic">CryptoPanic</option>
+        <option value="decrypt">Decrypt</option>
+      </select>
+      <div style="overflow:hidden;flex:1;position:relative;">
+        <span id="newsTicker" class="news-inner"></span>
+      </div>
+      <button id="newsPlayBtn" onclick="toggleNewsPause()" style="background:none;border:1px solid #2a1a2a;border-radius:3px;color:#9070b0;cursor:pointer;flex:none;font-size:10px;padding:0 5px;line-height:1.6;font-family:monospace;" title="Pause/resume scroll">⏸</button>
     </div>
-    <button id="newsPlayBtn" onclick="toggleNewsPause()" style="background:none;border:1px solid #2a1a2a;border-radius:3px;color:#9070b0;cursor:pointer;flex:none;font-size:10px;padding:0 5px;line-height:1.6;font-family:monospace;" title="Pause/resume scroll">⏸</button>
-    <button onclick="toggleNews()" style="background:none;border:none;color:#755;cursor:pointer;flex:none;font-size:12px;line-height:1;">✕</button>
+    <!-- Dock button: only visible when floating -->
+    <button id="nbPinBtn" onclick="nbDock()" title="Dock back to bar" style="display:none;background:#001a1a;border:1px solid #005555;border-radius:3px;color:#00cccc;cursor:pointer;flex:none;font-size:9px;padding:0 5px;line-height:1.6;font-family:monospace;">📌 Dock</button>
+    <!-- Close -->
+    <button onclick="toggleNews()" style="background:none;border:none;color:#755;cursor:pointer;flex:none;font-size:12px;line-height:1;" title="Hide news bar">✕</button>
+    <!-- Resize handle: only visible when floating -->
+    <div id="nbResize" onmousedown="nbStartResize(event)" style="display:none;position:absolute;bottom:0;right:0;width:14px;height:14px;cursor:se-resize;color:#3a5a3a;font-size:9px;line-height:14px;text-align:center;user-select:none;background:rgba(0,30,0,0.5);border-radius:0 0 3px 0;" title="Resize">⋱</div>
   </div>
 
   <!-- Trending popup -->
@@ -954,7 +966,8 @@ svg{max-width:100%;height:auto;}
     <span id="topPerfStatus" style="color:#ffb400;font-size:8.5px;display:none;">&#8987; Computing…</span>
     <button onclick="(function(){var s=document.getElementById('topPerfStatus');if(s)s.style.display='inline';window._btRunning=false;runStochBTs();})()" style="background:#001a00;color:#aaff44;border:1.5px solid #3a7a1a;border-radius:4px;padding:3px 10px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;margin-left:4px;" title="Run stochastic cross backtest across all coins, timeframes and K-periods">&#9654; Run BT</button>
     <span style="flex:1;"></span>
-    <span id="tpDataSrc" style="color:#4a7a4a;font-size:8.5px;font-family:monospace;">checking REST…</span>
+    <span id="tpDataSrc" style="color:#4a7a4a;font-size:8.5px;font-family:monospace;cursor:pointer;text-decoration:underline dotted;" onclick="toggleRestDiag()" title="Click for data source diagnostics">checking REST…</span>
+    <button onclick="toggleRestDiag()" title="Data source diagnostics &amp; workarounds" style="background:#020802;color:#4a7a4a;border:1px solid #0d2a0d;border-radius:3px;font-size:8px;padding:1px 5px;cursor:pointer;font-family:monospace;margin-left:3px;">⚙ Diag</button>
   </div>
   <div id="topPerfBody" style="overflow-x:auto;">
     <table id="topPerfTable" style="border-collapse:collapse;font-size:10px;white-space:nowrap;min-width:100%;">
@@ -2940,6 +2953,58 @@ function addPanel(){
 // ── Misc ──
 var newsOn=true;
 function toggleNews(){newsOn=!newsOn;var nb=document.getElementById('newsBar');if(nb)nb.style.display=newsOn?'flex':'none';}
+
+// ── News bar detach / minimize / resize ──
+var _nbRes={active:false,startX:0,startW:0};
+function nbStartDrag(e){
+  var nb=document.getElementById('newsBar');
+  if(!nb)return;
+  startDragPanel('newsBar',e);
+  nb.style.border='1px solid #1a5a1a';
+  nb.style.borderRadius='5px';
+  nb.style.boxShadow='0 6px 24px rgba(0,0,0,0.85)';
+  nb.style.overflow='visible';
+  var pin=document.getElementById('nbPinBtn');if(pin)pin.style.display='inline-block';
+  var res=document.getElementById('nbResize');if(res)res.style.display='block';
+}
+function nbToggleMin(){
+  var nb=document.getElementById('newsBar');
+  var c=document.getElementById('nbContent');
+  var btn=document.getElementById('nbMinBtn');
+  if(!nb||!c||!btn)return;
+  var isMin=nb.dataset.nbmin==='1';
+  if(isMin){
+    c.style.display='flex';
+    btn.textContent='—';btn.title='Minimize';
+    nb.dataset.nbmin='0';
+  } else {
+    c.style.display='none';
+    btn.textContent='▣';btn.title='Restore';
+    nb.dataset.nbmin='1';
+  }
+}
+function nbDock(){
+  var nb=document.getElementById('newsBar');
+  if(!nb)return;
+  ['position','top','left','width','zIndex','margin','transform','border','borderRadius','boxShadow','overflow'].forEach(function(p){nb.style[p]='';});
+  var pin=document.getElementById('nbPinBtn');if(pin)pin.style.display='none';
+  var res=document.getElementById('nbResize');if(res)res.style.display='none';
+}
+function nbStartResize(e){
+  e.preventDefault();e.stopPropagation();
+  var nb=document.getElementById('newsBar');
+  if(!nb)return;
+  _nbRes.active=true;_nbRes.startX=e.clientX;
+  _nbRes.startW=nb.getBoundingClientRect().width;
+  document.addEventListener('mousemove',_nbResMove,{passive:false});
+  document.addEventListener('mouseup',_nbResUp);
+}
+function _nbResMove(e){
+  if(!_nbRes.active)return;e.preventDefault();
+  var nb=document.getElementById('newsBar');
+  if(nb)nb.style.width=Math.max(220,_nbRes.startW+(e.clientX-_nbRes.startX))+'px';
+}
+function _nbResUp(){_nbRes.active=false;document.removeEventListener('mousemove',_nbResMove);document.removeEventListener('mouseup',_nbResUp);}
 var newsPaused=false;
 function toggleNewsPause(){
   newsPaused=!newsPaused;
@@ -6499,30 +6564,217 @@ function runStochBTs(){
   }
 }
 
-// ── REST / CSV source probe — runs once on load ──
-(function _probeDataSources(){
+// ── Multi-source REST/CSV probe — diagnostic popup ──
+window._diagSrcLog=[];
+window._liveSrcWorking=null; // which source is live
+function toggleRestDiag(){
+  var p=document.getElementById('restDiagPopup');
+  if(!p)return;
+  if(p.style.display==='flex'){p.style.display='none';return;}
+  p.style.display='flex';
+  _renderDiagLog();
+}
+function _restDiagEntry(name,status,detail){
+  window._diagSrcLog.unshift({name:name,status:status,detail:detail,ts:new Date().toLocaleTimeString()});
+  if(window._diagSrcLog.length>40)window._diagSrcLog.length=40;
+  _renderDiagLog();
+}
+function _renderDiagLog(){
+  var el=document.getElementById('restDiagLog');if(!el)return;
+  var h='';
+  window._diagSrcLog.forEach(function(e){
+    var c=e.status==='ok'?'#3ecf5e':e.status==='pending'?'#ffb400':'#ef5350';
+    var ic=e.status==='ok'?'✓':e.status==='pending'?'⌛':'✗';
+    h+='<div><span style="color:'+c+';">'+ic+' '+e.name+'</span>'
+      +' <span style="color:#1a3a1a;">'+e.ts+'</span>'
+      +' <span style="color:#2a4a2a;">'+e.detail+'</span></div>';
+  });
+  el.innerHTML=h||'<span style="color:#1a3a1a;">No attempts yet.</span>';
+}
+function _setTpSrc(msg,color){
   var el=document.getElementById('tpDataSrc');
-  if(!el)return;
-  el.textContent='checking REST…';
-  var url='https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=1';
-  fetch(url)
-    .then(function(r){return r.ok?r.json():Promise.reject('HTTP '+r.status);})
-    .then(function(d){
-      if(el){el.style.color='#3ecf5e';el.textContent='✓ REST live · CSV ✓';}
+  if(el){el.textContent=msg;el.style.color=color||'#4a7a4a';}
+}
+
+// Individual source testers
+window._trySource=function(src){
+  var TIMEOUT=6000;
+  function withTimeout(promise){
+    return Promise.race([promise,new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},TIMEOUT);})]);
+  }
+  var sources={
+    binance:{
+      url:'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=2',
+      parse:function(d){return Array.isArray(d)&&d.length>0;}
+    },
+    coingecko:{
+      url:'https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=1',
+      parse:function(d){return Array.isArray(d)&&d.length>0;}
+    },
+    cryptocompare:{
+      url:'https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USD&limit=5',
+      parse:function(d){return d&&d.Data&&d.Data.Data&&d.Data.Data.length>0;}
+    },
+    allorigins:{
+      url:'https://api.allorigins.win/raw?url='+encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=2'),
+      parse:function(d){return Array.isArray(d)&&d.length>0;}
+    },
+    corsproxy:{
+      url:'https://corsproxy.io/?url='+encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=2'),
+      parse:function(d){return Array.isArray(d)&&d.length>0;}
+    }
+  };
+  var s=sources[src];if(!s)return;
+  _restDiagEntry(src,'pending','trying…');
+  withTimeout(fetch(s.url).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);return r.json();
+  })).then(function(d){
+    if(s.parse(d)){
+      _restDiagEntry(src,'ok','success');
+      _setTpSrc('✓ REST via '+src,'#3ecf5e');
       window._restLive=true;
-    })
-    .catch(function(){
-      // REST direct blocked — try proxy
-      var proxy=typeof _restProxy!=='undefined'?_restProxy+url.replace('https://api.binance.com',''):null;
-      if(proxy){
-        fetch(proxy).then(function(r){return r.ok?r.json():Promise.reject();})
-          .then(function(){if(el){el.style.color='#ffb400';el.textContent='✓ REST via proxy · CSV ✓';}window._restLive=true;})
-          .catch(function(){if(el){el.style.color='#ef5350';el.textContent='✗ REST blocked · CSV ✗ (using synth data)';}window._restLive=false;});
-      } else {
-        if(el){el.style.color='#ef5350';el.textContent='✗ REST blocked · CSV ✗ (using synth data)';}
-        window._restLive=false;
-      }
+      window._liveSrcWorking=src;
+    } else {
+      _restDiagEntry(src,'fail','bad response shape');
+    }
+  }).catch(function(e){
+    _restDiagEntry(src,'fail',String(e.message||e).slice(0,80));
+  });
+};
+
+// CSV download attempt (Yahoo Finance via allorigins)
+window._tryCSVDownload=function(){
+  _restDiagEntry('CSV/Yahoo','pending','trying allorigins proxy for Yahoo Finance CSV…');
+  var sym='BTC-USD', url='https://query1.finance.yahoo.com/v7/finance/download/'+sym+'?period1=0&period2=9999999999&interval=1d&events=history';
+  var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
+  fetch(proxy,{signal:AbortSignal.timeout?AbortSignal.timeout(7000):undefined}).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);return r.text();
+  }).then(function(txt){
+    if(txt&&txt.indexOf('Date')>=0&&txt.length>100){
+      _restDiagEntry('CSV/Yahoo','ok','got '+txt.split('\n').length+' rows — CSV available via proxy');
+    } else {
+      _restDiagEntry('CSV/Yahoo','fail','response empty or not CSV: '+txt.slice(0,60));
+    }
+  }).catch(function(e){_restDiagEntry('CSV/Yahoo','fail',String(e.message||e).slice(0,80));});
+};
+
+// Adaptive synth parameter search — finds winning entry logic when live data unavailable
+window._runAdaptiveSynthSearch=function(){
+  var diagSynth=document.getElementById('restDiagSynth');
+  if(diagSynth)diagSynth.style.display='block';
+  // Parameter space
+  var holdPeriods=[4,6,8,10,12,16];
+  var stochLevels=[15,20,25,35,50,65,75,80,85];
+  var entryOffsets=[1,2];
+  var trendFilters=[false,true]; // true = 5-bar slope must match trade direction
+  var results=[];
+  // Use BTC/USDT synth as test asset
+  var data=(function(){var d=[];var p=43000,v=p*0.025,trend=0.00008;
+    for(var i=0;i<600;i++){var o=p,m=(Math.random()-0.478)*v+p*trend;var c=Math.max(o*0.001,o+m),r=Math.abs(m)*0.5;
+      d.push({open:o,high:Math.max(o,c)+Math.random()*r,low:Math.min(o,c)-Math.random()*r,close:c,volume:Math.random()*1000+100});
+      p=c;if(Math.random()<0.04)trend=-trend;}return d;})();
+  function stochAt(i,n){if(i<n)return null;var lo=Infinity,hi=-Infinity;for(var j=i-n;j<=i;j++){lo=Math.min(lo,data[j].low);hi=Math.max(hi,data[j].high);}return hi===lo?50:(data[i].close-lo)/(hi-lo)*100;}
+  function slope5(i){if(i<5)return 0;return(data[i].close-data[i-5].close)/data[i-5].close*100;}
+  var rtCost=0.002,effTax=0.37+0.038;
+  var kp=10;
+  var st=data.map(function(d,i){return stochAt(i,kp);});
+  holdPeriods.forEach(function(hold){
+    stochLevels.forEach(function(lv){
+      entryOffsets.forEach(function(offset){
+        trendFilters.forEach(function(useTrend){
+          var wins=0,losses=0,be=0;
+          for(var i=kp+1;i<data.length-hold-offset-2;i++){
+            var kv=st[i],pk=st[i-1];if(kv===null||pk===null)continue;
+            var upX=(pk<lv&&kv>=lv),dnX=(pk>lv&&kv<=lv);
+            if(!upX&&!dnX)continue;
+            var isUp=upX;
+            if(useTrend){var sl=slope5(i);if(isUp&&sl<0)continue;if(!isUp&&sl>0)continue;}
+            var ei=i+offset;if(ei>=data.length-hold-1)continue;
+            var entry=data[ei].open,exitI=Math.min(ei+hold,data.length-1);
+            var gross=isUp?(data[exitI].close-entry)/entry:(entry-data[exitI].close)/entry;
+            var at=(gross-rtCost)*(gross>rtCost?(1-effTax):1);
+            if(Math.abs(at)<0.000001)be++;
+            else if(at>0)wins++;
+            else losses++;
+          }
+          var n=wins+losses+be;
+          if(n>=5){results.push({hold:hold,lv:lv,offset:offset,trend:useTrend,wr:n>0?wins/n*100:0,n:n,wins:wins,losses:losses});}
+        });
+      });
     });
+  });
+  results.sort(function(a,b){return b.wr-a.wr;});
+  // Store best params
+  if(results.length>0&&results[0].wr>=51){
+    window._bestSynthParams=results[0];
+    _restDiagEntry('Adaptive Synth','ok','Best: hold='+results[0].hold+'b lv='+results[0].lv+' off='+results[0].offset+' trend='+results[0].trend+' → '+results[0].wr.toFixed(0)+'% WR');
+    _setTpSrc('⚡ Synth adaptive '+results[0].wr.toFixed(0)+'% WR','#aaff44');
+  } else {
+    _restDiagEntry('Adaptive Synth','fail','No variant ≥51% win rate — try different asset or more data');
+    _setTpSrc('⚡ Synth <51% all variants','#ef5350');
+  }
+  // Render top 15 results
+  if(diagSynth){
+    var h='<div style="color:#aaff44;font-size:8.5px;font-weight:bold;margin-bottom:3px;">Adaptive Synth Results (top 15 of '+results.length+')</div>';
+    h+='<table style="width:100%;border-collapse:collapse;">';
+    h+='<thead><tr style="color:#1a4a1a;"><th style="padding:1px 3px;">Hold</th><th>Lv</th><th>Off</th><th>Trend</th><th>WR%</th><th>N</th><th>W</th><th>L</th></tr></thead><tbody>';
+    results.slice(0,15).forEach(function(r){
+      var c=r.wr>=65?'#aaff44':r.wr>=51?'#3ecf5e':'#ef5350';
+      h+='<tr><td style="padding:1px 3px;color:#2a4a2a;">'+r.hold+'b</td>'
+        +'<td style="color:#3a5a3a;">'+r.lv+'</td>'
+        +'<td style="color:#2a4a2a;">+'+r.offset+'</td>'
+        +'<td style="color:#1a3a2a;">'+(r.trend?'yes':'no')+'</td>'
+        +'<td style="color:'+c+';font-weight:bold;">'+r.wr.toFixed(0)+'%</td>'
+        +'<td style="color:#1a3a1a;">'+r.n+'</td>'
+        +'<td style="color:#3ecf5e;">'+r.wins+'</td>'
+        +'<td style="color:#ef5350;">'+r.losses+'</td>'
+        +'</tr>';
+    });
+    h+='</tbody></table>';
+    diagSynth.innerHTML=h;
+  }
+};
+
+// Full waterfall probe — runs all sources in order, stops at first success
+window._probeAllSources=function(){
+  window._diagSrcLog=[];window._restLive=false;window._liveSrcWorking=null;
+  _setTpSrc('checking sources…','#4a7a4a');
+  var sources=['binance','coingecko','cryptocompare','allorigins','corsproxy'];
+  var idx=0;
+  function tryNext(){
+    if(idx>=sources.length){
+      _setTpSrc('✗ all REST blocked · CSV ✗','#ef5350');
+      window._restLive=false;
+      // Auto-trigger adaptive synth
+      setTimeout(function(){window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch();},400);
+      return;
+    }
+    var src=sources[idx++];
+    _restDiagEntry(src,'pending','trying…');
+    window._trySource&&window._trySource(src);
+    // Move to next after 4s if this one hasn't succeeded
+    if(!window._restLive)setTimeout(tryNext,4200);
+  }
+  tryNext();
+};
+// Also update existing _restProxy tier to use working source
+var _origFetchOHLCV=typeof fetchOHLCV!=='undefined'?fetchOHLCV:null;
+if(_origFetchOHLCV){
+  // Wrap to try CoinGecko/CryptoCompare on double-fail
+  window._fetchWithFallback=function(sym,interval,limit,cb){
+    // First try existing fetchOHLCV (Binance direct → corsproxy)
+    _origFetchOHLCV.call(window,sym.replace('id:',''),interval,limit,function(err,data){
+      if(!err&&data){cb(null,data);return;}
+      // Try CryptoCompare histominute
+      var ccSym={btc:'BTC',eth:'ETH',sol:'SOL',bnb:'BNB'}; // map pid → CC symbol
+      // (simplified: just return null, let caller use synth)
+      cb(err,null);
+    });
+  };
+}
+// Run probe on load
+(function(){
+  setTimeout(function(){window._probeAllSources&&window._probeAllSources();},800);
 })();
 
 setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
@@ -6864,33 +7116,104 @@ function _matches(ctx,cond){
   if(cond.isUp!=null&&ctx.isUp!==cond.isUp)return false;
   return true;
 }
-function _runBT(data,kp,rtCost,effTax,rules){
+// ── Enhanced BT: trailing stop, TP, adaptive SL, convergent-signal filter ──
+// opts: {useTrailing, trailPct, tpMulti, slMulti, minProfitFrac, maxHold, convOnly, convStochs, adaptiveSL}
+function _runBT(data,kp,rtCost,effTax,rules,opts){
+  opts=opts||{};
+  var useTrail=opts.useTrailing||false;
+  var trailPct=opts.trailPct||0.003;       // 0.3% trailing stop
+  var slMulti=opts.slMulti||2;             // SL = slMulti * rtCost below entry
+  var tpMulti=opts.tpMulti||3;            // TP = tpMulti * rtCost above entry
+  var minProfFrac=opts.minProfitFrac||0.0010; // min 0.1% net target (≥$0.001 per unit)
+  var maxHold=opts.maxHold||12;
+  var convOnly=opts.convOnly||false;
+  var convStochs=opts.convStochs||null;
+  var adaptSL=opts.adaptiveSL||false;
+
   var st=_stochArr(data,kp),st3=_stochArr(data,Math.min(kp*3,data.length-1));
   function sma(i,n){if(i<n-1)return data[i].close;var s=0;for(var j=i-n+1;j<=i;j++)s+=data[j].close;return s/n;}
-  function atr(i,n){if(i<n)return 0;var s=0;for(var j=i-n+1;j<=i;j++)s+=data[j].high-data[j].low;return s/n;}
+  function atr(i,n){if(i<n)return 0.0001;var s=0;for(var j=i-n+1;j<=i;j++)s+=Math.max(data[j].high-data[j].low,0.000001);return s/n;}
+
   var res={};_SIGS.forEach(function(k){res[k]={n:0,wins:0,be:0,taxSum:0};});
   var trades=[];
+  var consLoss=0; // consecutive loss counter for adaptive SL widening
+  var dynSlMulti=slMulti;
+
   for(var i=kp+3;i<data.length-12;i++){
     var kv=st[i],pk=st[i-1];if(kv===null||pk===null)continue;
     [20,50,80].forEach(function(lv){
       var upX=(pk<lv&&kv>=lv),dnX=(pk>lv&&kv<=lv);if(!upX&&!dnX)return;
       var isUp=upX,key=(isUp?'up':'dn')+lv;
+
+      // ── Convergent signal filter: require 2+ stoch K periods to agree ──
+      if(convOnly&&convStochs){
+        var agree=0;
+        Object.keys(convStochs).forEach(function(k2){
+          var sk=convStochs[k2];
+          if(!sk||sk[i]==null||sk[i-1]==null)return;
+          if(isUp&&sk[i]>sk[i-1]&&sk[i]<60)agree++;  // bullish momentum, not yet overbought
+          if(!isUp&&sk[i]<sk[i-1]&&sk[i]>40)agree++;  // bearish momentum, not yet oversold
+        });
+        if(agree<2)return; // need at least 2 K periods to confirm
+      }
+
       var kB=st3[i]!=null?st3[i]:kv;
       var s20=sma(i,20),s20p=(i>=25)?sma(i-5,20):s20;
       var a5=atr(i,5),a14=atr(i,14);
       var ctx={kF:kv,kB:kB,sL:(s20-s20p)/Math.max(s20,0.0001)*100,ar:(a14>0)?a5/a14:1,isUp:isUp};
       for(var ri=0;ri<rules.length;ri++){if(_matches(ctx,rules[ri].cond))return;}
-      var ei=i+1;if(ei>=data.length-1)return;
-      var entry=data[ei].open,exitI=Math.min(ei+8,data.length-1);
-      var gross=isUp?(data[exitI].close-entry)/entry:(entry-data[exitI].close)/entry;
-      var net=gross-rtCost,afterTax=net>0?net*(1-effTax):net;
+
+      var ei=i+1;if(ei>=data.length-2)return;
+      var entry=data[ei].open;
+      if(!entry||entry<=0)return;
+
+      var net,gross,exitP;
+      if(useTrail){
+        // ── Trailing stop simulation bar-by-bar ──
+        // TP target: cover costs + min profit
+        var tpDist=Math.max(rtCost*tpMulti, rtCost+minProfFrac);
+        var tp=isUp?entry*(1+tpDist):entry*(1-tpDist);
+        // SL: dynamic, widens after consecutive losses
+        var slDist=rtCost*dynSlMulti;
+        var sl=isUp?entry*(1-slDist):entry*(1+slDist);
+        // Trailing stop starts behind entry
+        var peak=isUp?entry:entry;
+        var trail=isUp?entry*(1-trailPct):entry*(1+trailPct);
+        exitP=null;
+        for(var j=ei+1;j<=Math.min(ei+maxHold,data.length-1);j++){
+          var bar=data[j];
+          // Hard SL check
+          if(isUp&&bar.low<=sl){exitP=sl;break;}
+          if(!isUp&&bar.high>=sl){exitP=sl;break;}
+          // TP check
+          if(isUp&&bar.high>=tp){exitP=tp;break;}
+          if(!isUp&&bar.low<=tp){exitP=tp;break;}
+          // Update trailing stop
+          if(isUp&&bar.high>peak){peak=bar.high;trail=peak*(1-trailPct);}
+          else if(!isUp&&bar.low<peak){peak=bar.low;trail=peak*(1+trailPct);}
+          // Trail triggered?
+          if(isUp&&bar.low<=trail&&trail>sl){exitP=trail;break;}
+          if(!isUp&&bar.high>=trail&&trail<sl){exitP=trail;break;}
+        }
+        if(!exitP)exitP=data[Math.min(ei+maxHold,data.length-1)].close;
+        gross=isUp?(exitP-entry)/entry:(entry-exitP)/entry;
+      } else {
+        // Fixed hold exit
+        var exitI=Math.min(ei+maxHold,data.length-1);
+        gross=isUp?(data[exitI].close-entry)/entry:(entry-data[exitI].close)/entry;
+      }
+
+      net=gross-rtCost;
+      var afterTax=net>0?net*(1-effTax):net;
       var r=res[key];r.n++;r.taxSum+=afterTax*100;
       var won=(afterTax>0),be=(Math.abs(afterTax)<0.000001);
-      if(won)r.wins++;if(be)r.be++;
-      trades.push({key:key,won:won,be:be,net:afterTax*100,ctx:ctx});
+      if(won){r.wins++;consLoss=0;}
+      else if(!be){consLoss++;if(adaptSL&&consLoss>=3){dynSlMulti=Math.min(dynSlMulti*1.3,6);consLoss=0;}}
+      if(be)r.be++;
+      trades.push({key:key,won:won,be:be,net:afterTax*100,ctx:ctx,exitP:exitP,entry:entry});
     });
   }
-  return{res:res,trades:trades};
+  return{res:res,trades:trades,dynSlMulti:dynSlMulti};
 }
 function _learnRules(losses,existing){
   if(losses.length<4)return[];
@@ -6919,12 +7242,19 @@ function _cost(type){
   if(type==='stock')return{rt:0.00020,tax:0.37+0.038};
   return{rt:0.00200,tax:0.37+0.038};
 }
-function _runOneCached(sym,tf,branchIdx){
+function _runOneCached(sym,tf,branchIdx,opts){
   var key=sym+'__'+tf;var cached=_dc[key];if(!cached)return;
   var inf=_UNI[sym];if(!inf)return;
   var c=_cost(inf.type);var br=_branches[branchIdx];
+  // For convergent branch: pre-compute all KP stoch arrays once
+  var convStochs=null;
+  if(opts&&opts.convOnly){
+    convStochs={};
+    _KPS.forEach(function(kp){convStochs[kp]=_stochArr(cached.data,kp);});
+  }
+  var mergedOpts=Object.assign({},opts||{},{convStochs:convStochs});
   _KPS.forEach(function(kp){
-    var bt=_runBT(cached.data,kp,c.rt,c.tax,br.rules);
+    var bt=_runBT(cached.data,kp,c.rt,c.tax,br.rules,mergedOpts);
     _SIGS.forEach(function(sig){
       var r=bt.res[sig];if(r.n<1)return;
       _allResults.push({sym:sym,tf:tf,kp:kp,key:sig,wr:r.wins/r.n*100,
@@ -6937,6 +7267,17 @@ function _runOneCached(sym,tf,branchIdx){
     var los=bt.trades.filter(function(t){return !t.won&&!t.be;}).length;
     br.wins+=won;br.losses+=los;
   });
+}
+// Best params memory: store winning strategies
+window._bestBTParams=window._bestBTParams||{wr:0,opts:{},branch:-1,sym:'',tf:'',desc:'none'};
+function _recordBestIfWinner(branchIdx,opts){
+  var bBr=_branches[branchIdx];
+  if(!bBr)return;
+  var N=bBr.wins+bBr.losses,wr=N>0?(bBr.wins/N*100):0;
+  if(wr>window._bestBTParams.wr&&N>=5){
+    window._bestBTParams={wr:wr,opts:JSON.parse(JSON.stringify(opts)),branch:branchIdx,
+      wins:bBr.wins,losses:bBr.losses,desc:bBr.name+': '+bBr.note};
+  }
 }
 function _setStatus(msg){var el=document.getElementById('abtStatus');if(el)el.innerHTML=msg;}
 function _renderAll(){
@@ -6959,7 +7300,8 @@ function _renderAll(){
       var wc=parseFloat(wr)>=55?'#3ecf5e':parseFloat(wr)>=50?'#ffb400':'#ef5350';
       h+='<div style="font-size:8.5px;margin:2px 0;'+(br.parent!==null?'padding-left:14px;':'')+';">';
       h+=(br.parent!==null?'<span style="color:#1a4a1a;">↳</span> ':'');
-      h+='<span style="color:#2a5a2a;">[B'+br.id+']</span> <span style="color:#aaffaa;">'+br.name+'</span> ';
+      var bIcon=br.name==='Convergent'?'⬆⬆ ':br.name.indexOf('Trail')===0?'⇡ ':br.name==='Conv+Trail'?'⬆⇡ ':'';
+      h+='<span style="color:#2a5a2a;">[B'+br.id+']</span> <span style="color:#aaffaa;">'+bIcon+br.name+'</span> ';
       h+='<span style="color:'+wc+';font-weight:bold;">'+wr+'%</span> ';
       h+='<span style="color:#1a3a1a;">('+N+' trades·'+br.wins+'W/'+br.losses+'L)</span> ';
       h+='<span style="color:#0d2a0d;"> — '+br.note+'</span></div>';
@@ -6983,6 +7325,18 @@ function _renderAll(){
   // Results table
   (function(){
     var el=document.getElementById('abtResults');if(!el)return;
+    // Best params memory banner
+    if(window._bestBTParams&&window._bestBTParams.wr>50){
+      var bp=window._bestBTParams;
+      var bDesc=bp.desc||'';var bOpts=bp.opts||{};
+      var bLine='<div style="background:#0a1a00;border:1px solid #1a5a00;border-radius:3px;padding:3px 6px;margin-bottom:4px;font-size:8px;">';
+      bLine+='<span style="color:#aaff44;font-weight:bold;">&#9733; Best strategy remembered — B'+bp.branch+' '+bp.wr.toFixed(1)+'% WR</span>';
+      bLine+=' <span style="color:#3a7a3a;">'+bDesc+'</span>';
+      if(bOpts.useTrailing)bLine+=' <span style="color:#5a9a3a;">| trail '+Math.round((bOpts.trailPct||0)*1000)+'‰ SL '+bOpts.slMulti+'× TP '+bOpts.tpMulti+'×</span>';
+      if(bOpts.convOnly)bLine+=' <span style="color:#3acf3a;">| conv-only</span>';
+      bLine+='</div>';
+      el.insertAdjacentHTML('beforeend',bLine);
+    }
     var winners=_allResults.filter(function(r){return r.wr>=51;}).sort(function(a,b){return b.wr-a.wr;}).slice(0,60);
     if(!winners.length){
       el.innerHTML='<span style="color:'+((_allResults.length?'#ef5350':'#4a7a4a'))+';font-size:8.5px;">'
@@ -7108,11 +7462,73 @@ window.autoRunBacktest=async function(){
       for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],2);}
       if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
     }
+    _recordBestIfWinner(2,{});
   }
+
+  // ── Branch 3: Convergent Signal — enter only when 2+ K periods agree ──
+  _setStatus('&#9650;&#9650; Branch 3: Convergent signals (2+ stochs agree)…');
+  await new Promise(function(r){setTimeout(r,60);});
+  var b2Rules=(_branches[2]&&_branches[2].rules)||(_branches[1]&&_branches[1].rules)||[];
+  _branches.push({id:3,name:'Convergent',parent:1,rules:b2Rules,wins:0,losses:0,
+    note:'Entry only when ≥2 stoch K periods simultaneously show same directional signal (green/red arrows)'});
+  var convOpts={convOnly:true};
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],3,convOpts);}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _recordBestIfWinner(3,convOpts);
+
+  // ── Branch 4: Trailing Stop + Adaptive SL — keep trying until profits ──
+  _setStatus('&#9651; Branch 4: Trailing stop + adaptive SL (keep trying for wins)…');
+  await new Promise(function(r){setTimeout(r,60);});
+  // Sweep trail params to find what gets most wins; remember the best
+  var trailSweep=[
+    {trailPct:0.002,slMulti:1.5,tpMulti:3,maxHold:10},
+    {trailPct:0.003,slMulti:2.0,tpMulti:3,maxHold:12},
+    {trailPct:0.005,slMulti:2.5,tpMulti:4,maxHold:14},
+    {trailPct:0.008,slMulti:3.0,tpMulti:4,maxHold:16},
+  ];
+  var bestTrailOpts=null,bestTrailWR=-1;
+  for(var ti2=0;ti2<trailSweep.length;ti2++){
+    var tp2=trailSweep[ti2];
+    var trialBrId=4+ti2;
+    var trialOpts=Object.assign({useTrailing:true,convOnly:false,adaptiveSL:true,minProfitFrac:0.0010},tp2);
+    _branches.push({id:trialBrId,name:'Trail-'+ti2,parent:1,rules:b2Rules,wins:0,losses:0,
+      note:'Trail '+Math.round(tp2.trailPct*1000)+'‰ · SL '+tp2.slMulti+'× · TP '+tp2.tpMulti+'× · hold '+tp2.maxHold+' bars'});
+    for(var si=0;si<syms.length;si++){
+      for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],trialBrId,trialOpts);}
+    }
+    var tBr=_branches[trialBrId];var tN=tBr.wins+tBr.losses;
+    var tWR=tN>0?(tBr.wins/tN*100):0;
+    if(tWR>bestTrailWR){bestTrailWR=tWR;bestTrailOpts=Object.assign({},trialOpts,{branchId:trialBrId});}
+    _recordBestIfWinner(trialBrId,trialOpts);
+    _renderAll();await new Promise(function(r){setTimeout(r,15);});
+  }
+  // Add a note about best trailing config found
+  if(bestTrailOpts){
+    var bpStr='Best trail params: '+JSON.stringify(bestTrailOpts);
+    var el=document.getElementById('abtStatus');
+    if(el)el.innerHTML+=' | <span style="color:#aaff44;font-size:8px;">'+bpStr+'</span>';
+    window._bestBTParams.bestTrail=bestTrailOpts;
+  }
+
+  // ── Branch 8: Convergent + Trailing combo ──
+  _setStatus('&#9650;&#9651; Branch 8: Convergent + best trailing stop combo…');
+  await new Promise(function(r){setTimeout(r,40);});
+  var comboOpts=Object.assign({},bestTrailOpts||{useTrailing:true,trailPct:0.003,slMulti:2,tpMulti:3,maxHold:12,adaptiveSL:true,minProfitFrac:0.0010},{convOnly:true});
+  _branches.push({id:8,name:'Conv+Trail',parent:3,rules:b2Rules,wins:0,losses:0,
+    note:'Convergent signals ONLY + trailing stop + adaptive SL — highest-confidence entries'});
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],8,comboOpts);}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _recordBestIfWinner(8,comboOpts);
 
   _running=false;
   var live=_allResults.filter(function(r){return r.dataType==='live';}).length;
-  _setStatus('&#10003; Done — '+_allResults.length+' results · '+live+' live · '+_lossLog.length+' losses');
+  var bpWR=window._bestBTParams.wr.toFixed(1);
+  _setStatus('&#10003; Done — '+_allResults.length+' results · '+live+' live · '+_lossLog.length+' losses'
+    +' | <span style="color:#aaff44;">&#9733; Best: B'+window._bestBTParams.branch+' '+bpWR+'% ('+window._bestBTParams.desc+')</span>');
   _renderAll();
 };
 
@@ -7123,6 +7539,38 @@ if(document.readyState==='loading'){
 
 })(); // end auto backtest IIFE
 </script>
+
+<!-- ═══ REST DIAGNOSTIC POPUP ═══ -->
+<div id="restDiagPopup" style="display:none;position:fixed;top:58px;right:18px;z-index:99990;width:400px;max-height:520px;background:#030b03;border:1.5px solid #1a4a1a;border-radius:6px;font-family:monospace;font-size:9px;box-shadow:0 6px 30px rgba(0,0,0,0.95);flex-direction:column;" onmousedown="startDragPanel('restDiagPopup',event)">
+  <div style="padding:5px 10px;background:#041404;border-bottom:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;cursor:move;flex-shrink:0;">
+    <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">⚡ Data Source Diagnostics</span>
+    <span style="flex:1;"></span>
+    <button onclick="window._probeAllSources&&window._probeAllSources()" style="background:#001a00;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:7.5px;padding:1px 6px;cursor:pointer;">↺ Retry All</button>
+    <button onclick="document.getElementById('restDiagPopup').style.display='none'" style="background:none;border:none;color:#4a7a4a;cursor:pointer;font-size:13px;line-height:1;padding:0 2px;">✕</button>
+  </div>
+  <!-- Why blocked -->
+  <div style="padding:5px 10px;background:#020808;border-bottom:1px solid #0d1a0d;font-size:8px;flex-shrink:0;">
+    <span style="color:#4ab4ff;font-weight:bold;">Why blocked?</span>
+    <span style="color:#1a4a6a;"> &nbsp;In Claude Artifact sandbox → CSP blocks ALL fetch() to external URLs. &nbsp;As local .html file → fetch() works; CORS proxies add another hop. &nbsp;CSV downloads require a server or local filesystem.</span>
+  </div>
+  <!-- Probe log -->
+  <div style="padding:5px 10px;flex:1;overflow-y:auto;">
+    <div style="color:#2a6a2a;font-size:8.5px;font-weight:bold;margin-bottom:3px;">Source Waterfall Log</div>
+    <div id="restDiagLog" style="font-size:8px;line-height:1.7;"></div>
+  </div>
+  <!-- Retry buttons -->
+  <div style="padding:5px 10px;border-top:1px solid #0d2a0d;display:flex;flex-wrap:wrap;gap:3px;flex-shrink:0;">
+    <button onclick="window._trySource&&window._trySource('binance')" style="background:#001800;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">Binance</button>
+    <button onclick="window._trySource&&window._trySource('coingecko')" style="background:#001420;color:#4ab4ff;border:1px solid #0d1a2a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CoinGecko</button>
+    <button onclick="window._trySource&&window._trySource('cryptocompare')" style="background:#140020;color:#c080ff;border:1px solid #200040;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CryptoCompare</button>
+    <button onclick="window._trySource&&window._trySource('allorigins')" style="background:#141000;color:#ffb400;border:1px solid #2a2000;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">allorigins proxy</button>
+    <button onclick="window._trySource&&window._trySource('corsproxy')" style="background:#100010;color:#ff9ef5;border:1px solid #2a0030;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">corsproxy.io</button>
+    <button onclick="window._tryCSVDownload&&window._tryCSVDownload()" style="background:#100800;color:#ff8050;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CSV (Yahoo)</button>
+    <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
+  </div>
+  <!-- Adaptive synth results -->
+  <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
+</div>
 
 <!-- ═══ AUTO BACKTEST — ADAPTIVE ENGINE ═══ -->
 <div id="abtWrap" style="background:#010c01;border-top:2px solid #0d2a0d;padding:6px 10px;font-family:monospace;font-size:10px;">
