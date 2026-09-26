@@ -6849,10 +6849,14 @@ window._probeAllSources=function(){
   var idx=0;
   function tryNext(){
     if(idx>=sources.length){
-      _setTpSrc('✗ all REST blocked · CSV ✗','#ef5350');
+      _setTpSrc('✗ all REST blocked · trying history…','#ef5350');
       window._restLive=false;
-      // Auto-trigger adaptive synth
-      setTimeout(function(){window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch();},400);
+      // Auto-trigger historical sources first, then adaptive synth as final fallback
+      setTimeout(function(){
+        window._tryHistoricalSources&&window._tryHistoricalSources().then(function(){
+          if(!window._restLive)window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch();
+        }).catch(function(){window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch();});
+      },400);
       return;
     }
     var src=sources[idx++];
@@ -7012,6 +7016,268 @@ window._tryChartImages = async function(){
 };
 
 setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
+
+// ══════════ HISTORICAL DATA (Tier 4 — multi-source OHLCV history) ══════════
+// Sources: CryptoCompare histohour → Bybit kline → Kraken OHLC → CoinCap price history
+// All attempted direct first, then via allorigins/corsproxy if CORS fails.
+// "Load More" pattern: reads oldest timestamp from _dc cache, fetches bars before it.
+var _HIST_SYMS={
+  'BTC/USDT':{cc:'BTC',coinCap:'bitcoin',bybit:'BTCUSDT',kraken:'XBTUSD'},
+  'ETH/USDT':{cc:'ETH',coinCap:'ethereum',bybit:'ETHUSDT',kraken:'XETHUSD'},
+  'SOL/USDT':{cc:'SOL',coinCap:'solana',bybit:'SOLUSDT',kraken:'SOLUSD'},
+  'BNB/USDT':{cc:'BNB',coinCap:'binancecoin',bybit:'BNBUSDT',kraken:'BNBUSD'},
+  'XRP/USDT':{cc:'XRP',coinCap:'xrp',bybit:'XRPUSDT',kraken:'XXRPUSD'}
+};
+
+// Try fetching from a URL, optionally wrapping with allorigins proxy
+async function _histFetch(url,parseOk,useProxy){
+  var urls=useProxy
+    ?['https://api.allorigins.win/raw?url='+encodeURIComponent(url),'https://corsproxy.io/?'+encodeURIComponent(url),url]
+    :[url,'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+  for(var i=0;i<urls.length;i++){
+    try{
+      var r=await fetch(urls[i],{signal:AbortSignal.timeout(6000)});
+      if(!r.ok)continue;
+      var d=await r.json();
+      if(parseOk(d))return d;
+    }catch(e){}
+  }
+  return null;
+}
+
+// Parse CryptoCompare histohour response → OHLCV array
+function _parseCCHistohour(d){
+  if(!d||!d.Data||!d.Data.Data)return null;
+  return d.Data.Data.filter(function(b){return b.volumeto>0;}).map(function(b){
+    return{open:b.open,high:b.high,low:b.low,close:b.close,volume:b.volumeto,time:b.time*1000};
+  });
+}
+// Parse Bybit kline response → OHLCV array
+function _parseBybitKline(d){
+  if(!d||!d.result||!d.result.list)return null;
+  return d.result.list.slice().reverse().map(function(k){
+    return{open:+k[1],high:+k[2],low:+k[3],close:+k[4],volume:+k[5],time:+k[0]};
+  });
+}
+// Parse CoinCap price history → reconstructed OHLCV (no native H/L, approximated)
+function _parseCoinCapHist(d){
+  if(!d||!d.data||!Array.isArray(d.data))return null;
+  var pts=d.data;
+  var bars=[];
+  var grp=Math.max(1,Math.floor(pts.length/200));
+  for(var i=0;i<pts.length;i+=grp){
+    var chunk=pts.slice(i,i+grp);
+    var prices=chunk.map(function(p){return parseFloat(p.priceUsd);});
+    var o=prices[0],c=prices[prices.length-1];
+    var h=Math.max.apply(null,prices),l=Math.min.apply(null,prices);
+    bars.push({open:o,high:h,low:l,close:c,volume:1,time:chunk[0].time});
+  }
+  return bars;
+}
+
+window._tryHistoricalSources=async function(){
+  var diagSynth=document.getElementById('restDiagSynth');
+  if(diagSynth)diagSynth.style.display='block';
+  _restDiagEntry('Hist Sources','pending','Scanning CryptoCompare/Bybit/Kraken/CoinCap…');
+
+  var loaded=0;
+  var report='<div style="color:#4ab4ff;font-size:8.5px;font-weight:bold;margin-bottom:3px;">📅 Historical Source Results</div>';
+  report+='<table style="width:100%;border-collapse:collapse;font-size:7.5px;">';
+  report+='<thead><tr style="color:#2a4a6a;"><th style="text-align:left;padding:1px 4px;">Sym</th><th>Source</th><th>Bars</th><th>Status</th></tr></thead><tbody>';
+
+  var syms=Object.keys(_HIST_SYMS);
+  for(var si=0;si<syms.length;si++){
+    var sym=syms[si];
+    var ids=_HIST_SYMS[sym];
+    var bars=null;
+    var srcName='—';
+
+    // 1) CryptoCompare histohour
+    var ccUrl='https://min-api.cryptocompare.com/data/v2/histohour?fsym='+ids.cc+'&tsym=USD&limit=2000';
+    var ccD=await _histFetch(ccUrl,function(d){return d&&d.Data&&d.Data.Data&&d.Data.Data.length>10;},false);
+    if(ccD){bars=_parseCCHistohour(ccD);srcName='CryptoCompare';}
+
+    // 2) Bybit kline
+    if(!bars){
+      var bybitUrl='https://api.bybit.com/v5/market/kline?category=spot&symbol='+ids.bybit+'&interval=60&limit=200';
+      var byD=await _histFetch(bybitUrl,function(d){return d&&d.result&&d.result.list&&d.result.list.length>5;},false);
+      if(byD){bars=_parseBybitKline(byD);srcName='Bybit';}
+    }
+
+    // 3) CoinCap price history
+    if(!bars){
+      var end=Date.now();
+      var start=end-(7*24*3600*1000); // 7 days
+      var ccapUrl='https://api.coincap.io/v2/assets/'+ids.coinCap+'/history?interval=h1&start='+start+'&end='+end;
+      var capD=await _histFetch(ccapUrl,function(d){return d&&d.data&&d.data.length>10;},false);
+      if(capD){bars=_parseCoinCapHist(capD);srcName='CoinCap';}
+    }
+
+    var status=bars&&bars.length>10?'ok':'fail';
+    var color=status==='ok'?'#3ecf5e':'#ef5350';
+    report+='<tr><td style="padding:1px 4px;color:#7af;">'+sym+'</td>';
+    report+='<td style="color:#aaa;">'+srcName+'</td>';
+    report+='<td style="color:#ffb;">'+((bars&&bars.length)||0)+'</td>';
+    report+='<td style="color:'+color+';">'+status+'</td></tr>';
+
+    if(bars&&bars.length>10){
+      var key1=sym+'__H1',key4=sym+'__H4';
+      if(!_dc[key1]||_dc[key1].dataType!=='live'){_dc[key1]={data:bars,dataType:'snap',src:srcName};}
+      if(!_dc[key4]||_dc[key4].dataType!=='live'){_dc[key4]={data:bars,dataType:'snap',src:srcName};}
+      loaded++;
+    }
+  }
+
+  report+='</tbody></table>';
+  if(diagSynth)diagSynth.innerHTML=report;
+
+  if(loaded>0){
+    _restDiagEntry('Hist Sources','ok','Loaded '+loaded+' symbols from historical APIs');
+    _setTpSrc('📅 Historical · '+loaded+' syms','#4ab4ff');
+    setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},300);
+  } else {
+    _restDiagEntry('Hist Sources','fail','All historical APIs blocked — showing backup options');
+    _setTpSrc('📅 Hist blocked','#ef5350');
+    window._showBackupOptions&&window._showBackupOptions();
+  }
+};
+
+// Load more historical data before oldest cached bar (scroll back in time)
+window._loadMoreHistory=async function(sym,tf){
+  sym=sym||'BTC/USDT'; tf=tf||'H1';
+  var key=sym+'__'+tf;
+  var existing=_dc[key];
+  var ids=_HIST_SYMS[sym];
+  if(!ids){_restDiagEntry('More Hist','fail','Unknown symbol '+sym);return;}
+
+  // Find oldest timestamp
+  var oldestTs=Date.now();
+  if(existing&&existing.data&&existing.data.length>0){
+    existing.data.forEach(function(b){if(b.time&&b.time<oldestTs)oldestTs=b.time;});
+  }
+  var toTsSec=Math.floor(oldestTs/1000);
+
+  _restDiagEntry('More Hist','pending','Fetching bars before '+new Date(oldestTs).toISOString().slice(0,16)+'…');
+
+  // CryptoCompare histohour with toTs
+  var ccUrl='https://min-api.cryptocompare.com/data/v2/histohour?fsym='+ids.cc+'&tsym=USD&limit=2000&toTs='+toTsSec;
+  var ccD=await _histFetch(ccUrl,function(d){return d&&d.Data&&d.Data.Data&&d.Data.Data.length>10;},false);
+  var newBars=ccD?_parseCCHistohour(ccD):null;
+
+  // Bybit fallback
+  if(!newBars){
+    var byUrl='https://api.bybit.com/v5/market/kline?category=spot&symbol='+ids.bybit+'&interval=60&limit=200&end='+toTsSec*1000;
+    var byD=await _histFetch(byUrl,function(d){return d&&d.result&&d.result.list&&d.result.list.length>5;},false);
+    if(byD)newBars=_parseBybitKline(byD);
+  }
+
+  if(!newBars||newBars.length<2){
+    _restDiagEntry('More Hist','fail','No earlier bars available (CORS blocked or no more history)');
+    window._showBackupOptions&&window._showBackupOptions();
+    return;
+  }
+
+  // Prepend unique bars (avoid duplicates by checking time)
+  var existTimes=new Set((existing&&existing.data?existing.data:[]).map(function(b){return b.time||0;}));
+  var prepend=newBars.filter(function(b){return !existTimes.has(b.time);});
+  if(prepend.length===0){_restDiagEntry('More Hist','ok','No new bars (already have oldest available)');return;}
+
+  var merged=prepend.concat(existing&&existing.data?existing.data:[]);
+  _dc[key]={data:merged,dataType:existing?existing.dataType:'snap',src:'history-scroll'};
+  _restDiagEntry('More Hist','ok','Prepended '+prepend.length+' bars → '+merged.length+' total');
+  _setTpSrc('📅 +'+prepend.length+' hist bars','#4ab4ff');
+  setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},200);
+};
+
+// Backup options panel — shown when all automated retrieval fails
+window._showBackupOptions=function(){
+  var diagSynth=document.getElementById('restDiagSynth');
+  if(!diagSynth)return;
+  diagSynth.style.display='block';
+  var curSym=document.querySelector('.sym-in')?document.querySelector('.sym-in').value:'BTCUSDT';
+
+  var h='<div style="color:#ef5350;font-size:8.5px;font-weight:bold;margin-bottom:5px;">⚠ All automated data retrieval blocked (CSP sandbox)</div>';
+  h+='<div style="color:#888;font-size:8px;margin-bottom:6px;">Try these manual options or open the dashboard as a local .html file for full API access.</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:4px;">';
+
+  var manualLinks=[
+    {label:'📋 Copy Binance REST URL',color:'#3ecf5e',
+     url:'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=500',
+     desc:'Open in browser tab → paste JSON into console'},
+    {label:'📊 Yahoo Finance CSV',color:'#ffb400',
+     url:'https://query1.finance.yahoo.com/v7/finance/download/BTC-USD?period1=0&period2=9999999999&interval=1d&events=history',
+     desc:'Direct download link — paste or import manually'},
+    {label:'📅 CryptoCompare History',color:'#c080ff',
+     url:'https://min-api.cryptocompare.com/data/v2/histohour?fsym=BTC&tsym=USD&limit=2000',
+     desc:'Free, no auth — open in new tab to check if accessible'},
+    {label:'📈 CoinCap History API',color:'#4ab4ff',
+     url:'https://api.coincap.io/v2/assets/bitcoin/history?interval=h1',
+     desc:'No auth, CORS-friendly — may work in some environments'},
+    {label:'🔄 Bybit Kline API',color:'#9db4ff',
+     url:'https://api.bybit.com/v5/market/kline?category=spot&symbol=BTCUSDT&interval=60&limit=200',
+     desc:'Public, no auth — open to test accessibility'}
+  ];
+
+  manualLinks.forEach(function(ln){
+    h+='<div style="background:#0a1a0a;border:1px solid #1a3a1a;border-radius:3px;padding:4px 6px;">';
+    h+='<div style="display:flex;align-items:center;gap:6px;">';
+    h+='<span style="color:'+ln.color+';font-size:8px;font-weight:bold;">'+ln.label+'</span>';
+    h+='<button onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+ln.url+'\')" ';
+    h+='style="background:#001800;color:#3ecf5e;border:1px solid #1a3a1a;border-radius:2px;font-size:7px;padding:1px 5px;cursor:pointer;">📋 Copy URL</button>';
+    h+='<a href="'+ln.url+'" target="_blank" style="color:#4a7a4a;font-size:7px;text-decoration:underline;">Open ↗</a>';
+    h+='</div>';
+    h+='<div style="color:#4a6a4a;font-size:7px;margin-top:1px;">'+ln.desc+'</div>';
+    h+='</div>';
+  });
+
+  // File upload option
+  h+='<div style="background:#0a0a1a;border:1px solid #1a1a3a;border-radius:3px;padding:4px 6px;">';
+  h+='<div style="color:#7af;font-size:8px;font-weight:bold;">📁 Upload Local CSV/JSON</div>';
+  h+='<div style="color:#3a3a6a;font-size:7px;margin-top:1px;">Download data from any source, then load it here</div>';
+  h+='<input type="file" id="histUploadInput" accept=".csv,.json,.txt" style="margin-top:3px;font-size:7px;color:#7af;" ';
+  h+='onchange="window._handleHistUpload&&window._handleHistUpload(this.files[0])">';
+  h+='</div>';
+
+  h+='</div>';
+  diagSynth.innerHTML=h;
+};
+
+// Handle file upload — parse CSV/JSON into OHLCV bars
+window._handleHistUpload=function(file){
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var txt=e.target.result;
+    var bars=null;
+    try{
+      // Try JSON first (Binance klines array or CryptoCompare format)
+      var j=JSON.parse(txt);
+      if(Array.isArray(j)&&j.length>0&&Array.isArray(j[0])){
+        // Binance klines: [time,open,high,low,close,vol,...]
+        bars=j.map(function(k){return{open:+k[1],high:+k[2],low:+k[3],close:+k[4],volume:+k[5],time:+k[0]};});
+      } else if(j&&j.Data&&j.Data.Data){
+        bars=_parseCCHistohour(j);
+      }
+    }catch(ex){
+      // Try CSV (Yahoo Finance: Date,Open,High,Low,Close,Adj Close,Volume)
+      var lines=txt.split('\n').filter(function(l){return l.trim()&&!l.startsWith('Date');});
+      bars=lines.map(function(l){
+        var c=l.split(',');
+        return{open:parseFloat(c[1]),high:parseFloat(c[2]),low:parseFloat(c[3]),close:parseFloat(c[4]),volume:parseFloat(c[6])||1,time:new Date(c[0]).getTime()};
+      }).filter(function(b){return!isNaN(b.open)&&!isNaN(b.close);});
+    }
+    if(bars&&bars.length>=10){
+      _dc['BTC/USDT__H1']={data:bars,dataType:'snap',src:'upload:'+file.name};
+      _dc['BTC/USDT__D1']={data:bars,dataType:'snap',src:'upload:'+file.name};
+      _restDiagEntry('Upload','ok','Parsed '+bars.length+' bars from '+file.name);
+      _setTpSrc('📁 Upload: '+file.name.slice(0,20),'#7af');
+      setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},200);
+    } else {
+      _restDiagEntry('Upload','fail','Could not parse '+file.name+' — expected CSV (Yahoo) or JSON (Binance/CC)');
+    }
+  };
+  reader.readAsText(file);
+};
 
 // ══════════ DEV TOOLS ══════════
 var _devInspecting=false;
@@ -7802,6 +8068,9 @@ if(document.readyState==='loading'){
     <button onclick="window._tryCSVDownload&&window._tryCSVDownload()" style="background:#100800;color:#ff8050;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CSV (Yahoo)</button>
     <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
     <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
+    <button onclick="window._tryHistoricalSources&&window._tryHistoricalSources()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">📅 History</button>
+    <button onclick="window._loadMoreHistory&&window._loadMoreHistory('BTC/USDT','H1')" style="background:#001428;color:#9db4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">⬅ More Hist</button>
+    <button onclick="window._showBackupOptions&&window._showBackupOptions()" style="background:#140000;color:#ef5350;border:1px solid #2a0000;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">⚠ Backups</button>
   </div>
   <!-- Adaptive synth results -->
   <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
