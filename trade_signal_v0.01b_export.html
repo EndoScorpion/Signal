@@ -8,7 +8,20 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{background:#0b0c10;color:#ccc;font-family:monospace;font-size:11px;min-height:100vh;}
-:root{--up:rgb(38,166,154);--down:rgb(239,83,80);--line:rgb(33,125,245);--grid:#2a2e39;--panel:#131722;--head:#1a1e29;--row:#161a24;}
+:root{--up:rgb(38,166,154);--down:rgb(239,83,80);--line:rgb(33,125,245);--grid:#2a2e39;--panel:#131722;--head:#1a1e29;--row:#161a24;
+  --pnl-vl-bg:#04100a;--pnl-vl-border:#0d3a1a;
+  --pnl-tp-bg:#040e04;--pnl-tp-border:#1a4a1a;
+  --pnl-bt-bg:#030603;--pnl-bt-border:#0d1f0d;
+  --pnl-news-bg:#080508;--pnl-news-border:#1a0a1a;
+  --pnl-toolbar-bg:#000000;--pnl-toolbar-border:#1e2228;
+  --pnl-mw-bg:#030402;--pnl-mw-border:#0a120a;
+  --pnl-snap-bg:#030e03;--pnl-snap-border:#0d2a0d;
+}
+@keyframes compact-flash{0%{opacity:1;}50%{opacity:.3;}100%{opacity:1;}}
+@keyframes compact-slide-in{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+#compactExpandBar{display:none;position:sticky;top:0;z-index:9998;background:#001a08;border-bottom:2px solid #3ecf5e;padding:4px 10px;text-align:center;animation:compact-slide-in .25s ease;}
+#compactExpandBar button{background:#001a00;color:#3ecf5e;border:1.5px solid #3ecf5e;border-radius:4px;padding:3px 16px;font-family:monospace;font-size:11px;cursor:pointer;font-weight:bold;letter-spacing:.3px;}
+#compactExpandBar button:hover{background:#002a00;}
 button{font-family:monospace;cursor:pointer;}
 input,select{font-family:monospace;}
 
@@ -96,7 +109,7 @@ canvas.main-canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
 .bt-eq{color:#4a5570;font-size:10px;margin-top:2px;}
 
 /* Snap bar */
-.snap-bar{display:flex;gap:6px;align-items:center;margin:0 8px 6px;padding:4px 8px;background:#000;border:1px solid #21252f;border-radius:4px;flex-wrap:wrap;}
+.snap-bar{display:flex;gap:6px;align-items:center;margin:0 8px 6px;padding:4px 8px;background:var(--pnl-snap-bg);border:1px solid var(--pnl-snap-border);border-radius:4px;flex-wrap:wrap;}
 .sn-btn{background:#000;color:#9f9;border:1px solid #2a2;border-radius:3px;padding:2px 7px;font-size:10px;}
 
 /* News */
@@ -192,7 +205,7 @@ svg{max-width:100%;height:auto;}
 .tv-badge{display:inline-flex;align-items:center;gap:4px;background:#0a0f1a;border:1px solid #2a4060;border-radius:3px;padding:2px 7px;font-size:10px;color:#9db4ff;text-decoration:none;}
 .tv-badge:hover{border-color:#557;color:#7af;}
 /* ── MarketWatch menu bar ── */
-#mwBar{display:flex;align-items:center;background:#030402;border-bottom:1px solid #0a120a;padding:0 6px;gap:6px;}
+#mwBar{display:flex;align-items:center;background:var(--pnl-mw-bg);border-bottom:1px solid var(--pnl-mw-border);padding:0 6px;gap:6px;}
 #mwBtn{background:none;border:none;cursor:pointer;font-family:'Times New Roman',Times,serif;color:#3ecf5e;font-size:14px;font-weight:bold;padding:4px 8px 4px 4px;letter-spacing:.4px;white-space:nowrap;}
 #mwBtn:hover{color:#5fff8f;}
 #mwMenu{display:none;position:absolute;top:100%;left:0;background:#0a0d14;border:1px solid #1e2228;border-radius:4px;min-width:215px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.85);margin-top:1px;}
@@ -341,6 +354,11 @@ svg{max-width:100%;height:auto;}
     <!-- Last saved -->
     <div id="stLog" style="color:#2a4a2a;font-size:8.5px;line-height:1.4;max-height:36px;overflow:hidden;text-overflow:ellipsis;">No signals saved yet.</div>
   </div>
+</div>
+
+<!-- Compact mode expand bar (sticky, shown only in compact mode) -->
+<div id="compactExpandBar">
+  <button onclick="toggleCompact()">&#8633; Expand View</button>
 </div>
 
 <!-- REMINDER MODAL -->
@@ -629,7 +647,7 @@ svg{max-width:100%;height:auto;}
   </div>
 
   <!-- NEWS BAR: full-width strip under the clock/volume row -->
-  <div id="newsBar" style="display:flex;align-items:center;gap:6px;padding:2px 8px;border-top:1px solid #1a0a1a;background:#080508;overflow:hidden;min-height:20px;position:relative;">
+  <div id="newsBar" style="display:flex;align-items:center;gap:6px;padding:2px 8px;border-top:1px solid var(--pnl-news-border);background:var(--pnl-news-bg);overflow:hidden;min-height:20px;position:relative;">
     <!-- Trending chip -->
     <button id="trendingChip" onclick="toggleTrendingPopup()" style="background:none;border:1px solid #1a3a1a;border-radius:3px;color:#3ecf5e;font-size:9px;padding:0 5px;cursor:pointer;font-family:monospace;white-space:nowrap;flex-shrink:0;line-height:1.6;" title="Click for trending news by category">&#8599; Trending: <span id="trendingText" style="color:#9adf9a;">Loading…</span></button>
     <span style="color:#1e2e1e;flex-shrink:0;">│</span>
@@ -679,7 +697,7 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- MAIN TOOLBAR -->
-<div id="mainToolbar" style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:5px 8px;background:#000;border-bottom:1px solid #1e2228;">
+<div id="mainToolbar" style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:5px 8px;background:var(--pnl-toolbar-bg);border-bottom:1px solid var(--pnl-toolbar-border);">
   <span id="tbDragHandle" title="Drag to float" style="cursor:grab;color:#2a3a5a;font-size:15px;padding:0 3px;user-select:none;line-height:1;" onmousedown="startDragPanel('mainToolbar',event)">&#8942;</span>
   <button id="refreshBtn" class="tb-btn" onclick="refreshAll(this)" style="color:#3ecf5e;border-color:#1a4a2a;background:#001a08;font-weight:bold;font-size:11px;" title="Refresh via REST API then synthetic fallback">&#8635; Refresh</button>
   <button id="repairBtn" class="tb-btn" onclick="repairCharts(this)" style="color:#ffb400;border-color:#553300;background:#1a0a00;font-weight:bold;font-size:11px;" title="Force-clear locks and redraw all charts; opens Diag panel">&#9889; Repair</button>
@@ -734,7 +752,7 @@ svg{max-width:100%;height:auto;}
 
 <!-- ═══ VOLUME LEADERS EMBEDDED PANEL ═══ -->
 <div id="vlPanel" style="display:block;padding:0 4px 6px;">
-  <div id="vlPanel-inner" style="background:#131722;border:1px solid #2a2e39;border-radius:4px;position:relative;overflow:hidden;">
+  <div id="vlPanel-inner" style="background:var(--pnl-vl-bg);border:1px solid var(--pnl-vl-border);border-radius:4px;position:relative;overflow:hidden;">
     <div class="vlp-head" id="vlpHead" onmousedown="startDragPanel('vlPanel',event)" style="cursor:move;">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;">
         <span style="color:#2a4a3a;font-size:14px;cursor:grab;line-height:1;">&#8942;</span>
@@ -861,7 +879,7 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- ═══ TOP PERFORMERS ═══ -->
-<div id="topPerfBar" style="background:#040e04;border-top:2px solid #1a4a1a;border-bottom:1px solid #0d2a0d;padding:7px 10px;font-family:monospace;font-size:10px;display:block;">
+<div id="topPerfBar" style="background:var(--pnl-tp-bg);border-top:2px solid var(--pnl-tp-border);border-bottom:1px solid var(--pnl-tp-border);padding:7px 10px;font-family:monospace;font-size:10px;display:block;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;">
     <span style="color:#aaff44;font-weight:bold;font-size:11px;">&#9733; Top Performers</span>
     <span style="color:#3a7a3a;font-size:9px;">Stoch signals ≥35% win rate after fees &amp; US tax · all TFs &amp; K periods</span>
@@ -3992,6 +4010,20 @@ var _cpFields=[
   {value:'css_clock',    label:'UI — Clock color'},
   {value:'css_newsbar',  label:'UI — News bar text'},
   {value:'css_ticker',   label:'UI — Ticker text'},
+  {value:'pnl_vl_bg',       label:'Panel — Volume Leaders bg'},
+  {value:'pnl_vl_border',   label:'Panel — Volume Leaders border'},
+  {value:'pnl_tp_bg',       label:'Panel — Top Performers bg'},
+  {value:'pnl_tp_border',   label:'Panel — Top Performers border'},
+  {value:'pnl_bt_bg',       label:'Panel — Backtest bg'},
+  {value:'pnl_bt_border',   label:'Panel — Backtest border'},
+  {value:'pnl_news_bg',     label:'Panel — News bar bg'},
+  {value:'pnl_news_border', label:'Panel — News bar border'},
+  {value:'pnl_toolbar_bg',  label:'Panel — Toolbar bg'},
+  {value:'pnl_toolbar_border',label:'Panel — Toolbar border'},
+  {value:'pnl_mw_bg',       label:'Panel — MarketWatch bar bg'},
+  {value:'pnl_mw_border',   label:'Panel — MarketWatch bar border'},
+  {value:'pnl_snap_bg',     label:'Panel — Snapshot bar bg'},
+  {value:'pnl_snap_border', label:'Panel — Snapshot bar border'},
 ];
 var _cpSelectedField=_cpFields[0];
 var _cpSwatchColors=['#ef5350','#ff7043','#ffb400','#ffee58','#a5d632','#26a69a','#29b6f6','#5c6bc0','#ab47bc','#ec407a','#ffffff','#9db4ff','#c7a8ff','#ff9ef5','#3ecf5e','#7af','#000000','#131722','#1a1e29','#0b0c10'];
@@ -4243,6 +4275,14 @@ function cpApply(){
       if(!s){s=document.createElement('style');s.id='themeVars';document.head.appendChild(s);}
       s.textContent=(s.textContent||'')+'\n:root{'+v+':'+colorVal+';}';
     }
+  } else if(tgt&&tgt.indexOf('pnl_')===0){
+    var pkey=tgt.replace('pnl_','').replace(/_/g,'-');
+    var cssVar='--'+pkey.replace(/-bg$/,'-bg').replace(/-border$/,'-border');
+    // map pnl_vl_bg → --pnl-vl-bg etc.
+    cssVar='--pnl-'+tgt.replace('pnl_','').replace(/_/g,'-');
+    var s2=document.getElementById('themeVars');
+    if(!s2){s2=document.createElement('style');s2.id='themeVars';document.head.appendChild(s2);}
+    s2.textContent=(s2.textContent||'')+'\n:root{'+cssVar+':'+colorVal+';}';
   }
   // Flash preview
   var pv=document.getElementById('cpPreview');if(pv){pv.style.transform='scale(1.2)';setTimeout(function(){pv.style.transform='';},200);}
@@ -4286,19 +4326,33 @@ function toggleCompact(){
   var vl=document.getElementById('vlPanel');
   var tb=document.getElementById('mainToolbar');
   var btn=document.getElementById('compactBtn');
+  var expBar=document.getElementById('compactExpandBar');
   if(!vl||!tb)return;
   if(_compact){
-    // Move VL panel to just before the toolbar
-    tb.parentNode.insertBefore(vl,tb);
-    if(btn){btn.textContent='⊟ Expanded';btn.style.color='#3ecf5e';btn.style.borderColor='#1a4a2a';}
+    // Animate out then move
+    vl.style.transition='opacity .2s,transform .2s';
+    vl.style.opacity='0';vl.style.transform='translateY(-8px)';
+    setTimeout(function(){
+      tb.parentNode.insertBefore(vl,tb);
+      vl.style.transform='translateY(8px)';
+      setTimeout(function(){vl.style.opacity='1';vl.style.transform='';},20);
+    },200);
+    if(btn){btn.textContent='⊟ Expanded';btn.style.color='#3ecf5e';btn.style.borderColor='#1a4a2a';
+      btn.style.animation='compact-flash .4s ease 2';}
+    if(expBar){expBar.style.display='block';expBar.style.animation='compact-slide-in .25s ease';}
   } else {
-    // Restore VL panel to after .snap-bar
-    var snap=document.querySelector('.snap-bar');
-    if(snap&&snap.nextSibling){snap.parentNode.insertBefore(vl,snap.nextSibling);}
-    else if(snap){snap.parentNode.appendChild(vl);}
-    // If floating, un-float
-    if(vl.style.position==='fixed'){vl.style.position='';vl.style.top='';vl.style.left='';vl.style.width='';vl.style.zIndex='';}
-    if(btn){btn.textContent='⊞ Compact';btn.style.color='#ffb400';btn.style.borderColor='#553300';}
+    vl.style.transition='opacity .2s,transform .2s';
+    vl.style.opacity='0';vl.style.transform='translateY(-8px)';
+    setTimeout(function(){
+      var snap=document.querySelector('.snap-bar');
+      if(snap&&snap.nextSibling){snap.parentNode.insertBefore(vl,snap.nextSibling);}
+      else if(snap){snap.parentNode.appendChild(vl);}
+      if(vl.style.position==='fixed'){vl.style.position='';vl.style.top='';vl.style.left='';vl.style.width='';vl.style.zIndex='';}
+      vl.style.transform='translateY(8px)';
+      setTimeout(function(){vl.style.opacity='1';vl.style.transform='';},20);
+    },200);
+    if(btn){btn.textContent='⊞ Compact';btn.style.color='#ffb400';btn.style.borderColor='#553300';btn.style.animation='';}
+    if(expBar){expBar.style.display='none';}
   }
 }
 
@@ -6395,7 +6449,7 @@ setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run afte
 </script>
 
 <!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
-<div id="stochBTPanel" style="background:#030603;border-top:1px solid #0d1f0d;padding:6px 8px;font-family:monospace;">
+<div id="stochBTPanel" style="background:var(--pnl-bt-bg);border-top:1px solid var(--pnl-bt-border);padding:6px 8px;font-family:monospace;">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
     <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">&#9654; Stoch Cross Backtest — Multi-Period</span>
     <span style="color:#1a2a1a;font-size:8.5px;">US Short-Term Tax (Ord. Income):</span>
