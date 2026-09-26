@@ -255,6 +255,50 @@ svg{max-width:100%;height:auto;}
 .mem-btn:hover{color:#9db4ff;border-color:#4a5a7a;}
 /* ── Credit bar ── */
 #creditBar{background:#010201;border-bottom:1px solid #0a0f0a;padding:1px 8px;font-family:'IBM Plex Mono','Courier New',monospace;font-size:9px;display:flex;align-items:center;gap:0;white-space:nowrap;overflow:hidden;}
+
+/* ── View Presets ── */
+.vp-wrap{position:relative;display:inline-block;}
+#vpBtn{background:#001a28;border:1px solid #1a4a6a;border-radius:3px;color:#7af;font-size:10px;padding:2px 8px;cursor:pointer;font-family:monospace;white-space:nowrap;}
+#vpBtn:hover{border-color:#4a8aaa;color:#adf;}
+#vpMenu{display:none;position:absolute;top:100%;left:0;z-index:9999;background:#040c14;border:1px solid #1a3a5a;border-radius:5px;min-width:210px;box-shadow:0 6px 24px rgba(0,0,0,.9);margin-top:2px;}
+#vpMenu .vp-head{color:#2a5a7a;font-size:8px;text-transform:uppercase;letter-spacing:.9px;padding:6px 10px 3px;font-family:monospace;}
+#vpMenu .vp-sep{border-top:1px solid #0d1e2a;margin:3px 0;}
+#vpMenu button{display:block;width:100%;text-align:left;background:none;border:none;color:#7a9aaa;font-size:10px;font-family:monospace;padding:6px 12px;cursor:pointer;}
+#vpMenu button:hover{background:#0a1a28;color:#7af;}
+#vpMenu button.vp-active{color:#3ecf5e;background:#001808;border-left:2px solid #3ecf5e;}
+#vpMenu .vp-badge{font-size:8px;color:#4a6a8a;margin-left:6px;}
+
+/* ── Large-font mode (+2px on everything small) ── */
+body.vp-lg{font-size:13px !important;}
+body.vp-lg .tb-btn{font-size:12px !important;}
+body.vp-lg .ptitle{font-size:13px !important;}
+body.vp-lg .tf-sel,.vp-lg .sym-in,.vp-lg .prv-in,.vp-lg .bt-sel,.vp-lg .bt-in{font-size:12px !important;}
+body.vp-lg .cb,.vp-lg .ind-btn{font-size:13px !important;}
+body.vp-lg .bt-res,.vp-lg .bt-hdr,.vp-lg .bt-eq,.vp-lg .ctrl-legend{font-size:12px !important;}
+body.vp-lg .snap-bar,.vp-lg .snap-bar *{font-size:12px !important;}
+body.vp-lg .mw-item,.vp-lg .mw-sec{font-size:12px !important;}
+body.vp-lg .vl-grid *,.vp-lg .vlp-tbl *{font-size:12px !important;}
+body.vp-lg .fs-tab{font-size:11px !important;}
+body.vp-lg #creditBar,body.vp-lg #creditBar *{font-size:11px !important;}
+body.vp-lg #mwStatus{font-size:11.5px !important;}
+body.vp-lg select,body.vp-lg input[type=text],body.vp-lg input[type=number]{font-size:12px !important;}
+/* Inline-style font overrides — catch hardcoded small sizes */
+body.vp-lg [style*="font-size:7px"],body.vp-lg [style*="font-size: 7px"]{font-size:9px !important;}
+body.vp-lg [style*="font-size:7.5px"],body.vp-lg [style*="font-size: 7.5px"]{font-size:9.5px !important;}
+body.vp-lg [style*="font-size:8px"],body.vp-lg [style*="font-size: 8px"]{font-size:10px !important;}
+body.vp-lg [style*="font-size:8.5px"],body.vp-lg [style*="font-size: 8.5px"]{font-size:10.5px !important;}
+body.vp-lg [style*="font-size:9px"],body.vp-lg [style*="font-size: 9px"]{font-size:11px !important;}
+body.vp-lg [style*="font-size:9.5px"],body.vp-lg [style*="font-size: 9.5px"]{font-size:11.5px !important;}
+body.vp-lg [style*="font-size:10px"],body.vp-lg [style*="font-size: 10px"]{font-size:12px !important;}
+body.vp-lg [style*="font-size:10.5px"],body.vp-lg [style*="font-size: 10.5px"]{font-size:12.5px !important;}
+body.vp-lg [style*="font-size:11px"],body.vp-lg [style*="font-size: 11px"]{font-size:13px !important;}
+body.vp-lg [style*="font-size:11.5px"],body.vp-lg [style*="font-size: 11.5px"]{font-size:13.5px !important;}
+
+/* ── Mobile / phone layout ── */
+body.vp-mobile .panels{flex-direction:column !important;}
+body.vp-mobile .panel{width:calc(100% - 8px) !important;min-width:unset !important;}
+body.vp-mobile .pbtns{flex-wrap:wrap !important;}
+body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
 </style><span class="font-label" style="color:#c7a8ff;">IBM Plex Mono</span><span class="font-label" style="color:#9db4ff;">Courier Prime</span>
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Source+Code+Pro:wght@400;600&family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -800,6 +844,22 @@ svg{max-width:100%;height:auto;}
   </div>
   <button class="tb-btn news" onclick="toggleNews()">News</button>
   <button class="tb-btn help" onclick="showHelp()">?</button>
+  <!-- View presets dropdown -->
+  <div class="vp-wrap">
+    <button id="vpBtn" onclick="toggleVPMenu()" title="View presets — zoom &amp; font scale for different screens">&#128065; View &#9660;</button>
+    <div id="vpMenu">
+      <div class="vp-head">Screen Presets</div>
+      <button id="vp-laptop15"  onclick="setViewPreset('laptop15')" >&#128187; 15&quot; Laptop <span class="vp-badge">85% zoom · compact</span></button>
+      <button id="vp-desktop24" onclick="setViewPreset('desktop24')">&#128444;&#65039; 24&quot; Desktop <span class="vp-badge">100% · large fonts</span></button>
+      <button id="vp-tv55"      onclick="setViewPreset('tv55')"     >&#128250; 55&quot; TV/Monitor <span class="vp-badge">150% · bold</span></button>
+      <div class="vp-sep"></div>
+      <div class="vp-head">Mobile</div>
+      <button id="vp-phone"     onclick="setViewPreset('phone')"    >&#128241; Android Phone <span class="vp-badge">single-col · lg</span></button>
+      <button id="vp-tablet"    onclick="setViewPreset('tablet')"   >&#128064; Android Tablet <span class="vp-badge">110% · large fonts</span></button>
+      <div class="vp-sep"></div>
+      <button onclick="setViewPreset('reset')" style="color:#ef5350 !important;">&#8635; Reset to default</button>
+    </div>
+  </div>
   <button class="tb-btn" style="color:#9f9;border-color:#333;font-size:10px;" onclick="toggleTerm()">&#9000; Terminal</button>
   <button class="tb-btn" id="vlPanelBtn" style="color:#3ecf5e;border-color:#1a4a2a;font-weight:bold;background:#001a08;" onclick="toggleVLPanel()">&#128202; Vol Panel</button>
   <button class="tb-btn" style="color:#3ecf5e;border-color:#1a4a2a;" onclick="toggleVLPop()">&#8599; Pop Out</button>
@@ -4933,6 +4993,52 @@ var _diagLog=[];
 var _lastSnapshot={};
 var _diagWatcher=null;
 var _diagWatchActive=false;
+
+// ── View Presets ──
+var _VP_PRESETS={
+  laptop15: {zoom:0.85,lg:false,mobile:false,label:'💻 15" Laptop'},
+  desktop24:{zoom:1.00,lg:true, mobile:false,label:'🖥 24" Desktop'},
+  tv55:     {zoom:1.50,lg:true, mobile:false,label:'📺 55" Monitor'},
+  phone:    {zoom:1.00,lg:true, mobile:true, label:'📱 Android Phone'},
+  tablet:   {zoom:1.10,lg:true, mobile:false,label:'📟 Android Tablet'},
+  reset:    {zoom:1.00,lg:false,mobile:false,label:'⊞ View'},
+};
+var _vpOpen=false;
+function toggleVPMenu(){
+  _vpOpen=!_vpOpen;
+  var m=document.getElementById('vpMenu');
+  if(m)m.style.display=_vpOpen?'block':'none';
+}
+document.addEventListener('click',function(e){
+  if(_vpOpen&&!e.target.closest('.vp-wrap')){_vpOpen=false;var m=document.getElementById('vpMenu');if(m)m.style.display='none';}
+});
+function setViewPreset(name){
+  var p=_VP_PRESETS[name];if(!p)return;
+  // Zoom: use CSS zoom (Chrome/Edge) with transform fallback
+  document.documentElement.style.zoom=p.zoom;
+  // Large fonts class
+  document.body.classList.toggle('vp-lg',!!p.lg);
+  // Mobile layout class
+  document.body.classList.toggle('vp-mobile',!!p.mobile);
+  // Update button label
+  var btn=document.getElementById('vpBtn');
+  if(btn)btn.innerHTML='&#128065; '+p.label+' &#9660;';
+  // Highlight active item
+  Object.keys(_VP_PRESETS).forEach(function(k){
+    var el=document.getElementById('vp-'+k);if(el)el.classList.toggle('vp-active',k===name);
+  });
+  // Close menu
+  _vpOpen=false;var m=document.getElementById('vpMenu');if(m)m.style.display='none';
+  // Persist
+  try{localStorage.setItem('_viewPreset',name);}catch(e){}
+  // Repaint charts after zoom settles
+  setTimeout(function(){if(typeof resizeAllCharts==='function')resizeAllCharts();},180);
+}
+// Auto-restore saved preset or default to desktop24 (large fonts)
+(function(){
+  var saved;try{saved=localStorage.getItem('_viewPreset');}catch(e){}
+  setViewPreset(saved||'desktop24');
+})();
 
 function toggleDiagPanel(){
   var el=document.getElementById('diagPanel');
