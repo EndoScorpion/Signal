@@ -267,7 +267,7 @@ svg{max-width:100%;height:auto;}
 <div id="mwBar">
   <div id="mwRoot" style="position:relative;">
     <button id="mwBtn" onclick="toggleMWMenu(event)">MarketWatch &#9660;</button>
-    <button onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="background:#0a000a;color:#ff9ef5;border:1px solid #5a1a5a;border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:monospace;margin-left:5px;vertical-align:middle;">&#127912; Colors</button>
+    <button onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;padding:0;margin-left:5px;flex-shrink:0;vertical-align:middle;box-shadow:0 0 3px rgba(255,150,255,0.4);"></button>
     <div id="mwMenu">
       <div class="mw-sec">Settings</div>
       <button class="mw-item" onclick="openFloatSettings('bg');toggleMWMenu()">&#127912; Chart BG Colors</button>
@@ -6474,6 +6474,11 @@ setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run afte
   <div style="margin-top:5px;padding-top:4px;border-top:1px solid #050d05;color:#112211;font-size:7.5px;line-height:1.6;">
     <b style="color:#1a3a1a;">Signal key:</b> K↑/↓ = %K cross direction &nbsp;·&nbsp; 20/50/80 = stoch level &nbsp;·&nbsp; bold Win% = ≥51% top performer &nbsp;·&nbsp; <b style="color:#1a3a1a;">−Tax</b> = after US short-term cap gains (ordinary income, &lt;1yr) &nbsp;·&nbsp; NIIT 3.8% applies if MAGI &gt;$200K single / $250K joint &nbsp;·&nbsp; <span style="color:#112211;">Not financial or tax advice — consult a CPA.</span>
   </div>
+</div>
+
+<!-- Bottom color picker button -->
+<div style="text-align:center;padding:10px 0 14px;background:#040804;border-top:1px solid #0d1a0d;">
+  <button onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="background:#0a000a;color:#ff9ef5;border:1.5px solid #5a1a5a;border-radius:5px;padding:5px 18px;font-size:12px;cursor:pointer;font-family:monospace;font-weight:bold;letter-spacing:.3px;">&#127912; Colors</button>
 </div>
 
 </body>
