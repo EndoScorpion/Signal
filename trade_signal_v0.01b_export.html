@@ -7973,6 +7973,8 @@ window.autoRunBacktest=async function(){
     }
   }
 
+  _recordBestIfWinner(0,{}); // record B0 baseline as candidate best
+
   // ── Learn rules from B0 losses ──
   _setStatus('&#9997; Analyzing '+_lossLog.length+' losses…');
   await new Promise(function(r){setTimeout(r,80);});
@@ -7991,6 +7993,7 @@ window.autoRunBacktest=async function(){
       for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],1);}
       if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
     }
+    _recordBestIfWinner(1,{}); // ← B1 must be evaluated — often the best branch
 
     var b0WR=_branches[0].wins/Math.max(1,_branches[0].wins+_branches[0].losses)*100;
     var b1WR=_branches[1].wins/Math.max(1,_branches[1].wins+_branches[1].losses)*100;
