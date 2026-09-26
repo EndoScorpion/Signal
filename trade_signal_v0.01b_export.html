@@ -949,7 +949,7 @@ svg{max-width:100%;height:auto;}
 <div id="topPerfBar" style="background:var(--pnl-tp-bg);border-top:2px solid var(--pnl-tp-border);border-bottom:1px solid var(--pnl-tp-border);padding:7px 10px;font-family:monospace;font-size:10px;display:block;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;">
     <span style="color:#aaff44;font-weight:bold;font-size:11px;">&#9733; Top Performers</span>
-    <span style="color:#3a7a3a;font-size:9px;">Stoch signals ≥35% win rate after fees &amp; US tax · all TFs &amp; K periods</span>
+    <span style="color:#3a7a3a;font-size:9px;">Stoch signals ≥51% win rate after fees &amp; US tax · all TFs &amp; K periods · losing records in detail tables below</span>
     <span id="topPerfCount" style="color:#3ecf5e;font-size:9px;font-weight:bold;"></span>
     <span id="topPerfStatus" style="color:#ffb400;font-size:8.5px;display:none;">&#8987; Computing…</span>
     <button onclick="(function(){var s=document.getElementById('topPerfStatus');if(s)s.style.display='inline';window._btRunning=false;runStochBTs();})()" style="background:#001a00;color:#aaff44;border:1.5px solid #3a7a1a;border-radius:4px;padding:3px 10px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;margin-left:4px;" title="Run stochastic cross backtest across all coins, timeframes and K-periods">&#9654; Run BT</button>
@@ -6282,6 +6282,7 @@ function renderTopPerformers(allHits,statusMsg){
   var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
   var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
   allHits.sort(function(a,b){return b.wr-a.wr;});
+  var displayHits=allHits.filter(function(h){return h.wr>=51;});
   bar.style.display='block';
   if(statusMsg){
     if(cntEl)cntEl.textContent='';
@@ -6293,9 +6294,14 @@ function renderTopPerformers(allHits,statusMsg){
     rows.innerHTML='<tr><td colspan="11" style="color:#ffb400;padding:8px 6px;font-size:9px;">&#8987; No signals found yet — computing… or click <b style="color:#aaff44;">▶ Run BT</b></td></tr>';
     return;
   }
-  if(cntEl)cntEl.textContent='('+allHits.length+' signal'+(allHits.length!==1?'s':'')+')';
+  if(displayHits.length===0){
+    if(cntEl)cntEl.textContent='(0 of '+allHits.length+' ≥51% win)';
+    rows.innerHTML='<tr><td colspan="11" style="color:#ef5350;padding:8px 6px;font-size:9px;">No signals with ≥51% win rate — see detail tables below for all results.</td></tr>';
+    return;
+  }
+  if(cntEl)cntEl.textContent='('+displayHits.length+' of '+allHits.length+' ≥51% win)';
   rows.innerHTML='';
-  allHits.forEach(function(h){
+  displayHits.forEach(function(h){
     var d=h.d;
     var isUp=h.key.indexOf('up')===0;
     var sigC=isUp?'#26a69a':'#ef5350';
