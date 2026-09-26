@@ -361,6 +361,68 @@ svg{max-width:100%;height:auto;}
   <button onclick="toggleCompact()">&#8633; Expand View</button>
 </div>
 
+<!-- ══════════ DEV TOOLS ══════════ -->
+<!-- Element highlight overlay -->
+<div id="devHighlight" style="display:none;position:fixed;pointer-events:none;z-index:99990;box-sizing:border-box;border:2px solid #a78bfa;background:rgba(167,139,250,0.08);transition:all .08s ease;"></div>
+
+<!-- Hover tooltip -->
+<div id="devTip" style="display:none;position:fixed;z-index:99995;background:#0d0a14;border:1px solid #5a3a9a;border-radius:4px;padding:3px 8px;font-family:monospace;font-size:11px;color:#c7a8ff;pointer-events:none;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,0.8);"></div>
+
+<!-- Left-click context menu for highlight -->
+<div id="devCtxMenu" style="display:none;position:fixed;z-index:99999;background:#0d0a14;border:1px solid #5a3a9a;border-radius:5px;padding:4px 0;font-family:monospace;font-size:11px;box-shadow:0 4px 20px rgba(0,0,0,0.9);min-width:180px;">
+  <div style="color:#7a5aaa;font-size:9px;padding:3px 10px 2px;text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid #1e1228;">Highlight Color</div>
+  <div id="devCtxColors" style="display:flex;gap:6px;padding:6px 10px;flex-wrap:wrap;"></div>
+  <div style="border-top:1px solid #1e1228;margin-top:2px;">
+    <button onclick="devPickHighlightColor()" style="display:block;width:100%;text-align:left;background:none;border:none;color:#ff9ef5;padding:4px 10px;cursor:pointer;font-family:monospace;font-size:11px;">🎨 Pick color… (color wheel)</button>
+    <button onclick="devSetHighlight('none')" style="display:block;width:100%;text-align:left;background:none;border:none;color:#ef5350;padding:4px 10px;cursor:pointer;font-family:monospace;font-size:11px;">✕  Remove highlight</button>
+    <button onclick="devPinElement()" style="display:block;width:100%;text-align:left;background:none;border:none;color:#60a5fa;padding:4px 10px;cursor:pointer;font-family:monospace;font-size:11px;">📌 Pin element</button>
+    <button onclick="devCopySelector()" style="display:block;width:100%;text-align:left;background:none;border:none;color:#34d399;padding:4px 10px;cursor:pointer;font-family:monospace;font-size:11px;">⎘  Copy selector</button>
+    <button onclick="devCtxClose()" style="display:block;width:100%;text-align:left;background:none;border:none;color:#4a5570;padding:4px 10px;cursor:pointer;font-family:monospace;font-size:11px;">✕  Close</button>
+  </div>
+</div>
+
+<!-- DOM Inspector Panel -->
+<div id="devDOMPanel" style="display:none;position:fixed;top:60px;left:20px;z-index:99990;width:310px;max-height:380px;background:#0a0814;border:1px solid #3a2a5a;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;display:none;flex-direction:column;">
+  <div onmousedown="startDragPanel('devDOMPanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0d0a18;padding:5px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #2a1a4a;user-select:none;flex-shrink:0;">
+    <span style="color:#a78bfa;font-weight:bold;font-size:10px;">🔍 DOM Inspector</span>
+    <div style="display:flex;gap:4px;align-items:center;">
+      <input id="devDOMFilter" type="text" placeholder="filter…" style="background:#000;color:#c7a8ff;border:1px solid #3a2a5a;border-radius:3px;padding:1px 5px;font-family:monospace;font-size:10px;width:80px;outline:none;" oninput="devDOMApplyFilter(this.value)">
+      <button onclick="devToggleDOM()" style="background:none;border:none;color:#5a3a7a;font-size:13px;cursor:pointer;line-height:1;padding:0 2px;">✕</button>
+    </div>
+  </div>
+  <div id="devDOMPath" style="background:#060410;padding:4px 8px;border-bottom:1px solid #1a0a2a;font-size:9px;color:#7a5aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;"></div>
+  <div id="devDOMBody" style="overflow-y:auto;padding:6px 8px;flex:1;min-height:60px;"></div>
+</div>
+
+<!-- Styles Panel -->
+<div id="devStylesPanel" style="display:none;position:fixed;top:60px;right:20px;z-index:99990;width:300px;max-height:400px;background:#080e0a;border:1px solid #2a5a3a;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;display:none;flex-direction:column;">
+  <div onmousedown="startDragPanel('devStylesPanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0a100c;padding:5px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #1a3a1a;user-select:none;flex-shrink:0;">
+    <span style="color:#34d399;font-weight:bold;font-size:10px;">🎨 Styles</span>
+    <div style="display:flex;gap:4px;align-items:center;">
+      <input id="devStylesFilter" type="text" placeholder="filter…" style="background:#000;color:#34d399;border:1px solid #1a3a2a;border-radius:3px;padding:1px 5px;font-family:monospace;font-size:10px;width:80px;outline:none;" oninput="devStylesApplyFilter(this.value)">
+      <button onclick="devToggleStyles()" style="background:none;border:none;color:#2a5a3a;font-size:13px;cursor:pointer;line-height:1;padding:0 2px;">✕</button>
+    </div>
+  </div>
+  <div id="devStylesEl" style="background:#040a06;padding:3px 8px;border-bottom:1px solid #0d2a0d;font-size:9px;color:#4a7a4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;"></div>
+  <div id="devStylesBody" style="overflow-y:auto;padding:4px 8px;flex:1;min-height:60px;"></div>
+</div>
+
+<!-- Console Panel -->
+<div id="devConsolePanel" style="display:none;position:fixed;bottom:60px;left:20px;z-index:99990;width:440px;max-height:260px;background:#0a0800;border:1px solid #3a2a00;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;display:none;flex-direction:column;">
+  <div onmousedown="startDragPanel('devConsolePanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0c0a00;padding:5px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #2a1a00;user-select:none;flex-shrink:0;">
+    <span style="color:#fbbf24;font-weight:bold;font-size:10px;">&gt;_ Console</span>
+    <div style="display:flex;gap:5px;align-items:center;">
+      <button onclick="devConsoleClear()" style="background:none;border:1px solid #2a1a00;border-radius:3px;color:#7a5a00;font-size:9px;cursor:pointer;padding:1px 6px;">Clear</button>
+      <button onclick="devToggleConsole()" style="background:none;border:none;color:#5a3a00;font-size:13px;cursor:pointer;line-height:1;padding:0 2px;">✕</button>
+    </div>
+  </div>
+  <div id="devConsoleBody" style="overflow-y:auto;padding:4px 8px;flex:1;min-height:60px;"></div>
+  <div style="display:flex;border-top:1px solid #1a1000;flex-shrink:0;">
+    <span style="color:#fbbf24;padding:4px 6px;font-size:12px;">&gt;</span>
+    <input id="devConsoleInput" type="text" placeholder="eval expression…" style="flex:1;background:transparent;border:none;color:#fbbf24;font-family:monospace;font-size:11px;outline:none;padding:3px 2px;" onkeydown="if(event.key==='Enter')devConsoleEval(this.value)">
+  </div>
+</div>
+
 <!-- REMINDER MODAL -->
 <div id="rdModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:#0d1014;border:1px solid #3a2a1a;border-radius:6px;padding:14px 18px;min-width:280px;box-shadow:0 8px 40px #000e;font-family:monospace;font-size:11px;">
   <div style="color:#ffcf9d;font-weight:bold;margin-bottom:8px;font-size:12px;">&#9200; Set Reminder</div>
@@ -734,6 +796,11 @@ svg{max-width:100%;height:auto;}
   <button id="compactBtn" class="tb-btn" style="color:#ffb400;border-color:#553300;font-size:10px;" onclick="toggleCompact()" title="Move Volume Leaders above toolbar in compact mode">&#8633; Compact</button>
   <button class="tb-btn" id="diagBtn" onclick="toggleDiagPanel()" style="color:#3ecf5e;border-color:#1a4a2a;font-size:10px;" title="Auto Diagnostics — detect and fix blank charts">&#128301; Diag</button>
   <button class="tb-btn" id="fdpBtn" onclick="toggleFDP()" style="color:#d4b800;border-color:#3a3000;font-size:12px;font-weight:bold;letter-spacing:0;" title="Floating Diagnostics Panel — bugs, auto-repair, info">&#9889;</button>
+  <span style="color:#333;">|</span>
+  <button id="devInspectBtn" class="tb-btn" onclick="devToggleInspect()" title="Element inspector — hover to highlight + show tag/size" style="color:#a78bfa;border-color:#3a2a5a;font-size:10px;">&#128269; Inspect</button>
+  <button class="tb-btn" onclick="devToggleDOM()" title="DOM Inspector panel" style="color:#60a5fa;border-color:#1a2a5a;font-size:10px;">&#127760; DOM</button>
+  <button class="tb-btn" onclick="devToggleStyles()" title="Styles panel" style="color:#34d399;border-color:#1a3a2a;font-size:10px;">&#127912; Styles</button>
+  <button class="tb-btn" onclick="devToggleConsole()" title="Console panel" style="color:#fbbf24;border-color:#3a2a00;font-size:10px;">&#62; Console</button>
 </div>
 
 <!-- NEWS BAR moved into #volClockArea above -->
@@ -4024,6 +4091,7 @@ var _cpFields=[
   {value:'pnl_mw_border',   label:'Panel — MarketWatch bar border'},
   {value:'pnl_snap_bg',     label:'Panel — Snapshot bar bg'},
   {value:'pnl_snap_border', label:'Panel — Snapshot bar border'},
+  {value:'dev_highlight',   label:'DevTools — Element highlight color'},
 ];
 var _cpSelectedField=_cpFields[0];
 var _cpSwatchColors=['#ef5350','#ff7043','#ffb400','#ffee58','#a5d632','#26a69a','#29b6f6','#5c6bc0','#ab47bc','#ec407a','#ffffff','#9db4ff','#c7a8ff','#ff9ef5','#3ecf5e','#7af','#000000','#131722','#1a1e29','#0b0c10'];
@@ -4275,6 +4343,12 @@ function cpApply(){
       if(!s){s=document.createElement('style');s.id='themeVars';document.head.appendChild(s);}
       s.textContent=(s.textContent||'')+'\n:root{'+v+':'+colorVal+';}';
     }
+  } else if(tgt==='dev_highlight'){
+    window._devHighlightColor=colorVal;
+    var hl=document.getElementById('devHighlight');
+    if(hl)hl.style.borderColor=colorVal;
+    var tip=document.getElementById('devTip');
+    if(tip)tip.style.borderColor=colorVal;
   } else if(tgt&&tgt.indexOf('pnl_')===0){
     var pkey=tgt.replace('pnl_','').replace(/_/g,'-');
     var cssVar='--'+pkey.replace(/-bg$/,'-bg').replace(/-border$/,'-border');
@@ -6446,6 +6520,244 @@ function runStochBTs(){
 })();
 
 setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
+
+// ══════════ DEV TOOLS ══════════
+var _devInspecting=false;
+var _devHoveredEl=null;
+var _devPinnedEl=null;
+var _devHighlightColor='#a78bfa';
+window._devHighlightColor='#a78bfa';
+var _devHighlightBg='rgba(167,139,250,0.08)';
+var _devCtxColors=['#a78bfa','#60a5fa','#34d399','#fbbf24','#f87171','#fb923c','#e879f9','#ffffff'];
+
+function devToggleInspect(){
+  _devInspecting=!_devInspecting;
+  var btn=document.getElementById('devInspectBtn');
+  if(btn){btn.style.background=_devInspecting?'#1a0a30':'';btn.style.color=_devInspecting?'#c7a8ff':'#a78bfa';}
+  var hl=document.getElementById('devHighlight');
+  var tip=document.getElementById('devTip');
+  if(!_devInspecting){if(hl)hl.style.display='none';if(tip)tip.style.display='none';}
+}
+function devToggleDOM(){
+  var p=document.getElementById('devDOMPanel');
+  if(!p)return;
+  p.style.display=(p.style.display==='none'||!p.style.display)?'flex':'none';
+}
+function devToggleStyles(){
+  var p=document.getElementById('devStylesPanel');
+  if(!p)return;
+  p.style.display=(p.style.display==='none'||!p.style.display)?'flex':'none';
+}
+function devToggleConsole(){
+  var p=document.getElementById('devConsolePanel');
+  if(!p)return;
+  p.style.display=(p.style.display==='none'||!p.style.display)?'flex':'none';
+}
+function devConsoleClear(){var b=document.getElementById('devConsoleBody');if(b)b.innerHTML='';}
+function devConsoleEval(expr){
+  var b=document.getElementById('devConsoleBody');
+  if(!b)return;
+  var inp=document.getElementById('devConsoleInput');
+  if(inp)inp.value='';
+  var row=document.createElement('div');
+  row.style.cssText='border-bottom:1px solid #1a1000;padding:2px 0;';
+  try{
+    var result=eval(expr);
+    row.innerHTML='<span style="color:#fbbf24;">&gt; '+_devEsc(expr)+'</span><br><span style="color:#a3e635;">← '+_devEsc(String(result))+'</span>';
+  }catch(e){
+    row.innerHTML='<span style="color:#fbbf24;">&gt; '+_devEsc(expr)+'</span><br><span style="color:#ef5350;">✕ '+_devEsc(e.message)+'</span>';
+  }
+  b.appendChild(row);b.scrollTop=b.scrollHeight;
+}
+function _devEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function _devLog(type,args){
+  var p=document.getElementById('devConsolePanel');
+  var b=document.getElementById('devConsoleBody');
+  if(!b)return;
+  var colors={log:'#ccc',warn:'#fbbf24',error:'#ef5350',info:'#60a5fa'};
+  var row=document.createElement('div');
+  row.style.cssText='border-bottom:1px solid #120f00;padding:2px 0;color:'+( colors[type]||'#ccc')+';word-break:break-all;';
+  row.textContent=Array.from(args).map(function(a){try{return typeof a==='object'?JSON.stringify(a):String(a);}catch(e){return '[object]';}}).join(' ');
+  b.appendChild(row);b.scrollTop=b.scrollHeight;
+  // auto-show on error
+  if(type==='error'&&p&&p.style.display==='none'){p.style.display='flex';}
+}
+// Intercept console
+(function(){
+  var orig={log:console.log,warn:console.warn,error:console.error,info:console.info};
+  ['log','warn','error','info'].forEach(function(t){
+    console[t]=function(){orig[t].apply(console,arguments);_devLog(t,arguments);};
+  });
+})();
+
+// Mouse hover inspector
+document.addEventListener('mousemove',function(e){
+  if(!_devInspecting)return;
+  var el=document.elementFromPoint(e.clientX,e.clientY);
+  var skipIds=['devHighlight','devTip','devCtxMenu','devDOMPanel','devStylesPanel','devConsolePanel','compactExpandBar'];
+  if(!el||skipIds.indexOf(el.id)>=0)return;
+  _devHoveredEl=el;
+  var r=el.getBoundingClientRect();
+  var color=window._devHighlightColor||'#a78bfa';
+  // highlight box
+  var hl=document.getElementById('devHighlight');
+  if(hl){
+    hl.style.display='block';
+    hl.style.left=r.left+'px';hl.style.top=r.top+'px';
+    hl.style.width=r.width+'px';hl.style.height=r.height+'px';
+    hl.style.borderColor=color;
+    hl.style.background=color.replace('#','').length===6?
+      'rgba('+parseInt(color.slice(1,3),16)+','+parseInt(color.slice(3,5),16)+','+parseInt(color.slice(5,7),16)+',0.07)':'rgba(167,139,250,0.07)';
+  }
+  // tooltip
+  var tip=document.getElementById('devTip');
+  if(tip){
+    var tag='<'+el.tagName.toLowerCase();
+    if(el.id)tag+=' #'+el.id;
+    if(el.className&&typeof el.className==='string')tag+=' .'+el.className.trim().split(/\s+/).join('.');
+    tag+='>';
+    var dim=Math.round(r.width)+'×'+Math.round(r.height)+'px';
+    tip.innerHTML='<span style="color:'+color+'">'+_devEsc(tag)+'</span> <span style="color:#7a5aaa;">'+dim+'</span>';
+    tip.style.display='block';
+    tip.style.borderColor=color;
+    var tx=e.clientX+14,ty=e.clientY-32;
+    if(tx+220>window.innerWidth)tx=e.clientX-224;
+    if(ty<4)ty=e.clientY+18;
+    tip.style.left=tx+'px';tip.style.top=ty+'px';
+  }
+},true);
+
+document.addEventListener('mouseleave',function(){
+  var hl=document.getElementById('devHighlight');
+  var tip=document.getElementById('devTip');
+  if(hl)hl.style.display='none';
+  if(tip)tip.style.display='none';
+},true);
+
+// Left-click in inspect mode: open context menu + inspect element
+document.addEventListener('click',function(e){
+  // close ctx menu on any click outside it
+  var ctx=document.getElementById('devCtxMenu');
+  if(ctx&&e.target&&!ctx.contains(e.target)){ctx.style.display='none';}
+  if(!_devInspecting)return;
+  var el=e.target;
+  var skip=['devHighlight','devTip','devCtxMenu'];
+  for(var i=0;i<skip.length;i++){if(document.getElementById(skip[i])&&document.getElementById(skip[i]).contains(el))return;}
+  if(el.closest&&el.closest('#devDOMPanel,#devStylesPanel,#devConsolePanel,#compactExpandBar'))return;
+  e.preventDefault();e.stopPropagation();
+  _devHoveredEl=el;
+  _devInspectElement(el);
+  _devShowCtxMenu(e.clientX,e.clientY);
+},true);
+
+function _devShowCtxMenu(x,y){
+  var ctx=document.getElementById('devCtxMenu');
+  if(!ctx)return;
+  // build color swatches
+  var sw=document.getElementById('devCtxColors');
+  if(sw){
+    sw.innerHTML='';
+    _devCtxColors.forEach(function(c){
+      var d=document.createElement('div');
+      d.style.cssText='width:20px;height:20px;border-radius:50%;background:'+c+';cursor:pointer;border:2px solid '+(c===window._devHighlightColor?'#fff':'transparent')+';flex-shrink:0;';
+      d.title=c;d.onclick=function(){devSetHighlight(c);};
+      sw.appendChild(d);
+    });
+  }
+  ctx.style.display='block';
+  var cx=Math.min(x,window.innerWidth-190);
+  var cy=Math.min(y,window.innerHeight-ctx.offsetHeight-4);
+  ctx.style.left=cx+'px';ctx.style.top=cy+'px';
+}
+function devCtxClose(){var c=document.getElementById('devCtxMenu');if(c)c.style.display='none';}
+function devSetHighlight(color){
+  if(color==='none'){
+    window._devHighlightColor='transparent';
+    var hl=document.getElementById('devHighlight');if(hl){hl.style.borderColor='transparent';hl.style.background='none';}
+  } else {
+    window._devHighlightColor=color;
+    var hl2=document.getElementById('devHighlight');if(hl2)hl2.style.borderColor=color;
+    var tip=document.getElementById('devTip');if(tip)tip.style.borderColor=color;
+  }
+  devCtxClose();
+}
+function devPickHighlightColor(){
+  devCtxClose();
+  // set cpTarget to dev_highlight and open the existing color wheel
+  var t=document.getElementById('cpTarget');if(t)t.value='dev_highlight';
+  var lbl=document.getElementById('cpTargetLabel');if(lbl)lbl.textContent='DevTools — Element highlight color';
+  if(!_cp.open)toggleColorPicker();
+}
+function devPinElement(){
+  _devPinnedEl=_devHoveredEl;
+  devCtxClose();
+  console.info('[DevTools] Pinned: '+(_devPinnedEl?_devPinnedEl.tagName:'none'));
+}
+function devCopySelector(){
+  var el=_devHoveredEl;if(!el){devCtxClose();return;}
+  var sel=el.tagName.toLowerCase();
+  if(el.id)sel='#'+el.id;
+  else if(el.className&&typeof el.className==='string')sel='.'+el.className.trim().split(/\s+/)[0];
+  try{navigator.clipboard.writeText(sel);}catch(e){}
+  console.info('[DevTools] Copied selector: '+sel);
+  devCtxClose();
+}
+
+function _devGetSelector(el){
+  if(!el||el===document.body)return 'body';
+  var parts=[];var cur=el;
+  while(cur&&cur!==document.body&&cur.nodeType===1){
+    var p=cur.tagName.toLowerCase();
+    if(cur.id){p='#'+cur.id;parts.unshift(p);break;}
+    parts.unshift(p);cur=cur.parentElement;
+  }
+  return parts.join(' > ');
+}
+function _devInspectElement(el){
+  if(!el)return;
+  // DOM panel
+  var db=document.getElementById('devDOMBody');
+  var dp=document.getElementById('devDOMPath');
+  if(dp)dp.textContent=_devGetSelector(el);
+  if(db){
+    var attrs=Array.from(el.attributes||[]).map(function(a){
+      return '<div style="padding:1px 0;"><span style="color:#60a5fa;">'+_devEsc(a.name)+'</span><span style="color:#4a5570;">=</span><span style="color:#fbbf24;">"'+_devEsc(a.value)+'"</span></div>';
+    }).join('');
+    var r=el.getBoundingClientRect();
+    db.innerHTML='<div style="color:#a78bfa;font-weight:bold;font-size:11px;margin-bottom:4px;">&lt;'+_devEsc(el.tagName.toLowerCase())+'&gt;</div>'+attrs+
+      '<div style="margin-top:5px;padding-top:4px;border-top:1px solid #1a0a2a;color:#7a5aaa;font-size:10px;">'+
+      Math.round(r.width)+'×'+Math.round(r.height)+'px &nbsp; top:'+Math.round(r.top)+' left:'+Math.round(r.left)+'</div>';
+    if(document.getElementById('devDOMPanel').style.display==='none')devToggleDOM();
+  }
+  // Styles panel
+  var sb=document.getElementById('devStylesBody');
+  var sl=document.getElementById('devStylesEl');
+  if(sl)sl.textContent='<'+el.tagName.toLowerCase()+(el.id?' #'+el.id:'')+' '+Math.round(el.getBoundingClientRect().width)+'×'+Math.round(el.getBoundingClientRect().height)+'px>';
+  if(sb){
+    var cs=window.getComputedStyle(el);
+    var keys=['display','position','width','height','margin','padding','background','color','font-size','border','border-radius','overflow','z-index','flex','grid','opacity','transform','box-shadow'];
+    var rows=keys.map(function(k){
+      var v=cs.getPropertyValue(k);
+      if(!v||v==='none'||v==='normal'||v==='0px'||v==='auto'||v==='initial')return '';
+      return '<div style="display:flex;padding:2px 0;border-bottom:1px solid #0d1a0d;gap:6px;">'+
+        '<span style="color:#4a7a4a;min-width:90px;flex-shrink:0;">'+k+'</span>'+
+        '<span style="color:#a3e635;word-break:break-all;">'+_devEsc(v)+'</span></div>';
+    }).filter(Boolean).join('');
+    // also inline style
+    var inline=el.getAttribute('style')||'';
+    sb.innerHTML=(inline?'<div style="color:#60a5fa;font-size:9px;padding:2px 0 4px;">Inline: '+_devEsc(inline.slice(0,120))+'</div>':'')+rows||'<span style="color:#3a5a3a;font-size:10px;">No notable styles</span>';
+    if(document.getElementById('devStylesPanel').style.display==='none')devToggleStyles();
+  }
+}
+function devDOMApplyFilter(q){
+  var b=document.getElementById('devDOMBody');if(!b)return;
+  b.querySelectorAll('div').forEach(function(d){d.style.display=(!q||d.textContent.toLowerCase().indexOf(q.toLowerCase())>=0)?'':'none';});
+}
+function devStylesApplyFilter(q){
+  var b=document.getElementById('devStylesBody');if(!b)return;
+  b.querySelectorAll('div').forEach(function(d){d.style.display=(!q||d.textContent.toLowerCase().indexOf(q.toLowerCase())>=0)?'':'none';});
+}
+// ══════════ END DEV TOOLS ══════════
 </script>
 
 <!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
