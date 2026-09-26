@@ -382,7 +382,7 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- DOM Inspector Panel -->
-<div id="devDOMPanel" style="display:none;position:fixed;top:60px;left:20px;z-index:99990;width:310px;max-height:380px;background:#0a0814;border:1px solid #3a2a5a;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;display:none;flex-direction:column;">
+<div id="devDOMPanel" style="display:none;position:fixed;top:60px;left:20px;z-index:99992;width:310px;max-height:380px;background:#0a0814;border:1px solid #3a2a5a;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;flex-direction:column;">
   <div onmousedown="startDragPanel('devDOMPanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0d0a18;padding:5px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #2a1a4a;user-select:none;flex-shrink:0;">
     <span style="color:#a78bfa;font-weight:bold;font-size:10px;">🔍 DOM Inspector</span>
     <div style="display:flex;gap:4px;align-items:center;">
@@ -395,7 +395,7 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- Styles Panel -->
-<div id="devStylesPanel" style="display:none;position:fixed;top:60px;right:20px;z-index:99990;width:300px;max-height:400px;background:#080e0a;border:1px solid #2a5a3a;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;display:none;flex-direction:column;">
+<div id="devStylesPanel" style="display:none;position:fixed;top:60px;right:20px;z-index:99992;width:300px;max-height:400px;background:#080e0a;border:1px solid #2a5a3a;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;flex-direction:column;">
   <div onmousedown="startDragPanel('devStylesPanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0a100c;padding:5px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #1a3a1a;user-select:none;flex-shrink:0;">
     <span style="color:#34d399;font-weight:bold;font-size:10px;">🎨 Styles</span>
     <div style="display:flex;gap:4px;align-items:center;">
@@ -408,9 +408,9 @@ svg{max-width:100%;height:auto;}
 </div>
 
 <!-- Console Panel -->
-<div id="devConsolePanel" style="display:none;position:fixed;bottom:60px;left:20px;z-index:99990;width:440px;max-height:260px;background:#0a0800;border:1px solid #3a2a00;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;display:none;flex-direction:column;">
-  <div onmousedown="startDragPanel('devConsolePanel',event)" style="cursor:move;display:flex;align-items:center;justify-content:space-between;background:#0c0a00;padding:5px 8px;border-radius:6px 6px 0 0;border-bottom:1px solid #2a1a00;user-select:none;flex-shrink:0;">
-    <span style="color:#fbbf24;font-weight:bold;font-size:10px;">&gt;_ Console</span>
+<div id="devConsolePanel" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99992;height:220px;background:#0a0800;border-top:2px solid #4a3a00;box-shadow:0 -4px 20px rgba(0,0,0,0.9);font-family:monospace;font-size:11px;flex-direction:column;">
+  <div style="cursor:ns-resize;display:flex;align-items:center;justify-content:space-between;background:#0c0a00;padding:5px 8px;border-bottom:1px solid #2a1a00;user-select:none;flex-shrink:0;" onmousedown="devConsoleResize(event)">
+    <span style="color:#fbbf24;font-weight:bold;font-size:10px;">&gt;_ Console <span style="color:#4a3a00;font-size:9px;font-weight:normal;">— drag top edge to resize</span></span>
     <div style="display:flex;gap:5px;align-items:center;">
       <button onclick="devConsoleClear()" style="background:none;border:1px solid #2a1a00;border-radius:3px;color:#7a5a00;font-size:9px;cursor:pointer;padding:1px 6px;">Clear</button>
       <button onclick="devToggleConsole()" style="background:none;border:none;color:#5a3a00;font-size:13px;cursor:pointer;line-height:1;padding:0 2px;">✕</button>
@@ -6541,19 +6541,26 @@ function devToggleInspect(){
 function devToggleDOM(){
   var p=document.getElementById('devDOMPanel');
   if(!p)return;
-  p.style.display=(p.style.display==='none'||!p.style.display)?'flex':'none';
+  p.style.display=(p.style.display==='flex')?'none':'flex';
 }
 function devToggleStyles(){
   var p=document.getElementById('devStylesPanel');
   if(!p)return;
-  p.style.display=(p.style.display==='none'||!p.style.display)?'flex':'none';
+  p.style.display=(p.style.display==='flex')?'none':'flex';
 }
 function devToggleConsole(){
   var p=document.getElementById('devConsolePanel');
   if(!p)return;
-  p.style.display=(p.style.display==='none'||!p.style.display)?'flex':'none';
+  p.style.display=(p.style.display==='flex')?'none':'flex';
 }
 function devConsoleClear(){var b=document.getElementById('devConsoleBody');if(b)b.innerHTML='';}
+function devConsoleResize(e){
+  var p=document.getElementById('devConsolePanel');if(!p)return;
+  var startY=e.clientY,startH=p.offsetHeight;
+  function mv(ev){p.style.height=Math.max(100,Math.min(600,startH-(ev.clientY-startY)))+'px';}
+  function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);}
+  document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+}
 function devConsoleEval(expr){
   var b=document.getElementById('devConsoleBody');
   if(!b)return;
