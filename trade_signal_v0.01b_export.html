@@ -63,8 +63,22 @@ input,select{font-family:monospace;}
 .ib.pause-btn:hover{background:#1a1000;}
 .ib.pause-btn.paused{color:#ef5350;border-color:#660000;animation:pulse 1.5s infinite;}
 .ib.minimized-restore{color:#4f4;border-color:#2a5;}
-.panel-min-btn{position:absolute;top:2px;right:3px;z-index:15;background:#0a0a00;color:#aa9900;border:1px solid #443300;border-radius:3px;padding:0 5px;font-size:13px;cursor:pointer;line-height:1.5;font-weight:bold;font-family:monospace;}
-.panel-min-btn:hover{background:#1a1600;color:#ffdd00;}
+.panel-min-btn{position:absolute;top:2px;right:3px;z-index:15;background:#0a0a00;color:#ffcc00;border:1px solid #443300;border-radius:3px;padding:0 5px;font-size:13px;cursor:pointer;line-height:1.5;font-weight:bold;font-family:monospace;}
+.panel-min-btn:hover{background:#1a1600;color:#ffee44;}
+/* Close-confirm modal */
+#_cc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:999990;display:flex;align-items:center;justify-content:center;}
+#_cc-box{background:#0e1012;border:1.5px solid #444;border-radius:7px;padding:18px 22px 14px;min-width:270px;font-family:monospace;box-shadow:0 8px 40px rgba(0,0,0,.95);}
+#_cc-box h4{margin:0 0 6px;font-size:12px;color:#e0e0e0;}
+#_cc-box p{margin:0 0 12px;font-size:9.5px;color:#888;line-height:1.5;}
+.cc-btn{display:block;width:100%;text-align:left;padding:7px 12px;margin-bottom:6px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:10px;border:1px solid;}
+.cc-min{background:#0a0a00;color:#ffcc00;border-color:#443300;}
+.cc-min:hover{background:#1a1600;}
+.cc-arc{background:#001428;color:#4ab4ff;border-color:#0d1a3a;}
+.cc-arc:hover{background:#001d3a;}
+.cc-del{background:#0a0000;color:#ef5350;border-color:#300;opacity:.7;}
+.cc-del:hover{opacity:1;}
+.cc-cancel{background:none;color:#555;border-color:#333;font-size:9px;padding:4px 12px;}
+.cc-cancel:hover{color:#888;}
 .zb{background:#0a1a2a;color:#7af;border:1px solid #2a3a4a;border-radius:3px;padding:1px 5px;font-size:11px;font-family:'Courier Prime','Courier New',monospace;}
 .zb.y{color:#aff;}.zb.r{color:#fa8;}
 
@@ -227,9 +241,11 @@ svg{max-width:100%;height:auto;}
 /* ── Backtest header row ── */
 .bt-hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
 .bt-hdr-row .bt-hdr{margin-bottom:0;}
-.bt-min{background:none;border:none;color:#ffb400;font-size:18px;line-height:1;cursor:pointer;padding:0 4px;opacity:.85;}
+.bt-min{background:none;border:none;color:#ffcc00;font-size:18px;line-height:1;cursor:pointer;padding:0 4px;opacity:.85;}
 .bt-min:hover{opacity:1;}
 .bt-min.expanded{color:#3ecf5e;font-size:13px;}
+.panel-arc-btn{position:absolute;top:2px;right:26px;z-index:15;background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;padding:0 5px;font-size:10px;cursor:pointer;line-height:1.5;font-family:monospace;opacity:.75;}
+.panel-arc-btn:hover{opacity:1;}
 /* ── Row collapse toggle ── */
 .rows-tog{background:#0a0f0a;color:#7a9a7a;border:1px solid #2a3a2a;border-radius:3px;padding:2px 6px;font-size:11px;cursor:pointer;font-family:monospace;line-height:1.4;}
 .rows-tog.on{color:#3ecf5e;border-color:#1a4a2a;background:#001800;}
@@ -906,7 +922,8 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
       <div style="display:flex;gap:3px;">
         <button onclick="refreshVLPanel()" style="background:#001a00;color:#3ecf5e;border:1px solid #1a4;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:monospace;">&#8635;</button>
         <button onclick="popOutVLPanel()" title="Pop out to floating window" style="background:#0a0020;color:#c7a8ff;border:1px solid #442;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:monospace;">&#8599; Pop Out</button>
-        <button onclick="minimizeVLPanel(this)" style="background:#0a0a00;color:#ffb400;border:1px solid #440;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:monospace;" id="vlpMinBtn">&mdash;</button>
+        <button onclick="minimizeVLPanel(this)" style="background:#0a0a00;color:#ffcc00;border:1px solid #440;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:monospace;" id="vlpMinBtn">&mdash;</button>
+    <button onclick="_archivePanel('vlPanel')" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:monospace;" title="Archive panel data">&#128190;</button>
         <button onclick="document.getElementById('vlPanel').style.display='none';document.getElementById('vlPanelBtn').textContent='&#128202; Vol Panel';" style="background:#1a0000;color:#ef5350;border:1px solid #500;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:monospace;">&#10005;</button>
       </div>
     </div>
@@ -1058,6 +1075,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
 
   <!-- PANEL 1: BTC/USDT — Canvas + ECharts -->
   <div class="panel" id="p-btc">
+    <button class="panel-arc-btn" onclick="_archivePanel('p-btc')" title="Archive BTC data">💾</button>
     <button class="panel-min-btn" onclick="minimizePanel('p-btc',this)" title="Minimize panel">—</button>
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
@@ -1149,6 +1167,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
 
   <!-- PANEL 2: ETH — ETH/USDT + BACKTEST -->
   <div class="panel" id="p-eth">
+    <button class="panel-arc-btn" onclick="_archivePanel('p-eth')" title="Archive ETH data">💾</button>
     <button class="panel-min-btn" onclick="minimizePanel('p-eth',this)" title="Minimize panel">—</button>
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
@@ -1247,6 +1266,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
 
   <!-- PANEL 3: SOL -->
   <div class="panel" id="p-sol">
+    <button class="panel-arc-btn" onclick="_archivePanel('p-sol')" title="Archive SOL data">💾</button>
     <button class="panel-min-btn" onclick="minimizePanel('p-sol',this)" title="Minimize panel">—</button>
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
@@ -1337,6 +1357,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
 
   <!-- PANEL 4: BNB -->
   <div class="panel" id="p-bnb">
+    <button class="panel-arc-btn" onclick="_archivePanel('p-bnb')" title="Archive BNB data">💾</button>
     <button class="panel-min-btn" onclick="minimizePanel('p-bnb',this)" title="Minimize panel">—</button>
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
@@ -7632,6 +7653,8 @@ function _runBT(data,kp,rtCost,effTax,rules,opts){
   var convStochs=opts.convStochs||null;
   var adaptSL=opts.adaptiveSL||false;
 
+  var entryLevels=opts.entryLevels||[20,50,80];
+  var relaxConvMin=opts.relaxConvMin||2;
   var st=_stochArr(data,kp),st3=_stochArr(data,Math.min(kp*3,data.length-1));
   function sma(i,n){if(i<n-1)return data[i].close;var s=0;for(var j=i-n+1;j<=i;j++)s+=data[j].close;return s/n;}
   function atr(i,n){if(i<n)return 0.0001;var s=0;for(var j=i-n+1;j<=i;j++)s+=Math.max(data[j].high-data[j].low,0.000001);return s/n;}
@@ -7643,11 +7666,11 @@ function _runBT(data,kp,rtCost,effTax,rules,opts){
 
   for(var i=kp+3;i<data.length-12;i++){
     var kv=st[i],pk=st[i-1];if(kv===null||pk===null)continue;
-    [20,50,80].forEach(function(lv){
+    entryLevels.forEach(function(lv){
       var upX=(pk<lv&&kv>=lv),dnX=(pk>lv&&kv<=lv);if(!upX&&!dnX)return;
-      var isUp=upX,key=(isUp?'up':'dn')+lv;
+      var isUp=upX,key=(isUp?'up':'dn')+(lv<=25?20:lv>=75?80:lv); // map to canonical sig key
 
-      // ── Convergent signal filter: require 2+ stoch K periods to agree ──
+      // ── Convergent signal filter: require N stoch K periods to agree ──
       if(convOnly&&convStochs){
         var agree=0;
         Object.keys(convStochs).forEach(function(k2){
@@ -7656,7 +7679,7 @@ function _runBT(data,kp,rtCost,effTax,rules,opts){
           if(isUp&&sk[i]>sk[i-1]&&sk[i]<60)agree++;  // bullish momentum, not yet overbought
           if(!isUp&&sk[i]<sk[i-1]&&sk[i]>40)agree++;  // bearish momentum, not yet oversold
         });
-        if(agree<2)return; // need at least 2 K periods to confirm
+        if(agree<relaxConvMin)return; // relaxable convergence threshold
       }
 
       var kB=st3[i]!=null?st3[i]:kv;
@@ -7783,29 +7806,56 @@ function _recordBestIfWinner(branchIdx,opts){
 }
 function _setStatus(msg){var el=document.getElementById('abtStatus');if(el)el.innerHTML=msg;}
 function _renderAll(){
-  // Data status
+  // Data status + total wins + data quality badge
   (function(){
     var el=document.getElementById('abtDataStatus');if(!el)return;
     var lv=0,sn=0,sm=0;_allResults.forEach(function(r){if(r.dataType==='live')lv++;else if(r.dataType==='snap')sn++;else sm++;});
-    el.innerHTML='<span style="color:#3ecf5e;">'+lv+' LIVE</span> · '
+    var totalWins=_branches.reduce(function(s,b){return s+b.wins;},0);
+    var totalLosses=_branches.reduce(function(s,b){return s+b.losses;},0);
+    var hasReal=(lv+sn)>0;
+    var qualBadge=hasReal
+      ?'<span style="background:#002200;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;padding:1px 6px;font-weight:bold;font-size:8.5px;">✔ REAL DATA</span>'
+      :'<span style="background:#1a0a00;color:#ffb400;border:1px solid #553300;border-radius:3px;padding:1px 6px;font-weight:bold;font-size:8.5px;animation:pulse 2s infinite;">⚠ SYNTHETIC ONLY — no live market data</span>';
+    var winsSpan='<span style="color:#aaff44;font-weight:bold;font-size:9px;">★ Total wins: '+totalWins.toLocaleString()+' / '+(totalWins+totalLosses).toLocaleString()+'</span>';
+    el.innerHTML=winsSpan+' &nbsp;'+qualBadge+' &nbsp;'
+      +'<span style="color:#3ecf5e;">'+lv+' LIVE</span> · '
       +'<span style="color:#ffb400;">'+sn+' SNAP</span> · '
       +'<span style="color:#ef5350;">'+sm+' SIM</span> · '
-      +'<span style="color:#1a3a1a;">total '+_allResults.length+'</span>'
-      +' &nbsp;·&nbsp; <span style="color:#0d2a0d;">REST: Binance API (crypto) · US stocks: SIM · FOREX: SIM · CSV: N/A</span>';
+      +'<span style="color:#1a3a1a;">total '+_allResults.length+'</span>';
+    // Update branch count in header
+    var bc=document.getElementById('abtBranchCount');if(bc)bc.textContent=_branches.length;
   })();
   // Branches
   (function(){
     var el=document.getElementById('abtBranches');if(!el)return;
-    var h='<div style="color:#aaff44;font-size:9px;font-weight:bold;margin-bottom:2px;">⑃ Adaptive Branch Tree</div>';
+    // Compute per-branch data types from _allResults
+    var brDataTypes={};
+    _allResults.forEach(function(r){
+      if(!brDataTypes[r.branch])brDataTypes[r.branch]={lv:0,sn:0,sm:0};
+      if(r.dataType==='live')brDataTypes[r.branch].lv++;
+      else if(r.dataType==='snap')brDataTypes[r.branch].sn++;
+      else brDataTypes[r.branch].sm++;
+    });
+    var h='<div style="color:#aaff44;font-size:9px;font-weight:bold;margin-bottom:2px;">⑃ Adaptive Branch Tree (<span id="abtBranchCount">'+_branches.length+'</span> branches)</div>';
     _branches.forEach(function(br){
       var N=br.wins+br.losses,wr=N>0?(br.wins/N*100).toFixed(1):'…';
-      var wc=parseFloat(wr)>=55?'#3ecf5e':parseFloat(wr)>=50?'#ffb400':'#ef5350';
+      var wrF=parseFloat(wr);
+      var wc=wrF>=55?'#3ecf5e':wrF>=50?'#ffb400':'#ef5350';
+      var dt=brDataTypes[br.id]||{lv:0,sn:0,sm:0};
+      var hasReal=(dt.lv+dt.sn)>0;
+      var dtBadge=hasReal
+        ?'<span style="background:#002200;color:#3ecf5e;border-radius:2px;padding:0 4px;font-size:7px;">REAL</span>'
+        :'<span style="background:#1a0800;color:#ffb400;border-radius:2px;padding:0 4px;font-size:7px;">SYN</span>';
+      // Loss mitigation indicator
+      var mitigated=br.name.indexOf('Mitig')>=0||br.name.indexOf('Slow')>=0?'<span style="color:#ff9ef5;font-size:7px;"> 🔄mitig</span>':'';
       h+='<div style="font-size:8.5px;margin:2px 0;'+(br.parent!==null?'padding-left:14px;':'')+';">';
       h+=(br.parent!==null?'<span style="color:#1a4a1a;">↳</span> ':'');
-      var bIcon=br.name==='Convergent'?'⬆⬆ ':br.name.indexOf('Trail')===0?'⇡ ':br.name==='Conv+Trail'?'⬆⇡ ':'';
+      var bIcon=br.name==='Convergent'?'⬆⬆ ':br.name.indexOf('Trail')===0?'⇡ ':br.name==='Conv+Trail'?'⬆⇡ ':br.name.indexOf('Wide')===0?'⟺ ':br.name.indexOf('Relax')===0?'≈ ':'';
       h+='<span style="color:#2a5a2a;">[B'+br.id+']</span> <span style="color:#aaffaa;">'+bIcon+br.name+'</span> ';
+      h+=dtBadge+' ';
       h+='<span style="color:'+wc+';font-weight:bold;">'+wr+'%</span> ';
-      h+='<span style="color:#1a3a1a;">('+N+' trades·'+br.wins+'W/'+br.losses+'L)</span> ';
+      h+='<span style="color:#1a3a1a;">('+N+' trades·'+br.wins+'W/'+br.losses+'L)</span>';
+      h+=mitigated;
       h+='<span style="color:#0d2a0d;"> — '+br.note+'</span></div>';
     });
     el.innerHTML=h;
@@ -8026,11 +8076,110 @@ window.autoRunBacktest=async function(){
   }
   _recordBestIfWinner(8,comboOpts);
 
+  // ── B9: Wide-Entry — enter at K=15 and K=85 in addition to 20/50/80 ──
+  _setStatus('&#10230; Branch 9: Wide-Entry (relaxed K thresholds ±5)…');
+  await new Promise(function(r){setTimeout(r,40);});
+  var bestB=window._bestBTParams.branch>=0?_branches[window._bestBTParams.branch]:_branches[1]||_branches[0];
+  var bestRules=(bestB&&bestB.rules)||b2Rules;
+  _branches.push({id:9,name:'Wide-Entry',parent:window._bestBTParams.branch>=0?window._bestBTParams.branch:1,
+    rules:bestRules,wins:0,losses:0,note:'Entry K thresholds widened ±5 → more signals, based on best branch'});
+  var wideEntryOpts={useTrailing:true,trailPct:0.003,slMulti:2,tpMulti:3,maxHold:14,adaptiveSL:true,minProfitFrac:0.0010,entryLevels:[15,25,50,75,85]};
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],9,wideEntryOpts);}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _recordBestIfWinner(9,wideEntryOpts);
+
+  // ── B10: Wide-Period — stoch K periods [8,12,18,25] instead of [5,10,15,20] ──
+  _setStatus('&#10230; Branch 10: Wide-Period (K periods 8/12/18/25)…');
+  await new Promise(function(r){setTimeout(r,40);});
+  _branches.push({id:10,name:'Wide-Period',parent:1,rules:bestRules,wins:0,losses:0,
+    note:'Stoch K periods [8,12,18,25] — wider lookback windows, smoother signals'});
+  var savedKPS=_KPS.slice();
+  _KPS=[8,12,18,25];
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],10,{useTrailing:true,trailPct:0.003,slMulti:2,tpMulti:3,maxHold:16,adaptiveSL:true,minProfitFrac:0.0010});}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _KPS=savedKPS;
+  _recordBestIfWinner(10,{});
+
+  // ── B11: Wide-Hold — extend maxHold to 24 bars ──
+  _setStatus('&#10230; Branch 11: Wide-Hold (maxHold 24 bars)…');
+  await new Promise(function(r){setTimeout(r,40);});
+  _branches.push({id:11,name:'Wide-Hold',parent:1,rules:bestRules,wins:0,losses:0,
+    note:'Extended hold up to 24 bars — lets winners run longer before forced exit'});
+  var wideHoldOpts={useTrailing:true,trailPct:0.004,slMulti:2.5,tpMulti:4,maxHold:24,adaptiveSL:true,minProfitFrac:0.0010};
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],11,wideHoldOpts);}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _recordBestIfWinner(11,wideHoldOpts);
+
+  // ── B12: Relaxed-Conv — only 1 stoch agrees (single-confirm) ──
+  _setStatus('&#8773; Branch 12: Relaxed-Conv (single stoch confirm)…');
+  await new Promise(function(r){setTimeout(r,40);});
+  _branches.push({id:12,name:'Relax-Conv',parent:3,rules:bestRules,wins:0,losses:0,
+    note:'Convergent filter relaxed to single stoch confirm — more entries, still filtered'});
+  // Use convOnly with a custom agree threshold of 1 via opts
+  var relaxConvOpts=Object.assign({},comboOpts,{relaxedConv:true,relaxConvMin:1,convOnly:true,maxHold:14});
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],12,relaxConvOpts);}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _recordBestIfWinner(12,relaxConvOpts);
+
+  // ── B13: Best-Expanded — take best branch rules + wide entry + wide hold ──
+  _setStatus('&#9733; Branch 13: Best-Expanded (best rules + wide params)…');
+  await new Promise(function(r){setTimeout(r,40);});
+  var bpOpts=window._bestBTParams.opts||{};
+  var expandedOpts=Object.assign({},bpOpts,{useTrailing:true,trailPct:bpOpts.trailPct||0.003,
+    slMulti:(bpOpts.slMulti||2)*1.1,tpMulti:(bpOpts.tpMulti||3)*1.1,maxHold:Math.min(30,(bpOpts.maxHold||12)+6),
+    adaptiveSL:true,minProfitFrac:0.0010,entryLevels:[15,20,25,50,75,80,85]});
+  _branches.push({id:13,name:'Best-Expanded',parent:window._bestBTParams.branch,rules:bestRules,wins:0,losses:0,
+    note:'Best branch params expanded: +6 hold bars, ±10% wider SL/TP, extra entry levels'});
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],13,expandedOpts);}
+    if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+  }
+  _recordBestIfWinner(13,expandedOpts);
+
+  // ── B14-B16: Loss-Mitigation — find worst branches (WR<45%) and slow them ──
+  _setStatus('&#128504; Branch 14-16: Loss mitigation variants…');
+  await new Promise(function(r){setTimeout(r,40);});
+  var weakBranches=_branches.filter(function(b){
+    var N=b.wins+b.losses;return N>10&&(b.wins/N*100)<45;
+  }).slice(0,3);
+  var mitigId=14;
+  for(var wi=0;wi<weakBranches.length;wi++){
+    var wb=weakBranches[wi];var wbN=wb.wins+wb.losses;var wbWR=wb.wins/wbN*100;
+    var slowed=Object.assign({},
+      {useTrailing:true,trailPct:0.004,slMulti:3.0,tpMulti:4,maxHold:8,adaptiveSL:true,
+       minProfitFrac:0.0015,convOnly:true,relaxedConv:false},
+      {entryLevels:[20,50,80]});
+    _branches.push({id:mitigId,name:'Mitig-B'+wb.id,parent:wb.id,rules:wb.rules,wins:0,losses:0,
+      note:'Loss-mitigated B'+wb.id+' (was '+wbWR.toFixed(1)+'%) — conv-only + tight SL + short hold'});
+    for(var si=0;si<syms.length;si++){
+      for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],mitigId,slowed);}
+    }
+    _recordBestIfWinner(mitigId,slowed);
+    mitigId++;
+    _renderAll();await new Promise(function(r){setTimeout(r,15);});
+  }
+
   _running=false;
   var live=_allResults.filter(function(r){return r.dataType==='live';}).length;
+  var snap=_allResults.filter(function(r){return r.dataType==='snap';}).length;
   var bpWR=window._bestBTParams.wr.toFixed(1);
-  _setStatus('&#10003; Done — '+_allResults.length+' results · '+live+' live · '+_lossLog.length+' losses'
-    +' | <span style="color:#aaff44;">&#9733; Best: B'+window._bestBTParams.branch+' '+bpWR+'% ('+window._bestBTParams.desc+')</span>');
+  var totalWins=_branches.reduce(function(s,b){return s+b.wins;},0);
+  var hasReal=(live+snap)>0;
+  var dataTag=hasReal
+    ?'<span style="color:#3ecf5e;">&#10003; real data</span>'
+    :'<span style="color:#ffb400;">&#9888; synthetic only</span>';
+  _setStatus('&#10003; Done — '+_allResults.length+' results · '+live+' live · '+snap+' snap · '+_lossLog.length+' losses'
+    +' | <span style="color:#aaff44;">&#9733; '+totalWins.toLocaleString()+' total wins</span>'
+    +' | <span style="color:#aaff44;">Best: B'+window._bestBTParams.branch+' '+bpWR+'% ('+window._bestBTParams.desc+')</span>'
+    +' | '+dataTag);
   _renderAll();
 };
 
@@ -8042,13 +8191,178 @@ if(document.readyState==='loading'){
 })(); // end auto backtest IIFE
 </script>
 
+<script>
+// ═══ CLOSE-CONFIRM + ARCHIVE SYSTEM ═══
+(function(){
+  // Show confirm popup when any close button is clicked on a panel/box
+  window._closeConfirm = function(panelId, closeFn, label){
+    label = label || panelId;
+    // Remove any existing overlay
+    var old = document.getElementById('_cc-overlay');
+    if(old) old.remove();
+    var overlay = document.createElement('div');
+    overlay.id = '_cc-overlay';
+    overlay.innerHTML =
+      '<div id="_cc-box">'
+      +'<h4>Close "'+label+'"?</h4>'
+      +'<p>Choose what to do with this panel:</p>'
+      +'<button class="cc-btn cc-min" onclick="_ccDo(\'min\',\''+panelId+'\')">— Minimize &nbsp;<span style="font-size:8px;color:#886">collapse to header bar</span></button>'
+      +'<button class="cc-btn cc-arc" onclick="_ccDo(\'arc\',\''+panelId+'\')">💾 Archive &nbsp;<span style="font-size:8px;color:#49a">export data as .csv / .txt</span></button>'
+      +'<button class="cc-btn cc-del" onclick="_ccDo(\'hide\',\''+panelId+'\')">👁 Hide &nbsp;<span style="font-size:8px;color:#764">remove from view (restore via toolbar)</span></button>'
+      +'<button class="cc-btn cc-cancel" onclick="document.getElementById(\'_cc-overlay\').remove()">✕ Cancel</button>'
+      +'</div>';
+    // Store closeFn for use by _ccDo
+    overlay._closeFn = closeFn;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+  };
+
+  window._ccDo = function(action, panelId){
+    var overlay = document.getElementById('_cc-overlay');
+    var closeFn = overlay && overlay._closeFn;
+    if(overlay) overlay.remove();
+    if(action === 'arc'){
+      _archivePanel(panelId);
+    } else if(action === 'min'){
+      // Try to find and trigger the minimize button
+      var panel = document.getElementById(panelId);
+      if(panel){
+        var minBtn = panel.querySelector('.panel-min-btn,.bt-min,#nbMinBtn,#vlpMinBtn');
+        if(minBtn) minBtn.click();
+        else if(closeFn) closeFn();
+      } else if(closeFn){ closeFn(); }
+    } else if(action === 'hide'){
+      // Hide panel as a collapsed stub at bottom
+      var panel = document.getElementById(panelId);
+      if(panel){
+        panel.dataset.ccHidden = '1';
+        panel.dataset.ccOrigDisplay = panel.style.display || '';
+        panel.style.display = 'none';
+        _ccAddStub(panelId, panel.querySelector('.panel-min-btn,.bt-min') ? (panel.querySelector('h2,h3,.bt-hdr,span')|| {textContent:panelId}).textContent : panelId);
+      } else if(closeFn){ closeFn(); }
+    }
+  };
+
+  // Add a small stub button at the bottom so hidden panel can be restored
+  window._ccAddStub = function(panelId, label){
+    var bar = document.getElementById('_cc-stub-bar');
+    if(!bar){
+      bar = document.createElement('div');
+      bar.id = '_cc-stub-bar';
+      bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99980;background:#050a05;border-top:1px solid #1a3a1a;padding:3px 8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;';
+      bar.innerHTML = '<span style="color:#3a6a3a;font-size:9px;font-family:monospace;">Hidden panels:</span>';
+      document.body.appendChild(bar);
+    }
+    var stub = document.createElement('button');
+    stub.style.cssText = 'background:#0a1a00;color:#ffcc00;border:1px solid #443300;border-radius:3px;font-size:9px;padding:2px 8px;cursor:pointer;font-family:monospace;';
+    stub.textContent = '— ' + label.trim().substring(0,20);
+    stub.title = 'Restore "'+label.trim()+'"';
+    stub.onclick = function(){
+      var panel = document.getElementById(panelId);
+      if(panel){ panel.style.display = panel.dataset.ccOrigDisplay || ''; delete panel.dataset.ccHidden; }
+      stub.remove();
+      var bar = document.getElementById('_cc-stub-bar');
+      if(bar && bar.querySelectorAll('button').length === 0) bar.remove();
+    };
+    bar.appendChild(stub);
+  };
+
+  // Archive a panel's data — scrape text + download CSV/TXT
+  window._archivePanel = function(panelId){
+    var panel = document.getElementById(panelId);
+    var lines = [];
+    var ts = new Date().toISOString().replace('T',' ').substring(0,19);
+    lines.push('# Signal Dashboard Archive — Panel: ' + panelId);
+    lines.push('# Exported: ' + ts);
+    lines.push('');
+
+    // Special case: auto backtest results
+    if(panelId === 'autoBacktestPanel' || panelId === 'abtResults'){
+      if(typeof _allResults !== 'undefined' && _allResults.length){
+        lines.push('Symbol,TF,K,Signal,WinRate%,Trades,Wins,BreakEven,NetAvg%,Branch,DataType');
+        _allResults.forEach(function(r){
+          lines.push([r.sym,r.tf,r.kp,r.key,r.wr.toFixed(2),r.n,r.wins,r.be,r.netAvg.toFixed(4),'B'+r.branch,r.dataType].join(','));
+        });
+        lines.push('');
+        lines.push('# Branches');
+        lines.push('ID,Name,Wins,Losses,WR%,Note');
+        if(typeof _branches !== 'undefined') _branches.forEach(function(b){
+          var N=b.wins+b.losses,wr=N>0?(b.wins/N*100).toFixed(1):'0';
+          lines.push([b.id,b.name,b.wins,b.losses,wr,b.note].join(','));
+        });
+      }
+    } else {
+      // Generic: scrape cached OHLCV data for this panel's symbol
+      var symMap = {'p-btc':'BTC/USDT','p-eth':'ETH/USDT','p-sol':'SOL/USDT','p-bnb':'BNB/USDT','p-usdc':'BTC/USDT'};
+      var sym = symMap[panelId];
+      var exported = 0;
+      if(sym && typeof _dc !== 'undefined'){
+        Object.keys(_dc).forEach(function(key){
+          if(key.indexOf(sym.replace('/',''))===0||key.indexOf(sym)===0){
+            var cached = _dc[key];
+            if(cached && cached.data && cached.data.length){
+              lines.push('# '+key+' ('+cached.dataType+') — '+(cached.src||''));
+              lines.push('Open,High,Low,Close,Volume');
+              cached.data.forEach(function(d){
+                lines.push([d.open,d.high,d.low,d.close,d.volume||0].join(','));
+              });
+              lines.push('');
+              exported++;
+            }
+          }
+        });
+      }
+      // Also scrape visible text content
+      if(panel && !exported){
+        lines.push('# Panel text content');
+        lines.push(panel.innerText || panel.textContent || '(empty)');
+      }
+    }
+
+    var content = lines.join('\n');
+    var filename = 'signal_'+panelId+'_'+ts.replace(/[: ]/g,'-')+'.csv';
+    _archiveDownload(content, filename);
+    // Also show inline
+    _archiveShowInline(panelId, content);
+  };
+
+  window._archiveDownload = function(content, filename){
+    var blob = new Blob([content], {type:'text/plain'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename; a.style.display='none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 2000);
+  };
+
+  window._archiveShowInline = function(panelId, content){
+    var old = document.getElementById('_arc-'+panelId);
+    if(old) old.remove();
+    var el = document.createElement('div');
+    el.id = '_arc-'+panelId;
+    el.style.cssText = 'background:#020808;border:1px solid #0d2a3a;border-radius:4px;margin:6px 0;padding:6px 8px;font-size:8px;font-family:monospace;max-height:120px;overflow-y:auto;color:#4ab4ff;white-space:pre;';
+    el.textContent = content.substring(0,2000) + (content.length>2000?'\n…':'');
+    var close = document.createElement('button');
+    close.textContent = '✕';
+    close.style.cssText = 'float:right;background:none;border:none;color:#555;cursor:pointer;font-size:11px;';
+    close.onclick = function(){ el.remove(); };
+    el.insertBefore(close, el.firstChild);
+    // Try to inject near panel, else body
+    var panel = document.getElementById(panelId);
+    if(panel) panel.insertAdjacentElement('afterend', el);
+    else document.body.appendChild(el);
+  };
+})();
+</script>
+
 <!-- ═══ REST DIAGNOSTIC POPUP ═══ -->
 <div id="restDiagPopup" style="display:none;position:fixed;top:58px;right:18px;z-index:99990;width:400px;max-height:520px;background:#030b03;border:1.5px solid #1a4a1a;border-radius:6px;font-family:monospace;font-size:9px;box-shadow:0 6px 30px rgba(0,0,0,0.95);flex-direction:column;" onmousedown="startDragPanel('restDiagPopup',event)">
   <div style="padding:5px 10px;background:#041404;border-bottom:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;cursor:move;flex-shrink:0;">
     <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">⚡ Data Source Diagnostics</span>
     <span style="flex:1;"></span>
     <button onclick="window._probeAllSources&&window._probeAllSources()" style="background:#001a00;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:7.5px;padding:1px 6px;cursor:pointer;">↺ Retry All</button>
-    <button onclick="document.getElementById('restDiagPopup').style.display='none'" style="background:none;border:none;color:#4a7a4a;cursor:pointer;font-size:13px;line-height:1;padding:0 2px;">✕</button>
+    <button onclick="_archivePanel('restDiagPopup')" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:7.5px;padding:1px 6px;cursor:pointer;" title="Archive diagnostics data">💾</button>
+    <button onclick="_closeConfirm('restDiagPopup',function(){document.getElementById('restDiagPopup').style.display='none';},'Data Diagnostics')" style="background:none;border:none;color:#4a7a4a;cursor:pointer;font-size:13px;line-height:1;padding:0 2px;" title="Close / Minimize">✕</button>
   </div>
   <!-- Why blocked -->
   <div style="padding:5px 10px;background:#020808;border-bottom:1px solid #0d1a0d;font-size:8px;flex-shrink:0;">
@@ -8082,11 +8396,12 @@ if(document.readyState==='loading'){
 <div id="abtWrap" style="background:#010c01;border-top:2px solid #0d2a0d;padding:6px 10px;font-family:monospace;font-size:10px;">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
     <span style="color:#aaffaa;font-weight:bold;font-size:11px;">&#9889; Auto Backtest</span>
-    <span style="color:#3a7a3a;font-size:9px;">Adaptive engine · 18 symbols · M1→MN1 · 3 branches</span>
+    <span style="color:#3a7a3a;font-size:9px;">Adaptive engine · 18 symbols · M1→MN1 · <span id="abtBranchCount">0</span> branches</span>
     <span id="abtStatus" style="color:#3ecf5e;font-size:8.5px;"></span>
     <span style="flex:1;"></span>
+    <button onclick="_archivePanel('autoBacktestPanel')" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:8.5px;padding:2px 6px;cursor:pointer;font-family:monospace;" title="Archive backtest results">💾 Archive</button>
     <button onclick="window.autoRunBacktest&&window.autoRunBacktest()" style="background:#001800;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:8.5px;padding:2px 8px;cursor:pointer;font-family:monospace;">&#8635; Re-run</button>
-    <button onclick="(function(){var p=document.getElementById('abtBody');p.style.display=p.style.display==='none'?'block':'none';})()" style="background:#001000;color:#2a6a2a;border:1px solid #0d2a0d;border-radius:3px;font-size:8px;padding:2px 5px;cursor:pointer;font-family:monospace;">&#9660; Toggle</button>
+    <button onclick="(function(){var p=document.getElementById('abtBody');p.style.display=p.style.display==='none'?'block':'none';})()" style="background:#001000;color:#ffcc00;border:1px solid #0d2a0d;border-radius:3px;font-size:8px;padding:2px 5px;cursor:pointer;font-family:monospace;">— Toggle</button>
   </div>
   <div id="abtDataStatus" style="color:#1a3a1a;font-size:7.5px;margin-bottom:4px;"></div>
   <div id="abtBody">
