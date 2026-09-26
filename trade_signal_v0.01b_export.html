@@ -223,7 +223,7 @@ svg{max-width:100%;height:auto;}
 #mwBtn{background:none;border:none;cursor:pointer;font-family:'Times New Roman',Times,serif;color:#3ecf5e;font-size:14px;font-weight:bold;padding:4px 8px 4px 4px;letter-spacing:.4px;white-space:nowrap;}
 #mwBtn:hover{color:#5fff8f;}
 #mwMenu{display:none;position:absolute;top:100%;left:0;background:#0a0d14;border:1px solid #1e2228;border-radius:4px;min-width:215px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.85);margin-top:1px;}
-.mw-sec{color:#1a3a1a;font-size:8px;text-transform:uppercase;letter-spacing:.9px;padding:5px 10px 2px;font-family:monospace;}
+.mw-sec{color:#5a8a5a;font-size:9px;text-transform:uppercase;letter-spacing:.9px;padding:5px 10px 2px;font-family:monospace;}
 .mw-sep{border-top:1px solid #1a2228;margin:3px 0;}
 .mw-item{display:block;width:100%;text-align:left;background:none;border:none;color:#7a9a7a;font-size:10px;font-family:monospace;padding:5px 12px;cursor:pointer;transition:background .1s,color .1s;}
 .mw-item:hover{background:#0d1a0d;color:#3ecf5e;}
@@ -302,6 +302,20 @@ body.vp-lg select,body.vp-lg input[type=text],body.vp-lg input[type=number]{font
 body.vp-lg [style*="font-size:7px"],body.vp-lg [style*="font-size: 7px"]{font-size:9px !important;}
 body.vp-lg [style*="font-size:7.5px"],body.vp-lg [style*="font-size: 7.5px"]{font-size:9.5px !important;}
 body.vp-lg [style*="font-size:8px"],body.vp-lg [style*="font-size: 8px"]{font-size:10px !important;}
+/* Global min font — always elevate sub-9px fonts regardless of vp-lg toggle */
+[style*="font-size:6px"],[style*="font-size: 6px"],
+[style*="font-size:6.5px"],[style*="font-size: 6.5px"],
+[style*="font-size:7px"],[style*="font-size: 7px"],
+[style*="font-size:7.5px"],[style*="font-size: 7.5px"]{font-size:9px!important;}
+/* Lighten hardcoded very-dark text (improves readability on dark backgrounds) */
+[style*="color:#1a3a1a"]{color:#6a9a6a!important;}
+[style*="color:#2a4a2a"]{color:#6a9a6a!important;}
+[style*="color:#1a4a2a"]{color:#5a9a6a!important;}
+[style*="color:#1a4a6a"]{color:#5a8aaa!important;}
+[style*="color:#2a6a2a"]{color:#6aaa6a!important;}
+[style*="color:#2a5a7a"]{color:#5a9aaa!important;}
+[style*="color:#2a4060"]{color:#5a7090!important;}
+[style*="color:#1a2a0a"]{color:#5a7a3a!important;}
 body.vp-lg [style*="font-size:8.5px"],body.vp-lg [style*="font-size: 8.5px"]{font-size:10.5px !important;}
 body.vp-lg [style*="font-size:9px"],body.vp-lg [style*="font-size: 9px"]{font-size:11px !important;}
 body.vp-lg [style*="font-size:9.5px"],body.vp-lg [style*="font-size: 9.5px"]{font-size:11.5px !important;}
@@ -6451,16 +6465,16 @@ function _renderCompactTable(containerId,tfLabel,periods,allPeriodData){
       h+='<td style="color:'+sigC+';padding:2px 5px;white-space:nowrap;">'+sigLbls[sig]+'</td>';
       var bestCtxNote='';
       periods.forEach(function(kp){
-        if(!pd||!pd.results||!pd.results[kp]){h+='<td style="color:#1a2a1a;text-align:right;padding:2px 5px;">—</td>';return;}
+        if(!pd||!pd.results||!pd.results[kp]){h+='<td style="color:#5a7a5a;text-align:right;padding:2px 5px;">—</td>';return;}
         var d=pd.results[kp][sig];
-        if(!d||d.n<2){h+='<td style="color:#1a2a1a;text-align:right;padding:2px 5px;">—</td>';return;}
+        if(!d||d.n<2){h+='<td style="color:#5a7a5a;text-align:right;padding:2px 5px;">—</td>';return;}
         var wr=d.wins/d.n*100;
-        var wrC=wr>=65?'#aaff44':wr>=55?'#3ecf5e':wr>=51?'#ffb400':wr>=40?'#4a5a4a':'#2a1a1a';
+        var wrC=wr>=65?'#aaff44':wr>=55?'#3ecf5e':wr>=51?'#ffb400':wr>=40?'#7a8a7a':'#ef5350';
         var bld=(wr>=51)?'font-weight:bold;':'';
         h+='<td style="color:'+wrC+';text-align:right;padding:2px 5px;'+bld+'">'+wr.toFixed(0)+'%</td>';
         if(!bestCtxNote)bestCtxNote=_bestCtxNote(d);
       });
-      h+='<td style="color:#1a4a2a;padding:2px 5px;font-size:7px;white-space:nowrap;">'+bestCtxNote+'</td>';
+      h+='<td style="color:#7aaa8a;padding:2px 5px;font-size:9px;white-space:nowrap;">'+bestCtxNote+'</td>';
       h+='</tr>';
     });
   });
@@ -6572,13 +6586,13 @@ function runStochBTs(){
       var ctxNote=_bestCtxNote(d);
       rows+='<tr style="border-bottom:1px solid #050d05;">'
         +'<td style="color:'+sigC+';font-weight:bold;padding:2px 5px;">'+lbls[k]+'</td>'
-        +'<td style="color:#2a4a3a;text-align:right;padding:2px 5px;">'+d.n+'</td>'
+        +'<td style="color:#7aaa8a;text-align:right;padding:2px 5px;">'+d.n+'</td>'
         +'<td style="color:'+wrC+';text-align:right;padding:2px 5px;font-weight:bold;">'+wr+'%</td>'
-        +'<td style="color:#4a5a4a;text-align:right;padding:2px 5px;">'+s(avg_g)+'</td>'
+        +'<td style="color:#8a9a8a;text-align:right;padding:2px 5px;">'+s(avg_g)+'</td>'
         +'<td style="color:'+nC+';text-align:right;padding:2px 5px;">'+s(avg_n)+'</td>'
         +'<td style="color:'+tC+';text-align:right;padding:2px 5px;font-weight:bold;">'+s(avg_t)+'</td>'
-        +'<td style="color:#1a3a2a;text-align:right;padding:2px 5px;">'+(d.barsSum/d.n).toFixed(1)+'b</td>'
-        +'<td style="color:#1a4a2a;padding:2px 5px;font-size:7.5px;">'+ctxNote+'</td>'
+        +'<td style="color:#6a9a7a;text-align:right;padding:2px 5px;">'+(d.barsSum/d.n).toFixed(1)+'b</td>'
+        +'<td style="color:#7aaa8a;padding:2px 5px;font-size:9px;">'+ctxNote+'</td>'
         +'</tr>';
     });
     body.innerHTML+='<div style="background:#040d04;border:1px solid #0d1f0d;border-radius:4px;padding:6px 8px;">'
@@ -6714,11 +6728,13 @@ function _renderDiagLog(){
   window._diagSrcLog.forEach(function(e){
     var c=e.status==='ok'?'#3ecf5e':e.status==='pending'?'#ffb400':'#ef5350';
     var ic=e.status==='ok'?'✓':e.status==='pending'?'⌛':'✗';
-    h+='<div><span style="color:'+c+';">'+ic+' '+e.name+'</span>'
-      +' <span style="color:#1a3a1a;">'+e.ts+'</span>'
-      +' <span style="color:#2a4a2a;">'+e.detail+'</span></div>';
+    var detailColor=e.status==='fail'?'#ef5350':e.status==='pending'?'#cccccc':'#7acc7a';
+    h+='<div style="border-bottom:1px solid #0d1a0d;padding:1px 0;">'
+      +'<span style="color:'+c+';font-weight:bold;">'+ic+' '+e.name+'</span>'
+      +' <span style="color:#7aaa7a;font-size:9px;">'+e.ts+'</span>'
+      +' <span style="color:'+detailColor+';">'+e.detail+'</span></div>';
   });
-  el.innerHTML=h||'<span style="color:#1a3a1a;">No attempts yet.</span>';
+  el.innerHTML=h||'<span style="color:#6a8a6a;">No attempts yet.</span>';
 }
 function _setTpSrc(msg,color){
   var el=document.getElementById('tpDataSrc');
@@ -6872,11 +6888,15 @@ window._probeAllSources=function(){
   var idx=0;
   function tryNext(){
     if(idx>=sources.length){
-      _setTpSrc('✗ all REST blocked · trying history…','#ef5350');
+      _setTpSrc('✗ all REST blocked · trying GitHub data…','#ef5350');
       window._restLive=false;
-      // Auto-trigger historical sources first, then adaptive synth as final fallback
+      // Tier 3.5 → GitHub raw CSVs → Tier 4 historical APIs → Tier 5 adaptive synth
       setTimeout(function(){
-        window._tryHistoricalSources&&window._tryHistoricalSources().then(function(){
+        var ghP=window._tryGitHubDatasets?window._tryGitHubDatasets():Promise.resolve(0);
+        ghP.then(function(ghLoaded){
+          _setTpSrc(ghLoaded>0?'GitHub: '+ghLoaded+' syms':'✗ GitHub blocked · trying APIs…',ghLoaded>0?'#4ab4ff':'#ef5350');
+          return window._tryHistoricalSources?window._tryHistoricalSources():Promise.resolve();
+        }).then(function(){
           if(!window._restLive)window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch();
         }).catch(function(){window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch();});
       },400);
@@ -7039,6 +7059,105 @@ window._tryChartImages = async function(){
 };
 
 setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
+
+// ══════════ GITHUB DATASETS (Tier 3.5 — open-source OHLCV repos on raw.githubusercontent.com) ══════════
+// BTC: jptrustlearning/btc — actual OHLCV in Thai headers, updated ~daily to Sep 2026
+// ETH/SOL/BNB/XRP: coinmetrics/data — daily close price (synthetic OHLCV reconstructed)
+// raw.githubusercontent.com is accessible without CORS issues in most environments.
+// In Claude.ai sandbox ALL fetch() is blocked — auto-falls to Tier 4/5.
+var _GH_SOURCES={
+  'BTC/USDT':{url:'https://raw.githubusercontent.com/jptrustlearning/btc/main/btc_prices.csv',type:'jptrustlearning',
+    fallback:'https://raw.githubusercontent.com/coinmetrics/data/master/csv/btc.csv',fbType:'coinmetrics',fbCol:19},
+  'ETH/USDT':{url:'https://raw.githubusercontent.com/coinmetrics/data/master/csv/eth.csv',type:'coinmetrics',priceCol:19},
+  'SOL/USDT':{url:'https://raw.githubusercontent.com/coinmetrics/data/master/csv/sol.csv',type:'coinmetrics',priceCol:3},
+  'BNB/USDT':{url:'https://raw.githubusercontent.com/coinmetrics/data/master/csv/bnb.csv',type:'coinmetrics',priceCol:12},
+  'XRP/USDT':{url:'https://raw.githubusercontent.com/coinmetrics/data/master/csv/xrp.csv',type:'coinmetrics',priceCol:12}
+};
+
+// Parse jptrustlearning BTC CSV: Thai headers → date,open,high,low,close,volume
+function _parseJptrustBTC(txt){
+  var lines=txt.trim().split('\n');
+  if(lines.length<2)return null;
+  var bars=[];
+  for(var i=1;i<lines.length;i++){
+    var cols=lines[i].split(',');if(cols.length<5)continue;
+    var o=parseFloat(cols[1]),h=parseFloat(cols[2]),l=parseFloat(cols[3]),c=parseFloat(cols[4]),v=parseFloat(cols[5])||1;
+    if(isNaN(o)||isNaN(c)||c<=0)continue;
+    bars.push({open:o,high:h,low:l,close:c,volume:v,time:new Date(cols[0].trim()).getTime()});
+  }
+  return bars.length>10?bars.filter(function(b){return!isNaN(b.time);}):null;
+}
+
+// Parse coinmetrics CSV: daily close price → synthetic OHLCV (open=prev close, ±1.5% H/L)
+function _parseCoinmetricsCSV(txt,colIdx){
+  var lines=txt.trim().split('\n');
+  if(lines.length<2)return null;
+  var headers=lines[0].split(',');
+  var pIdx=(colIdx!==undefined)?colIdx-1:Math.max(headers.indexOf('ReferenceRateUSD'),headers.indexOf('PriceUSD'));
+  if(pIdx<0)pIdx=2;
+  var bars=[];var prevClose=null;
+  for(var i=1;i<lines.length;i++){
+    var cols=lines[i].split(',');
+    if(cols.length<pIdx+1)continue;
+    var price=parseFloat(cols[pIdx]);
+    if(isNaN(price)||price<=0)continue;
+    var t=new Date(cols[0].trim()).getTime();if(isNaN(t))continue;
+    var o=prevClose!==null?prevClose:price*0.995;
+    var vola=0.015;
+    var hi=Math.max(o,price)*(1+vola*0.5),lo=Math.min(o,price)*(1-vola*0.5);
+    bars.push({open:o,high:hi,low:lo,close:price,volume:1,time:t});
+    prevClose=price;
+  }
+  return bars.length>10?bars:null;
+}
+
+window._tryGitHubDatasets=async function(){
+  _restDiagEntry('GitHub Data','pending','Fetching BTC(jptrustlearning) + ETH/SOL/BNB/XRP(coinmetrics)…');
+  var loaded=0;
+  for(var sym in _GH_SOURCES){
+    var cfg=_GH_SOURCES[sym];
+    var bars=null,srcName='—';
+    var tryUrls=[cfg.url,'https://corsproxy.io/?'+encodeURIComponent(cfg.url),'https://api.allorigins.win/raw?url='+encodeURIComponent(cfg.url)];
+    for(var ui=0;ui<tryUrls.length&&!bars;ui++){
+      try{
+        var r=await fetch(tryUrls[ui],{signal:AbortSignal.timeout(8000)});
+        if(!r.ok)continue;
+        var txt=await r.text();
+        if(cfg.type==='jptrustlearning'){bars=_parseJptrustBTC(txt);srcName='GitHub/jptrustlearning';}
+        else{bars=_parseCoinmetricsCSV(txt,cfg.priceCol);srcName='GitHub/coinmetrics';}
+      }catch(e){}
+    }
+    if(!bars&&cfg.fallback){
+      var fbUrls=[cfg.fallback,'https://corsproxy.io/?'+encodeURIComponent(cfg.fallback)];
+      for(var fi=0;fi<fbUrls.length&&!bars;fi++){
+        try{
+          var r2=await fetch(fbUrls[fi],{signal:AbortSignal.timeout(8000)});
+          if(!r2.ok)continue;
+          var txt2=await r2.text();
+          bars=_parseCoinmetricsCSV(txt2,cfg.fbCol);
+          if(bars)srcName='GitHub/coinmetrics-BTC';
+        }catch(e){}
+      }
+    }
+    if(bars&&bars.length>10){
+      var key=sym+'__D1';
+      if(!_dc[key]||_dc[key].dataType==='sim'){
+        _dc[key]={data:bars,dataType:'snap',src:srcName};loaded++;
+      }
+      _restDiagEntry(sym+' GitHub','ok',srcName+': '+bars.length+' daily bars');
+    }else{
+      _restDiagEntry(sym+' GitHub','fail','blocked by CSP/proxy or parse failed');
+    }
+  }
+  if(loaded>0){
+    _setTpSrc('GitHub: '+loaded+' syms','#4ab4ff');
+    setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},300);
+    _restDiagEntry('GitHub Data','ok','Loaded '+loaded+' symbols from GitHub raw CSVs');
+  }else{
+    _restDiagEntry('GitHub Data','fail','All GitHub CSVs blocked (CSP sandbox) — falling to Tier 4');
+  }
+  return loaded;
+};
 
 // ══════════ HISTORICAL DATA (Tier 4 — multi-source OHLCV history) ══════════
 // Sources: CryptoCompare histohour → Bybit kline → Kraken OHLC → CoinCap price history
@@ -8363,33 +8482,34 @@ if(document.readyState==='loading'){
   <div style="padding:5px 10px;background:#041404;border-bottom:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;cursor:move;flex-shrink:0;">
     <span style="color:#3ecf5e;font-weight:bold;font-size:10px;">⚡ Data Source Diagnostics</span>
     <span style="flex:1;"></span>
-    <button onclick="window._probeAllSources&&window._probeAllSources()" style="background:#001a00;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:7.5px;padding:1px 6px;cursor:pointer;">↺ Retry All</button>
-    <button onclick="_archivePanel('restDiagPopup')" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:7.5px;padding:1px 6px;cursor:pointer;" title="Archive diagnostics data">💾</button>
+    <button onclick="window._probeAllSources&&window._probeAllSources()" style="background:#001a00;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:9px;padding:1px 6px;cursor:pointer;">↺ Retry All</button>
+    <button onclick="_archivePanel('restDiagPopup')" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:1px 6px;cursor:pointer;" title="Archive diagnostics data">💾</button>
     <button onclick="_closeConfirm('restDiagPopup',function(){document.getElementById('restDiagPopup').style.display='none';},'Data Diagnostics')" style="background:none;border:none;color:#4a7a4a;cursor:pointer;font-size:13px;line-height:1;padding:0 2px;" title="Close / Minimize">✕</button>
   </div>
   <!-- Why blocked -->
   <div style="padding:5px 10px;background:#020808;border-bottom:1px solid #0d1a0d;font-size:8px;flex-shrink:0;">
     <span style="color:#4ab4ff;font-weight:bold;">Why blocked?</span>
-    <span style="color:#1a4a6a;"> &nbsp;In Claude Artifact sandbox → CSP blocks ALL fetch() to external URLs. &nbsp;As local .html file → fetch() works; CORS proxies add another hop. &nbsp;CSV downloads require a server or local filesystem.</span>
+    <span style="color:#6aaacc;"> &nbsp;In Claude Artifact sandbox → CSP blocks ALL fetch() to external URLs. &nbsp;As local .html file → fetch() works; CORS proxies add another hop. &nbsp;CSV downloads require a server or local filesystem.</span>
   </div>
   <!-- Probe log -->
   <div style="padding:5px 10px;flex:1;overflow-y:auto;">
-    <div style="color:#2a6a2a;font-size:8.5px;font-weight:bold;margin-bottom:3px;">Source Waterfall Log</div>
+    <div style="color:#6aaa6a;font-size:9px;font-weight:bold;margin-bottom:3px;">Source Waterfall Log</div>
     <div id="restDiagLog" style="font-size:8px;line-height:1.7;"></div>
   </div>
   <!-- Retry buttons -->
   <div style="padding:5px 10px;border-top:1px solid #0d2a0d;display:flex;flex-wrap:wrap;gap:3px;flex-shrink:0;">
-    <button onclick="window._trySource&&window._trySource('binance')" style="background:#001800;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">Binance</button>
-    <button onclick="window._trySource&&window._trySource('coingecko')" style="background:#001420;color:#4ab4ff;border:1px solid #0d1a2a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CoinGecko</button>
-    <button onclick="window._trySource&&window._trySource('cryptocompare')" style="background:#140020;color:#c080ff;border:1px solid #200040;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CryptoCompare</button>
-    <button onclick="window._trySource&&window._trySource('allorigins')" style="background:#141000;color:#ffb400;border:1px solid #2a2000;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">allorigins proxy</button>
-    <button onclick="window._trySource&&window._trySource('corsproxy')" style="background:#100010;color:#ff9ef5;border:1px solid #2a0030;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">corsproxy.io</button>
-    <button onclick="window._tryCSVDownload&&window._tryCSVDownload()" style="background:#100800;color:#ff8050;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CSV (Yahoo)</button>
-    <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
-    <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
-    <button onclick="window._tryHistoricalSources&&window._tryHistoricalSources()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">📅 History</button>
-    <button onclick="window._loadMoreHistory&&window._loadMoreHistory('BTC/USDT','H1')" style="background:#001428;color:#9db4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">⬅ More Hist</button>
-    <button onclick="window._showBackupOptions&&window._showBackupOptions()" style="background:#140000;color:#ef5350;border:1px solid #2a0000;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">⚠ Backups</button>
+    <button onclick="window._trySource&&window._trySource('binance')" style="background:#001800;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">Binance</button>
+    <button onclick="window._trySource&&window._trySource('coingecko')" style="background:#001420;color:#4ab4ff;border:1px solid #0d1a2a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">CoinGecko</button>
+    <button onclick="window._trySource&&window._trySource('cryptocompare')" style="background:#140020;color:#c080ff;border:1px solid #200040;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">CryptoCompare</button>
+    <button onclick="window._trySource&&window._trySource('allorigins')" style="background:#141000;color:#ffb400;border:1px solid #2a2000;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">allorigins proxy</button>
+    <button onclick="window._trySource&&window._trySource('corsproxy')" style="background:#100010;color:#ff9ef5;border:1px solid #2a0030;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">corsproxy.io</button>
+    <button onclick="window._tryCSVDownload&&window._tryCSVDownload()" style="background:#100800;color:#ff8050;border:1px solid #2a1800;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">CSV (Yahoo)</button>
+    <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
+    <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
+    <button onclick="window._tryGitHubDatasets&&window._tryGitHubDatasets()" style="background:#001420;color:#7adfff;border:1px solid #0d2a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">🐙 GitHub Data</button>
+    <button onclick="window._tryHistoricalSources&&window._tryHistoricalSources()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📅 History</button>
+    <button onclick="window._loadMoreHistory&&window._loadMoreHistory('BTC/USDT','H1')" style="background:#001428;color:#9db4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">⬅ More Hist</button>
+    <button onclick="window._showBackupOptions&&window._showBackupOptions()" style="background:#140000;color:#ef5350;border:1px solid #2a0000;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">⚠ Backups</button>
   </div>
   <!-- Adaptive synth results -->
   <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
@@ -8406,7 +8526,7 @@ if(document.readyState==='loading'){
     <button onclick="window.autoRunBacktest&&window.autoRunBacktest()" style="background:#001800;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:8.5px;padding:2px 8px;cursor:pointer;font-family:monospace;">&#8635; Re-run</button>
     <button onclick="(function(){var p=document.getElementById('abtBody');p.style.display=p.style.display==='none'?'block':'none';})()" style="background:#001000;color:#ffcc00;border:1px solid #0d2a0d;border-radius:3px;font-size:8px;padding:2px 5px;cursor:pointer;font-family:monospace;">— Toggle</button>
   </div>
-  <div id="abtDataStatus" style="color:#1a3a1a;font-size:7.5px;margin-bottom:4px;"></div>
+  <div id="abtDataStatus" style="color:#6a9a6a;font-size:9px;margin-bottom:4px;"></div>
   <div id="abtBody">
     <div id="abtBranches" style="margin-bottom:5px;"></div>
     <div id="abtRules"></div>
