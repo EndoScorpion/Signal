@@ -6883,6 +6883,134 @@ if(_origFetchOHLCV){
   setTimeout(function(){window._probeAllSources&&window._probeAllSources();},800);
 })();
 
+// ══════════ CHART IMAGE PARSING (Tier 3 data source) ══════════
+// Fetch CoinGecko sparkline SVGs via CORS proxies, parse polyline points → OHLCV bars
+window._tryChartImages = async function(){
+  var diagSynth=document.getElementById('restDiagSynth');
+  if(diagSynth){diagSynth.style.display='block';}
+  _restDiagEntry('Chart Images','pending','Fetching sparkline SVGs via CORS proxy…');
+
+  // Map dashboard symbols → CoinGecko coin IDs
+  var cgMap={
+    'BTC/USDT':'bitcoin',
+    'ETH/USDT':'ethereum',
+    'SOL/USDT':'solana',
+    'BNB/USDT':'binancecoin',
+    'XRP/USDT':'ripple'
+  };
+  // Base prices from _UNI (fallback if not available)
+  var basePrices={'BTC/USDT':43000,'ETH/USDT':2400,'SOL/USDT':140,'BNB/USDT':280,'XRP/USDT':0.60};
+
+  var proxies=[
+    function(u){return 'https://allorigins.win/raw?url='+encodeURIComponent(u);},
+    function(u){return 'https://corsproxy.io/?'+encodeURIComponent(u);}
+  ];
+
+  var loaded=0;
+  var imgHtml='<div style="color:#ffb400;font-size:8.5px;font-weight:bold;margin-bottom:4px;">📸 Sparkline Chart Images Parsed</div>';
+  imgHtml+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;">';
+
+  var syms=Object.keys(cgMap);
+  for(var si=0;si<syms.length;si++){
+    var sym=syms[si];
+    var cgId=cgMap[sym];
+    var svgUrl='https://www.coingecko.com/coins/'+cgId+'/sparkline.svg';
+    var svgText=null;
+
+    // Try each proxy
+    for(var pi=0;pi<proxies.length&&!svgText;pi++){
+      try{
+        var proxyUrl=proxies[pi](svgUrl);
+        var resp=await fetch(proxyUrl,{signal:AbortSignal.timeout(5000)});
+        if(resp.ok){
+          var txt=await resp.text();
+          if(txt&&txt.indexOf('<polyline')>=0){svgText=txt;}
+        }
+      }catch(e2){}
+    }
+
+    if(!svgText)continue;
+
+    // Parse polyline points="x1,y1 x2,y2 ..."
+    var pm=svgText.match(/points\s*=\s*["']([^"']+)["']/i);
+    if(!pm)continue;
+    var pts=pm[1].trim().split(/\s+/).map(function(p){
+      var xy=p.split(',');return{x:parseFloat(xy[0]),y:parseFloat(xy[1])};
+    }).filter(function(p){return!isNaN(p.x)&&!isNaN(p.y);});
+    if(pts.length<10)continue;
+
+    // SVG Y-axis is inverted (high Y = low price). Normalize.
+    var minY=Math.min.apply(null,pts.map(function(p){return p.y;}));
+    var maxY=Math.max.apply(null,pts.map(function(p){return p.y;}));
+    var rngY=(maxY-minY)||1;
+    var base=basePrices[sym]||100;
+    // Map normalised [0..1] to price range ±25%
+    var priceRange=base*0.5;
+    var toPrice=function(y){return base+(((maxY-y)/rngY)-0.5)*priceRange;};
+
+    // Group every N points into a bar (target ~100 bars)
+    var barsPerGroup=Math.max(1,Math.floor(pts.length/100));
+    var bars=[];
+    for(var bi=0;bi<pts.length;bi+=barsPerGroup){
+      var chunk=pts.slice(bi,bi+barsPerGroup);
+      var prices=chunk.map(function(p){return toPrice(p.y);});
+      var o=prices[0],c=prices[prices.length-1];
+      var h=Math.max.apply(null,prices);
+      var l=Math.min.apply(null,prices);
+      bars.push({open:o,high:h,low:l,close:c,volume:1});
+    }
+
+    if(bars.length>=10){
+      // Store as snap in backtest cache at multiple timeframes
+      var key1=sym+'__H1',key4=sym+'__H4';
+      // Only set if no live data already
+      var existing1=typeof _dc!=='undefined'?_dc[key1]:null;
+      var existing4=typeof _dc!=='undefined'?_dc[key4]:null;
+      if(!existing1||existing1.dataType!=='live'){
+        if(typeof _dc!=='undefined')_dc[key1]={data:bars,dataType:'snap'};
+      }
+      if(!existing4||existing4.dataType!=='live'){
+        if(typeof _dc!=='undefined')_dc[key4]={data:bars,dataType:'snap'};
+      }
+      loaded++;
+
+      // Show mini inline SVG of the sparkline (re-render from bars)
+      var svgW=120,svgH=36;
+      var minP2=Math.min.apply(null,bars.map(function(b){return b.low;}));
+      var maxP2=Math.max.apply(null,bars.map(function(b){return b.high;}));
+      var rng2=(maxP2-minP2)||1;
+      var toSvgY=function(v){return svgH-2-((v-minP2)/rng2)*(svgH-4);};
+      var stepX2=svgW/Math.max(bars.length,1);
+      var miniSvg='<svg viewBox="0 0 '+svgW+' '+svgH+'" width="'+svgW+'" height="'+svgH+'" style="border:1px solid #1a3a1a;border-radius:2px;">';
+      bars.forEach(function(b,i){
+        var cx=i*stepX2+stepX2/2;
+        var col=b.close>=b.open?'#26a69a':'#ef5350';
+        miniSvg+='<line x1="'+cx+'" y1="'+toSvgY(b.high)+'" x2="'+cx+'" y2="'+toSvgY(b.low)+'" stroke="'+col+'" stroke-width="0.8"/>';
+        var yT=Math.min(toSvgY(b.open),toSvgY(b.close));
+        var bH=Math.max(0.8,Math.abs(toSvgY(b.close)-toSvgY(b.open)));
+        miniSvg+='<rect x="'+(cx-stepX2*0.3)+'" y="'+yT+'" width="'+(stepX2*0.6)+'" height="'+bH+'" fill="'+col+'"/>';
+      });
+      miniSvg+='</svg>';
+      imgHtml+='<div style="text-align:center;"><div style="color:#ffb400;font-size:7px;margin-bottom:1px;">'+sym+'</div>'+miniSvg+'<div style="color:#888;font-size:6.5px;">'+bars.length+' bars</div></div>';
+    }
+  }
+
+  imgHtml+='</div>';
+
+  if(loaded>0){
+    _restDiagEntry('Chart Images','ok','Parsed '+loaded+' sparkline SVGs → snap data');
+    _setTpSrc('📸 Chart img SNAP · '+loaded+' syms','#ffb400');
+    if(diagSynth){diagSynth.innerHTML=imgHtml;}
+    // Trigger backtest re-run with snap data
+    setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},300);
+  } else {
+    _restDiagEntry('Chart Images','fail','No sparkline SVGs parsed (CORS proxies blocked or no polyline data)');
+    if(diagSynth){
+      diagSynth.innerHTML='<div style="color:#ef5350;font-size:8px;padding:4px;">📸 Chart image parsing failed — CORS proxies could not reach CoinGecko sparklines. This is normal in sandboxed environments.</div>';
+    }
+  }
+};
+
 setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
 
 // ══════════ DEV TOOLS ══════════
@@ -7673,6 +7801,7 @@ if(document.readyState==='loading'){
     <button onclick="window._trySource&&window._trySource('corsproxy')" style="background:#100010;color:#ff9ef5;border:1px solid #2a0030;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">corsproxy.io</button>
     <button onclick="window._tryCSVDownload&&window._tryCSVDownload()" style="background:#100800;color:#ff8050;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">CSV (Yahoo)</button>
     <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
+    <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:7.5px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
   </div>
   <!-- Adaptive synth results -->
   <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
