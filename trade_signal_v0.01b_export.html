@@ -6771,7 +6771,385 @@ function devStylesApplyFilter(q){
   b.querySelectorAll('div').forEach(function(d){d.style.display=(!q||d.textContent.toLowerCase().indexOf(q.toLowerCase())>=0)?'':'none';});
 }
 // ══════════ END DEV TOOLS ══════════
+
+// ══════════════════════════════════════════════════════════════════════
+// AUTO BACKTEST ENGINE — Adaptive, Multi-Asset, Multi-TF
+// Colors: LIVE wins=green | losses=red | SIM=red | SNAP/BE=yellow
+// ══════════════════════════════════════════════════════════════════════
+(function(){
+'use strict';
+var _UNI={
+  'BTC/USDT': {id:'BTCUSDT',base:43000,vol:0.025,type:'crypto'},
+  'ETH/USDT': {id:'ETHUSDT',base:2400, vol:0.030,type:'crypto'},
+  'SOL/USDT': {id:'SOLUSDT',base:140,  vol:0.040,type:'crypto'},
+  'BNB/USDT': {id:'BNBUSDT',base:280,  vol:0.025,type:'crypto'},
+  'XRP/USDT': {id:'XRPUSDT',base:0.55, vol:0.050,type:'crypto'},
+  'DOGE/USDT':{id:'DOGEUSDT',base:0.12,vol:0.060,type:'crypto'},
+  'BTC/USDC': {id:'BTCUSDC',base:43000,vol:0.025,type:'crypto'},
+  'ETH/USDC': {id:'ETHUSDC',base:2400, vol:0.030,type:'crypto'},
+  'SOL/USDC': {id:'SOLUSDC',base:140,  vol:0.040,type:'crypto'},
+  'AAPL': {base:185,  vol:0.015,type:'stock'},
+  'MSFT': {base:380,  vol:0.012,type:'stock'},
+  'NVDA': {base:550,  vol:0.035,type:'stock'},
+  'AMD':  {base:165,  vol:0.030,type:'stock'},
+  'TSLA': {base:250,  vol:0.040,type:'stock'},
+  'AMZN': {base:175,  vol:0.020,type:'stock'},
+  'EUR/USD':{base:1.08500,vol:0.00080,type:'forex'},
+  'GBP/USD':{base:1.27000,vol:0.00120,type:'forex'},
+  'USD/JPY':{base:151.500,vol:0.15000,type:'forex'},
+};
+var _TFD={
+  M1: {bi:'1m', bars:1000},M5: {bi:'5m', bars:1000},M15:{bi:'15m',bars:500},
+  M30:{bi:'30m',bars:400}, H1: {bi:'1h', bars:300}, H4: {bi:'4h', bars:200},
+  D1: {bi:'1d', bars:150}, WK1:{bi:'1w', bars:80},  MN1:{bi:'1M', bars:36}
+};
+var _KPS=[5,10,15,20];
+var _SIGS=['up20','up50','up80','dn20','dn50','dn80'];
+var _SL={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
+// State
+var _dc={},_branches=[],_lossLog=[],_ruleLog=[],_allResults=[],_running=false;
+
+function _synth(sym,bars){
+  var inf=_UNI[sym]||{base:100,vol:0.02,type:'crypto'};
+  var p=inf.base,v=inf.vol*(inf.type==='forex'?1:inf.base);
+  var data=[],trend=(Math.random()-0.5)*0.00015;
+  for(var i=0;i<bars;i++){
+    var o=p,m=(Math.random()-0.478)*v+p*trend;
+    var c=Math.max(o*0.0001,o+m),rng=Math.abs(m)*0.5;
+    data.push({open:o,high:Math.max(o,c)+Math.random()*rng,low:Math.min(o,c)-Math.random()*rng,close:c,volume:Math.random()*1000+100});
+    p=c;
+    if(Math.random()<0.04)trend=-trend+(Math.random()-0.5)*0.0003;
+  }
+  return data;
+}
+function _fetchBi(sym,tf){
+  var inf=_UNI[sym];if(!inf||!inf.id)return Promise.reject('no id');
+  var def=_TFD[tf];if(!def)return Promise.reject('bad tf');
+  var url='https://api.binance.com/api/v3/klines?symbol='+inf.id+'&interval='+def.bi+'&limit='+Math.min(def.bars,1000);
+  return fetch(url).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(arr){return arr.map(function(k){return{open:+k[1],high:+k[2],low:+k[3],close:+k[4],volume:+k[5]};});});
+}
+function _getData(sym,tf){
+  var key=sym+'__'+tf;
+  if(_dc[key])return Promise.resolve(_dc[key]);
+  var inf=_UNI[sym];if(!inf)return Promise.resolve(null);
+  var bars=(_TFD[tf]||{bars:200}).bars;
+  if(inf.id){
+    return _fetchBi(sym,tf).then(function(d){
+      if(d&&d.length>=10){_dc[key]={data:d,dataType:'live'};return _dc[key];}
+      throw new Error('short');
+    }).catch(function(){
+      _dc[key]={data:_synth(sym,bars),dataType:'sim'};return _dc[key];
+    });
+  }
+  _dc[key]={data:_synth(sym,bars),dataType:'sim'};
+  return Promise.resolve(_dc[key]);
+}
+function _stochArr(data,n){
+  return data.map(function(d,i){
+    if(i<n)return null;
+    var lo=Infinity,hi=-Infinity;
+    for(var j=i-n;j<=i;j++){lo=Math.min(lo,data[j].low);hi=Math.max(hi,data[j].high);}
+    return hi===lo?50:(data[i].close-lo)/(hi-lo)*100;
+  });
+}
+function _matches(ctx,cond){
+  if(cond.kFMin!=null&&ctx.kF<cond.kFMin)return false;
+  if(cond.kFMax!=null&&ctx.kF>cond.kFMax)return false;
+  if(cond.kBMin!=null&&ctx.kB<cond.kBMin)return false;
+  if(cond.kBMax!=null&&ctx.kB>cond.kBMax)return false;
+  if(cond.sLMin!=null&&ctx.sL<cond.sLMin)return false;
+  if(cond.sLMax!=null&&ctx.sL>cond.sLMax)return false;
+  if(cond.arMax!=null&&ctx.ar>cond.arMax)return false;
+  if(cond.isUp!=null&&ctx.isUp!==cond.isUp)return false;
+  return true;
+}
+function _runBT(data,kp,rtCost,effTax,rules){
+  var st=_stochArr(data,kp),st3=_stochArr(data,Math.min(kp*3,data.length-1));
+  function sma(i,n){if(i<n-1)return data[i].close;var s=0;for(var j=i-n+1;j<=i;j++)s+=data[j].close;return s/n;}
+  function atr(i,n){if(i<n)return 0;var s=0;for(var j=i-n+1;j<=i;j++)s+=data[j].high-data[j].low;return s/n;}
+  var res={};_SIGS.forEach(function(k){res[k]={n:0,wins:0,be:0,taxSum:0};});
+  var trades=[];
+  for(var i=kp+3;i<data.length-12;i++){
+    var kv=st[i],pk=st[i-1];if(kv===null||pk===null)continue;
+    [20,50,80].forEach(function(lv){
+      var upX=(pk<lv&&kv>=lv),dnX=(pk>lv&&kv<=lv);if(!upX&&!dnX)return;
+      var isUp=upX,key=(isUp?'up':'dn')+lv;
+      var kB=st3[i]!=null?st3[i]:kv;
+      var s20=sma(i,20),s20p=(i>=25)?sma(i-5,20):s20;
+      var a5=atr(i,5),a14=atr(i,14);
+      var ctx={kF:kv,kB:kB,sL:(s20-s20p)/Math.max(s20,0.0001)*100,ar:(a14>0)?a5/a14:1,isUp:isUp};
+      for(var ri=0;ri<rules.length;ri++){if(_matches(ctx,rules[ri].cond))return;}
+      var ei=i+1;if(ei>=data.length-1)return;
+      var entry=data[ei].open,exitI=Math.min(ei+8,data.length-1);
+      var gross=isUp?(data[exitI].close-entry)/entry:(entry-data[exitI].close)/entry;
+      var net=gross-rtCost,afterTax=net>0?net*(1-effTax):net;
+      var r=res[key];r.n++;r.taxSum+=afterTax*100;
+      var won=(afterTax>0),be=(Math.abs(afterTax)<0.000001);
+      if(won)r.wins++;if(be)r.be++;
+      trades.push({key:key,won:won,be:be,net:afterTax*100,ctx:ctx});
+    });
+  }
+  return{res:res,trades:trades};
+}
+function _learnRules(losses,existing){
+  if(losses.length<4)return[];
+  var N=losses.length,rules=[];
+  function add(cond,desc,sub){
+    var mr=sub.length/N;
+    if(mr>0.22&&!existing.some(function(e){return e.desc===desc;}))
+      rules.push({cond:cond,desc:desc,matchRate:mr,lossCount:sub.length});
+  }
+  var obl=losses.filter(function(t){return t.ctx.isUp&&t.ctx.kF>65;});
+  if(obl.length>0){var avgK=obl.reduce(function(a,t){return a+t.ctx.kF;},0)/obl.length;
+    add({kFMin:Math.round(avgK-8),isUp:true,kBMin:58},'Skip longs K>'+Math.round(avgK-8)+' & large stoch overbought>58',obl);}
+  var oss=losses.filter(function(t){return !t.ctx.isUp&&t.ctx.kF<35;});
+  if(oss.length>0){var avgK2=oss.reduce(function(a,t){return a+t.ctx.kF;},0)/oss.length;
+    add({kFMax:Math.round(avgK2+8),isUp:false,kBMax:42},'Skip shorts K<'+Math.round(avgK2+8)+' & large stoch oversold<42',oss);}
+  var ctrL=losses.filter(function(t){return t.ctx.isUp&&t.ctx.sL<-0.04;});
+  add({sLMax:-0.03,isUp:true},'Delay longs: 20-bar slope strongly bearish (<-0.03%/bar)',ctrL);
+  var ctrS=losses.filter(function(t){return !t.ctx.isUp&&t.ctx.sL>0.04;});
+  add({sLMin:0.03,isUp:false},'Delay shorts: 20-bar slope strongly bullish (>+0.03%/bar)',ctrS);
+  var atrC=losses.filter(function(t){return t.ctx.ar<0.6;});
+  add({arMax:0.65},'Skip entries: ATR contracting to <65% of 14-bar avg (false breakout zone)',atrC);
+  return rules;
+}
+function _cost(type){
+  if(type==='forex')return{rt:0.00030,tax:0.37+0.038};
+  if(type==='stock')return{rt:0.00020,tax:0.37+0.038};
+  return{rt:0.00200,tax:0.37+0.038};
+}
+function _runOneCached(sym,tf,branchIdx){
+  var key=sym+'__'+tf;var cached=_dc[key];if(!cached)return;
+  var inf=_UNI[sym];if(!inf)return;
+  var c=_cost(inf.type);var br=_branches[branchIdx];
+  _KPS.forEach(function(kp){
+    var bt=_runBT(cached.data,kp,c.rt,c.tax,br.rules);
+    _SIGS.forEach(function(sig){
+      var r=bt.res[sig];if(r.n<1)return;
+      _allResults.push({sym:sym,tf:tf,kp:kp,key:sig,wr:r.wins/r.n*100,
+        n:r.n,wins:r.wins,be:r.be,netAvg:r.taxSum/r.n,dataType:cached.dataType,branch:branchIdx});
+    });
+    bt.trades.forEach(function(t){
+      if(!t.won&&!t.be)_lossLog.push({sym:sym,tf:tf,kp:kp,key:t.key,net:t.net,ctx:t.ctx,branch:branchIdx});
+    });
+    var won=bt.trades.filter(function(t){return t.won;}).length;
+    var los=bt.trades.filter(function(t){return !t.won&&!t.be;}).length;
+    br.wins+=won;br.losses+=los;
+  });
+}
+function _setStatus(msg){var el=document.getElementById('abtStatus');if(el)el.innerHTML=msg;}
+function _renderAll(){
+  // Data status
+  (function(){
+    var el=document.getElementById('abtDataStatus');if(!el)return;
+    var lv=0,sn=0,sm=0;_allResults.forEach(function(r){if(r.dataType==='live')lv++;else if(r.dataType==='snap')sn++;else sm++;});
+    el.innerHTML='<span style="color:#3ecf5e;">'+lv+' LIVE</span> · '
+      +'<span style="color:#ffb400;">'+sn+' SNAP</span> · '
+      +'<span style="color:#ef5350;">'+sm+' SIM</span> · '
+      +'<span style="color:#1a3a1a;">total '+_allResults.length+'</span>'
+      +' &nbsp;·&nbsp; <span style="color:#0d2a0d;">REST: Binance API (crypto) · US stocks: SIM · FOREX: SIM · CSV: N/A</span>';
+  })();
+  // Branches
+  (function(){
+    var el=document.getElementById('abtBranches');if(!el)return;
+    var h='<div style="color:#aaff44;font-size:9px;font-weight:bold;margin-bottom:2px;">⑃ Adaptive Branch Tree</div>';
+    _branches.forEach(function(br){
+      var N=br.wins+br.losses,wr=N>0?(br.wins/N*100).toFixed(1):'…';
+      var wc=parseFloat(wr)>=55?'#3ecf5e':parseFloat(wr)>=50?'#ffb400':'#ef5350';
+      h+='<div style="font-size:8.5px;margin:2px 0;'+(br.parent!==null?'padding-left:14px;':'')+';">';
+      h+=(br.parent!==null?'<span style="color:#1a4a1a;">↳</span> ':'');
+      h+='<span style="color:#2a5a2a;">[B'+br.id+']</span> <span style="color:#aaffaa;">'+br.name+'</span> ';
+      h+='<span style="color:'+wc+';font-weight:bold;">'+wr+'%</span> ';
+      h+='<span style="color:#1a3a1a;">('+N+' trades·'+br.wins+'W/'+br.losses+'L)</span> ';
+      h+='<span style="color:#0d2a0d;"> — '+br.note+'</span></div>';
+    });
+    el.innerHTML=h;
+  })();
+  // Rule log
+  (function(){
+    var el=document.getElementById('abtRules');if(!el)return;
+    if(!_ruleLog.length){el.innerHTML='';return;}
+    var h='<div style="padding:3px 6px;background:#020408;border:1px solid #0d1520;border-radius:3px;margin-bottom:4px;">';
+    h+='<div style="color:#4ab4ff;font-size:9px;font-weight:bold;margin-bottom:2px;">✎ Learned Avoid Rules</div>';
+    _ruleLog.forEach(function(rl,i){
+      h+='<div style="font-size:7.5px;color:#2a5a8a;margin:1px 0;">';
+      h+='<span style="color:#1a4a8a;">[R'+(i+1)+'→B'+rl.branch+']</span> ';
+      h+='<span style="color:#3a7aaa;">'+rl.desc+'</span> ';
+      h+='<span style="color:#1a3a5a;">('+Math.round(rl.matchRate*100)+'% of losses, '+rl.lossCount+' trades)</span></div>';
+    });
+    h+='</div>';el.innerHTML=h;
+  })();
+  // Results table
+  (function(){
+    var el=document.getElementById('abtResults');if(!el)return;
+    var winners=_allResults.filter(function(r){return r.wr>=51;}).sort(function(a,b){return b.wr-a.wr;}).slice(0,60);
+    if(!winners.length){
+      el.innerHTML='<span style="color:'+((_allResults.length?'#ef5350':'#4a7a4a'))+';font-size:8.5px;">'
+        +(_allResults.length?'No signals ≥51% win rate yet':'⌛ Computing…')+'</span>';return;
+    }
+    var h='<table style="width:100%;border-collapse:collapse;font-size:8px;">';
+    h+='<thead><tr style="color:#1a3a1a;border-bottom:1px solid #0d1f0d;">';
+    ['Symbol','TF','K','Signal','Win%','#','BE','Net avg','Branch','Source'].forEach(function(hh){
+      h+='<th style="padding:2px 4px;text-align:'+(hh==='Symbol'?'left':'right')+';">'+hh+'</th>';
+    });
+    h+='</tr></thead><tbody>';
+    winners.forEach(function(r){
+      var isSim=(r.dataType==='sim');
+      var c=isSim?'#ef5350':r.dataType==='snap'?'#ffb400':'#3ecf5e';
+      var wrC=isSim?'#ef5350':r.wr>=65?'#aaff44':r.wr>=55?'#3ecf5e':'#ffb400';
+      var sc=r.key.indexOf('up')===0?'#26a69a':'#ef5350';
+      h+='<tr style="border-bottom:1px solid #050d05;">';
+      h+='<td style="color:'+c+';padding:2px 4px;font-weight:bold;">'+r.sym+'</td>';
+      h+='<td style="color:#3a7a3a;padding:2px 4px;text-align:right;">'+r.tf+'</td>';
+      h+='<td style="color:#2a5a2a;padding:2px 4px;text-align:right;">K'+r.kp+'</td>';
+      h+='<td style="color:'+sc+';padding:2px 4px;text-align:right;">'+(_SL[r.key]||r.key)+'</td>';
+      h+='<td style="color:'+wrC+';padding:2px 4px;text-align:right;font-weight:bold;">'+r.wr.toFixed(0)+'%</td>';
+      h+='<td style="color:#2a4a2a;padding:2px 4px;text-align:right;">'+r.n+'</td>';
+      h+='<td style="color:#ffb400;padding:2px 4px;text-align:right;">'+(r.be||0)+'</td>';
+      var nc=r.netAvg>=0?'#3ecf5e':'#ef5350';
+      h+='<td style="color:'+nc+';padding:2px 4px;text-align:right;">'+(r.netAvg>=0?'+':'')+r.netAvg.toFixed(3)+'%</td>';
+      h+='<td style="color:#1a4a1a;padding:2px 4px;text-align:right;">B'+r.branch+'</td>';
+      h+='<td style="color:'+c+';padding:2px 4px;text-align:right;font-size:7px;">'+(r.dataType==='live'?'LIVE':r.dataType==='snap'?'SNAP':'SIM')+'</td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table>';
+    h+='<div style="color:#0d2a0d;font-size:7px;margin-top:2px;">'+winners.length+' signals ≥51% · LIVE=green · SIM=red · SNAP/BE=yellow</div>';
+    el.innerHTML=h;
+  })();
+  // Loss log
+  (function(){
+    var el=document.getElementById('abtLossLog');if(!el)return;
+    if(!_lossLog.length){el.innerHTML='<span style="color:#1a3a1a;font-size:8px;">No losses yet.</span>';return;}
+    var h='<table style="width:100%;border-collapse:collapse;font-size:7.5px;">';
+    h+='<thead><tr style="color:#3a1a1a;border-bottom:1px solid #1a0a0a;">';
+    ['#','Sym','TF','K','Sig','Net%','K(f)','K(b)','SlopeL','ATR×','B'].forEach(function(hh){
+      h+='<th style="padding:1px 3px;text-align:'+(hh==='Sym'?'left':'right')+';">'+hh+'</th>';
+    });
+    h+='</tr></thead><tbody>';
+    _lossLog.slice(-100).forEach(function(l,i){
+      h+='<tr style="border-bottom:1px solid #0a0505;">';
+      h+='<td style="color:#2a1a1a;text-align:right;padding:1px 3px;">'+(i+1)+'</td>';
+      h+='<td style="color:#ef5350;padding:1px 3px;">'+l.sym+'</td>';
+      h+='<td style="color:#3a1a1a;text-align:right;padding:1px 3px;">'+l.tf+'</td>';
+      h+='<td style="color:#2a1a1a;text-align:right;padding:1px 3px;">'+l.kp+'</td>';
+      h+='<td style="color:'+(l.key.indexOf('up')===0?'#ef7350':'#ef3530')+';text-align:right;padding:1px 3px;">'+(_SL[l.key]||l.key)+'</td>';
+      h+='<td style="color:#ef5350;text-align:right;padding:1px 3px;">'+l.net.toFixed(3)+'%</td>';
+      h+='<td style="color:#5a2a2a;text-align:right;padding:1px 3px;">'+(l.ctx.kF||0).toFixed(1)+'</td>';
+      h+='<td style="color:#3a1a1a;text-align:right;padding:1px 3px;">'+(l.ctx.kB||0).toFixed(1)+'</td>';
+      h+='<td style="color:#3a1a1a;text-align:right;padding:1px 3px;">'+(l.ctx.sL||0).toFixed(3)+'</td>';
+      h+='<td style="color:#3a1a1a;text-align:right;padding:1px 3px;">'+(l.ctx.ar||1).toFixed(2)+'</td>';
+      h+='<td style="color:#2a1a1a;text-align:right;padding:1px 3px;">'+l.branch+'</td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table>';el.innerHTML=h;
+  })();
+}
+
+window.autoRunBacktest=async function(){
+  if(_running)return;
+  _running=true;
+  _dc={};_branches=[];_lossLog=[];_ruleLog=[];_allResults=[];
+  _branches.push({id:0,name:'Base',parent:null,rules:[],wins:0,losses:0,note:'Raw stoch cross — no adaptive rules'});
+  var syms=Object.keys(_UNI),tfs=Object.keys(_TFD),total=syms.length*tfs.length,done=0;
+
+  // ── Branch 0: fetch data + baseline BT ──
+  _setStatus('&#8987; Branch 0 baseline…');
+  for(var si=0;si<syms.length;si++){
+    for(var ti=0;ti<tfs.length;ti++){
+      var cached=await _getData(syms[si],tfs[ti]);
+      if(cached){_runOneCached(syms[si],tfs[ti],0);}
+      done++;
+      if(done%4===0){
+        _setStatus('&#8987; B0 '+done+'/'+total+' — <span style="color:#3ecf5e;">'+syms[si]+'</span> '+tfs[ti]);
+        _renderAll();await new Promise(function(r){setTimeout(r,10);});
+      }
+    }
+  }
+
+  // ── Learn rules from B0 losses ──
+  _setStatus('&#9997; Analyzing '+_lossLog.length+' losses…');
+  await new Promise(function(r){setTimeout(r,80);});
+  var b0Losses=_lossLog.slice();
+  var newRules=_learnRules(b0Losses,[]);
+
+  if(newRules.length>0){
+    newRules.forEach(function(rl){_ruleLog.push(Object.assign({},rl,{branch:1}));});
+    _branches.push({id:1,name:'Adaptive-1',parent:0,rules:newRules,wins:0,losses:0,
+      note:'Applied '+newRules.length+' avoid rule(s) learned from B0 loss patterns'});
+
+    // ── Branch 1: re-run on cached data ──
+    var b1LossStart=_lossLog.length;
+    _setStatus('&#8987; Branch 1 (adaptive rules)…');
+    for(var si=0;si<syms.length;si++){
+      for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],1);}
+      if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+    }
+
+    var b0WR=_branches[0].wins/Math.max(1,_branches[0].wins+_branches[0].losses)*100;
+    var b1WR=_branches[1].wins/Math.max(1,_branches[1].wins+_branches[1].losses)*100;
+    var imp=(b1WR-b0WR).toFixed(1);
+
+    // ── Learn rules from B1 losses ──
+    var b1Losses=_lossLog.slice(b1LossStart);
+    var moreRules=_learnRules(b1Losses,newRules);
+
+    if(b1WR>b0WR+1&&moreRules.length>0){
+      moreRules.forEach(function(rl){_ruleLog.push(Object.assign({},rl,{branch:2}));});
+      _branches.push({id:2,name:'Adaptive-2',parent:1,rules:newRules.concat(moreRules),wins:0,losses:0,
+        note:'B1 improved +'+imp+'% → added '+moreRules.length+' more rules'});
+    } else {
+      _branches.push({id:2,name:'Loose-alt',parent:0,rules:newRules.slice(0,1),wins:0,losses:0,
+        note:'B1 gain ('+imp+'%) marginal → trying minimal 1-rule variant'});
+    }
+    // ── Branch 2 ──
+    _setStatus('&#8987; Branch 2…');
+    for(var si=0;si<syms.length;si++){
+      for(var ti=0;ti<tfs.length;ti++){_runOneCached(syms[si],tfs[ti],2);}
+      if(si%3===0){_renderAll();await new Promise(function(r){setTimeout(r,10);});}
+    }
+  }
+
+  _running=false;
+  var live=_allResults.filter(function(r){return r.dataType==='live';}).length;
+  _setStatus('&#10003; Done — '+_allResults.length+' results · '+live+' live · '+_lossLog.length+' losses');
+  _renderAll();
+};
+
+// Auto-run 3s after page load
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(window.autoRunBacktest,3000);});
+}else{setTimeout(window.autoRunBacktest,3000);}
+
+})(); // end auto backtest IIFE
 </script>
+
+<!-- ═══ AUTO BACKTEST — ADAPTIVE ENGINE ═══ -->
+<div id="abtWrap" style="background:#010c01;border-top:2px solid #0d2a0d;padding:6px 10px;font-family:monospace;font-size:10px;">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+    <span style="color:#aaffaa;font-weight:bold;font-size:11px;">&#9889; Auto Backtest</span>
+    <span style="color:#3a7a3a;font-size:9px;">Adaptive engine · 18 symbols · M1→MN1 · 3 branches</span>
+    <span id="abtStatus" style="color:#3ecf5e;font-size:8.5px;"></span>
+    <span style="flex:1;"></span>
+    <button onclick="window.autoRunBacktest&&window.autoRunBacktest()" style="background:#001800;color:#3ecf5e;border:1px solid #1a4a1a;border-radius:3px;font-size:8.5px;padding:2px 8px;cursor:pointer;font-family:monospace;">&#8635; Re-run</button>
+    <button onclick="(function(){var p=document.getElementById('abtBody');p.style.display=p.style.display==='none'?'block':'none';})()" style="background:#001000;color:#2a6a2a;border:1px solid #0d2a0d;border-radius:3px;font-size:8px;padding:2px 5px;cursor:pointer;font-family:monospace;">&#9660; Toggle</button>
+  </div>
+  <div id="abtDataStatus" style="color:#1a3a1a;font-size:7.5px;margin-bottom:4px;"></div>
+  <div id="abtBody">
+    <div id="abtBranches" style="margin-bottom:5px;"></div>
+    <div id="abtRules"></div>
+    <div id="abtResults" style="overflow-x:auto;"></div>
+    <!-- Loss Log -->
+    <div style="margin-top:7px;">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;">
+        <span style="color:#ef5350;font-size:9px;font-weight:bold;">&#10005; Loss Log</span>
+        <span style="color:#3a1a1a;font-size:8px;">last 100 losing trades with context snapshot</span>
+        <button onclick="(function(){var p=document.getElementById('abtLossLog');p.style.display=p.style.display==='none'?'block':'none';})()" style="background:#0a0000;color:#4a1a1a;border:1px solid #2a0a0a;border-radius:3px;font-size:7.5px;padding:1px 4px;cursor:pointer;font-family:monospace;">&#9660;</button>
+      </div>
+      <div id="abtLossLog" style="overflow-x:auto;display:none;"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ STOCH CROSS BACKTEST PANEL ═══ -->
 <div id="stochBTPanel" style="background:var(--pnl-bt-bg);border-top:1px solid var(--pnl-bt-border);padding:6px 8px;font-family:monospace;">
