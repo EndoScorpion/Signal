@@ -343,27 +343,6 @@ svg{max-width:100%;height:auto;}
   </div>
 </div>
 
-<!-- THEME BAR -->
-<div id="themeBar">
-  <span style="color:#4a5570;font-size:10px;white-space:nowrap;">Theme:</span>
-  <button class="th-btn active-theme" data-theme="dark" onclick="applyTheme('dark')" style="color:#3ecf5e;border-color:#1a4a2a;"><span class="th-swatch" style="background:#0b0c10;"></span>Dark</button>
-  <button class="th-btn" data-theme="blue" onclick="applyTheme('blue')" style="color:#4a9aff;border-color:#1a2a4a;"><span class="th-swatch" style="background:#07090e;border-color:#1e3060;"></span>Blue</button>
-  <button class="th-btn" data-theme="forest" onclick="applyTheme('forest')" style="color:#4ecf7a;border-color:#1a4a28;"><span class="th-swatch" style="background:#060e08;border-color:#1a3820;"></span>Forest</button>
-  <button class="th-btn" data-theme="slate" onclick="applyTheme('slate')" style="color:#9db4ff;border-color:#2a3060;"><span class="th-swatch" style="background:#0c0d12;border-color:#2a3060;"></span>Slate</button>
-  <button class="th-btn" data-theme="ember" onclick="applyTheme('ember')" style="color:#ff8a50;border-color:#4a2010;"><span class="th-swatch" style="background:#0f0908;border-color:#3a1c08;"></span>Ember</button>
-  <button class="th-btn" data-theme="violet" onclick="applyTheme('violet')" style="color:#c7a8ff;border-color:#3a2060;"><span class="th-swatch" style="background:#090812;border-color:#2e1a50;"></span>Violet</button>
-  <span style="color:#2a2e39;margin:0 3px;">|</span>
-  <button class="th-btn" onclick="backupTheme()" style="color:#ffb400;border-color:#553300;">&#128190; Backup Theme</button>
-  <button class="th-btn" onclick="restoreTheme()" style="color:#9db4ff;border-color:#334466;">&#8635; Restore</button>
-  <span style="color:#4a5570;font-size:10px;white-space:nowrap;margin-left:4px;">Vol Bar:</span>
-  <input type="color" value="#9b59b6" title="Volume bar color" style="width:22px;height:18px;border:1px solid #3a3;border-radius:3px;cursor:pointer;padding:1px;background:#000;vertical-align:middle;" oninput="window._volBarColor=this.value;Object.keys(panels).forEach(function(id){if(panels[id]&&panels[id].mode==='svg')drawSVG(id);});">
-  <span style="flex:1;"></span>
-  <!-- Refresh all -->
-  <button class="th-btn" onclick="refreshAll(this)" title="Refresh all panels &amp; VL data" style="color:#7af;border-color:#1a3a5a;background:#001020;">&#8635; Refresh</button>
-  <!-- Reminder -->
-  <button id="reminderBtn" class="th-btn" onclick="toggleReminderModal()" style="color:#ffcf9d;border-color:#664400;background:#0a0500;">&#9200; Reminder <span id="rdCount" style="color:#ffb400;font-size:9px;display:none;"></span></button>
-</div>
-
 <!-- REMINDER MODAL -->
 <div id="rdModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:#0d1014;border:1px solid #3a2a1a;border-radius:6px;padding:14px 18px;min-width:280px;box-shadow:0 8px 40px #000e;font-family:monospace;font-size:11px;">
   <div style="color:#ffcf9d;font-weight:bold;margin-bottom:8px;font-size:12px;">&#9200; Set Reminder</div>
@@ -6476,6 +6455,26 @@ setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run afte
   </div>
 </div>
 
+<!-- THEME BAR (moved to bottom) -->
+<div id="themeBar">
+  <span style="color:#4a5570;font-size:10px;white-space:nowrap;">Theme:</span>
+  <button class="th-btn active-theme" data-theme="dark" onclick="applyTheme('dark')" style="color:#3ecf5e;border-color:#1a4a2a;"><span class="th-swatch" style="background:#0b0c10;"></span>Dark</button>
+  <button class="th-btn" data-theme="blue" onclick="applyTheme('blue')" style="color:#4a9aff;border-color:#1a2a4a;"><span class="th-swatch" style="background:#07090e;border-color:#1e3060;"></span>Blue</button>
+  <button class="th-btn" data-theme="forest" onclick="applyTheme('forest')" style="color:#4ecf7a;border-color:#1a4a28;"><span class="th-swatch" style="background:#060e08;border-color:#1a3820;"></span>Forest</button>
+  <button class="th-btn" data-theme="slate" onclick="applyTheme('slate')" style="color:#9db4ff;border-color:#2a3060;"><span class="th-swatch" style="background:#0c0d12;border-color:#2a3060;"></span>Slate</button>
+  <button class="th-btn" data-theme="ember" onclick="applyTheme('ember')" style="color:#ff8a50;border-color:#4a2010;"><span class="th-swatch" style="background:#0f0908;border-color:#3a1c08;"></span>Ember</button>
+  <button class="th-btn" data-theme="violet" onclick="applyTheme('violet')" style="color:#c7a8ff;border-color:#3a2060;"><span class="th-swatch" style="background:#090812;border-color:#2e1a50;"></span>Violet</button>
+  <span style="color:#2a2e39;margin:0 3px;">|</span>
+  <button class="th-btn" onclick="backupTheme()" style="color:#ffb400;border-color:#553300;">&#128190; Backup Theme</button>
+  <button class="th-btn" onclick="restoreTheme()" style="color:#9db4ff;border-color:#334466;">&#8635; Restore</button>
+  <span style="color:#4a5570;font-size:10px;white-space:nowrap;margin-left:4px;">Vol Bar:</span>
+  <input type="color" value="#9b59b6" title="Volume bar color" style="width:22px;height:18px;border:1px solid #3a3;border-radius:3px;cursor:pointer;padding:1px;background:#000;vertical-align:middle;" oninput="window._volBarColor=this.value;Object.keys(panels).forEach(function(id){if(panels[id]&&panels[id].mode==='svg')drawSVG(id);});">
+  <span style="flex:1;"></span>
+  <!-- Refresh all -->
+  <button class="th-btn" onclick="refreshAll(this)" title="Refresh all panels &amp; VL data" style="color:#7af;border-color:#1a3a5a;background:#001020;">&#8635; Refresh</button>
+  <!-- Reminder -->
+  <button id="reminderBtn" class="th-btn" onclick="toggleReminderModal()" style="color:#ffcf9d;border-color:#664400;background:#0a0500;">&#9200; Reminder <span id="rdCount" style="color:#ffb400;font-size:9px;display:none;"></span></button>
+</div>
 <!-- Bottom color picker button -->
 <div style="text-align:center;padding:10px 0 14px;background:#040804;border-top:1px solid #0d1a0d;">
   <button onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="background:#0a000a;color:#ff9ef5;border:1.5px solid #5a1a5a;border-radius:5px;padding:5px 18px;font-size:12px;cursor:pointer;font-family:monospace;font-weight:bold;letter-spacing:.3px;">&#127912; Colors</button>
