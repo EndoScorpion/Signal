@@ -3825,6 +3825,7 @@ function connectBinanceWSS(){
     _wss=new WebSocket(url);
     _wss.onopen=function(){
       _wssRetry=0;
+      window._wsConnected=true;
       var dot=document.getElementById('wssDot');
       if(dot){dot.className='wss-dot live';}
     };
@@ -3850,12 +3851,13 @@ function connectBinanceWSS(){
       }
     };
     _wss.onclose=function(){
+      window._wsConnected=false;
       var dot=document.getElementById('wssDot');
       if(dot)dot.className='wss-dot dead';
       _wssRetry++;
       setTimeout(connectBinanceWSS,Math.min(30000,2000*Math.pow(2,_wssRetry)));
     };
-    _wss.onerror=function(){_wss.close();};
+    _wss.onerror=function(){window._wsConnected=false;_wss.close();};
   }catch(e){console.warn('WSS unavailable:',e);}
 }
 connectBinanceWSS();
