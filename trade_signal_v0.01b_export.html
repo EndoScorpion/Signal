@@ -267,6 +267,7 @@ svg{max-width:100%;height:auto;}
 <div id="mwBar">
   <div id="mwRoot" style="position:relative;">
     <button id="mwBtn" onclick="toggleMWMenu(event)">MarketWatch &#9660;</button>
+    <button onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="background:#0a000a;color:#ff9ef5;border:1px solid #5a1a5a;border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:monospace;margin-left:5px;vertical-align:middle;">&#127912; Colors</button>
     <div id="mwMenu">
       <div class="mw-sec">Settings</div>
       <button class="mw-item" onclick="openFloatSettings('bg');toggleMWMenu()">&#127912; Chart BG Colors</button>
@@ -357,8 +358,6 @@ svg{max-width:100%;height:auto;}
   <span style="color:#4a5570;font-size:10px;white-space:nowrap;margin-left:4px;">Vol Bar:</span>
   <input type="color" value="#9b59b6" title="Volume bar color" style="width:22px;height:18px;border:1px solid #3a3;border-radius:3px;cursor:pointer;padding:1px;background:#000;vertical-align:middle;" oninput="window._volBarColor=this.value;Object.keys(panels).forEach(function(id){if(panels[id]&&panels[id].mode==='svg')drawSVG(id);});">
   <span style="flex:1;"></span>
-  <!-- Color Picker -->
-  <button class="th-btn" onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="color:#ff9ef5;border-color:#5a1a5a;background:#0a000a;">&#127912; Colors</button>
   <!-- Refresh all -->
   <button class="th-btn" onclick="refreshAll(this)" title="Refresh all panels &amp; VL data" style="color:#7af;border-color:#1a3a5a;background:#001020;">&#8635; Refresh</button>
   <!-- Reminder -->
