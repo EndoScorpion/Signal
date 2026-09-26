@@ -890,6 +890,8 @@ svg{max-width:100%;height:auto;}
     <span id="topPerfCount" style="color:#3ecf5e;font-size:9px;font-weight:bold;"></span>
     <span id="topPerfStatus" style="color:#ffb400;font-size:8.5px;display:none;">&#8987; Computing…</span>
     <button onclick="(function(){var s=document.getElementById('topPerfStatus');if(s)s.style.display='inline';window._btRunning=false;runStochBTs();})()" style="background:#001a00;color:#aaff44;border:1.5px solid #3a7a1a;border-radius:4px;padding:3px 10px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;margin-left:4px;" title="Run stochastic cross backtest across all coins, timeframes and K-periods">&#9654; Run BT</button>
+    <span style="flex:1;"></span>
+    <span id="tpDataSrc" style="color:#4a7a4a;font-size:8.5px;font-family:monospace;">checking REST…</span>
   </div>
   <div id="topPerfBody" style="overflow-x:auto;">
     <table id="topPerfTable" style="border-collapse:collapse;font-size:10px;white-space:nowrap;min-width:100%;">
@@ -6095,9 +6097,8 @@ function _collectTopHits(id,tfLabel,kPeriod,results,costInfo){
   if(!results)return hits;
   Object.keys(results).forEach(function(sig){
     var d=results[sig];
-    if(!d||d.n<2)return;
+    if(!d||d.n<1)return; // require at least 1 signal
     var wr=d.wins/d.n*100;
-    if(wr<35)return;
     hits.push({id:id,tf:tfLabel,kp:kPeriod,key:sig,wr:wr,d:d,rtCostPct:costInfo.rtCostPct});
   });
   return hits;
@@ -6167,7 +6168,7 @@ function _renderCompactTable(containerId,tfLabel,periods,allPeriodData){
   el.innerHTML=h;
 }
 
-function renderTopPerformers(allHits){
+function renderTopPerformers(allHits,statusMsg){
   var bar=document.getElementById('topPerfBar');
   var rows=document.getElementById('topPerfRows');
   var cntEl=document.getElementById('topPerfCount');
@@ -6176,12 +6177,16 @@ function renderTopPerformers(allHits){
   var sigLbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
   allHits.sort(function(a,b){return b.wr-a.wr;});
   bar.style.display='block';
-  if(allHits.length===0){
+  if(statusMsg){
     if(cntEl)cntEl.textContent='';
-    rows.innerHTML='<tr><td colspan="11" style="color:#4a9a4a;padding:8px 6px;font-size:9px;">No signals ≥35% win rate yet — click <b style="color:#aaff44;">▶ Run BT</b> to compute</td></tr>';
+    rows.innerHTML='<tr><td colspan="11" style="color:#ef5350;padding:8px 6px;font-size:9px;">&#9888; '+statusMsg+'</td></tr>';
     return;
   }
-  bar.style.display='block';
+  if(allHits.length===0){
+    if(cntEl)cntEl.textContent='';
+    rows.innerHTML='<tr><td colspan="11" style="color:#ffb400;padding:8px 6px;font-size:9px;">&#8987; No signals found yet — computing… or click <b style="color:#aaff44;">▶ Run BT</b></td></tr>';
+    return;
+  }
   if(cntEl)cntEl.textContent='('+allHits.length+' signal'+(allHits.length!==1?'s':'')+')';
   rows.innerHTML='';
   allHits.forEach(function(h){
@@ -6214,14 +6219,17 @@ function renderTopPerformers(allHits){
 
 var _btRunning=false;
 function runStochBTs(){
-  if(_btRunning)return; // re-entrancy guard: prevents overlapping invocations from rapid tax/state changes
+  if(_btRunning)return;
   _btRunning=true;
-  // Safety: force-reset after 12s in case async fetches never call back
   setTimeout(function(){_btRunning=false;},12000);
   var _tpStatus=document.getElementById('topPerfStatus');
   if(_tpStatus)_tpStatus.style.display='inline';
+  try{
   var body=document.getElementById('stochBTBody');
-  if(!body){_btRunning=false;return;}
+  if(!body){
+    renderTopPerformers([],'stochBTBody element not found — backtest panel may be hidden');
+    _btRunning=false;if(_tpStatus)_tpStatus.style.display='none';return;
+  }
   var names={btc:'BTC/USDT',eth:'ETH/USDT',sol:'SOL/USDT',bnb:'BNB/USDT'};
   var lbls={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
   var allTopHits=[];
@@ -6371,7 +6379,39 @@ function runStochBTs(){
       onM15Done();
     });
   });
+  }catch(e){
+    renderTopPerformers([],'JS error in runStochBTs: '+e.message);
+    _btRunning=false;
+    var _tpS=document.getElementById('topPerfStatus');
+    if(_tpS)_tpS.style.display='none';
+  }
 }
+
+// ── REST / CSV source probe — runs once on load ──
+(function _probeDataSources(){
+  var el=document.getElementById('tpDataSrc');
+  if(!el)return;
+  el.textContent='checking REST…';
+  var url='https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=1';
+  fetch(url)
+    .then(function(r){return r.ok?r.json():Promise.reject('HTTP '+r.status);})
+    .then(function(d){
+      if(el){el.style.color='#3ecf5e';el.textContent='✓ REST live · CSV ✓';}
+      window._restLive=true;
+    })
+    .catch(function(){
+      // REST direct blocked — try proxy
+      var proxy=typeof _restProxy!=='undefined'?_restProxy+url.replace('https://api.binance.com',''):null;
+      if(proxy){
+        fetch(proxy).then(function(r){return r.ok?r.json():Promise.reject();})
+          .then(function(){if(el){el.style.color='#ffb400';el.textContent='✓ REST via proxy · CSV ✓';}window._restLive=true;})
+          .catch(function(){if(el){el.style.color='#ef5350';el.textContent='✗ REST blocked · CSV ✗ (using synth data)';}window._restLive=false;});
+      } else {
+        if(el){el.style.color='#ef5350';el.textContent='✗ REST blocked · CSV ✗ (using synth data)';}
+        window._restLive=false;
+      }
+    });
+})();
 
 setTimeout(runStochBTs,500); // runs on load; live data debounce may re-run after REST arrives
 </script>
