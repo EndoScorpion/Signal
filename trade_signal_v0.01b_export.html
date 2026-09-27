@@ -8636,11 +8636,17 @@ if(document.readyState==='loading'){
   <!-- Alpha Vantage API key input -->
   <div style="padding:5px 10px;border-top:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;flex-shrink:0;">
     <span style="color:#6a9a6a;font-size:9px;white-space:nowrap;">⚡ AV Key:</span>
-    <input id="avKeyInput" type="password" placeholder="paste API key…" oninput="window._updateAVKey&&window._updateAVKey(this.value)"
+    <input id="avKeyInput" type="text" placeholder="paste or type API key…"
+      oninput="window._updateAVKey&&window._updateAVKey(this.value)"
+      onkeydown="event.stopPropagation()"
+      onpaste="var me=this;setTimeout(function(){window._updateAVKey&&window._updateAVKey(me.value);},10);event.stopPropagation();"
+      onclick="this.select()"
       style="flex:1;background:#001000;color:#aaffaa;border:1px solid #1a4a1a;border-radius:3px;font-size:9px;padding:2px 6px;font-family:monospace;outline:none;min-width:0;" />
     <span id="avKeyStatus" style="color:#5a8a5a;font-size:9px;white-space:nowrap;"></span>
     <button onclick="(function(){var k=document.getElementById('avKeyInput').value.trim();window._updateAVKey&&window._updateAVKey(k);if(k)window._tryAlphaVantage&&window._tryAlphaVantage();})()"
       style="background:#001a10;color:#3ecf5e;border:1px solid #0a3020;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;">Go</button>
+    <button onclick="(function(){var k=window.prompt('Paste your Alpha Vantage API key:','');if(k&&k.trim()){var inp=document.getElementById('avKeyInput');if(inp)inp.value=k.trim();window._updateAVKey&&window._updateAVKey(k.trim());window._tryAlphaVantage&&window._tryAlphaVantage();}})()"
+      style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;" title="Open a prompt dialog to paste key">📋</button>
   </div>
   <!-- Adaptive synth results -->
   <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
