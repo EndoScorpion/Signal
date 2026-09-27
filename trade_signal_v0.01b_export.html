@@ -6768,6 +6768,19 @@ function _restDiagEntry(name,status,detail){
   window._diagSrcLog.unshift({name:name,status:status,detail:detail,ts:new Date().toLocaleTimeString()});
   if(window._diagSrcLog.length>40)window._diagSrcLog.length=40;
   _renderDiagLog();
+  // Failstop tracking — pause source after 3 consecutive failures
+  window._srcFailCount=window._srcFailCount||{};
+  window._srcPaused=window._srcPaused||{};
+  if(status==='fail'){
+    window._srcFailCount[name]=(window._srcFailCount[name]||0)+1;
+    if(window._srcFailCount[name]>=3&&!window._srcPaused[name]){
+      window._srcPaused[name]=true;
+      _renderFailstops();
+    }
+  } else if(status==='ok'){
+    window._srcFailCount[name]=0;
+    if(window._srcPaused&&window._srcPaused[name]){delete window._srcPaused[name];_renderFailstops();}
+  }
 }
 function _renderDiagLog(){
   var el=document.getElementById('restDiagLog');if(!el)return;
@@ -6783,6 +6796,41 @@ function _renderDiagLog(){
   });
   el.innerHTML=h||'<span style="color:#6a8a6a;">No attempts yet.</span>';
 }
+function _renderFailstops(){
+  var el=document.getElementById('abtDataStatus');if(!el)return;
+  var paused=window._srcPaused||{};
+  var names=Object.keys(paused);
+  if(!names.length){el.innerHTML='';return;}
+  var h='<span style="color:#ffb400;font-weight:bold;font-size:9px;">&#9888; Failstops (3+ failures — auto-paused):</span> ';
+  names.forEach(function(n){
+    h+='<span style="color:#ef5350;font-size:8.5px;margin-right:3px;">&#x2717; '+n+'</span>'
+      +'<button onclick="window._retrySource(\''+n+'\')" '
+      +'style="background:#0a0500;color:#ffb400;border:1px solid #2a1500;border-radius:3px;font-size:8px;padding:1px 5px;cursor:pointer;margin-right:7px;">&#8635; Retry</button>';
+  });
+  el.innerHTML=h;
+}
+window._retrySource=function(name){
+  window._srcFailCount=window._srcFailCount||{};
+  window._srcPaused=window._srcPaused||{};
+  window._srcFailCount[name]=0;
+  delete window._srcPaused[name];
+  _renderFailstops();
+  _restDiagEntry(name,'pending','manual retry…');
+  var retryMap={
+    'AlphaVantage':function(){window._tryAlphaVantage&&window._tryAlphaVantage();},
+    'Shibui':function(){window._tryShibuiData&&window._tryShibuiData();},
+    'binance':function(){window._trySource&&window._trySource('binance');},
+    'coingecko':function(){window._trySource&&window._trySource('coingecko');},
+    'cryptocompare':function(){window._trySource&&window._trySource('cryptocompare');},
+    'allorigins':function(){window._trySource&&window._trySource('allorigins');},
+    'corsproxy':function(){window._trySource&&window._trySource('corsproxy');},
+    'GitHub':function(){window._tryGitHubDatasets&&window._tryGitHubDatasets();},
+    'Hist Sources':function(){window._tryHistoricalSources&&window._tryHistoricalSources();}
+  };
+  var fn=retryMap[name];
+  if(fn){setTimeout(fn,50);}
+  else{window._probeAllSources&&setTimeout(window._probeAllSources,50);}
+};
 function _setTpSrc(msg,color){
   var el=document.getElementById('tpDataSrc');
   if(el){el.textContent=msg;el.style.color=color||'#4a7a4a';}
@@ -6790,6 +6838,7 @@ function _setTpSrc(msg,color){
 
 // Individual source testers
 window._trySource=function(src){
+  if(window._srcPaused&&window._srcPaused[src]){_renderFailstops();return;}
   var TIMEOUT=6000;
   function withTimeout(promise){
     return Promise.race([promise,new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},TIMEOUT);})]);
@@ -6977,9 +7026,10 @@ if(_origFetchOHLCV){
     });
   };
 }
-// Run probe on load
+// Run probe on load — AV preload already ran synchronously; now probe REST + Shibui
 (function(){
   setTimeout(function(){window._probeAllSources&&window._probeAllSources();},800);
+  setTimeout(function(){window._tryShibuiData&&window._tryShibuiData();},1500);
 })();
 
 // ══════════ CHART IMAGE PARSING (Tier 3 data source) ══════════
@@ -7171,7 +7221,24 @@ function _setAVKey(k){try{localStorage.setItem('_avApiKey',k);}catch(e){}}
 // Expose key setter for UI input
 window._updateAVKey=function(k){_setAVKey(k.trim());var el=document.getElementById('avKeyStatus');if(el)el.textContent=k.trim()?'✓ saved':'cleared';};
 
+window._tryShibuiData=async function(){
+  if(window._srcPaused&&window._srcPaused['Shibui']){_renderFailstops();return 0;}
+  _restDiagEntry('Shibui','pending','Shibui Finance: checking preloaded US macro data…');
+  var loaded=0;
+  if(window._SHIBUI_PRELOAD&&typeof window._SHIBUI_PRELOAD==='function'){
+    try{window._SHIBUI_PRELOAD();loaded=1;}catch(e){}
+  }
+  if(loaded>0){
+    _restDiagEntry('Shibui','ok','Shibui macro data loaded (US equities context — SPY/QQQ)');
+    _setTpSrc('📊 Shibui: macro loaded','#4ab4ff');
+  }else{
+    _restDiagEntry('Shibui','fail','Shibui: US equities only (NYSE+NASDAQ) — no crypto REST API in browser');
+    _setTpSrc('📊 Shibui: US-only (no crypto)','#ffb400');
+  }
+  return loaded;
+};
 window._tryAlphaVantage=async function(){
+  if(window._srcPaused&&window._srcPaused['AlphaVantage']){_renderFailstops();return 0;}
   var key=_getAVKey();
   if(!key){_restDiagEntry('AlphaVantage','fail','no API key — enter in diag panel below');return 0;}
   _restDiagEntry('AlphaVantage','pending','fetching DIGITAL_CURRENCY_DAILY for 5 syms…');
@@ -8655,6 +8722,7 @@ window._AV_PRELOAD&&window._AV_PRELOAD();
     <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
     <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
     <button onclick="window._tryAlphaVantage&&window._tryAlphaVantage()" style="background:#001a10;color:#3ecf5e;border:1px solid #0a3020;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;font-weight:bold;">⚡ AlphaVantage</button>
+    <button onclick="window._tryShibuiData&&window._tryShibuiData()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;font-weight:bold;">📊 Shibui</button>
     <button onclick="window._tryGitHubDatasets&&window._tryGitHubDatasets()" style="background:#001420;color:#7adfff;border:1px solid #0d2a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">🐙 GitHub Data</button>
     <button onclick="window._tryHistoricalSources&&window._tryHistoricalSources()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📅 History</button>
     <button onclick="window._loadMoreHistory&&window._loadMoreHistory('BTC/USDT','H1')" style="background:#001428;color:#9db4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">⬅ More Hist</button>
