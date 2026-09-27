@@ -61,8 +61,18 @@ input,select{font-family:monospace;}
 .ib.rs{background:#000;color:#997;border-color:#554;}
 .ib.pause-btn{background:#000;color:#ffb400;border-color:#664400;font-size:11px;padding:2px 7px;}
 .ib.pause-btn:hover{background:#1a1000;}
-.ib.pause-btn.paused{color:#ef5350;border-color:#660000;animation:pulse 1.5s infinite;}
+.ib.pause-btn.paused{color:#ffb400;border-color:#aa6600;background:#0d0700;animation:pulseyellow 0.7s infinite;}
+@keyframes pulseyellow{0%,100%{opacity:1;box-shadow:0 0 4px #ffb40060;}50%{opacity:0.45;box-shadow:0 0 1px #ffb40020;}}
+.paused-lbl{display:inline-block;color:#ffb400;font-size:8px;font-weight:bold;font-family:monospace;letter-spacing:0.5px;animation:pulseyellow 0.7s infinite;vertical-align:middle;}
+.pause-all-btn{background:#0a0500;color:#ffb400;border:1.5px solid #664400;border-radius:4px;padding:2px 9px;font-family:monospace;font-size:10px;cursor:pointer;}
+.pause-all-btn.paused{animation:pulseyellow 0.7s infinite;}
 .ib.minimized-restore{color:#4f4;border-color:#2a5;}
+/* Bottom dock */
+body{padding-bottom:38px;}
+#bottomDock{position:fixed;bottom:0;left:0;right:0;z-index:9985;background:#020403;border-top:2px solid #1a2a1a;padding:3px 8px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.dock-btn{background:#050a05;color:#4a7a4a;border:1px solid #1a3a1a;border-radius:4px;padding:2px 9px;font-family:monospace;font-size:9.5px;cursor:pointer;white-space:nowrap;}
+.dock-btn:hover{color:#3ecf5e;border-color:#2a5a2a;}
+.dock-btn.docked{color:#ffb400;border-color:#553300;background:#0a0500;animation:pulseyellow 0.7s infinite;}
 .panel-min-btn{position:absolute;top:2px;right:3px;z-index:15;background:#0a0a00;color:#ffcc00;border:1px solid #443300;border-radius:3px;padding:0 5px;font-size:13px;cursor:pointer;line-height:1.5;font-weight:bold;font-family:monospace;}
 .panel-min-btn:hover{background:#1a1600;color:#ffee44;}
 /* Close-confirm modal */
@@ -814,7 +824,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
       <div style="overflow:hidden;flex:1;position:relative;">
         <span id="newsTicker" class="news-inner"></span>
       </div>
-      <button id="newsPlayBtn" onclick="toggleNewsPause()" style="background:none;border:1px solid #2a1a2a;border-radius:3px;color:#9070b0;cursor:pointer;flex:none;font-size:10px;padding:0 5px;line-height:1.6;font-family:monospace;" title="Pause/resume scroll">⏸</button>
+      <button id="newsPlayBtn" onclick="toggleNewsPause()" style="background:none;border:1px solid #2a1a2a;border-radius:3px;color:#3ecf5e;cursor:pointer;flex:none;font-size:10px;padding:0 5px;line-height:1.6;font-family:monospace;" title="Pause/resume scroll">▶</button>
     </div>
     <!-- Dock button: only visible when floating -->
     <button id="nbPinBtn" onclick="nbDock()" title="Dock back to bar" style="display:none;background:#001a1a;border:1px solid #005555;border-radius:3px;color:#00cccc;cursor:pointer;flex:none;font-size:9px;padding:0 5px;line-height:1.6;font-family:monospace;">📌 Dock</button>
@@ -908,6 +918,8 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
   <button id="compactBtn" class="tb-btn" style="color:#ffb400;border-color:#553300;font-size:10px;" onclick="toggleCompact()" title="Move Volume Leaders above toolbar in compact mode">&#8633; Compact</button>
   <button class="tb-btn" id="diagBtn" onclick="toggleDiagPanel()" style="color:#3ecf5e;border-color:#1a4a2a;font-size:10px;" title="Auto Diagnostics — detect and fix blank charts">&#128301; Diag</button>
   <button class="tb-btn" id="fdpBtn" onclick="toggleFDP()" style="color:#d4b800;border-color:#3a3000;font-size:12px;font-weight:bold;letter-spacing:0;" title="Floating Diagnostics Panel — bugs, auto-repair, info">&#9889;</button>
+  <button id="pauseAllChartsBtn" class="pause-all-btn paused" onclick="window._toggleAllCharts&&window._toggleAllCharts(this)" title="Pause / resume all chart updates">&#9654; Charts</button>
+  <button id="pauseNewsBtn" class="pause-all-btn paused" onclick="window._toggleAllNews&&window._toggleAllNews(this)" title="Pause / resume news &amp; tickers">&#9654; News</button>
   <span style="color:#333;">|</span>
   <button id="devInspectBtn" class="tb-btn" onclick="devToggleInspect()" title="Element inspector — hover to highlight + show tag/size" style="color:#a78bfa;border-color:#3a2a5a;font-size:10px;">&#128269; Inspect</button>
   <button class="tb-btn" onclick="devToggleDOM()" title="DOM Inspector panel" style="color:#60a5fa;border-color:#1a2a5a;font-size:10px;">&#127760; DOM</button>
@@ -1104,7 +1116,8 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
         <span class="ptitle">BTC/USDT</span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#3ecf5e"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+        <svg id="dot-btc" width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle id="dotc-btc" cx="4" cy="4" r="3.5" fill="#ffb400"><animate attributeName="opacity" values="1;0.45;1" dur="0.7s" repeatCount="indefinite"/></circle></svg>
+        <span id="paused-lbl-btc" class="paused-lbl" style="margin-left:3px;">PAUSED</span>
         <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-btc">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-btc">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-btc">Spd:--</span><span id="fee-btc" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel" onchange="changePanel('btc',this.value)"><option>1m</option><option selected>5m</option><option>15m</option><option>1h</option><option>4h</option><option>1d</option></select>
         <input class="sym-in" value="BTCUSDT" type="text">
@@ -1116,7 +1129,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
         <button class="ib" onclick="restorePanel('btc')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-btc',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-btc')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-btc" onclick="togglePause('btc',this)" title="Pause auto-update">&#9646;&#9646;</button>
+        <button class="ib pause-btn paused" id="pause-btc" onclick="togglePause('btc',this)" title="Resume auto-update">&#9654;</button>
         <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-btc" onclick="toggleRows('btc',this)" title="Collapse control rows">≡</button>
       </div>
@@ -1196,7 +1209,8 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
         <span class="ptitle">ETH/USDT</span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#ffb400"/></svg>
+        <svg id="dot-eth" width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle id="dotc-eth" cx="4" cy="4" r="3.5" fill="#ffb400"><animate attributeName="opacity" values="1;0.45;1" dur="0.7s" repeatCount="indefinite"/></circle></svg>
+        <span id="paused-lbl-eth" class="paused-lbl" style="margin-left:3px;">PAUSED</span>
         <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-eth">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-eth">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-eth">Spd:--</span><span id="fee-eth" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel"><option>1m</option><option>5m</option><option selected>1h</option><option>4h</option><option>1d</option></select>
         <input class="sym-in" value="ETHUSDT" type="text">
@@ -1208,7 +1222,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
         <button class="ib" onclick="restorePanel('eth')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-eth',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-eth')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-eth" onclick="togglePause('eth',this)" title="Pause auto-update">&#9646;&#9646;</button>
+        <button class="ib pause-btn paused" id="pause-eth" onclick="togglePause('eth',this)" title="Resume auto-update">&#9654;</button>
         <a href="https://www.tradingview.com/chart/?symbol=BYBIT:ETHUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-eth" onclick="toggleRows('eth',this)" title="Collapse control rows">≡</button>
       </div>
@@ -1295,7 +1309,8 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
         <span class="ptitle">SOL/USDT</span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#3ecf5e"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+        <svg id="dot-sol" width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle id="dotc-sol" cx="4" cy="4" r="3.5" fill="#ffb400"><animate attributeName="opacity" values="1;0.45;1" dur="0.7s" repeatCount="indefinite"/></circle></svg>
+        <span id="paused-lbl-sol" class="paused-lbl" style="margin-left:3px;">PAUSED</span>
         <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-sol">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-sol">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-sol">Spd:--</span><span id="fee-sol" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel"><option selected>15m</option><option>1h</option><option>4h</option></select>
         <input class="sym-in" value="SOLUSDT" type="text">
@@ -1307,7 +1322,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
         <button class="ib" onclick="restorePanel('sol')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-sol',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-sol')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-sol" onclick="togglePause('sol',this)" title="Pause auto-update">&#9646;&#9646;</button>
+        <button class="ib pause-btn paused" id="pause-sol" onclick="togglePause('sol',this)" title="Resume auto-update">&#9654;</button>
         <a href="https://www.tradingview.com/chart/?symbol=OKX:SOLUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-sol" onclick="toggleRows('sol',this)" title="Collapse control rows">≡</button>
       </div>
@@ -1386,7 +1401,8 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
     <div class="panel-head">
       <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;">
         <span class="ptitle">BNB/USDT</span>
-        <svg width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle cx="4" cy="4" r="3.5" fill="#ef5350"/></svg>
+        <svg id="dot-bnb" width="8" height="8" viewBox="0 0 8 8" style="display:inline-block;vertical-align:middle;flex-shrink:0;margin-left:2px;"><circle id="dotc-bnb" cx="4" cy="4" r="3.5" fill="#ffb400"><animate attributeName="opacity" values="1;0.45;1" dur="0.7s" repeatCount="indefinite"/></circle></svg>
+        <span id="paused-lbl-bnb" class="paused-lbl" style="margin-left:3px;">PAUSED</span>
         <span style="font-size:9px;color:#5b6270;white-space:nowrap;margin-left:2px;"><span style="color:#26a69a;" id="bid-bnb">B:--</span><span style="color:#ef5350;margin-left:3px;" id="ask-bnb">A:--</span><span style="color:#ffb400;margin-left:3px;" id="spd-bnb">Spd:--</span><span id="fee-bnb" style="margin-left:4px;font-size:9px;"></span></span>
         <select class="tf-sel"><option>5m</option><option selected>1h</option><option>4h</option></select>
         <input class="sym-in" value="BNBUSDT" type="text">
@@ -1398,7 +1414,7 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
         <button class="ib" onclick="restorePanel('bnb')" title="Restore" style="color:#a7f;font-size:10px;">Rs</button>
         <button class="ib" onclick="expandPanel('p-bnb',this)" title="Expand" style="color:#aaf;">&#10562;</button>
         <button class="ib rs" onclick="resetSize('p-bnb')" title="Reset Size" style="color:#997;">&#8855;</button>
-        <button class="ib pause-btn" id="pause-bnb" onclick="togglePause('bnb',this)" title="Pause auto-update">&#9646;&#9646;</button>
+        <button class="ib pause-btn paused" id="pause-bnb" onclick="togglePause('bnb',this)" title="Resume auto-update">&#9654;</button>
         <a href="https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT" target="_blank" class="ib" style="color:#9db4ff;text-decoration:none;font-size:10px;" title="TradingView">TV↗</a>
         <button class="ib rows-tog" id="rows-tog-bnb" onclick="toggleRows('bnb',this)" title="Collapse control rows">≡</button>
       </div>
@@ -1754,16 +1770,16 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
 <script>
 // ── Shared state ──
 var panels = {
-  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+  btc:{sym:'BTC/USDT', price:43821.5, base:43821.5, mode:'svg', zx:1, zy:1, paused:true, stochBg:1,
        autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
        showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75},
-  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+  eth:{sym:'ETH/USDT', price:2284.3,  base:2284.3,  mode:'svg', zx:1, zy:1, paused:true, stochBg:1,
        autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
        showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75},
-  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+  sol:{sym:'SOL/USDT', price:98.47,   base:98.47,   mode:'svg', zx:1, zy:1, paused:true, stochBg:1,
        autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
        showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75},
-  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg', zx:1, zy:1, paused:false, stochBg:1,
+  bnb:{sym:'BNB/USDT', price:312.8,   base:312.8,   mode:'svg', zx:1, zy:1, paused:true, stochBg:1,
        autoScroll:true, frozen:false, shiftEnabled:true, shiftPct:8, showYLeft:true, showYRight:true, futureBars:null,
        showSMA2:true, showSMA5:true, showSMA10:true, showMA20:true, showMA50:true, smaOpacity:0.75}
 };
@@ -2566,12 +2582,23 @@ function drawSVG(id){
 }
 
 // ── Pause toggle ──
+function _setPausedVisuals(id, isPaused){
+  var dotc=document.getElementById('dotc-'+id);
+  var lbl=document.getElementById('paused-lbl-'+id);
+  if(dotc){
+    dotc.setAttribute('fill', isPaused ? '#ffb400' : '#3ecf5e');
+    var anim=dotc.querySelector('animate')||dotc.parentNode.querySelector('animate');
+    if(anim) anim.setAttribute('dur', isPaused ? '0.7s' : '2s');
+  }
+  if(lbl) lbl.style.display = isPaused ? 'inline-block' : 'none';
+}
 function togglePause(id,btn){
   panels[id].paused=!panels[id].paused;
   if(panels[id].paused){
     btn.innerHTML='&#9654;'; // play triangle = currently paused
     btn.title='Resume auto-update';
     btn.classList.add('paused');
+    _setPausedVisuals(id, true);
     // For SVG mode: lock the current wrapper so it stays for interaction
     var wrap=document.getElementById('svgwrap-'+id);
     if(wrap) wrap.dataset.locked='1';
@@ -2579,6 +2606,7 @@ function togglePause(id,btn){
     btn.innerHTML='&#9646;&#9646;'; // pause bars = currently live
     btn.title='Pause auto-update';
     btn.classList.remove('paused');
+    _setPausedVisuals(id, false);
     var wrap=document.getElementById('svgwrap-'+id);
     if(wrap) delete wrap.dataset.locked;
     // Immediate redraw on resume
@@ -3110,7 +3138,7 @@ function _nbResMove(e){
   if(nb)nb.style.width=Math.max(220,_nbRes.startW+(e.clientX-_nbRes.startX))+'px';
 }
 function _nbResUp(){_nbRes.active=false;document.removeEventListener('mousemove',_nbResMove);document.removeEventListener('mouseup',_nbResUp);}
-var newsPaused=false;
+var newsPaused=true; // start paused
 function toggleNewsPause(){
   newsPaused=!newsPaused;
   var el=document.getElementById('newsTicker');
@@ -3124,6 +3152,54 @@ function toggleNewsPause(){
   }
   if(btn){btn.textContent=newsPaused?'▶':'⏸';btn.style.color=newsPaused?'#3ecf5e':'#9070b0';}
 }
+window._toggleAllCharts=function(btn){
+  var ids=['btc','eth','sol','bnb'];
+  var allPaused=ids.every(function(id){return panels[id]&&panels[id].paused;});
+  ids.forEach(function(id){
+    var pb=document.getElementById('pause-'+id);
+    if(!pb)return;
+    if(allPaused){if(panels[id].paused)togglePause(id,pb);}
+    else{if(!panels[id].paused)togglePause(id,pb);}
+  });
+  var nowPaused=ids.every(function(id){return panels[id]&&panels[id].paused;});
+  if(btn){btn.innerHTML=nowPaused?'&#9654; Charts':'&#9646;&#9646; Charts';if(nowPaused)btn.classList.add('paused');else btn.classList.remove('paused');}
+};
+window._toggleAllNews=function(btn){
+  toggleNewsPause();
+  if(btn){btn.innerHTML=newsPaused?'&#9654; News':'&#9646;&#9646; News';if(newsPaused)btn.classList.add('paused');else btn.classList.remove('paused');}
+};
+window._dockToggle=function(key,btn){
+  var targets={
+    charts:document.getElementById('panelsArea'),
+    news:document.getElementById('newsBar'),
+    vl:document.getElementById('vlPanel')
+  };
+  var el=targets[key];
+  if(!el)return;
+  var isHidden=el.style.display==='none';
+  el.style.display=isHidden?'':'none';
+  var labels={charts:'📈 Charts',news:'📰 News',vl:'📊 Vol Leaders'};
+  if(btn){
+    if(isHidden){btn.innerHTML=labels[key]+' ▼';btn.classList.remove('docked');}
+    else{btn.innerHTML=labels[key]+' ▲';btn.classList.add('docked');}
+  }
+};
+window._initDashboardLayout=function(){
+  var toolbar=document.getElementById('mainToolbar');
+  if(!toolbar)return;
+  var insertAfter=toolbar;
+  ['topPerfBar','abtWrap','stochBTPanel'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    insertAfter.parentNode.insertBefore(el,insertAfter.nextSibling);
+    insertAfter=el;
+  });
+  var pa=document.getElementById('panelsArea');
+  if(pa)pa.style.display='none';
+  var nb=document.getElementById('newsBar');
+  if(nb)nb.style.display='none';
+};
+setTimeout(window._initDashboardLayout,250);
 
 // ── News sources ──
 var newsSources={
@@ -8859,6 +8935,16 @@ window._AV_PRELOAD&&window._AV_PRELOAD();
 <!-- Bottom color picker button -->
 <div style="text-align:center;padding:10px 0 14px;background:#040804;border-top:1px solid #0d1a0d;">
   <button onclick="toggleColorPicker()" title="Color Picker — palette, RGB, CMYK" style="background:#0a000a;color:#ff9ef5;border:1.5px solid #5a1a5a;border-radius:5px;padding:5px 18px;font-size:12px;cursor:pointer;font-family:monospace;font-weight:bold;letter-spacing:.3px;">&#127912; Colors</button>
+</div>
+
+<!-- ═══ BOTTOM DOCK — minimized / docked panels ═══ -->
+<div id="bottomDock">
+  <span style="color:#2a4a2a;font-size:9px;font-weight:bold;white-space:nowrap;">&#128205; Docked:</span>
+  <button id="dockBtnNews" class="dock-btn docked" onclick="window._dockToggle('news',this)" title="Restore / hide news bar">&#128240; News &#9650;</button>
+  <button id="dockBtnCharts" class="dock-btn docked" onclick="window._dockToggle('charts',this)" title="Restore / hide chart panels">&#128200; Charts &#9650;</button>
+  <button id="dockBtnVL" class="dock-btn" onclick="window._dockToggle('vl',this)" title="Toggle volume leaders">&#128202; Vol Leaders &#9660;</button>
+  <span style="flex:1;"></span>
+  <span style="color:#2a3a2a;font-size:8px;white-space:nowrap;">&#9650; = hidden &nbsp; &#9660; = visible &nbsp; click to toggle</span>
 </div>
 
 </body>
