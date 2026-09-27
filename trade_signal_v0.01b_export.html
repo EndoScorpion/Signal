@@ -7297,6 +7297,68 @@ function _setAVKey(k){try{localStorage.setItem('_avApiKey',k);}catch(e){}}
 // Expose key setter for UI input
 window._updateAVKey=function(k){_setAVKey(k.trim());var el=document.getElementById('avKeyStatus');if(el)el.textContent=k.trim()?'✓ saved':'cleared';};
 
+// ── Webull Open API ──
+var _WB_BASE='https://api.webull.com/openapi';
+var _WB_CREDS={key:'',secret:''};
+window._updateWBCreds=function(){
+  var k=(document.getElementById('wbKeyInput')||{}).value||'';
+  var s=(document.getElementById('wbSecInput')||{}).value||'';
+  _WB_CREDS.key=k.trim();_WB_CREDS.secret=s.trim();
+  try{sessionStorage.setItem('_wb_key',_WB_CREDS.key);sessionStorage.setItem('_wb_sec',_WB_CREDS.secret);}catch(e){}
+  var el=document.getElementById('wbCredStatus');
+  if(el)el.textContent=(_WB_CREDS.key&&_WB_CREDS.secret)?'✓ creds saved':'–';
+};
+(function(){
+  try{
+    var k=sessionStorage.getItem('_wb_key');var s=sessionStorage.getItem('_wb_sec');
+    if(k&&s){_WB_CREDS.key=k;_WB_CREDS.secret=s;
+      var ki=document.getElementById('wbKeyInput');var si=document.getElementById('wbSecInput');
+      if(ki)ki.value=k;if(si)si.value=s;
+      var el=document.getElementById('wbCredStatus');if(el)el.textContent='✓ creds saved';
+    }
+  }catch(e){}
+})();
+window._tryWebullData=async function(){
+  if(window._srcPaused&&window._srcPaused['Webull']){_renderFailstops();return 0;}
+  if(!_WB_CREDS.key||!_WB_CREDS.secret){
+    _restDiagEntry('Webull','fail','No credentials — paste App Key + Secret in diag panel');
+    _setTpSrc('🐂 Webull: no creds','#ffb400');
+    return 0;
+  }
+  _restDiagEntry('Webull','pending','Webull Open API: attempting token request…');
+  _setTpSrc('🐂 Webull: connecting…','#4a9aff');
+  // Webull Open API OAuth token request
+  // Note: CORS/CSP blocks this in Artifact sandbox — works as local .html
+  try{
+    var tokenUrl=_WB_BASE+'/oauth/v1/token';
+    var body=JSON.stringify({grant_type:'client_credentials',app_key:_WB_CREDS.key,app_secret:_WB_CREDS.secret});
+    var r=await fetch(tokenUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:body,signal:AbortSignal.timeout(6000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    if(!d.access_token)throw new Error('no token in response');
+    window._wbToken=d.access_token;
+    window._wbTokenExp=Date.now()+(d.expires_in||3600)*1000;
+    _restDiagEntry('Webull','ok','Token obtained — fetching crypto quotes…');
+    // Fetch crypto quote (BTC-USD, ETH-USD)
+    var qr=await fetch(_WB_BASE+'/market/v1/instruments/quote?symbol=BTC-USD',{
+      headers:{'Authorization':'Bearer '+window._wbToken},signal:AbortSignal.timeout(6000)
+    });
+    if(qr.ok){
+      var qd=await qr.json();
+      _restDiagEntry('Webull','ok','BTC-USD quote: $'+(qd.close||qd.last||'--'));
+      _setTpSrc('🐂 Webull: LIVE','#3ecf5e');
+      return 1;
+    }
+    _restDiagEntry('Webull','ok','Token ok — market data may need Non-Display subscription');
+    _setTpSrc('🐂 Webull: connected (no live data tier)','#ffb400');
+    return 1;
+  }catch(e){
+    var blocked=e.message&&(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')||e.message.includes('Load failed'));
+    _restDiagEntry('Webull','fail',blocked?'CORS/CSP blocked (normal in Artifact sandbox — works as local .html file)':('Error: '+e.message));
+    _setTpSrc('🐂 Webull: blocked in sandbox','#ef5350');
+    return 0;
+  }
+};
 window._tryShibuiData=async function(){
   if(window._srcPaused&&window._srcPaused['Shibui']){_renderFailstops();return 0;}
   _restDiagEntry('Shibui','pending','Shibui Finance: checking preloaded US macro data…');
@@ -8799,6 +8861,7 @@ window._AV_PRELOAD&&window._AV_PRELOAD();
     <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
     <button onclick="window._tryAlphaVantage&&window._tryAlphaVantage()" style="background:#001a10;color:#3ecf5e;border:1px solid #0a3020;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;font-weight:bold;">⚡ AlphaVantage</button>
     <button onclick="window._tryShibuiData&&window._tryShibuiData()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;font-weight:bold;">📊 Shibui</button>
+    <button onclick="window._tryWebullData&&window._tryWebullData()" style="background:#000a20;color:#4a9aff;border:1px solid #0d1a4a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;font-weight:bold;">🐂 Webull</button>
     <button onclick="window._tryGitHubDatasets&&window._tryGitHubDatasets()" style="background:#001420;color:#7adfff;border:1px solid #0d2a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">🐙 GitHub Data</button>
     <button onclick="window._tryHistoricalSources&&window._tryHistoricalSources()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📅 History</button>
     <button onclick="window._loadMoreHistory&&window._loadMoreHistory('BTC/USDT','H1')" style="background:#001428;color:#9db4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">⬅ More Hist</button>
@@ -8818,6 +8881,26 @@ window._AV_PRELOAD&&window._AV_PRELOAD();
       style="background:#001a10;color:#3ecf5e;border:1px solid #0a3020;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;">Go</button>
     <button onclick="(function(){var k=window.prompt('Paste your Alpha Vantage API key:','');if(k&&k.trim()){var inp=document.getElementById('avKeyInput');if(inp)inp.value=k.trim();window._updateAVKey&&window._updateAVKey(k.trim());window._tryAlphaVantage&&window._tryAlphaVantage();}})()"
       style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;" title="Open a prompt dialog to paste key">📋</button>
+  </div>
+  <!-- Webull API key/secret input -->
+  <div style="padding:5px 10px;border-top:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;">
+    <span style="color:#4a9aff;font-size:9px;white-space:nowrap;font-weight:bold;">🐂 Webull AppKey:</span>
+    <input id="wbKeyInput" type="text" placeholder="App Key (from View →)"
+      oninput="window._updateWBCreds&&window._updateWBCreds()"
+      onkeydown="event.stopPropagation()"
+      onclick="this.select()"
+      style="flex:1;min-width:80px;background:#000510;color:#9db4ff;border:1px solid #1a2a5a;border-radius:3px;font-size:9px;padding:2px 6px;font-family:monospace;outline:none;" />
+    <input id="wbSecInput" type="password" placeholder="App Secret"
+      oninput="window._updateWBCreds&&window._updateWBCreds()"
+      onkeydown="event.stopPropagation()"
+      onclick="this.select()"
+      style="flex:1;min-width:80px;background:#000510;color:#9db4ff;border:1px solid #1a2a5a;border-radius:3px;font-size:9px;padding:2px 6px;font-family:monospace;outline:none;" />
+    <span id="wbCredStatus" style="color:#5a7aaa;font-size:9px;white-space:nowrap;"></span>
+    <button onclick="window._tryWebullData&&window._tryWebullData()"
+      style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;">Go</button>
+    <button onclick="(function(){var k=window.prompt('Webull App Key:','');var s=k?window.prompt('Webull App Secret:',''):'';if(k&&s){document.getElementById('wbKeyInput').value=k;document.getElementById('wbSecInput').value=s;window._updateWBCreds&&window._updateWBCreds();window._tryWebullData&&window._tryWebullData();}})()"
+      style="background:#001020;color:#7adfff;border:1px solid #0d2040;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;" title="Paste credentials via prompt">📋</button>
+    <span style="color:#2a3a5a;font-size:8px;">(stored in session only — never committed)</span>
   </div>
   <!-- Adaptive synth results -->
   <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
