@@ -7806,6 +7806,7 @@ var _SIGS=['up20','up50','up80','dn20','dn50','dn80'];
 var _SL={up20:'K↑20',up50:'K↑50',up80:'K↑80',dn20:'K↓20',dn50:'K↓50',dn80:'K↓80'};
 // State
 var _dc={},_branches=[],_lossLog=[],_ruleLog=[],_allResults=[],_running=false;
+window._dc=_dc; // expose for external preload scripts
 
 function _synth(sym,bars){
   var inf=_UNI[sym]||{base:100,vol:0.02,type:'crypto'};
