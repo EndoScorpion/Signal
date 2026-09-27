@@ -505,10 +505,20 @@ body.vp-mobile #mainToolbar{flex-wrap:wrap !important;}
     <span style="color:#666;">min &nbsp;—</span>
     <input id="rdMsg" type="text" value="Check trade signals!" placeholder="Reminder message…" style="flex:1;background:#000;color:#ffcf9d;border:1px solid #553;border-radius:3px;font-family:monospace;font-size:11px;padding:2px 6px;">
   </div>
-  <div style="display:flex;gap:6px;align-items:center;">
+  <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
     <button onclick="setReminder()" style="background:#1a0e00;color:#ffb400;border:1px solid #664;border-radius:3px;padding:3px 14px;font-family:monospace;font-size:11px;cursor:pointer;">&#9654; Start</button>
     <button onclick="cancelReminder()" style="background:#0a0000;color:#ef5350;border:1px solid #500;border-radius:3px;padding:3px 10px;font-family:monospace;font-size:11px;cursor:pointer;">&#10005; Cancel</button>
     <span id="rdStatus" style="color:#4a5570;font-size:10px;"></span>
+  </div>
+  <div style="border-top:1px solid #2a1a00;padding-top:7px;">
+    <div style="color:#6a6a4a;font-size:9px;margin-bottom:4px;letter-spacing:.5px;">SNOOZE ACTIVE REMINDER</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;">
+      <button onclick="snoozeReminder(5,null)" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:3px;padding:2px 8px;font-family:monospace;font-size:10px;cursor:pointer;">💤 5m</button>
+      <button onclick="snoozeReminder(10,null)" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:3px;padding:2px 8px;font-family:monospace;font-size:10px;cursor:pointer;">💤 10m</button>
+      <button onclick="snoozeReminder(15,null)" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:3px;padding:2px 8px;font-family:monospace;font-size:10px;cursor:pointer;">💤 15m</button>
+      <button onclick="snoozeReminder(30,null)" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:3px;padding:2px 8px;font-family:monospace;font-size:10px;cursor:pointer;">💤 30m</button>
+      <button onclick="snoozeReminder(60,null)" style="background:#001428;color:#9db4ff;border:1px solid #2a3a5a;border-radius:3px;padding:2px 8px;font-family:monospace;font-size:10px;cursor:pointer;">💤 1h</button>
+    </div>
   </div>
 </div>
 <div id="rdOverlay" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.4);" onclick="toggleReminderModal()"></div>
@@ -4186,17 +4196,54 @@ function cancelReminder(){
   _rdTimer=null;_rdFire=null;
   var cd=document.getElementById('rdCount');if(cd)cd.style.display='none';
 }
+function snoozeReminder(mins,rdAl){
+  if(rdAl&&rdAl.parentNode)rdAl.remove();
+  cancelReminder();
+  var ms=mins*60*1000;
+  _rdFire=Date.now()+ms;
+  // Store last snooze message for re-fire
+  var lastMsg=window._rdLastMsg||'Check trade signals!';
+  _rdTimer=setInterval(function(){
+    var left=Math.max(0,_rdFire-Date.now());
+    var m2=Math.floor(left/60000),s2=Math.floor((left%60000)/1000);
+    var cd=document.getElementById('rdCount');
+    if(cd){cd.style.display='inline';cd.textContent=m2+':'+(s2<10?'0':'')+s2;}
+    if(left<=0){cancelReminder();fireReminder(lastMsg);}
+  },1000);
+  // Show brief snooze confirmation
+  var sn=document.createElement('div');
+  sn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#001428;border:1.5px solid #4ab4ff;border-radius:6px;padding:10px 22px;font-family:monospace;font-size:12px;color:#4ab4ff;z-index:99999;box-shadow:0 4px 20px rgba(74,180,255,0.2);text-align:center;';
+  sn.textContent='💤 Snoozed '+mins+' min';
+  document.body.appendChild(sn);
+  setTimeout(function(){if(sn.parentNode)sn.remove();},2000);
+}
 function fireReminder(msg){
+  window._rdLastMsg=msg;
   // Browser notification
   if(Notification&&Notification.permission==='granted'){
     new Notification('⚡ Trade Signal Reminder',{body:msg,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="%230b0c10"/><text x="16" y="22" text-anchor="middle" fill="%233ecf5e" font-size="18">📊</text></svg>'});
   }
-  // In-page alert
+  // In-page alert with snooze buttons
   var rdAl=document.createElement('div');
-  rdAl.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#001a08;border:2px solid #3ecf5e;border-radius:8px;padding:16px 28px;font-family:monospace;font-size:13px;color:#3ecf5e;z-index:99999;box-shadow:0 4px 32px rgba(62,207,94,0.25);text-align:center;max-width:340px;';
-  rdAl.innerHTML='<div style="font-size:20px;margin-bottom:6px;">⏰</div><div style="font-weight:bold;margin-bottom:4px;">Signal Reminder</div><div style="font-size:11px;color:#9db4ff;">'+msg+'</div><button onclick="this.parentNode.remove()" style="margin-top:10px;background:#1a0a30;color:#9db4ff;border:1px solid #557;border-radius:4px;padding:4px 18px;font-family:monospace;cursor:pointer;">Dismiss</button>';
+  rdAl.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#001a08;border:2px solid #3ecf5e;border-radius:8px;padding:16px 22px 12px;font-family:monospace;font-size:13px;color:#3ecf5e;z-index:99999;box-shadow:0 4px 32px rgba(62,207,94,0.25);text-align:center;min-width:300px;max-width:380px;';
+  rdAl.innerHTML=
+    '<div style="font-size:22px;margin-bottom:5px;">⏰</div>'
+    +'<div style="font-weight:bold;margin-bottom:4px;font-size:13px;">Signal Reminder</div>'
+    +'<div style="font-size:11px;color:#9db4ff;margin-bottom:12px;">'+msg+'</div>'
+    +'<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">'
+    +'<button onclick="snoozeReminder(5,this.closest(\'div[style*=position\\:fixed]\'))" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:4px;padding:4px 10px;font-family:monospace;font-size:10px;cursor:pointer;">💤 5m</button>'
+    +'<button onclick="snoozeReminder(10,this.closest(\'div[style*=position\\:fixed]\'))" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:4px;padding:4px 10px;font-family:monospace;font-size:10px;cursor:pointer;">💤 10m</button>'
+    +'<button onclick="snoozeReminder(15,this.closest(\'div[style*=position\\:fixed]\'))" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:4px;padding:4px 10px;font-family:monospace;font-size:10px;cursor:pointer;">💤 15m</button>'
+    +'<button onclick="snoozeReminder(30,this.closest(\'div[style*=position\\:fixed]\'))" style="background:#001428;color:#4ab4ff;border:1px solid #1a3a5a;border-radius:4px;padding:4px 10px;font-family:monospace;font-size:10px;cursor:pointer;">💤 30m</button>'
+    +'</div>'
+    +'<button onclick="this.closest(\'div[style*=position\\:fixed]\').remove()" style="background:#0a0000;color:#ef5350;border:1px solid #500;border-radius:4px;padding:4px 18px;font-family:monospace;font-size:10px;cursor:pointer;">✕ Dismiss</button>';
   document.body.appendChild(rdAl);
-  setTimeout(function(){if(rdAl.parentNode)rdAl.remove();},15000);
+  // Pulse the border to draw attention
+  var pulse=0,pInt=setInterval(function(){
+    if(!rdAl.parentNode){clearInterval(pInt);return;}
+    rdAl.style.borderColor=(pulse++%2)?'#3ecf5e':'#aaff44';
+  },600);
+  setTimeout(function(){if(rdAl.parentNode)rdAl.remove();clearInterval(pInt);},20000);
 }
 
 // ── Vol color picker ──
