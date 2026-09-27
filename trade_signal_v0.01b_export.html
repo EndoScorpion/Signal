@@ -6937,8 +6937,13 @@ window._probeAllSources=function(){
     if(idx>=sources.length){
       _setTpSrc('✗ all REST blocked · trying GitHub data…','#ef5350');
       window._restLive=false;
-      // Tier 3.5 → GitHub raw CSVs → Tier 4 historical APIs → Tier 5 adaptive synth
-      setTimeout(function(){
+      // Tier 2.5 → Alpha Vantage → Tier 3.5 → GitHub raw CSVs → Tier 4 → Tier 5 synth
+      setTimeout(async function(){
+        var avLoaded=0;
+        if(window._tryAlphaVantage){
+          try{avLoaded=await window._tryAlphaVantage();}catch(e){}
+        }
+        if(avLoaded>0)return; // AV success — no need for lower tiers
         var ghP=window._tryGitHubDatasets?window._tryGitHubDatasets():Promise.resolve(0);
         ghP.then(function(ghLoaded){
           _setTpSrc(ghLoaded>0?'GitHub: '+ghLoaded+' syms':'✗ GitHub blocked · trying APIs…',ghLoaded>0?'#4ab4ff':'#ef5350');
@@ -7157,6 +7162,58 @@ function _parseCoinmetricsCSV(txt,colIdx){
   }
   return bars.length>10?bars:null;
 }
+
+// ─── Alpha Vantage REST API — Tier 2.5 ───────────────────────────────────────
+var _AV_SYMS={'BTC/USDT':'BTC','ETH/USDT':'ETH','SOL/USDT':'SOL','BNB/USDT':'BNB','XRP/USDT':'XRP'};
+var _AV_BASE='https://www.alphavantage.co/query';
+function _getAVKey(){try{return localStorage.getItem('_avApiKey')||'';}catch(e){return '';}}
+function _setAVKey(k){try{localStorage.setItem('_avApiKey',k);}catch(e){}}
+// Expose key setter for UI input
+window._updateAVKey=function(k){_setAVKey(k.trim());var el=document.getElementById('avKeyStatus');if(el)el.textContent=k.trim()?'✓ saved':'cleared';};
+
+window._tryAlphaVantage=async function(){
+  var key=_getAVKey();
+  if(!key){_restDiagEntry('AlphaVantage','fail','no API key — enter in diag panel below');return 0;}
+  _restDiagEntry('AlphaVantage','pending','fetching DIGITAL_CURRENCY_DAILY for 5 syms…');
+  _setTpSrc('⚡ AV: fetching…','#4ab4ff');
+  var loaded=0;
+  for(var sym in _AV_SYMS){
+    var avsym=_AV_SYMS[sym];
+    var url=_AV_BASE+'?function=DIGITAL_CURRENCY_DAILY&symbol='+avsym+'&market=USD&apikey='+key+'&datatype=csv';
+    try{
+      var r=await fetch(url,{signal:AbortSignal.timeout(10000)});
+      if(!r.ok)continue;
+      var txt=await r.text();
+      if(txt.indexOf('timestamp')<0||txt.indexOf('Error')==0||txt.indexOf('"Information"')>=0)continue;
+      var lines=txt.replace(/\r/g,'').split('\n').filter(Boolean);
+      if(lines.length<2)continue;
+      var data=[];
+      for(var i=1;i<lines.length;i++){
+        var cols=lines[i].split(',');
+        if(cols.length<5)continue;
+        var o=parseFloat(cols[1]),h=parseFloat(cols[2]),l=parseFloat(cols[3]),c=parseFloat(cols[4]);
+        if(isNaN(o)||isNaN(c))continue;
+        data.push({open:o,high:h,low:l,close:c,volume:parseFloat(cols[5]||'0'),time:new Date(cols[0]).getTime()});
+      }
+      data.reverse(); // AV returns newest-first, reverse to oldest-first
+      if(data.length>0){
+        _dc[sym+'__D1']={data:data,dataType:'live',src:'alphavantage'};
+        // Also store as H4/H1 by resampling (use daily as proxy)
+        if(!_dc[sym+'__H4'])_dc[sym+'__H4']={data:data.slice(-200),dataType:'live',src:'av-daily'};
+        loaded++;
+      }
+    }catch(e){}
+  }
+  if(loaded>0){
+    _restDiagEntry('AlphaVantage','ok',loaded+' syms daily OHLCV loaded');
+    _setTpSrc('⚡ AV: '+loaded+' syms live','#3ecf5e');
+    window._restLive=true;
+    setTimeout(function(){if(typeof runStochBTs==='function')runStochBTs();},300);
+  }else{
+    _restDiagEntry('AlphaVantage','fail','all syms failed — check key or CORS');
+  }
+  return loaded;
+};
 
 window._tryGitHubDatasets=async function(){
   _restDiagEntry('GitHub Data','pending','Fetching BTC(jptrustlearning) + ETH/SOL/BNB/XRP(coinmetrics)…');
@@ -8524,6 +8581,23 @@ if(document.readyState==='loading'){
 })();
 </script>
 
+<script>
+// Pre-populate AV key input from localStorage on page load
+(function(){
+  function initAVKeyUI(){
+    var inp=document.getElementById('avKeyInput');
+    var st=document.getElementById('avKeyStatus');
+    if(!inp)return;
+    try{
+      var saved=localStorage.getItem('_avApiKey')||'';
+      if(saved){inp.value=saved;if(st)st.textContent='✓ saved';}
+    }catch(e){}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initAVKeyUI);}
+  else{initAVKeyUI();}
+})();
+</script>
+
 <!-- ═══ REST DIAGNOSTIC POPUP ═══ -->
 <div id="restDiagPopup" style="display:none;position:fixed;top:58px;right:18px;z-index:99990;width:400px;max-height:520px;background:#030b03;border:1.5px solid #1a4a1a;border-radius:6px;font-family:monospace;font-size:9px;box-shadow:0 6px 30px rgba(0,0,0,0.95);flex-direction:column;" onmousedown="startDragPanel('restDiagPopup',event)">
   <div style="padding:5px 10px;background:#041404;border-bottom:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;cursor:move;flex-shrink:0;">
@@ -8553,10 +8627,20 @@ if(document.readyState==='loading'){
     <button onclick="window._tryCSVDownload&&window._tryCSVDownload()" style="background:#100800;color:#ff8050;border:1px solid #2a1800;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">CSV (Yahoo)</button>
     <button onclick="window._runAdaptiveSynthSearch&&window._runAdaptiveSynthSearch()" style="background:#0a0a00;color:#aaff44;border:1px solid #1a2a00;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">Adaptive Synth ▶</button>
     <button onclick="window._tryChartImages&&window._tryChartImages()" style="background:#140a00;color:#ffb400;border:1px solid #2a1800;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📸 Chart Imgs</button>
+    <button onclick="window._tryAlphaVantage&&window._tryAlphaVantage()" style="background:#001a10;color:#3ecf5e;border:1px solid #0a3020;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;font-weight:bold;">⚡ AlphaVantage</button>
     <button onclick="window._tryGitHubDatasets&&window._tryGitHubDatasets()" style="background:#001420;color:#7adfff;border:1px solid #0d2a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">🐙 GitHub Data</button>
     <button onclick="window._tryHistoricalSources&&window._tryHistoricalSources()" style="background:#001428;color:#4ab4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">📅 History</button>
     <button onclick="window._loadMoreHistory&&window._loadMoreHistory('BTC/USDT','H1')" style="background:#001428;color:#9db4ff;border:1px solid #0d1a3a;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">⬅ More Hist</button>
     <button onclick="window._showBackupOptions&&window._showBackupOptions()" style="background:#140000;color:#ef5350;border:1px solid #2a0000;border-radius:3px;font-size:9px;padding:2px 6px;cursor:pointer;">⚠ Backups</button>
+  </div>
+  <!-- Alpha Vantage API key input -->
+  <div style="padding:5px 10px;border-top:1px solid #0d2a0d;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+    <span style="color:#6a9a6a;font-size:9px;white-space:nowrap;">⚡ AV Key:</span>
+    <input id="avKeyInput" type="password" placeholder="paste API key…" oninput="window._updateAVKey&&window._updateAVKey(this.value)"
+      style="flex:1;background:#001000;color:#aaffaa;border:1px solid #1a4a1a;border-radius:3px;font-size:9px;padding:2px 6px;font-family:monospace;outline:none;min-width:0;" />
+    <span id="avKeyStatus" style="color:#5a8a5a;font-size:9px;white-space:nowrap;"></span>
+    <button onclick="(function(){var k=document.getElementById('avKeyInput').value.trim();window._updateAVKey&&window._updateAVKey(k);if(k)window._tryAlphaVantage&&window._tryAlphaVantage();})()"
+      style="background:#001a10;color:#3ecf5e;border:1px solid #0a3020;border-radius:3px;font-size:9px;padding:2px 7px;cursor:pointer;">Go</button>
   </div>
   <!-- Adaptive synth results -->
   <div id="restDiagSynth" style="padding:5px 10px;border-top:1px solid #0d2a0d;font-size:7.5px;display:none;flex-shrink:0;overflow-y:auto;max-height:160px;"></div>
