@@ -1,0 +1,102 @@
+<!-- addon29 (b039) slcNet: auto-cascading data layer. Connector -> Yahoo -> Stooq -> AlphaVantage(key) -> user proxy -> imported/cached files. Works with or without Claude. -->
+<style>#slcNetP{position:fixed;right:12px;bottom:12px;width:340px;max-height:70vh;overflow:auto;background:#10161f;color:#dfe8f3;border:1px solid #2e6;border-radius:8px;font:12px system-ui;z-index:2147483000;display:none;padding:8px}#slcNetP h4{margin:0 0 6px;color:#4f8}#slcNetP .r{display:flex;justify-content:space-between;gap:6px;padding:2px 0;border-bottom:1px solid #223}#slcNetP .ok{color:#4f8}#slcNetP .bad{color:#f66}#slcNetP .na{color:#999}#slcNetP button,#slcNetP input{font:12px system-ui;margin:2px 2px 2px 0}#slcNetBtn{position:fixed;right:12px;bottom:12px;z-index:2147482999;background:#0b3;color:#fff;border:0;border-radius:14px;padding:4px 10px;font:12px system-ui;cursor:pointer}</style>
+<script>
+(function(){
+if(window.slcNet)return;
+var KEY="slc_net_v1",BANK={},ST={},LOG=[];
+function ls(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}}
+function lsw(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var CFG=ls(KEY)||{};CFG.av=CFG.av||"";CFG.proxy=CFG.proxy||"";CFG.off=CFG.off||{};
+function save(){lsw(KEY,CFG)}
+function log(m){LOG.push(new Date().toTimeString().slice(0,8)+" "+m);if(LOG.length>60)LOG.shift();try{var s=document.getElementById("slcNetLog");if(s)s.textContent=LOG.slice(-8).join("\n")}catch(e){}}
+function st(n){return ST[n]||(ST[n]={ok:0,fail:0,streak:0,dead:false,last:""})}
+function good(n){var s=st(n);s.ok++;s.streak=0;s.last="ok";paint()}
+function badm(n,e){var s=st(n);s.fail++;s.streak++;s.last=String(e&&e.message||e).slice(0,60);if(s.streak>=3&&!s.dead){s.dead=true;log(n+" failed 3x - skipped for this session, trying next method")}paint()}
+function alive(n){return !CFG.off[n]&&!st(n).dead}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+async function F(url,ms){var c=new AbortController(),t=setTimeout(function(){c.abort()},ms||12000);try{var u=url;if(CFG.proxy&&/\{url\}/.test(CFG.proxy)&&arguments[2]==="px")u=CFG.proxy.replace("{url}",encodeURIComponent(url));var r=await fetch(u,{signal:c.signal,credentials:"omit"});if(!r.ok)throw new Error("HTTP "+r.status);return r}finally{clearTimeout(t)}}
+async function retry(fn,n){var e;for(var i=0;i<(n||2);i++){try{return await fn()}catch(x){e=x;await sleep(400*(i+1))}}throw e}
+function iso(t){return new Date(t*1000).toISOString().slice(0,10)}
+function rngFor(c){return c<=100?"6mo":c<=260?"1y":c<=520?"2y":c<=1300?"5y":"max"}
+/* ---- bar sources: each returns [{time,open,high,low,close,volume}] oldest..newest ---- */
+async function yahooBars(s,a,px){var m=a.timespan==="M",u="https://query1.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(s)+"?range="+(m?"10y":rngFor(a.count||100))+"&interval="+(m?"1mo":"1d")+"&events=div";var j=await (await F(u,12000,px)).json(),r=j&&j.chart&&j.chart.result&&j.chart.result[0];if(!r||!r.timestamp)throw new Error("no data");var q=r.indicators.quote[0],o=[];for(var i=0;i<r.timestamp.length;i++){if(q.close[i]==null)continue;o.push({time:iso(r.timestamp[i]),open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i],volume:q.volume[i]||0})}
+ var dv=[];if(r.events&&r.events.dividends)Object.keys(r.events.dividends).forEach(function(k){var d=r.events.dividends[k];dv.push({amount:d.amount,ex_div_date:iso(d.date),pay_date:"",div_type:"cash"})});o._div=dv.sort(function(a,b){return a.ex_div_date<b.ex_div_date?-1:1});return o}
+async function stooqBars(s,a,px){if(a.timespan==="M")throw new Error("daily only");var u="https://stooq.com/q/d/l/?s="+encodeURIComponent(s.toLowerCase().replace(/[.]/g,"-"))+".us&i=d";var t=await (await F(u,12000,px)).text();var L=t.trim().split(/\r?\n/);if(L.length<3||!/date/i.test(L[0]))throw new Error("no data");var o=[];for(var i=1;i<L.length;i++){var c=L[i].split(",");if(c.length<5||isNaN(+c[4]))continue;o.push({time:c[0],open:+c[1],high:+c[2],low:+c[3],close:+c[4],volume:+c[5]||0})}if(!o.length)throw new Error("empty");return o}
+async function avBars(s,a){if(!CFG.av)throw new Error("no key");if(a.timespan==="M"){var j=await (await F("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol="+s+"&apikey="+CFG.av)).json(),k="Monthly Time Series"}else{var j=await (await F("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize="+((a.count||100)>100?"full":"compact")+"&symbol="+s+"&apikey="+CFG.av)).json(),k="Time Series (Daily)"}var T=j[k];if(!T)throw new Error(j.Note||j.Information||"no data");return Object.keys(T).sort().map(function(d){var x=T[d];return {time:d,open:+x["1. open"],high:+x["2. high"],low:+x["3. low"],close:+x["4. close"],volume:+x["5. volume"]}})}
+function bankBars(s){var b=BANK[s];if(!b||!b.length)throw new Error("not imported");return b.map(function(x){return {time:x[0],open:x[1],high:x[2],low:x[3],close:x[4],volume:x[5]||0}})}
+var BARSRC=[["Yahoo",function(s,a){return yahooBars(s,a)}],["Stooq",function(s,a){return stooqBars(s,a)}],["AlphaVantage",avBars],["Proxy-Yahoo",function(s,a){if(!CFG.proxy)throw new Error("no proxy set");return yahooBars(s,a,"px")}],["Imported",function(s){return bankBars(s)}]];
+async function barsFor(s,a){var errs=[];for(var i=0;i<BARSRC.length;i++){var n=BARSRC[i][0];if(!alive(n))continue;try{var r=await retry(function(){return BARSRC[i][1](s,a)},n==="Imported"?1:2);if(r&&r.length){good(n);r=r.slice(-(a.count||100));log(s+" via "+n);return {bars:r,src:n}}throw new Error("empty")}catch(e){badm(n,e);errs.push(n+": "+(e.message||e))}}
+ var cached=bankBars2(s);if(cached)return {bars:cached,src:"Cache"};throw new Error(errs.join(" | ")||"all methods off")}
+function bankBars2(s){try{return bankBars(s)}catch(e){return null}}
+/* ---- cascading mcp-compatible object ---- */
+var realMcp=null,realTried=false;
+async function real(){if(realTried&&!realMcp)return null;if(realMcp)return realMcp;realTried=true;try{if(window.claude&&claude.use){var m=await Promise.race([claude.use("mcp"),sleep(4000).then(function(){return null})]);if(m&&m.callTool)realMcp=m}}catch(e){}return realMcp}
+function wrap(p){return {payload:p}}
+function unw(r){var p=r&&r.payload;if(typeof p==="string"){try{p=JSON.parse(p)}catch(e){}}return p}
+async function viaReal(server,tool,args,opts){var m=await real();if(!m||!alive("Claude-Webull"))throw new Error("connector unavailable");try{var r=await m.callTool(server,tool,args,opts);good("Claude-Webull");return r}catch(e){badm("Claude-Webull",e);throw e}}
+async function callTool(server,tool,args,opts){
+ args=args||{};
+ if(tool==="get_stock_bars"){var syms=args.symbols||[args.symbol],got={},res=[],miss=syms.slice();
+  try{var r=await viaReal(server,tool,args,opts),p=unw(r);((p&&p.result)||[]).forEach(function(x){if(x.result&&x.result.length){got[x.symbol]=x.result;}});miss=syms.filter(function(s){return !got[s]})}catch(e){}
+  var q=miss.slice(),errs=0;await Promise.all([0,1,2].map(async function(){while(q.length){var s=q.shift();try{var o=await barsFor(s,args);got[s]=o.bars;BANK[s]=BANK[s]||null;if(o.bars._div)DIV[s]=o.bars._div}catch(e){errs++}}}));
+  syms.forEach(function(s){if(got[s])res.push({symbol:s,result:got[s]})});
+  if(!res.length)throw new Error("all data sources failed (see 🔌 Data sources)");return wrap({result:res})}
+ if(tool==="get_stock_dividend_calendar"||tool==="get_fund_dividends"){var s=args.symbol;
+  try{return await viaReal(server,tool,args,opts)}catch(e){}
+  if(DIV[s]&&DIV[s].length)return wrap({result:tool==="get_fund_dividends"?DIV[s].map(function(d){return {share_date:d.ex_div_date,pay_date:d.pay_date,dps:d.amount}}):DIV[s]});
+  if(alive("Yahoo")){try{var o=await retry(function(){return yahooBars(s,{count:520})},2);good("Yahoo");DIV[s]=o._div||[];return wrap({result:tool==="get_fund_dividends"?DIV[s].map(function(d){return {share_date:d.ex_div_date,pay_date:d.pay_date,dps:d.amount}}):DIV[s]})}catch(e){badm("Yahoo",e)}}
+  if(CFG.av&&alive("AlphaVantage")){try{var j=await (await F("https://www.alphavantage.co/query?function=DIVIDENDS&symbol="+s+"&apikey="+CFG.av)).json(),a=(j.data||[]).map(function(d){return {amount:+d.amount,ex_div_date:d.ex_dividend_date,pay_date:d.payment_date||"",div_type:"cash"}});good("AlphaVantage");DIV[s]=a.reverse();return wrap({result:DIV[s]})}catch(e){badm("AlphaVantage",e)}}
+  return wrap({result:[]})}
+ if(tool==="get_fund_brief"){try{return await viaReal(server,tool,args,opts)}catch(e){return wrap({})}}
+ return viaReal(server,tool,args,opts)}
+var DIV={};
+var API={callTool:callTool,viaFallback:true};
+/* ---- import (drag-drop / picker): CSV symbol,date,open,high,low,close,volume | JSON {SYM:[[d,o,h,l,c,v]]} | Webull-shaped payload ---- */
+function importText(name,t){var n=0;try{if(/^\s*[\[{]/.test(t)){var j=JSON.parse(t);if(j.payload)j=typeof j.payload==="string"?JSON.parse(j.payload):j.payload;if(j.result&&Array.isArray(j.result)){j.result.forEach(function(r){if(r.symbol&&r.result){BANK[r.symbol]=r.result.map(function(x){return [x.time.slice(0,10),+x.open,+x.high,+x.low,+x.close,+x.volume||0]}).sort(function(a,b){return a[0]<b[0]?-1:1});n++}})}else{Object.keys(j).forEach(function(k){var v=j[k];if(Array.isArray(v)&&v.length&&Array.isArray(v[0])&&/^\d{4}-/.test(String(v[0][0]))){BANK[k]=v.slice().sort(function(a,b){return a[0]<b[0]?-1:1});n++}})}}
+ else{var L=t.split(/\r?\n/),H=L[0].toLowerCase().split(",").map(function(x){return x.trim().replace(/"/g,"")}),ix=function(k){return H.indexOf(k)},si=ix("symbol")<0?ix("sym"):ix("symbol"),di=ix("date")<0?ix("time"):ix("date"),oi=ix("open"),hi=ix("high"),li=ix("low"),ci=ix("close"),vi=ix("volume");if(si<0||di<0||ci<0)throw new Error("CSV needs columns symbol,date,open,high,low,close,volume");var T={};for(var i=1;i<L.length;i++){var c=L[i].split(",");if(c.length<=ci)continue;var s=c[si].replace(/"/g,"").trim();(T[s]=T[s]||[]).push([c[di].replace(/"/g,"").slice(0,10),+c[oi>=0?oi:ci],+c[hi>=0?hi:ci],+c[li>=0?li:ci],+c[ci],vi>=0?+c[vi]||0:0])}Object.keys(T).forEach(function(k){BANK[k]=T[k].sort(function(a,b){return a[0]<b[0]?-1:1});n++})}}catch(e){log("import "+name+": "+e.message);return 0}
+ if(n){st("Imported").dead=false;st("Imported").streak=0}log("imported "+n+" symbols from "+name);paint();return n}
+function pick(){var i=document.createElement("input");i.type="file";i.multiple=true;i.accept=".json,.csv,.txt";i.onchange=function(){Array.prototype.forEach.call(i.files,function(f){var r=new FileReader();r.onload=function(){importText(f.name,String(r.result))};r.readAsText(f)})};i.click()}
+window.addEventListener("dragover",function(e){if(e.dataTransfer&&Array.prototype.indexOf.call(e.dataTransfer.types||[],"Files")>=0)e.preventDefault()});
+window.addEventListener("drop",function(e){if(!e.dataTransfer||!e.dataTransfer.files||!e.dataTransfer.files.length)return;e.preventDefault();Array.prototype.forEach.call(e.dataTransfer.files,function(f){var r=new FileReader();r.onload=function(){importText(f.name,String(r.result))};r.readAsText(f)})});
+/* ---- probe + panel ---- */
+async function probe(){log("probing data sources...");var names=["Claude-Webull"].concat(BARSRC.map(function(x){return x[0]}));names.forEach(function(n){var s=st(n);s.dead=false;s.streak=0});
+ var m=await real();if(m){try{await m.callTool("Webull","get_stock_bars",{symbols:["SPY"],category:"US_ETF",timespan:"D",count:5,real_time_required:false},{cache:false});good("Claude-Webull")}catch(e){badm("Claude-Webull",e)}}else st("Claude-Webull").last="not in Claude";
+ for(var i=0;i<BARSRC.length-1;i++){var n=BARSRC[i][0];if(CFG.off[n])continue;try{var r=await BARSRC[i][1]("SPY",{count:5,timespan:"D"});if(r&&r.length)good(n);else throw new Error("empty")}catch(e){badm(n,e)}}paint()}
+function paint(){var p=document.getElementById("slcNetRows");if(!p)return;var names=["Claude-Webull"].concat(BARSRC.map(function(x){return x[0]})),h="";names.forEach(function(n){var s=st(n),c=CFG.off[n]?"na":s.dead?"bad":s.ok?"ok":"na",t=CFG.off[n]?"off":s.dead?"failed - skipped":s.ok?"working ("+s.ok+")":(s.last||"untested");h+='<div class="r"><span>'+n+(n==="Imported"?" ("+Object.keys(BANK).length+" sym)":"")+'</span><span class="'+c+'">'+t+'</span></div>'});p.innerHTML=h;var b=document.getElementById("slcNetBtn");if(b){var any=names.some(function(n){return st(n).ok&&!st(n).dead});b.textContent="🔌 Data: "+(any?"live":"idle")}}
+function ui(){if(document.getElementById("slcNetBtn"))return;var b=document.createElement("button");b.id="slcNetBtn";b.textContent="🔌 Data";b.onclick=function(){var p=document.getElementById("slcNetP");p.style.display=p.style.display==="block"?"none":"block";if(p.style.display==="block")paint()};document.body.appendChild(b);var p=document.createElement("div");p.id="slcNetP";p.innerHTML='<h4>Data sources (auto-fallback)</h4><div style="color:#9ab;margin-bottom:6px">Tries in order; a failing method is skipped after 3 errors and the next one starts automatically. Works in any browser, with or without Claude.</div><div id="slcNetRows"></div><div style="margin-top:6px"><button id="slcNetProbe">Test all now</button><button id="slcNetRev">Re-enable failed</button><button id="slcNetImp">Import files…</button> <button id="slcNetX">Close</button></div><div style="margin-top:4px">Alpha Vantage key (optional): <input id="slcNetAv" size="16" placeholder="free key"><br>Proxy template (optional): <input id="slcNetPx" size="26" placeholder="https://myproxy/?u={url}"></div><div style="margin-top:4px;color:#9ab">Drop CSV (symbol,date,open,high,low,close,volume) or JSON price files anywhere on the page as the last-resort source.</div><pre id="slcNetLog" style="white-space:pre-wrap;color:#8ab;max-height:110px;overflow:auto;margin:4px 0 0"></pre>';document.body.appendChild(p);
+ var g=function(i){return document.getElementById(i)};g("slcNetAv").value=CFG.av;g("slcNetPx").value=CFG.proxy;g("slcNetAv").onchange=function(){CFG.av=this.value.trim();save();st("AlphaVantage").dead=false;st("AlphaVantage").streak=0};g("slcNetPx").onchange=function(){CFG.proxy=this.value.trim();save();st("Proxy-Yahoo").dead=false;st("Proxy-Yahoo").streak=0};g("slcNetProbe").onclick=probe;g("slcNetRev").onclick=function(){Object.keys(ST).forEach(function(k){ST[k].dead=false;ST[k].streak=0});paint()};g("slcNetImp").onclick=pick;g("slcNetX").onclick=function(){p.style.display="none"};paint()}
+function boot(){try{ui()}catch(e){}}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
+window.slcNet={mcp:function(){return API},callTool:callTool,probe:probe,import:importText,pick:pick,bank:BANK,status:ST,cfg:CFG};
+/* drop-in replacement for claude.use("mcp") used by the leaderboard / fund table / history grabber */
+window.slcGetMcp=async function(){return API};
+})();
+</script>
+<script>
+/* slcCost (b039): ONE cost model used by every win test and plan. All values editable in the Data panel. */
+(function(){
+var K="slc_cost_v1",D={comm:0,size:1000,fee:0.3,slip:2,cfee:10,swap:0,taxST:24,taxDiv:24,spr:{stock:4,etf:4,income:10,metal:6,crypto:8}};
+function ld(){try{var o=JSON.parse(localStorage.getItem(K)||"null");if(o){var r=JSON.parse(JSON.stringify(D));Object.keys(o).forEach(function(k){if(k==="spr")Object.assign(r.spr,o.spr);else r[k]=o[k]});return r}}catch(e){}return JSON.parse(JSON.stringify(D))}
+var C=ld();function sv(){try{localStorage.setItem(K,JSON.stringify(C))}catch(e){}}
+function kind(g){g=String(g||"").toLowerCase();return /crypto|coin/.test(g)?"crypto":/metal|gold|silver/.test(g)?"metal":/income|weekly|div|yield/.test(g)?"income":/etf|fund/.test(g)?"etf":"stock"}
+/* round-trip cost in PERCENT of position: spread + 2x slippage + 2x commission + regulatory fee (sell side) + crypto fees + swap/financing */
+function cost(grp,days){var k=kind(grp),c=(C.spr[k]||0)/100+2*C.slip/100+2*(C.comm/C.size*100)+(k==="crypto"?2*C.cfee/100:C.fee/100)+(days||0)*C.swap/365;return c}
+function parts(grp,days){var k=kind(grp);return {spread:(C.spr[k]||0)/100,slip:2*C.slip/100,comm:2*(C.comm/C.size*100),fee:k==="crypto"?2*C.cfee/100:C.fee/100,swap:(days||0)*C.swap/365}}
+function pstr(grp,days,taxAvg){var q=parts(grp,days),t=q.spread+q.slip+q.comm+q.fee+q.swap;return "spread "+q.spread.toFixed(3)+" + slip "+q.slip.toFixed(3)+" + comm "+q.comm.toFixed(3)+" + fees "+q.fee.toFixed(3)+" + swap "+q.swap.toFixed(3)+" = "+t.toFixed(3)+"%"+(taxAvg==null?"":" + avg tax "+taxAvg.toFixed(3)+"%")+" per trade"}
+/* drawdown on additive equity curve of per-trade net % (percentage points): episode = peak -> new peak. avg = mean episode depth, total = sum of episode depths, max = deepest */
+function ddAcc(){return {dN:0,dS:0,dM:0}}
+function ddSt(){return {eq:0,pk:0,cur:0}}
+function ddAdd(s,x,a){s.eq+=x;if(s.eq>=s.pk){if(s.cur>0){a.dN++;a.dS+=s.cur;if(s.cur>a.dM)a.dM=s.cur;s.cur=0}s.pk=s.eq}else{s.cur=s.pk-s.eq}}
+function ddEnd(s,a){if(s.cur>0){a.dN++;a.dS+=s.cur;if(s.cur>a.dM)a.dM=s.cur;s.cur=0}}
+function ddOf(arr){var a=ddAcc(),s=ddSt();arr.forEach(function(x){ddAdd(s,x,a)});ddEnd(s,a);return {avg:a.dN?a.dS/a.dN:0,total:a.dS,max:a.dM,n:a.dN}}
+function tax(pct,rate){return pct>0?pct*(1-(rate==null?C.taxST:rate)/100):pct}
+function net(grp,gross,days){var n=gross-cost(grp,days);return {cost:cost(grp,days),net:n,at:tax(n)}}
+function label(grp,days){return "costs "+cost(grp,days).toFixed(2)+"%/round trip (spread+slippage+fees+commission+swap), tax "+C.taxST+"% on gains"}
+window.slcCost={parts:parts,pstr:pstr,ddAcc:ddAcc,ddSt:ddSt,ddAdd:ddAdd,ddEnd:ddEnd,ddOf:ddOf,cfg:C,kind:kind,cost:cost,tax:tax,net:net,label:label,save:sv};
+function ui(){var p=document.getElementById("slcNetP");if(!p||document.getElementById("slcCostBox"))return;var d=document.createElement("div");d.id="slcCostBox";d.style.cssText="margin-top:8px;border-top:1px solid #2e6;padding-top:6px";
+ var F=[["comm","Commission $/order"],["size","Typical position $"],["fee","Reg. fees bps (sell)"],["slip","Slippage bps/side"],["cfee","Crypto fee bps/side"],["swap","Swap/financing %/yr"],["taxST","Tax % on short-term gains"],["taxDiv","Tax % on dividends"],["spr.stock","Spread bps stock"],["spr.etf","Spread bps ETF"],["spr.income","Spread bps income ETF"],["spr.metal","Spread bps metals"],["spr.crypto","Spread bps crypto"]];
+ d.innerHTML="<b style='color:#4f8'>Cost model (applied to ALL win logic)</b>"+F.map(function(f){return "<div class=r><span>"+f[1]+"</span><input data-k='"+f[0]+"' size=5></div>"}).join("")+"<div style='color:#9ab'>Defaults are estimates for a US cash account with $0 commission - set your broker's real numbers. Taxes shown only on gains; losses not offset (conservative).</div>";p.appendChild(d);
+ Array.prototype.forEach.call(d.querySelectorAll("input"),function(i){var k=i.getAttribute("data-k").split("."),v=k.length>1?C[k[0]][k[1]]:C[k[0]];i.value=v;i.onchange=function(){var x=parseFloat(this.value);if(isNaN(x)||x<0)return;if(k.length>1)C[k[0]][k[1]]=x;else C[k[0]]=x;sv()}})}
+setInterval(ui,1000);
+})();
+</script>

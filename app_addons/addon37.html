@@ -1,0 +1,73 @@
+<style>
+#slcGrabBtn{position:fixed;top:4px;right:560px;z-index:2147483190;background:#39ff14;color:#000;border:2px solid #39ff14;border-radius:5px;font:bold 12px "Times New Roman",serif;padding:2px 9px;cursor:pointer;box-shadow:0 0 8px #39ff14}
+#slcGrabP{position:fixed;left:180px;top:220px;width:820px;max-width:96vw;max-height:72vh;overflow:auto;z-index:2147483100;background:#000;color:#39ff14;border:2px solid #39ff14;border-radius:9px;font:12px/1.35 "Times New Roman",serif;box-shadow:0 6px 26px #000;padding:5px 8px;display:none;cursor:move}
+#slcGrabP h4{margin:0;color:#ffb000;font-size:14px;display:flex;justify-content:space-between}
+#slcGrabP button{font:12px "Times New Roman",serif;background:#000;color:#39ff14;border:1px solid #39ff14;border-radius:4px;cursor:pointer;padding:1px 7px;margin:2px 3px 2px 0}#slcGrabP button.go{background:#39ff14;color:#000;font-weight:bold}
+#slcGrabP table{border-collapse:collapse;width:100%;font-size:11.5px;cursor:default}#slcGrabP td,#slcGrabP th{border-bottom:1px solid #123d12;padding:1px 5px;text-align:left;white-space:nowrap}#slcGrabP th{background:#031a03}
+#slcGrabP .ok{color:#39ff14;font-weight:bold}#slcGrabP .bad{color:#ff6b6b}#slcGrabP .wn{color:#ffd24a}#gbList{width:100%;height:50px;background:#010;color:#9dffa0;border:1px solid #1f6b1f;font:11px monospace;cursor:text}
+</style>
+<script>
+(function(){
+function g(i){return document.getElementById(i)}
+var TK="slc_tested_v1",D={},busy=false,stopF=false,fetched={},LAST=null;
+var CRYPTO="BTC ETH SOL XRP BNB DOGE ADA AVAX DOT LINK LTC MATIC HYPE ZEC NEAR PUMP ENA AAVE SUI TAO EURUSD".split(" ");
+var EXTRA={"Broad / sector ETF":"SPY QQQ IWM DIA VTI VOO XLK XLF XLE XLV XLU XLP XLY XLI XLB XLRE XLC SMH SOXX ARKK",
+"Blue-chip / dividend stock":"KO PEP JNJ PG VZ T MO PM XOM CVX ABBV MRK PFE IBM INTC CSCO KMB CL GIS KHC O MMM BMY GILD LYB UPS SBUX TGT WFC C BAC USB F DOW HPQ KEY CAG CVS AAPL MSFT NVDA AMZN GOOGL META JPM HD WMT COST DIS NKE",
+"Metals miners / royalty":"NEM GOLD AEM WPM FNV RGLD HL PAAS AG FCX SCCO"};
+function ldT(){try{return JSON.parse(localStorage.getItem(TK)||"[]")||[]}catch(e){return[]}}
+function svT(a){try{localStorage.setItem(TK,JSON.stringify(a))}catch(e){}}
+function universe(){var U={},add=function(s,grp){s=String(s||"").toUpperCase().trim();if(s&&!U[s])U[s]=grp};
+ try{((window.slcMD&&slcMD.list&&slcMD.list.MET)||[]).forEach(function(x){add(x[0],"Metals")});((window.slcMD&&slcMD.list&&slcMD.list.DIV)||[]).forEach(function(x){add(x[0],"Weekly-pay income ETF")})}catch(e){}
+ try{var C=(window.slcMD2&&slcMD2.CAT)||{};Object.keys(C).forEach(function(k){C[k].split(" ").forEach(function(s){add(s,k)})})}catch(e){}
+ Object.keys(EXTRA).forEach(function(k){EXTRA[k].split(" ").forEach(function(s){add(s,k)})});
+ var man=(g("gbList")||{}).value||"";man.split(/[\s,]+/).forEach(function(s){add(s,"Added by you")});return U}
+function todo(){var U=universe(),T={};ldT().forEach(function(s){T[s]=1});CRYPTO.forEach(function(s){T[s]=1});return Object.keys(U).filter(function(s){return !T[s]}).map(function(s){return [s,U[s]]})}
+function heap(){var m=performance&&performance.memory;return m?m.usedJSHeapSize/m.jsHeapSizeLimit:0}
+function pause(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function unwrap(res){var p=res&&res.payload;if(typeof p==="string"){try{p=JSON.parse(p)}catch(e){}}return p}
+function msg(t,c){var m=g("gbMsg");if(m){m.className=c||"";m.textContent=t}}
+function stamp(){return new Date().toISOString().slice(0,16).replace(/[-:T]/g,"")}
+function parse(res){var p=unwrap(res),o={};((p&&p.result)||[]).forEach(function(r){var b=(r.result||[]).map(function(x){return [x.time.slice(0,10),+x.open,+x.high,+x.low,+x.close,+x.volume]}).sort(function(a,c){return a[0]<c[0]?-1:1});if(b.length>30)o[r.symbol]=b});return o}
+async function pull(mcp,syms,cat){return parse(await mcp.callTool("Webull","get_stock_bars",{symbols:syms,category:cat,timespan:"D",count:1000,real_time_required:false},{cache:false}))}
+function refresh(){var t=todo(),U=universe();g("gbCount").innerHTML="Universe "+Object.keys(U).length+" symbols &middot; already tested/crypto "+(Object.keys(U).length-t.length)+" &middot; <b>untested "+t.length+"</b> &middot; fetched this session "+Object.keys(D).length;g("gbTodo").textContent=t.map(function(x){return x[0]}).join(" ")}
+async function start(){if(busy)return;var mcp=await slcGetMcp();
+ var T=todo();if(!T.length){msg("Nothing untested left.","ok");return}busy=true;stopF=false;g("gbGo").textContent="■ Stop";var t0=Date.now(),CH=+((g("sfCh")||{}).value)||(heap()>.45?1:3),HM=+((g("sfCap")||{value:.75}).value)||.75,fail=0,bars=0;Object.keys(D).forEach(function(k){bars+=D[k].length});
+ msg("Safe grab: "+T.length+" untested symbols, "+CH+" per call, memory cap "+Math.round(HM*100)+"%, max 5 min per press.");
+ try{for(var i=0;i<T.length;i+=CH){if(stopF){msg("Stopped.","wn");break}if(Date.now()-t0>300000){msg("5-minute cap - press again to continue ("+(T.length-i)+" left).","wn");break}if(heap()>HM){msg("Memory "+Math.round(heap()*100)+"% - paused.","bad");break}if(bars>900000){msg("Memory guard: 900k bars held - download the CSV, then press again.","wn");break}
+  var part=T.slice(i,i+CH),syms=part.map(function(x){return x[0]}),got={};
+  try{var a=await pull(mcp,syms,"US_ETF");Object.keys(a).forEach(function(k){got[k]=a[k]});var miss=syms.filter(function(s){return!got[s]});if(miss.length){var b=await pull(mcp,miss,"US_STOCK");Object.keys(b).forEach(function(k){got[k]=b[k]})}}catch(e){fail+=syms.length;await pause(600);continue}
+  part.forEach(function(x){if(got[x[0]]){D[x[0]]={grp:x[1],b:got[x[0]]};bars+=got[x[0]].length}else fail++});
+  var T2=ldT();Object.keys(got).forEach(function(s){if(T2.indexOf(s)<0)T2.push(s)});svT(T2);refresh();msg("Grabbed "+Object.keys(D).length+" symbols ("+bars+" bars, "+fail+" failed/empty)");await pause(450)}}
+ finally{busy=false;g("gbGo").textContent="▶ Grab history (safe chunks)";refresh();try{slcNotify("progress","History grabbed: "+Object.keys(D).length+" symbols")}catch(e){}}}
+/* ---- in-browser pooled test of daily dip rules on whatever was grabbed ---- */
+function feats(b){var n=b.length,c=b.map(function(x){return x[4]}),f=[],ag=0,al=0,rs=new Array(n).fill(null);
+ for(var i=1;i<n;i++){var d=c[i]-c[i-1],u=d>0?d:0,dn=d<0?-d:0;if(i<=14){ag+=u/14;al+=dn/14;if(i===14)rs[i]=100-100/(1+ag/Math.max(al,1e-12))}else{ag=(ag*13+u)/14;al=(al*13+dn)/14;rs[i]=100-100/(1+ag/Math.max(al,1e-12))}}
+ for(i=0;i<n;i++){var o={rsi:rs[i]};if(i>=199){var s=0;for(var k=i-199;k<=i;k++)s+=c[k];o.sma200=s/200}
+  if(i>=19){var m=0,v=0;for(k=i-19;k<=i;k++)m+=c[k];m/=20;for(k=i-19;k<=i;k++)v+=(c[k]-m)*(c[k]-m);o.bbl=m-2*Math.sqrt(v/20)}
+  if(i>=13){var lo=1e99,hi=-1e99;for(k=i-13;k<=i;k++){lo=Math.min(lo,b[k][3]);hi=Math.max(hi,b[k][2])}o.stoch=100*(c[i]-lo)/Math.max(hi-lo,1e-12)}
+  if(i>=10){o.r3=c[i]/c[i-3]-1;o.r10=c[i]/c[i-10]-1}f.push(o)}return f}
+var RULES=[["S1 RSI<30 & below Bollinger",function(f,c){return f.rsi!=null&&f.bbl!=null&&f.rsi<30&&c<f.bbl}],["S2 RSI<25",function(f){return f.rsi!=null&&f.rsi<25}],["S3 3d -5% & 10d -10%",function(f){return f.r3!=null&&f.r3<-.05&&f.r10<-.10}],["S4 below Bollinger & Stoch<10 in uptrend",function(f,c){return f.bbl!=null&&f.sma200!=null&&f.stoch!=null&&c<f.bbl&&f.stoch<10&&c>f.sma200}]];
+function per(d){return d<"2020-01-01"?"2015-19":d<"2023-01-01"?"2020-22":"2023-26"}
+function CST(grp){return window.slcCost?slcCost.cost(grp,3):0}var CT=window.slcCost?slcCost.cfg.taxST:0;
+function evalAll(){CT=window.slcCost?slcCost.cfg.taxST:0;var acc={};function A(k){return acc[k]||(acc[k]={n:0,w:0,s:0,g:0,a:0,dN:0,dS:0,dM:0})}
+ Object.keys(D).forEach(function(sym){var b=D[sym].b,F=feats(b),grp=D[sym].grp,prev=RULES.map(function(){return false}),SS={};
+  function rec(k,r3){var q=A(k),cc=CST(grp),nn=r3*100-cc,at=nn>0?nn*(1-CT/100):nn;q.n++;q.s+=nn/100;q.g+=r3;q.a+=at/100;if(nn>0)q.w++;var s=SS[k]||(SS[k]=slcCost.ddSt());slcCost.ddAdd(s,at,q)}
+  for(var i=0;i<b.length-3;i++){if(b[i][0]<"2015-01-01")continue;var c=b[i][4],r3=b[i+3][4]/c-1,P=per(b[i][0]);rec(grp+"|BASE|"+P,r3);
+   RULES.forEach(function(R,j){var on=R[1](F[i],c);if(on&&!prev[j])rec(grp+"|"+R[0]+"|"+P,r3);prev[j]=on})}
+  Object.keys(SS).forEach(function(k){slcCost.ddEnd(SS[k],acc[k])})});
+ var rows=[];Object.keys(acc).forEach(function(k){var p=k.split("|"),q=acc[k],g=100*q.g/q.n,net=100*q.s/q.n,at=100*q.a/q.n;rows.push({grp:p[0],rule:p[1],per:p[2],n:q.n,win:100*q.w/q.n,avg:net,gross:g,at:at,cost:CST(p[0]),taxAvg:net-at,parts:slcCost.pstr(p[0],3,net-at),ddAvg:q.dN?q.dS/q.dN:0,ddTot:q.dS,ddMax:q.dM,ddN:q.dN})});return rows}
+function show(){if(!Object.keys(D).length){msg("Grab some history first.","wn");return}var R=evalAll();LAST=R;var base={};R.filter(function(r){return r.rule==="BASE"}).forEach(function(r){base[r.grp+r.per]=r});
+ var rows=R.filter(function(r){return r.rule!=="BASE"&&r.n>=15}).sort(function(a,b){return a.grp<b.grp?-1:a.grp>b.grp?1:a.rule<b.rule?-1:a.rule>b.rule?1:a.per<b.per?-1:1}),h="<b>All results NET of costs (spread, slippage, fees, commission, swap) - see Data panel</b><br><b>3-day hold, each fresh signal counted once, vs all-days baseline (groups x period)</b><table><tr><th>Group</th><th>Rule</th><th>Period</th><th>Signals</th><th>Win%</th><th>Avg 3d</th><th>Costs/trade (spread+slip+comm+fees+swap, tax)</th><th>Drawdown avg / total / max (pts, after tax)</th><th>Baseline win/avg</th><th>Edge</th></tr>";
+ rows.forEach(function(r){var b=base[r.grp+r.per],e=b?r.avg-b.avg:0;h+="<tr><td>"+r.grp+"</td><td>"+r.rule+"</td><td>"+r.per+"</td><td>"+r.n+"</td><td>"+r.win.toFixed(0)+"%</td><td class="+(r.avg>0?"ok":"bad")+">"+r.avg.toFixed(2)+"% <small title='gross before costs / after tax'>(gross "+r.gross.toFixed(2)+" - costs "+r.cost.toFixed(3)+" - tax "+r.taxAvg.toFixed(3)+" = "+r.at.toFixed(2)+")</small></td><td><small>"+r.parts+"</small></td><td><small>"+r.ddAvg.toFixed(2)+" / "+r.ddTot.toFixed(1)+" / <b>"+r.ddMax.toFixed(1)+"</b> ("+r.ddN+" dd)</small></td><td>"+(b?b.win.toFixed(0)+"% / "+b.avg.toFixed(2)+"%":"-")+"</td><td class="+(e>0.2?"ok":e<0?"bad":"wn")+">"+(e>=0?"+":"")+e.toFixed(2)+"</td></tr>"});
+ g("gbOut").innerHTML=h+"</table><small class=wn>A rule is only interesting if its edge is positive in ALL three periods with 15+ signals each. Survivor-only symbols, overlapping market regimes, costs and tax are included (edit in Data panel); drawdown = additive equity curve per symbol, avg/total/max of peak-to-trough episodes - treat as a lead, not proof.</small>"}
+function csv(){var r=["symbol,group,date,open,high,low,close,volume"];Object.keys(D).forEach(function(s){D[s].b.forEach(function(x){r.push([s,'"'+D[s].grp+'"',x[0],x[1],x[2],x[3],x[4],x[5]].join(","))})});if(r.length<2){msg("Nothing to download yet.","wn");return}window.slcSave("slc_untested_symbols_history_D1_b039_"+stamp()+".csv",r.join("\n"),"text/csv")}
+function build(){if(g("slcGrabP"))return;var d=document.createElement("div");d.id="slcGrabP";
+ d.innerHTML="<h4><span>&#128229; GRAB HISTORY &middot; symbols not tested yet <small>(drag me)</small></span><button id='gbX'>x</button></h4><div id='gbCount'></div><div id='gbMsg'></div><div><button id='gbGo' class='go'>▶ Grab history (safe chunks)</button><button id='gbTest'>test the daily rules on grabbed data</button><button id='gbCsv'>download history CSV</button><button id='gbRes'>download results .txt</button><button id='gbMark'>mark all as tested</button></div><small>Add your own symbols (space/comma separated):</small><textarea id='gbList' placeholder='e.g. SCHD VYM TLT'></textarea><div style='font-size:11px;color:#9dffa0'>Untested list: <span id='gbTodo'></span></div><div id='gbOut'></div>";
+ document.body.appendChild(d);g("gbX").onclick=function(){d.style.display="none"};g("gbGo").onclick=function(){if(busy)stopF=true;else start()};g("gbTest").onclick=show;g("gbCsv").onclick=csv;g("gbList").oninput=refresh;
+ g("gbRes").onclick=function(){if(!LAST)show();if(!LAST)return;window.slcSave("slc_untested_daily_rule_results_b039_"+stamp()+".txt",LAST.map(function(r){return [r.grp,r.rule,r.per,"n="+r.n,"win_net="+r.win.toFixed(1)+"%","gross="+r.gross.toFixed(3),"cost="+r.cost.toFixed(3),"tax="+r.taxAvg.toFixed(3),"net_after_tax="+r.at.toFixed(3),r.parts,"dd_avg="+r.ddAvg.toFixed(2),"dd_total="+r.ddTot.toFixed(1),"dd_max="+r.ddMax.toFixed(1)].join(" | ")}).join("\n"),"text/plain")};
+ g("gbMark").onclick=function(){var T=ldT();todo().forEach(function(x){T.push(x[0])});svT(T);refresh();msg("All current symbols marked as tested.","ok")};refresh()}
+function open(){build();g("slcGrabP").style.display="block";refresh()}
+function btn(){if(g("slcGrabBtn"))return;var b=document.createElement("button");b.id="slcGrabBtn";b.textContent="📥 Grab untested history";b.title="Fetch daily history for every stock/ETF/fund/metal symbol that has not been tested yet, in safe chunks.";b.onclick=open;document.body.appendChild(b)}
+setInterval(function(){try{btn()}catch(e){}},1500);btn();window.slcGrab={open:open,start:start,todo:todo,universe:universe,evalAll:evalAll,_D:D};
+})();
+</script>
