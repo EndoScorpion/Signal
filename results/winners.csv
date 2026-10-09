@@ -1,0 +1,3 @@
+symbol,timeframe,rule,entry_condition,hold_bars,n,win_net_pct,avg_net_pct,periods_ok
+*,D,S1 RSI<30 & below BB,rsi < 30 and c < bbl,3,123,57.7,0.765,1of2
+*,D,S2 RSI<25,rsi < 25,3,132,56.8,0.803,1of2

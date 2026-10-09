@@ -1,0 +1,1 @@
+{"comm_per_order_usd":0,"position_usd":1000,"reg_fee_bps_sell":0.3,"slippage_bps_per_side":2,"crypto_fee_bps_per_side":10,"swap_pct_per_year":0,"tax_short_term_pct":24,"tax_dividend_pct":24,"spread_bps":{"stock":4,"etf":4,"income":10,"metal":6,"crypto":8},"note":"Estimates. Set your broker's real numbers. Taxes only on gains, losses not offset (conservative)."}
