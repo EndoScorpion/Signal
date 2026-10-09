@@ -25,7 +25,7 @@ S2 | rsi < 25</textarea></div>
 <div><label>Max open</label><input id="mp" type="number" value="5"><label>Max new / day</label><input id="mn" type="number" value="3"></div>
 <div><label>Daily loss stop %</label><input id="dl" type="number" value="2" step=".5"><label>Round-trip cost % (spread+slip+fees)</label><input id="rt" type="number" step=".001"></div>
 </div>
-<button onclick="run()">Run paper test</button><button class="s" onclick="dl()">Download trades CSV</button>
+<button onclick="run()">Run paper test</button><button class="s" onclick="dl()">Download trades CSV</button><button class="s" onclick="cp()">Copy trades</button><span id="msg" class="mu" role="status"></span>
 <label style="display:inline-block;margin-left:8px">Add your own CSV(s) (symbol.csv: date,open,high,low,close,volume) <input type="file" id="f" multiple accept=".csv"></label>
 <div id="out"></div>
 <script>
@@ -61,6 +61,8 @@ o.innerHTML=`<h3>Results</h3><div class="k"><div>Trades<b>${n}</b></div><div>Win
 <h3>By period (entry date)</h3><table><tr><th>Period</th><th>n</th><th>Win %</th><th>Avg net %</th></tr>${per}</table>
 <h3>Trades</h3><div class="sc"><table><tr><th>Sym</th><th>Entry</th><th>Exit</th><th>In</th><th>Out</th><th>Gross %</th><th>Net %</th></tr>${led.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${(+r[3]).toFixed(2)}</td><td>${(+r[4]).toFixed(2)}</td><td>${r[5].toFixed(3)}</td><td class="${r[6]>=0?'pos':'neg'}">${r[6].toFixed(3)}</td></tr>`).join('')}</table></div>
 <div class="mu">Symbols: ${syms.join(', ')}</div>`}catch(e){o.innerHTML='<div class="warn">'+e.message+'</div>'}}
-function dl(){const t='sym,entry,exit,in,out,gross%,net%\n'+LED.map(r=>r.join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));a.download='paper_trades.csv';a.click()}
+function say(m){const e=document.getElementById('msg');e.textContent=m;e.style.color='var(--ok)';setTimeout(()=>e.textContent='',6000)}
+function cp(){if(!LED.length)return say('Run a test first.');const t=LED.map(r=>r.join('\t')).join('\n');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>say('Copied '+LED.length+' trades to clipboard.'),()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove();say('Copied '+LED.length+' trades.')})}
+function dl(){if(!LED.length)return say('Run a test first.');say('Saved '+LED.length+' trades as paper_trades.csv in your Downloads folder (check the browser download bar).');const t='sym,entry,exit,in,out,gross%,net%\n'+LED.map(r=>r.join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));a.download='paper_trades.csv';a.click()}
 run();
 </script></body></html>
