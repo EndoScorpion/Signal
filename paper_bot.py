@@ -4,7 +4,7 @@ Replays rules over data/history, enters at next open, exits after HOLD days, cha
 Limits: MAX_POS open positions, MAX_NEW per day, DAILY_LOSS_STOP pct, kill file results/KILL."""
 import glob,os,csv,json,argparse
 ap=argparse.ArgumentParser();ap.add_argument("--data",default="data/history");ap.add_argument("--cost",default="cost_model.json")
-ap.add_argument("--rule",default="S1");ap.add_argument("--hold",type=int,default=3);ap.add_argument("--from",dest="frm",default="2024-01-01")
+ap.add_argument("--rule",default="S1");ap.add_argument("--winners",help="winners.csv: symbol,timeframe,rule,entry_condition,hold_bars,...; only timeframe D is used here");ap.add_argument("--hold",type=int,default=3);ap.add_argument("--from",dest="frm",default="2024-01-01")
 ap.add_argument("--equity",type=float,default=10000);ap.add_argument("--pos",type=float,default=1000)
 ap.add_argument("--max-pos",type=int,default=5);ap.add_argument("--max-new",type=int,default=3);ap.add_argument("--daily-loss-stop",type=float,default=2.0)
 a=ap.parse_args();C=json.load(open(a.cost))
@@ -15,11 +15,23 @@ def feat(c,h,l,i):
     if i>=14:
         g=[max(c[j]-c[j-1],0) for j in range(i-13,i+1)];d=[max(c[j-1]-c[j],0) for j in range(i-13,i+1)]
         ag,al=sum(g)/14,sum(d)/14;f["rsi"]=100 if al==0 else 100-100/(1+ag/al)
+    if i>=14:
+        hh,ll=max(h[i-13:i+1]),min(l[i-13:i+1]);f["stoch"]=50 if hh==ll else 100*(c[i]-ll)/(hh-ll)
+    if i>=10:f["r3"]=c[i]/c[i-3]-1;f["r10"]=c[i]/c[i-10]-1
+    if i>=50:f["up"]=c[i]>sma(c,50,i)
     if i>=20:
         m=sma(c,20,i);sd=(sum((x-m)**2 for x in c[i-19:i+1])/20)**.5;f["bbl"]=m-2*sd
     return f
 RULES={"S1":lambda f,p:f.get("rsi",99)<30 and p<f.get("bbl",0),"S2":lambda f,p:f.get("rsi",99)<25}
-rule=RULES[a.rule]
+import re
+OK=re.compile(r"^[a-z0-9_.<>=! ()+\-*/]+$")
+def mk(expr):
+    if not OK.match(expr) or "__" in expr:raise SystemExit("bad condition: "+expr)
+    g=compile(expr,"cond","eval");return lambda f,p:bool(eval(g,{"__builtins__":{}},{"rsi":f.get("rsi",99),"stoch":f.get("stoch",50),"bbl":f.get("bbl",0),"r3":f.get("r3",0),"r10":f.get("r10",0),"up":f.get("up",False),"c":p}))
+if a.winners:
+    W=[r for r in csv.DictReader(open(a.winners)) if r["timeframe"]=="D"];RL=[(r["rule"],mk(r["entry_condition"].replace(" and "," and "))) for r in W]
+    rule=lambda f,p:any(fn(f,p) for _,fn in RL)
+else:rule=RULES[a.rule]
 D={}
 for fn in glob.glob(a.data+"/*.csv"):
     R=list(csv.DictReader(open(fn)));D[os.path.basename(fn)[:-4]]=[(r["date"],float(r["open"]),float(r["high"]),float(r["low"]),float(r["close"])) for r in R]
