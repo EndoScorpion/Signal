@@ -22,3 +22,14 @@ Tiny loss counts make the win% statistically meaningless: one extra stop-out fli
 
 ## Not validated
 No M1/tick EURUSD data here (proxy blocks FX sources; Alpha Vantage free tier has no long intraday). Need MT4 History Center export (M1, FXOpen ECN).
+
+
+## FXOpen ECN commission (user-supplied, secondary sources, verify at support.fxopen.com)
+Base EUR 3.50/side = EUR 7.00 round turn per 1.00 lot; scales linearly (0.01 lot = EUR 0.07), so in POINTS it is lot-size independent.
+1 point (0.00001) on 1 lot = about USD 1, so EUR 7.00 at EURUSD ~1.1 is about 7.7 points round turn.
+| tier | commission pts | win (TP 8) | loss (SL 290) | break-even win% |
+|--|--|--|--|--|
+| EUR 7.00 round-turn (base tier) | 7.7 | +0.3 | -297.7 | 99.90% |
+| EUR 5.00 round-turn | 5.5 | +2.5 | -295.5 | 99.16% |
+| EUR 3.00 round-turn (best tier, $1.50/side) | 3.3 | +4.7 | -293.3 | 98.42% |
+At the base tier an 8-point target nets about 0.3 pts per win, so no realistic win rate pays. Best tier needs large volume. Use --comm 7.7 in fx_scalp_sim.py.
