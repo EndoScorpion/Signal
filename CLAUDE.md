@@ -12,7 +12,7 @@ GOAL: use autonomous agent + planning mode to (1) pull sandbox/real daily histor
 ## Data sources (try in this order, auto-fallback, log which worked)
 1. Webull MCP get_stock_bars (symbols<=3, timespan D, count up to 1000)
 2. Shibui Finance MCP (call get_database_schema + get_query_patterns first; shibui. prefix; LIMIT<=200; DuckDB)
-3. fetch_history.py (Yahoo chart -> Stooq -> Alpha Vantage with ALPHAVANTAGE_KEY env var). Run: python3 fetch_history.py SPY QQQ ULTY
+3. fetch_history.py (Yahoo chart -> yfinance (pip install yfinance) -> Stooq -> Alpha Vantage with ALPHAVANTAGE_KEY env var). Run: python3 fetch_history.py SPY QQQ ULTY
 4. Files the user drops in data/import/ (CSV symbol,date,open,high,low,close,volume)
 
 ## Workflow

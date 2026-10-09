@@ -14,6 +14,12 @@ def stooq(s):
     L=get(f"https://stooq.com/q/d/l/?s={s.lower()}.us&i=d").strip().splitlines()
     if len(L)<3:raise Exception("no data")
     return [tuple([r[0]]+[float(x) for x in r[1:6]]) for r in (l.split(",") for l in L[1:]) if len(r)>=5]
+def yf(s):
+    import yfinance as Y  # pip install yfinance (free, no key)
+    d=Y.download(s,period=a.range,interval="1d",auto_adjust=False,progress=False)
+    if d.empty:raise Exception("no data")
+    d.columns=[c[0] if isinstance(c,tuple) else c for c in d.columns]
+    return [(i.strftime("%Y-%m-%d"),r["Open"],r["High"],r["Low"],r["Close"],r["Volume"]) for i,r in d.iterrows()]
 def av(s):
     k=os.environ.get("ALPHAVANTAGE_KEY");assert k,"no ALPHAVANTAGE_KEY"
     T=json.loads(get(f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=full&symbol={s}&apikey={k}"))["Time Series (Daily)"]
@@ -22,7 +28,7 @@ log=open("results_fetch_log.txt","a")
 for i,s in enumerate(S):
     f=f"{a.out}/{s}.csv"
     if os.path.exists(f):continue
-    for n,fn in (("yahoo",yahoo),("stooq",stooq),("alphavantage",av)):
+    for n,fn in (("yahoo",yahoo),("yfinance",yf),("stooq",stooq),("alphavantage",av)):
         try:
             r=fn(s)
             with open(f,"w",newline="") as o:
