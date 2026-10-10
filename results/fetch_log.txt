@@ -1,0 +1,1 @@
+2026-10-10: stocks seeded AAPL,MSFT,JPM (55 D bars); others seed Monday. Crypto M60 checked BTC/ETH/SOL: no C1 signal; H1 is M60 on Webull.
