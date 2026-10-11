@@ -16,3 +16,9 @@ Pending / next:
 2. User runs fetch_history.py with yfinance for 2015-19 daily data; rerun backtests + walk-forward.
 3. MQL session exports winners.csv in the contract format; run its rules through the same split.
 Tools in repo: backtest_costs.py, paper_bot.py (--winners), signal_paper_lab.html (offline), hs_pattern.py, test_mq5_family.py, fx_scalp_sim.py, hst_to_csv.py. All have .txt copies in backups/.
+
+## Session links (remembered 11 Oct 2026)
+- This session (Signal, "Resume from handoff"): https://claude.ai/code/session_01QiXsPubSeJzFboiisYu8tD
+- MQL session ("Planning mode and win logic", MQL repo, branch claudeai/friendly-heisenberg-bfo0sc, PR #1): https://claude.ai/code/session_01EGmAMAxLXRAU9ypfciCQ6w
+- Signal draft PR: https://github.com/EndoScorpion/Signal/pull/3
+- 11 Oct 2026: a note about the winners.csv contract and the live-account no-orders rule was posted into the MQL session at the user's request.
