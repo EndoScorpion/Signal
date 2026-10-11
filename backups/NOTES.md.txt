@@ -22,3 +22,11 @@ Tools in repo: backtest_costs.py, paper_bot.py (--winners), signal_paper_lab.htm
 - MQL session ("Planning mode and win logic", MQL repo, branch claudeai/friendly-heisenberg-bfo0sc, PR #1): https://claude.ai/code/session_01EGmAMAxLXRAU9ypfciCQ6w
 - Signal draft PR: https://github.com/EndoScorpion/Signal/pull/3
 - 11 Oct 2026: a note about the winners.csv contract and the live-account no-orders rule was posted into the MQL session at the user's request.
+
+## Thread map (11 Oct 2026, from session list)
+- "$" main project coordinator: "Remote Control session (from a project)" https://claude.ai/code/session_01DyMXgM2RA1Uqvs7DWmeiy1 (idle; was waiting for Desktop Commander reconnect / b12 reports). Coordinates the EA backtest threads (b22/b38/b39/b40/b41 builds, win logic).
+- MQL/win-logic: "Trade - Planning mode and win logic" https://claude.ai/code/session_01EGmAMAxLXRAU9ypfciCQ6w (MQL repo, PR #1)
+- Signal/daily+FX: "Resume from handoff" https://claude.ai/code/session_01QiXsPubSeJzFboiisYu8tD (this repo, PR #3)
+- Older: "MarketWatch" session_016hdrtwJUBpAuEJZw3RCpgt (Signal repo, artifacts), "MQL4 file analysis and comments" session_01CnxMmute6ojtCDXbf2oZ25 (Signal PR #1).
+- Cost note: compute spent per session so far is shown in the session list (MarketWatch ~$320, Trade/win-logic ~$65, this one ~$9): consider fresh short sessions from repo notes.
+- 11 Oct 2026: info-only note about the contract and no-live-orders rule posted to the "$" coordinator and the MQL session at the user's request.
