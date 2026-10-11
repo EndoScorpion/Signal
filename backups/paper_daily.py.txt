@@ -40,11 +40,13 @@ def run(rule,files):
     fn_,hold,stop,rt=RULES[rule]
     for fn in files:
         s=os.path.basename(fn)[:-4];B=load(fn);t=[b[0] for b in B];c=[b[4] for b in B];h=[b[2] for b in B];l=[b[3] for b in B]
+        last=-99  # one trade per hold window per symbol (no overlapping positions)
         for i in range(len(B)-1):   # last bar may still be forming? signal bars must have a next bar
             if t[i][:10]<a.start:continue
             k=(rule,s,t[i])
-            if k in L and L[k]["status"]=="closed":continue
-            if k not in L and not fn_(feat(c,h,l,i),c[i]):continue
+            if k in L and L[k]["status"]=="closed":last=i;continue
+            if k not in L and (i-last<=hold or not fn_(feat(c,h,l,i),c[i])):continue
+            last=i
             e=B[i+1][1];r=dict(rule=rule,sym=s,signal_time=t[i],entry_time=t[i+1],entry=round(e,6),exit_time="",exit="",gross_pct="",net_pct="",after_tax_pct="",status="open")
             x=xt=None
             for j in range(i+1,min(i+1+hold,len(B))):

@@ -1,1 +1,2 @@
 2026-10-10: stocks seeded AAPL,MSFT,JPM (55 D bars); others seed Monday. Crypto M60 checked BTC/ETH/SOL: no C1 signal; H1 is M60 on Webull.
+2026-10-11 Sun: stocks skipped; crypto D screen, M60 written for ADA AVAX DOT (12h drop >2%); others no signal
