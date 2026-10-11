@@ -1,0 +1,19 @@
+SPY yahoo FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+SPY stooq FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+SPY alphavantage FAIL no ALPHAVANTAGE_KEY
+QQQ yahoo FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+QQQ stooq FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+QQQ alphavantage FAIL no ALPHAVANTAGE_KEY
+ULTY yahoo FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+ULTY stooq FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+ULTY alphavantage FAIL no ALPHAVANTAGE_KEY
+SPY webull 1000
+ULTY webull 655
+QQQ webull 1000
+GLD webull 1000
+SLV webull 1000
+KO webull 1000
+XOM webull 1000
+JPM webull 1000
+AAPL webull 1000
+MSFT webull 1000

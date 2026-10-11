@@ -1,0 +1,71 @@
+<style>
+#slcFund{position:fixed;left:110px;top:150px;width:880px;max-width:96vw;max-height:72vh;overflow:auto;z-index:2147483110;background:#000;color:#39ff14;border:2px solid #ffb000;border-radius:9px;font:12px/1.35 "Times New Roman",serif;box-shadow:0 6px 26px #000;padding:5px 8px;display:none;cursor:move}
+#slcFund h4{margin:0;color:#ffb000;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+#slcFund button,#slcFund select{font:12px "Times New Roman",serif;background:#000;color:#39ff14;border:1px solid #39ff14;border-radius:4px;cursor:pointer;padding:1px 7px;margin:2px 3px 2px 0}#slcFund button.go{background:#ffb000;color:#000;font-weight:bold}
+#slcFund table{border-collapse:collapse;width:100%;font-size:11.5px;cursor:default}#slcFund td,#slcFund th{border-bottom:1px solid #3a2a00;padding:1px 5px;text-align:right;white-space:nowrap}#slcFund td:nth-child(-n+3),#slcFund th:nth-child(-n+3){text-align:left}
+#slcFund th{position:sticky;top:0;background:#1a1200;cursor:pointer;user-select:none}#slcFund th:hover{color:#fff}
+#slcFund .up{color:#39ff14}#slcFund .dn{color:#ff6b6b}#slcFund .wn{color:#ffd24a}#slcFund .bad{color:#ff6b6b}#slcFund .ok{color:#39ff14;font-weight:bold}
+#fpHash{width:100%;height:240px;background:#010;color:#9dffa0;border:1px solid #1f6b1f;font:11px monospace;display:none;cursor:text}
+#fpMsg{color:#9dffa0;min-height:15px}
+</style>
+<script>
+(function(){
+var F={},busy=false,stopF=false,KEY="slc_fundperf_v1",SORT=[{k:"tot",d:-1}];
+var COLS=[["rank","#"],["s","Fund"],["cat","Group"],["tot","Total*"],["w1","1W"],["m1","1M"],["m3","3M"],["m6","6M"],["y25","2025"],["y20","Since 2020"],["last","Price"]];
+function g(i){return document.getElementById(i)}
+function ld(){try{F=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){F={}}}
+function sv(){try{localStorage.setItem(KEY,JSON.stringify(F))}catch(e){}}
+function heap(){var m=performance&&performance.memory;return m?m.usedJSHeapSize/m.jsHeapSizeLimit:0}
+function pause(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function unwrap(res){var p=res&&res.payload;if(typeof p==="string"){try{p=JSON.parse(p)}catch(e){}}return p}
+function note(k,t){try{window.slcNotify(k,t)}catch(e){}}
+function msg(t,c){var m=g("fpMsg");if(m){m.className=c||"";m.textContent=t}}
+function chunk(){var c=+(g("sfCh")||{}).value||0;return c||(heap()>.45?1:3)}
+function cat(){return (window.slcMD2&&slcMD2.CAT)||{}}
+function parse(res){var p=unwrap(res),o={};((p&&p.result)||[]).forEach(function(r){var b=(r.result||[]).map(function(x){return {d:x.time.slice(0,10),o:+x.open,c:+x.close}}).sort(function(a,c){return a.d<c.d?-1:1});if(b.length)o[r.symbol]=b});return o}
+function back(b,days){var t=new Date(Date.parse(b[b.length-1].d)-days*864e5).toISOString().slice(0,10),x=null;for(var i=b.length-1;i>=0;i--){if(b[i].d<=t){x=b[i];break}}return x?(b[b.length-1].c/x.c-1)*100:null}
+async function loadPart(mcp,part,k){var D=parse(await mcp.callTool("Webull","get_stock_bars",{symbols:part,category:"US_ETF",timespan:"D",count:140,real_time_required:false},{cache:false}));
+ var M={};try{M=parse(await mcp.callTool("Webull","get_stock_bars",{symbols:part,category:"US_ETF",timespan:"M",count:120,real_time_required:false},{cache:false}))}catch(e){}
+ part.forEach(function(s){var b=D[s];if(!b||b.length<5)return;var last=b[b.length-1],m=M[s],y25=null,y20=null,full=false;
+  if(m&&m.length){var by={};m.forEach(function(x){by[x.d.slice(0,7)]=x});var d24=by["2024-12"],d25=by["2025-12"],l=m[m.length-1];y25=d24?((d25||l).c/d24.c-1)*100:null;var f=m.filter(function(x){return x.d>="2020-01"})[0];full=m[0].d<"2020-02";y20=f?(l.c/f.o-1)*100:null}
+  var w1=back(b,7),m1=back(b,30),m3=back(b,91),m6=back(b,182),parts=[m1,m3,m6].filter(function(v){return v!=null});
+  F[s]={s:s,cat:k,w1:w1,m1:m1,m3:m3,m6:m6,y25:y25,y20:y20,full20:full,tot:parts.length?parts.reduce(function(a,v){return a+v},0):null,last:last.c,asOf:last.d,at:Date.now()}})}
+async function load(force){if(busy)return;var mcp=await slcGetMcp();
+ var C=cat(),todo=[];Object.keys(C).forEach(function(k){C[k].split(" ").forEach(function(s){if(force||!F[s]||Date.now()-F[s].at>6*36e5)todo.push([s,k])})});
+ if(!todo.length){msg(Object.keys(C).length?"All funds are fresh (under 6 h old). Use Refresh to force.":"Fund list not ready yet - wait a few seconds and retry.","ok");return}
+ busy=true;stopF=false;g("fpLoad").textContent="■ Stop";var t0=Date.now(),CH=chunk(),HM=+(g("sfCap")||{value:.75}).value||.75,fails=0;msg("Safe load: "+todo.length+" funds, "+CH+" per call, memory cap "+Math.round(HM*100)+"%, max 5 min.");
+ try{for(var i=0;i<todo.length;i+=CH){if(stopF){msg("Stopped.","wn");break}if(Date.now()-t0>300000){msg("5-minute cap reached - press Load again to continue ("+(todo.length-i)+" left).","wn");break}if(heap()>HM){msg("Memory "+Math.round(heap()*100)+"% - paused to protect the browser.","bad");break}
+  var sl=todo.slice(i,i+CH),byCat={};sl.forEach(function(x){(byCat[x[1]]=byCat[x[1]]||[]).push(x[0])});
+  for(var k in byCat){try{await loadPart(mcp,byCat[k],k)}catch(e){fails++}}sv();render();msg("Loaded "+Object.keys(F).length+" ("+Math.min(i+CH,todo.length)+"/"+todo.length+" this run, "+fails+" failed)");await pause(450)}}
+ finally{busy=false;g("fpLoad").textContent="▶ Load (safe chunks)";render();note("progress","Fund performance table: "+Object.keys(F).length+" funds")}}
+function val(r,k,i){return k==="rank"?i:r[k]}
+function sorted(){var L=Object.keys(F).map(function(k){return F[k]}),grp=g("fpGrp")&&g("fpGrp").value;if(grp)L=L.filter(function(r){return r.cat===grp});
+ L.sort(function(a,b){for(var i=0;i<SORT.length;i++){var k=SORT[i].k,x=a[k],y=b[k];if(x==null&&y==null)continue;if(x==null)return 1;if(y==null)return -1;if(x===y)continue;var c=typeof x==="string"?(x<y?-1:1):(x-y);return c*SORT[i].d}return 0});return L}
+function pc(v){return v==null?"<span class=wn>n/a</span>":"<span class='"+(v>=0?"up":"dn")+"'>"+(v>=0?"+":"")+v.toFixed(1)+"%</span>"}
+var CIRC=["①","②","③","④","⑤","⑥"];
+function render(){var L=sorted(),th=g("fpHead");if(th)th.innerHTML=COLS.map(function(c){var i=SORT.findIndex(function(s){return s.k===c[0]});return "<th data-k='"+c[0]+"' title='Click: sort by this. Shift+click: add as next sort level (click again to flip, again to remove).'>"+c[1]+(i>=0?" "+CIRC[i]+(SORT[i].d<0?"▼":"▲"):"")+"</th>"}).join("");
+ var b=g("fpBody");if(b)b.innerHTML=L.length?L.map(function(r,i){return "<tr><td>"+(i+1)+"</td><td><b>"+r.s+"</b></td><td>"+r.cat+"</td><td><b>"+pc(r.tot)+"</b></td><td>"+pc(r.w1)+"</td><td>"+pc(r.m1)+"</td><td>"+pc(r.m3)+"</td><td>"+pc(r.m6)+"</td><td>"+pc(r.y25)+"</td><td>"+pc(r.y20)+(r.y20!=null&&!r.full20?" <small class=wn>*</small>":"")+"</td><td>"+r.last.toFixed(2)+"</td></tr>"}).join(""):"<tr><td colspan=11 style='text-align:left'>Press Load.</td></tr>";
+ var h=g("fpHash");if(h){var o={};L.forEach(function(r,i){o[r.s]={rank:i+1,group:r.cat,total_1m_3m_6m_pct:r.tot==null?null:+r.tot.toFixed(2),w1:r.w1==null?null:+r.w1.toFixed(2),m1:r.m1==null?null:+r.m1.toFixed(2),m3:r.m3==null?null:+r.m3.toFixed(2),m6:r.m6==null?null:+r.m6.toFixed(2),y2025:r.y25==null?null:+r.y25.toFixed(2),since2020:r.y20==null?null:+r.y20.toFixed(2),price:r.last,as_of:r.asOf}});h.value="// hash table: FUND => fields, sorted by: "+SORT.map(function(s){return s.k+(s.d<0?" desc":" asc")}).join(", ")+"\n"+JSON.stringify(o,null,1)}
+ var c=g("fpCount");if(c){var n=0;Object.keys(cat()).forEach(function(k){n+=cat()[k].split(" ").length});c.textContent=Object.keys(F).length+" of "+n+" loaded"}}
+function clickHead(k,shift){var i=SORT.findIndex(function(s){return s.k===k});
+ if(!shift){SORT=[{k:k,d:(i===0&&SORT.length===1)?-SORT[0].d:(k==="s"||k==="cat"||k==="rank"?1:-1)}]}
+ else if(i<0){if(SORT.length<6)SORT.push({k:k,d:(k==="s"||k==="cat"||k==="rank"?1:-1)})}
+ else if(SORT[i].d<0&&(k==="s"||k==="cat"||k==="rank")||SORT[i].d>0&&!(k==="s"||k==="cat"||k==="rank"))SORT.splice(i,1);else SORT[i].d*=-1;
+ if(!SORT.length)SORT=[{k:"tot",d:-1}];render()}
+function open(){build();g("slcFund").style.display="block";render()}
+function build(){if(g("slcFund"))return;ld();var d=document.createElement("div");d.id="slcFund";
+ d.innerHTML="<h4><span>&#128200; TOP FUND PERFORMERS &middot; highest total gain first <small>(drag me)</small></span><button id='fpX'>x</button></h4><div><button id='fpLoad' class='go'>▶ Load (safe chunks)</button><button id='fpRef'>Refresh all</button> <select id='fpGrp'><option value=''>All groups</option></select> <button id='fpVw'>hash table view</button><button id='fpReset'>reset sort</button><button id='fpCsv'>download CSV</button><button id='fpJs'>download hash (.json)</button> <span id='fpCount'></span></div><div id='fpMsg'></div>"+
+ "<table id='fpTbl'><thead><tr id='fpHead'></tr></thead><tbody id='fpBody'></tbody></table><textarea id='fpHash' readonly></textarea>"+
+ "<div style='font-size:11px;color:#9dffa0;margin-top:3px'>Click a column to sort; <b>Shift+click</b> other columns to add 2nd, 3rd... sort levels (numbered ①②③). *Total = 1M + 3M + 6M price gains added together (a momentum score; overlapping periods, so it double-counts recent moves). 1W/1M/3M/6M use daily closes (7/30/91/182 calendar days back). 2025 = Dec 2024 to Dec 2025. Since 2020 marked * = fund listed later. Price return only - distributions are not included, so income ETFs look worse than their real return. Past gains don't predict future ones. Not advice.</div>";
+ document.body.appendChild(d);var s=g("fpGrp");Object.keys(cat()).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=k;s.appendChild(o)});s.onchange=render;
+ g("fpHead").onclick=function(e){var t=e.target.closest("th");if(t)clickHead(t.getAttribute("data-k"),e.shiftKey)};
+ g("fpX").onclick=function(){d.style.display="none"};g("fpLoad").onclick=function(){if(busy)stopF=true;else load(false)};g("fpRef").onclick=function(){if(!busy)load(true)};g("fpReset").onclick=function(){SORT=[{k:"tot",d:-1}];render()};
+ g("fpVw").onclick=function(){var h=g("fpHash"),t=g("fpTbl"),on=h.style.display!=="block";h.style.display=on?"block":"none";t.style.display=on?"none":"";this.textContent=on?"table view":"hash table view"};
+ function st(){return new Date().toISOString().slice(0,16).replace(/[-:T]/g,"")}
+ g("fpCsv").onclick=function(){var r=["rank,fund,group,total_1m3m6m_pct,w1_pct,m1_pct,m3_pct,m6_pct,y2025_pct,since2020_pct,price,as_of"];function n(v){return v==null?"":v.toFixed(2)}sorted().forEach(function(x,i){r.push([i+1,x.s,'"'+x.cat+'"',n(x.tot),n(x.w1),n(x.m1),n(x.m3),n(x.m6),n(x.y25),n(x.y20),x.last,x.asOf].join(","))});window.slcSave("slc_fund_performance_b039_"+st()+".csv",r.join("\n"),"text/csv")};
+ g("fpJs").onclick=function(){window.slcSave("slc_fund_performance_hash_b039_"+st()+".json",g("fpHash").value.replace(/^\/\/.*\n/,""),"application/json")};render()}
+function btn(){var m=g("slcMD2");if(!m||g("fpOpen"))return;var h=m.querySelector("h5");if(!h)return;var b=document.createElement("button");b.id="fpOpen";b.textContent="📊 Sortable table (floating)";b.style.cssText="margin-left:10px;background:#ffb000;color:#000;border:1px solid #ffb000;border-radius:4px;font:12px 'Times New Roman',serif;cursor:pointer";b.onclick=function(e){e.preventDefault();open()};h.appendChild(b)}
+setInterval(function(){try{btn()}catch(e){}},1500);ld();
+window.slcFund={open:open,load:load,_F:F,sort:function(a){SORT=a;render()}};
+})();
+</script>

@@ -1,0 +1,18 @@
+<script>
+(function(){
+/* build 039: every download over ~1.2 MB is split into numbered parts (partNNofMM) unless it is already split. Parts are saved one at a time with a pause so the browser never builds one huge blob. */
+var MAX=1200000,GAP=700;
+function plan(name,text,mime){text=String(text==null?"":text);if(/part\d+of\d+/i.test(name)||text.length<=MAX)return null;
+ var isCsv=/\.csv$/i.test(name)||/csv/.test(mime||""),isHtml=/\.html?$/i.test(name)||/html/.test(mime||"");if(isHtml)return null;
+ var L=text.split("\n"),head=isCsv?L[0]:"",parts=[],cur=[],sz=0,i0=isCsv?1:0;
+ for(var i=i0;i<L.length;i++){var ln=L[i];if(sz+ln.length+1>MAX&&cur.length){parts.push(cur);cur=[];sz=0}cur.push(ln);sz+=ln.length+1}if(cur.length)parts.push(cur);
+ if(parts.length<2)return null;var m=/^(.*?)(\.[A-Za-z0-9]+)$/.exec(name)||[null,name,""],N=parts.length,pad=function(n){return (n<10?"0":"")+n};
+ return parts.map(function(p,k){var body=(isCsv?head+"\n":"")+p.join("\n");return {name:m[1]+"_part"+pad(k+1)+"of"+pad(N)+m[2],text:body,mime:mime}})}
+function wrap(){var f=window.slcSave;if(typeof f!=="function"||f.__split)return;
+ var w=function(name,text,mime){var P;try{P=plan(name,text,mime)}catch(e){P=null}if(!P)return f.apply(this,arguments);var self=this;
+  try{slcNotify("progress","Large download split into "+P.length+" parts ("+Math.round(String(text).length/1048576*10)/10+" MB) - saving one at a time")}catch(e){}
+  P.forEach(function(x,k){setTimeout(function(){try{f.call(self,x.name,x.text,x.mime)}catch(e){}if(k===P.length-1)try{slcNotify("done","All "+P.length+" parts saved")}catch(e){}},k*GAP)});return true};
+ w.__split=1;for(var k in f)try{w[k]=f[k]}catch(e){}window.slcSave=w}
+setInterval(wrap,1000);wrap();window.slcSplit={plan:plan,MAX:MAX};
+})();
+</script>
