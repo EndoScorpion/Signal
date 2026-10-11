@@ -20,7 +20,7 @@ function build(){var t=stamp(),H=null;try{if(window.slcDivTop&&Object.keys(slcDi
  var inj="var __D="+JSON.stringify(data).replace(/</g,"\\\\u003c")+";window.__PLAN="+JSON.stringify(plan).replace(/</g,"\\\\u003c")+";window.__RULES="+JSON.stringify(rs)+";";
  html=html.replace("var __D=/*__DATA__*/{};",function(){return inj});return {html:html,n:Object.keys(H).length,f:t.f}}
 var NEED=["dtLoad","dtCsv","dtJs","dtVw","fpLoad","fpHead","fpCsv","fpJs","fpVw","rbDed","rbScan","rbSv","gbGo","gbTest","gbCsv","slcSave=","slcNet","slcGetMcp","slcDivTop","slcFund","slcRobust","slcGrab","slcSplit","kOpen","kReset"];
-function verify(h){var miss=NEED.filter(function(k){return h.indexOf(k)<0});return {ok:!miss.length&&h.indexOf("</html>")>0&&(h.match(/<script/g)||[]).length===(h.match(/<\/script>/g)||[]).length,miss:miss}}
+function verify(h){var miss=NEED.filter(function(k){return h.indexOf(k)<0});return {ok:!miss.length&&h.indexOf("</html>")>0&&(h.match(/<script/g)||[]).length===(h.match(/<\\/script>/g)||[]).length,miss:miss}}
 function go(){var r=build();var v=verify(r.html);if(!v.ok){try{slcNotify("error","Export NOT saved - integrity check failed, missing: "+(v.miss.join(", ")||"unbalanced script tags"))}catch(e){}return}if(!r.n){try{slcNotify("warn","Load the yield leaderboard first (Load button), then export - otherwise the file would be empty.")}catch(e){}try{slcDivTop.open()}catch(e){}return}
  window.slcSave("slc_dividends_funds_FULL_APP_b039_"+r.f+".html",r.html,"text/html")}
 function rebind(){var b=document.getElementById("slcDivHx");if(b&&!b.__full){b.__full=1;b.onclick=go;b.textContent="⬇ HTML export: Dividends (full app)";b.title="One standalone HTML file with the leaderboard, fund table, rules checker and file tools - all buttons work offline."}}
