@@ -64,7 +64,7 @@ Start-Process -FilePath $Terminal -ArgumentList "`"$ini`"" -Wait
 
 # 5. Copy report into the repo and score it
 $src = Join-Path $DataDir "tester\$name.htm"
-if (-not (Test-Path $src)) { Write-Host "No report at $src — check MT4 journal (missing history / EA failed to load)." -ForegroundColor Red; exit 1 }
+if (-not (Test-Path $src)) { Write-Host "No report at $src - check MT4 journal (missing history / EA failed to load)." -ForegroundColor Red; exit 1 }
 $dst = Join-Path $repo "data\$name.htm"
 Copy-Item $src $dst -Force
 Write-Host "Report saved: $dst"
