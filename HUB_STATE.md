@@ -142,5 +142,8 @@ Setup: EURUSD M1, 2021.03.19-2022.01.01, spread 3, commission 6, deposit 10000.
 | g7a | BlockADX=24 | 134 | 73.9 | 120.09 | 1.953 | 21.84 |
 | g7b | BlockADX=20 | 80 | 70.0 | 51.76 | 1.586 | 29.29 |
 CAVEATS: all in-sample on the same window; BlockADX direction was chosen from g5e on this data, so g7a is tuned, not validated.
-PENDING (need MT4 closed): g7c ADX22, g7d ADX26, g7a at spread 6, g7a OOS 2022.01-2022.06 (history may be missing).
+| g7c | BlockADX=22 | 113 | 70.8 | 79.60 | 1.665 | 21.84 |
+| g7d | BlockADX=26 | 156 | 71.8 | 119.01 | 1.747 | 34.26 |
+(g7c/g7d run 12 Oct 2026, same setup, both OOS gate PASS; source data\g7cd_summary_12Oct2026.txt. Still in-sample tuning on one window.)
+PENDING (need MT4 closed): g7a at spread 6, g7a OOS 2022.01-2022.06 (history may be missing), g5 a-e rerun.
 Note: a stray "g8a 5k 500lev 6pt" block sits in Signal\data\g8_summary_12Oct2026.txt, written by another session (unverified).
