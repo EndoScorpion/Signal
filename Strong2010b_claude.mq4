@@ -1,6 +1,6 @@
 // +------------------------------------------------------------------+
 // |                                         Strong2010b_claude.mq4   |
-// |                                 Copyright © 2021, Nasif Hossain   |
+// |                                 Copyright (c) 2021, Nasif Hossain  |
 // |                                                         nhi.com   |
 // +------------------------------------------------------------------+
 // STRATEGY OVERVIEW
@@ -65,6 +65,19 @@ void OnDeinit(const int reason)
 {
 }
 
+// CountOpenOrders: counts only this EA's own orders (by symbol + magic).
+// OrdersTotal() is global; using it as a guard would block on other EAs.
+int CountOpenOrders(string sym, int magic)
+{
+    int cnt = 0;
+    for (int i = 0; i < OrdersTotal(); i++) {
+        if (OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) {
+            if (OrderSymbol() == sym && OrderMagicNumber() == magic) cnt++;
+        }
+    }
+    return cnt;
+}
+
 // +------------------------------------------------------------------+
 // |  FIX 2: Commission-aware entry gate                               |
 // +------------------------------------------------------------------+
@@ -114,8 +127,8 @@ bool SessionAllowed()
 void OnTick()
 {
     // ---- GUARD RAILS: skip if insufficient history or position open ----
-    if (Bars < 100)          { return; }
-    if (OrdersTotal() > 0)   { return; }
+    if (Bars < 100)                                { return; }
+    if (CountOpenOrders(Symbol(), 4598447) > 0)    { return; }
 
     // FIX 3: session filter — only trade during allowed market hours
     if (!SessionAllowed()) return;
@@ -165,14 +178,15 @@ void OnTick()
     int    tp   = GetRegimeTP(); // FIX 3: dynamic TP based on regime
     int slip = 5, magic = 4598447;
 
-    // FIX 2: reject entry if TP doesn't cover spread + commission with minimum R:R
-    if (!CostGateOK(tp, (int)(sl / Point))) return;
+    // FIX 2: sl and tp are in broker points; compare in the same unit.
+    // sl=290 → 29 pips on 5-digit; tp=300/360 → 30/36 pips on 5-digit.
+    if (!CostGateOK(tp, (int)sl)) return;
 
     RefreshRates();
-    if (OrderSend(Symbol(), OP_BUY, Lots, Ask, slip, Ask - (sl * p), Ask + (tp * p), "", magic, 0, clrGreen) == 1) {
-        if (OrdersTotal() > 0) { }
+    // Use Point (not p) here: sl/tp are in raw broker points, not pip-units.
+    if (OrderSend(Symbol(), OP_BUY, Lots, Ask, slip, Ask - (sl * Point), Ask + (tp * Point), "", magic, 0, clrGreen) > 0) {
         return;
-    } else if (OrdersTotal() == 0) {
+    } else if (CountOpenOrders(Symbol(), magic) == 0) {
         Print("OrderSend err ", GetLastError());
         return;
     }
