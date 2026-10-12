@@ -154,5 +154,9 @@ DECISION RULE for the ADX sweep (written 12 Oct 2026 BEFORE sweep results were s
 - Reject all if (b) is not met, or gains appear in only 1 of the 3 choppy years; then stop.
 - Holdout 2019-2022 is run exactly ONCE on the single chosen variant; no re-tuning afterwards.
 Sweep results: data\adx_sweep_tuning_12Oct2026.txt.
+HISTORY COVERAGE CHECK (12 Oct 2026, read-only sample of MT4_Backtest\history\...\EURUSD1.hst, ~3.5M bars; a full year is ~372k M1 bars; approximate, sampled every 5000th bar):
+2011 ~350k, 2012 ~360k, 2019 ~360k, 2021 ~335k = full. 2016 ~285k (76%), 2022 ~255k (68%), 2026 ~280k (YTD).
+PATCHY: 2013 ~200k, 2014 ~135k, 2015 ~115k (31%), 2017 ~180k (48%), 2018 ~130k (35%), 2020 ~220k (59%). MISSING: 2023, 2024 (0 bars); 2025 ~105k (28%).
+Consequence: 2023-2025 "0 trades" = no history, not a filter bug. 2015/2017/2018/2020 per-year results come from partial data, so they are weak evidence either way; holdout 2019-2022 is only trustworthy for 2019, 2021, 2022(part). 2016 is the best choppy tuning year.
 PENDING: g5 a-e rerun. Per-year (from .htm): g4b/g6b lose in 2015, 2016, 2018 (PF 0.59-0.86), win 2017/2019/2020/2022/2026; 2023-2025 have 0 trades (history missing or filter blocks all).
 Note: a stray "g8a 5k 500lev 6pt" block sits in Signal\data\g8_summary_12Oct2026.txt, written by another session (unverified).
