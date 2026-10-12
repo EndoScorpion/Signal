@@ -146,5 +146,7 @@ CAVEATS: all in-sample on the same window; BlockADX direction was chosen from g5
 | g7d | BlockADX=26 | 156 | 71.8 | 119.01 | 1.747 | 34.26 |
 (g7c/g7d run 12 Oct 2026, same setup, both OOS gate PASS; source data\g7cd_summary_12Oct2026.txt. Still in-sample tuning on one window.)
 g7a extras (12 Oct 2026, data\g7a_extra_summary_12Oct2026.txt): spread 6 on 2021 window: 138 trades, WR 74.6%, PF 2.040, DD $18.70, PASS (higher PF than spread 3 is odd - 4 more trades; treat as unexplained). 2022.01-2022.07 spread 3: 126 trades, WR 75.4%, PF 1.885, DD $33.76, PASS (first true out-of-window check for g7a).
+g7a on choppy years (12 Oct 2026, data\g7a_years_summary_12Oct2026.txt), all FAIL: 2015 WR 52.1% PF 0.702 (73 tr); 2016 WR 48.4% PF 0.594 (155 tr); 2018 WR 52.4% PF 0.696 (126 tr). ADX 24 does NOT fix choppy years; g7a's 2021/2022H1 PF 1.9-2.0 does not generalise.
+Improvement loop round 1 (master proposals; tune 2015-2018 ONLY, hold out 2019-2022): (1) BlockADX sweep 20/22/24/26, (2) ATR volatility cap, (3) loss-streak pause (last, high overfit risk).
 PENDING: g5 a-e rerun. Per-year (from .htm): g4b/g6b lose in 2015, 2016, 2018 (PF 0.59-0.86), win 2017/2019/2020/2022/2026; 2023-2025 have 0 trades (history missing or filter blocks all).
 Note: a stray "g8a 5k 500lev 6pt" block sits in Signal\data\g8_summary_12Oct2026.txt, written by another session (unverified).
