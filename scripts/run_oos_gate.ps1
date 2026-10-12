@@ -18,6 +18,7 @@ param(
     [int]   $Commission = 8,
     [int]   $Deposit  = 10000
 )
+if (Test-Path 'C:\Users\endos\Desktop\hst_out\MT4_PAUSE') { Write-Host 'MT4 PAUSED (hst_out\MT4_PAUSE exists) - not starting.' -ForegroundColor Yellow; exit 6 }
 
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot

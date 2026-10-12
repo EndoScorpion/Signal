@@ -1,3 +1,4 @@
+if (Test-Path 'C:\Users\endos\Desktop\hst_out\MT4_PAUSE') { Write-Host 'MT4 PAUSED (hst_out\MT4_PAUSE exists) - not starting.' -ForegroundColor Yellow; exit 6 }
 $out = 'C:\Users\endos\Signal\data\g5_summary_v2_12Oct2026.txt'
 $gate = 'C:\Users\endos\Signal\scripts\compile_and_gate_v2_12Oct2026.ps1'
 foreach ($n in 'g5a','g5b','g5c','g5d','g5e') {

@@ -1,4 +1,5 @@
-﻿$out = 'C:\Users\endos\Signal\data\g8_summary_12Oct2026.txt'
+﻿if (Test-Path 'C:\Users\endos\Desktop\hst_out\MT4_PAUSE') { Write-Host 'MT4 PAUSED (hst_out\MT4_PAUSE exists) - not starting.' -ForegroundColor Yellow; exit 6 }
+$out = 'C:\Users\endos\Signal\data\g8_summary_12Oct2026.txt'
 $gate = 'C:\Users\endos\Signal\scripts\compile_and_gate_v2_12Oct2026.ps1'
 $jobs = @(
  @{N='g7c';L='g7c ADX22 base';A=@()},

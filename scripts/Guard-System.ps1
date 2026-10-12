@@ -33,8 +33,9 @@ Log 'guard started'
 while (-not (Test-Path -LiteralPath $stop)) {
   $freeMB = [int]((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1024)
   if ($freeMB -lt $RamLowMB) {
-    $k = Get-Process -Name chrome,PhoneExperienceHost -ErrorAction SilentlyContinue
-    if ($k -and [G]::IdleSec() -ge 10) { $k | Stop-Process -Force -ErrorAction SilentlyContinue; Log "RAM low ($freeMB MB): closed chrome/PhoneExperienceHost" }
+    # chrome removed 12 Oct 2026 at user request (it closed Chrome while they were reading); only Phone Link is closed now
+    $k = Get-Process -Name PhoneExperienceHost -ErrorAction SilentlyContinue
+    if ($k -and [G]::IdleSec() -ge 10) { $k | Stop-Process -Force -ErrorAction SilentlyContinue; Log "RAM low ($freeMB MB): closed PhoneExperienceHost" }
   }
   $load = (Get-CimInstance Win32_Processor | Measure-Object LoadPercentage -Average).Average
   $temp = Get-Temp

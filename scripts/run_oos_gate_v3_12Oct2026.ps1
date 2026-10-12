@@ -21,6 +21,7 @@ param(
     [int]   $Model   = 0
 )
 
+if ((Test-Path 'C:\Users\endos\Desktop\hst_out\MT4_PAUSE') -or (Test-Path 'C:\Users\endos\MT4_Backtest\PAUSE')) { Write-Host 'MT4 PAUSED (PAUSE file exists) - not starting.' -ForegroundColor Yellow; exit 6 }
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 
@@ -76,4 +77,5 @@ $code = $LASTEXITCODE
 if ($code -eq 0) { Write-Host "OOS GATE: PASS (exit 0)" -ForegroundColor Green } else { Write-Host "OOS GATE: FAIL (exit $code)" -ForegroundColor Red }
 Write-Host "Next: git add data\$name.htm; commit; push; record numbers in HUB_STATE.md ## RESULTS"
 exit $code
+
 

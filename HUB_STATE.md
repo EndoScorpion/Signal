@@ -1,175 +1,46 @@
-# endos-29 Master Hub — State File
-Last updated: 2026-10-12 (OOS-gate cloud thread)
+# HUB_STATE (coordinator: "Phone Android Signal" [33e18c])
 
-## BLOCKING GATE
-**2021 M1 OOS backtest must exit 0 before ANY EA code changes.**
-Pass bar: PF ≥ 1.10 AND max DD < 5% ($500 on $10k) after 8pt commission.
+Rules (set by Nasif): single coordinator; sessions send short text reports here. Do NOT start MT4 or tests. `C:\Users\endos\Desktop\hst_out\MT4_PAUSE` stays until Nasif lifts it.
 
----
+## Global status (2026-10-12)
+- MT4: PAUSED (MT4_PAUSE flag present). No MT4 tests started from this session.
+- RAM: very tight (free ~420-710 MB, memory 86-89%). clone-guard hook blocks PowerShell under 1.5 GB free.
+- Phone link: two-way confirmed. Remote-control host = claude.exe PID 4200 (`--remote-control Signal`). Never end it.
 
-## GATE STATUS (2026-10-12): RAN LOCALLY — g4b PASS (PF 1.460); see ## RESULTS and the g6/g7 notes below. (Earlier text said "NOT RUN"; MT4 runs on the local PC only.)
-- **Cannot run in cloud.** MT4 Strategy Tester + FXOpen 2021 M1 tick history exist only on the PC.
-- **EA mismatch fixed in this file.** Old Job 1 said "b20legs_g1a (Strong2010b_claude.mq4 current branch)".
-  Those are different EAs: the branch `Strong2010b_claude.mq4` (662 lines) is a BUY-only PatRec rewrite;
-  b20legs_g1a is the SELL-leg EA whose 2019 IS numbers are in the leaderboard. Testing the branch file
-  would gate an EA that has no in-sample baseline. Job 1 now targets the compiled
-  `MQL4\Experts\Strong2010b_claude_b20legs_g1a.ex4` (present on the PC, built 2026-10-08).
-- **Scorer verified.** `oos_check.py` on the 2019 g2a report: 403 trades, PF 1.249, DD 1.05%, exit 0.
-  Price-based 8pt recompute gives PF 1.26 / net $138.76, matching data/stats_8pt.md. Note: the report's
-  profit column already carries ~8.6pt/trade broker cost, so `--commission 8` adds only $0.008/trade on top.
-- **One-command runner:** `scripts/run_oos_gate.ps1` (RAM gate, writes tester ini, runs MT4 headless,
-  copies report to data/, runs oos_check, exits 0/1). Set deposit $10,000 in the tester GUI once first.
+## Sessions
+| Session | Ref | Role | State |
+|---|---|---|---|
+| Phone Android Signal | 33e18c | Coordinator (this) | idle |
+| Remote control | 0056ec | Archives sessions / RAM advice | idle; archived "Recover closed master CLI" |
+| Remote Control session (from a project) | 094e32 | hst_out MT4 test queue owner | idle; MT4_PAUSE enforced in run_tester.ps1 |
+| Shared session | 8fb6e6 | clone/master test, large transcript | idle; candidate to archive |
 
-### Next steps
-1. Close MT4, then from the Signal folder: `powershell -ExecutionPolicy Bypass -File scripts\run_oos_gate.ps1`
-2. Push the .htm from data/, fill in ## RESULTS below.
-3. For the full OOS candidate set (stats_8pt.md, m=21): compile g2a–g2d .mq4 in MetaEditor (no .ex4 yet),
-   rerun with `-Expert Strong2010b_claude_g2a` etc. A winner also needs day-block p ≤ 0.0024.
-4. Only after exit 0: unblock Jobs 2–4.
+## Done
+- MT4_PAUSE guard added to Signal scripts: run_oos_gate.ps1, _v2, run_g5_all_v2, run_g7, run_g8 (compile_and_gate_v2 and run_oos_gate_v3 already guarded).
+- scripts/ram_guard_v1_12Oct2026.ps1: tiered RAM relief (Eco / pause / graceful end), dry-run default, protected list. Tested on a fake process only. NOT running.
 
----
+## Pending (needs Nasif)
+- Silent-mode edits for gate scripts (TestVisualEnable=false, minimized terminal launch).
+- Commission 6 -> 8 in run_oos_gate_v3, g5, g7, g8 runners (g5 results must be rescored at 8 before comparing with hst_out).
+- Whether to run ram_guard live (Eco-only first).
+- Archive "Shared session" when idle to free RAM.
 
-## Overnight Queue (process in order)
+## Findings
+- tick_log.csv built (88 reports, read-only, no MT4 started). History gaps seen in tester reports: 2023 and 2024 show 1970 dates (no data); 2022 data ends 2022.09.28; 2025 starts 2025.08.28. Any tick/history download for those periods needs MT4 -> blocked by MT4_PAUSE.
 
-### JOB 1 — BLOCKING OOS GATE
-```
-EA:        Strong2010b_claude_b20legs_g1a.ex4  (MQL4\Experts on the PC — NOT the branch Strong2010b_claude.mq4)
-Pair:      EURUSD
-TF:        M1
-Period:    2021-03-19 to 2022-01-01
-SpreadPt:  3  (sp3)
-Deposit:   $10,000
-Leverage:  1:100
-Commission: 8pt per RT (InpCommissionPts=8)
-```
-**Steps:**
-1. RAM check: `Get-CimInstance Win32_OperatingSystem | Select FreePhysicalMemory`
-   - Must be ≥ 1,000,000 KB (1.0 GB) before launching MT4
-2. Launch MT4 Strategy Tester → load Strong2010b_claude.mq4
-3. Set dates: 2021.03.19 – 2022.01.01, M1, EURUSD, Every Tick, $10k, 1:100
-4. Run → wait for completion
-5. Right-click Report tab → Save as HTML → save to:
-   `Signal\data\Strong2010b_claude_b20legs_g1a_M1_20210319-20220101_sp3.htm`
-6. Push to git:
-   ```
-   cd Signal
-   git add data/Strong2010b_claude_b20legs_g1a_M1_20210319-20220101_sp3.htm
-   git commit -m "data: 2021 M1 OOS backtest result (b20legs_g1a)"
-   git push -u origin claude/mql4-analysis-comments-bd4kz3
-   ```
-7. Score:
-   ```
-   python analysis/oos_check.py data/Strong2010b_claude_b20legs_g1a_M1_20210319-20220101_sp3.htm --commission 8 --deposit 10000
-   ```
-8. Record result in this file under ## RESULTS
+## Active (as seen on Nasif's screen)
+- History download: NOT running in any session. "Shared session" [8fb6e6] says it is not part of it; it will only check file size/date coverage read-only if asked once a chunk lands. Nasif's note "attempting safe history download - the others are working" was a status note, not an assignment. If the download uses MT4/terminal.exe it conflicts with MT4_PAUSE; only Nasif lifts the pause.
 
----
-
-### JOB 2 — HOLD (post OOS gate)
-CostGateOK formula fix + TP raise to ≥ 458pt  
-File: Strong2010b_claude.mq4  
-See analysis/rvc_patch_draft.txt for details
-
-### JOB 3 — HOLD (post OOS gate)
-Restore g2a features missing from patched EA:
-- H1 SMA(1200) directional gate
-- M15 ADX<28 block  
-- 3-level sell ladder
-
-### JOB 4 — HOLD (post OOS gate)
-Thursday filter: DayOfWeek() != 4 guard
-Cross-check 2019 AND 2021 Thursday data first
-
----
-
-## Security Constraints (HARD — do not override)
-- No EA code commits without Job 1 exit 0
-- RAM gate: ≥ 1.0 GB free for MT4 backtests
-- RAM gate: ≥ 1.5 GB free for new local CLI clones
-- Pass bar for ALL changes: PF ≥ 1.10 AND DD < 5% on 2021 M1 OOS
-- Lucky bar (13 variants tested): 2021 OOS PF ≥ 1.306 (5%) or ≥ 1.275 (10%)
-
----
-
-## RESULTS
-*(fill in after Job 1 completes)*
-
-12 Oct 2026 | Strong2010b_claude_g4b @ exp/g4b-hour-thu-filter | EURUSD M1 19 Mar 2021 -> 1 Jan 2022, spread 3
-- Trades: 182 (123W/59L)
-- Win rate: 67.6%
-- PF: 1.460
-- Net PnL: $98.19
-- Max DD: $33.79 closed (0.34%)
-- Verdict: PASS (OOS gate, exit 0). WARN hours: 12, 14, 15, 20, 22. WARN day: Monday (-2.66)
-- Report: data\Strong2010b_claude_g4b_M1_20210319-20220101_sp3.htm
-
-### Other variants, 2021 OOS (from data\g6_summary / g7_summary, cross-checked against the .htm reports)
-Gate numbers (PF, closed DD) differ slightly from the MT4 report numbers (PF, equity DD); both shown.
-| Variant | Gate | Gate PF / DD | MT4 report PF / DD | Trades |
-|---|---|---|---|---|
-| g6a | PASS | 1.462 / $33.77 | 1.47 / 0.47% | 182 |
-| g6b | PASS | 1.476 / $33.77 | 1.48 / 0.47% | 183 |
-| g6c | PASS | 1.462 / $33.77 | not checked | 182 |
-| g6d, g6e | PASS | 1.311 / 1.292 | not checked | - |
-| g7a | PASS | 1.953 / $21.84 | 2.03 / 0.29% | 134 |
-| g7b | PASS | 1.586 / $29.29 | 1.65 / 0.41% | 80 |
-- g5 a-e: failed RAM gate, no results. g7c/g7d: incomplete (RAM gate OK only).
-- g8a: PASS but different settings (5k, 500 lev, 6pt spread); not comparable.
-- g7a is best on paper; unverified beyond 2021 (check per-year OOS before trusting).
-
----
-
-## Session Map
-| Role | Session ID | Status | Notes |
-|------|-----------|--------|-------|
-| master | endos-29 (new session) | ACTIVE | runs queue |
-| analyst | system32-df (cloud) | ACTIVE | multi-factor win model |
-| scorer | signal-ba (cloud) | ACTIVE | 8pt rescore done |
-
-## EA Branch
-`claude/mql4-analysis-comments-bd4kz3`  
-Last commit: `1ac0ba2`
-
-### Pirates-folder session (Sonnet 5.5) - g5/g7 BlockADX results, 2026-10-12
-Source files: Signal\data\g5_summary_v2_12Oct2026.txt, g7_summary_12Oct2026.txt; CSV via scripts\Log-G5Results.ps1.
-Setup: EURUSD M1, 2021.03.19-2022.01.01, spread 3, commission 6, deposit 10000.
-| Variant | Change vs g5a | Trades | Win% | Net | PF | MaxDD |
-|---|---|---|---|---|---|---|
-| g5a | baseline (BlockADX=28, S2Entry=0, Slope=1.5) | 182 | 67.6 | 98.56 | 1.462 | 33.77 |
-| g5b | Slope=1 | 182 | 67.6 | 98.56 | 1.462 | 33.77 (identical: slope not binding) |
-| g5c/g5d | S2Entry=1 | 192 | 67.2 | 98.20 | 1.430 | 38.32 |
-| g5e | BlockADX=35, Slope=2 | 197 | 66.0 | 86.67 | 1.357 | 43.94 |
-| g7a | BlockADX=24 | 134 | 73.9 | 120.09 | 1.953 | 21.84 |
-| g7b | BlockADX=20 | 80 | 70.0 | 51.76 | 1.586 | 29.29 |
-CAVEATS: all in-sample on the same window; BlockADX direction was chosen from g5e on this data, so g7a is tuned, not validated.
-| g7c | BlockADX=22 | 113 | 70.8 | 79.60 | 1.665 | 21.84 |
-| g7d | BlockADX=26 | 156 | 71.8 | 119.01 | 1.747 | 34.26 |
-(g7c/g7d run 12 Oct 2026, same setup, both OOS gate PASS; source data\g7cd_summary_12Oct2026.txt. Still in-sample tuning on one window.)
-g7a extras (12 Oct 2026, data\g7a_extra_summary_12Oct2026.txt): spread 6 on 2021 window: 138 trades, WR 74.6%, PF 2.040, DD $18.70, PASS (higher PF than spread 3 is odd - 4 more trades; treat as unexplained). 2022.01-2022.07 spread 3: 126 trades, WR 75.4%, PF 1.885, DD $33.76, PASS (first true out-of-window check for g7a).
-g7a on choppy years (12 Oct 2026, data\g7a_years_summary_12Oct2026.txt), all FAIL: 2015 WR 52.1% PF 0.702 (73 tr); 2016 WR 48.4% PF 0.594 (155 tr); 2018 WR 52.4% PF 0.696 (126 tr). ADX 24 does NOT fix choppy years; g7a's 2021/2022H1 PF 1.9-2.0 does not generalise.
-Improvement loop round 1 (master proposals; tune 2015-2018 ONLY, hold out 2019-2022): (1) BlockADX sweep 20/22/24/26, (2) ATR volatility cap, (3) loss-streak pause (last, high overfit risk).
-DECISION RULE for the ADX sweep (written 12 Oct 2026 BEFORE sweep results were seen; do not change after):
-- Winner = highest pooled PF over 2015-2018 (summed gross profit / gross loss). Each year >= 40 trades, pooled max DD < 5%. If within 0.03 PF, take the one with more trades.
-- Real improvement over g4b/g7n baselines: in EACH choppy year (2015, 2016, 2018) PF >= +0.10 and win rate >= +3 pts; total wins >= 60% of baseline; pooled PF beats baseline; PF moves monotonically across ADX values (no lone spike).
-- Reject all if (b) is not met, or gains appear in only 1 of the 3 choppy years; then stop.
-- Holdout 2019-2022 is run exactly ONCE on the single chosen variant; no re-tuning afterwards.
-Sweep results: data\adx_sweep_tuning_12Oct2026.txt.
-NEW CHOPPY LOGIC TEST: ChopBracket_h1a (C:\Users\endos\Signal_copy\ChopBracket_h1a.mq4), a standalone test EA (does not touch the Strong2010b family). Moving bracket on the last 20 M15 bars' high/low, re-placed every bar: Mode 0 = limit orders just outside the edges (fade, only when ADX<=22), Mode 1 = stop orders outside the edges (breakout). One trade at a time, SL 150 pts, time exit 16 bars. Backtest only.
-Pre-set plan (before results): tune ONLY on 2016 (best-covered choppy year); judge on 2015 and 2018 (partial data); holdout 2019, 2021, 2022 run once on the single chosen setting. Keep if PF >= 1.10 and WR/PF clearly better than g4b on 2016 AND it does not lose on holdout; max 3 parameter rounds, then stop.
-ChopBracket_h1b (same folder): indicator-sized version. Bollinger(20,2) edges/width = bracket space; margin beyond band = (0.10 + 0.01 per ADX point over 15) x bandwidth; stop = 0.6 x bandwidth; ADX<=22 gate for fade; CCI(20) picks the side (sell side needs CCI>=+50, buy side <=-50); fade TP = 50% of distance to mid band. Same pre-set plan as h1a (tune 2016 only, holdout once). Variants tested count toward the 3-round cap.
-ChopBracket_h1c (same folder): h1b + ATR and tick volume weighed into a 0-1 choppiness score = (1.0*ADX part + 1.0*ATR part + 0.5*volume part)/2.5; ADX part = 1-ADX/30, ATR part = 1.5-ATR14/ATR100 (low volatility = chop), volume part = 1.5 - lastbar/20bar avg (low volume = chop), each clipped 0..1. Fade needs score >= 0.50; breakout needs (1-score) >= 0.50. Margin = 0.10*bandwidth + 0.20*ATR; stop = max(0.6*bandwidth, 1.5*ATR). h1a/h1b/h1c are three variants of ONE idea: they count toward the 3-round cap together. Tick volume in MT4 backtests is a rough proxy, not real volume.
-ADX SWEEP RESULT (tuning years, M1, data\adx_sweep_tuning_12Oct2026.txt) - VERDICT: REJECT (round 1 of 3 used).
-PF in choppy years 2015 / 2016 / 2018 (g4b baseline 0.67 / 0.59 / 0.85, WR 50.0 / 47.0 / 56.7; g7n 0.92 / 0.67 / 0.92):
-ADX20 g7b 0.483 / 0.712 / 0.643 | ADX22 g7c 0.662 / 0.660 / 0.704 | ADX24 g7a 0.702 / 0.594 / 0.696 | ADX26 g7d 0.688 / 0.559 / 0.772.
-Rule needs PF >= baseline+0.10 AND WR +3 in EACH choppy year: only g7b in 2016 qualifies; nobody in 2015 or 2018; PF is not monotonic across ADX. All variants pass 2017 (PF 3.1-3.9, partial data) but that is a good year anyway. Holdout 2019-2022 NOT run (no variant chosen). BlockADX does not fix choppy markets.
-CHOPBRACKET ROUND (2016 M15, data\chopbracket_2016_12Oct2026.txt) - code compiles and trades (hundreds of orders), but ALL six FAIL PF>=1.10 on the tuning year (round 2 of 3 used):
-fade h1a 431 tr WR 54.3% PF 0.846 | h1b 455 tr WR 61.1% PF 0.652 | h1c 211 tr WR 66.8% PF 0.700 (DD 0.25%)
-breakout h1a 1192 tr WR 47.2% PF 0.775 | h1b 968 tr WR 51.9% PF 0.817 | h1c 960 tr WR 53.1% PF 0.870
-For reference g4b 2016: WR 47.0% PF 0.59; g7a WR 48.4% PF 0.594. Fade h1b/h1c win often (61-67%) but lose on size: stop is bigger than the TP (payoff ratio problem), so PF < 1. Last parameter round (round 3): h1d = h1c fade with smaller stop and TP to mid band.
-h1d RESULT (round 3 of 3, 2016 M15, data\chopbracket_h1d_12Oct2026.txt): 209 tr, WR 37.8%, PF 0.630, DD 0.36% - FAIL. Tighter stop + TP to mid band cut the win rate (66.8% -> 37.8%) and PF fell. CAP REACHED: STOP. No 2015/2018/holdout runs for ChopBracket (nothing chosen). Takeaway: simple range-fade/breakout brackets do not beat the choppy-year problem on this data; best fade (h1c) wins 67% but its payoff ratio keeps PF below 1. Do not keep tuning on 2016.
-HISTORY COVERAGE CHECK (12 Oct 2026, read-only sample of MT4_Backtest\history\...\EURUSD1.hst, ~3.5M bars; a full year is ~372k M1 bars; approximate, sampled every 5000th bar):
-2011 ~350k, 2012 ~360k, 2019 ~360k, 2021 ~335k = full. 2016 ~285k (76%), 2022 ~255k (68%), 2026 ~280k (YTD).
-PATCHY: 2013 ~200k, 2014 ~135k, 2015 ~115k (31%), 2017 ~180k (48%), 2018 ~130k (35%), 2020 ~220k (59%). MISSING: 2023, 2024 (0 bars); 2025 ~105k (28%).
-Consequence: 2023-2025 "0 trades" = no history, not a filter bug. 2015/2017/2018/2020 per-year results come from partial data, so they are weak evidence either way; holdout 2019-2022 is only trustworthy for 2019, 2021, 2022(part). 2016 is the best choppy tuning year.
-PENDING: g5 a-e rerun. Per-year (from .htm): g4b/g6b lose in 2015, 2016, 2018 (PF 0.59-0.86), win 2017/2019/2020/2022/2026; 2023-2025 have 0 trades (history missing or filter blocks all).
-Note: a stray "g8a 5k 500lev 6pt" block sits in Signal\data\g8_summary_12Oct2026.txt, written by another session (unverified).
+## Report log (newest first)
+- hst_out [094e32]: watcher DISARMED. It can no longer lift MT4_PAUSE or start tests. MT4_PAUSE stays, no tester running; nothing starts until Nasif explicitly says "resume" to it. Re-arm = one command (run_guarded.ps1, 8 unseen-year jobs, RAM >= 1.0 GB, idle priority, minimized).
+- Coordinator: asked all 3 peers to stay idle / minimal activity to save RAM. Applying ram_guard (Eco-only) live was DENIED by the auto-mode classifier; not retried or worked around. ram_guard remains dry-run only.
+- hst_out [094e32]: citing Nasif's "safe ram test - coordinate with others". Its watcher is ARMED: when free RAM >= 1.0 GB for 2 checks it will LIFT MT4_PAUSE itself and run 8 unseen-year tests (serial, minimized, silent, 8 pts); re-pauses if RAM < 400 MB; stops if anyone recreates MT4_PAUSE. Free RAM 613 MB, nothing started. Asks: no downloads (QuotesDownloader / D:\ticks) or other MT4 work until its run reports GUARDED DONE (hst_out\guarded.log); don't recreate MT4_PAUSE unless Nasif asks. Will report when the run finishes/stops. FLAG FOR NASIF: auto-lift of MT4_PAUSE rests on a loose instruction; confirm or tell it to disarm.
+- Remote control [0056ec]: read-only RAM check: free 646 MB of 5,965 MB, CPU 27%. No terminal/metatester/QuotesDownloader running. MT4_PAUSE exists. Its window-watcher silent flag is on. Below 1.0 GB test gate and 1.5 GB download gate, so nothing should start.
+- Shared session [8fb6e6]: free RAM 0.6 GB (read via clone-guard hook; its own RAM command was blocked below 1.5 GB, not worked around). Below the 1.0 GB MT4 gate and the 1.5 GB download gate, so no tests or tick download should start. Nothing running from it; MT4 and history download not started.
+- Remote control [0056ec] (Pirates/Signal session): QuotesDownloader NOT running; D:\ticks empty; no tick download started. Free RAM ~758 MB. Per the session (attributing it to Nasif, unverified by me): tick download waits until the hst_out MT4 tests finish and free RAM >= 1.5 GB, then ONE 3-month chunk to D:\ticks. It also says Nasif just approved the hst_out tests to resume - NOT confirmed by me; MT4_PAUSE flag still needs to be removed by Nasif.
+- hst_out session [094e32]: received Nasif's "hst proceed" but NOT starting. Free RAM 387 MB < 1.0 GB start rule (and under 400 MB stop line). Top users: Claude app processes (844/333/275/259 MB). MT4_PAUSE stays. Guarded runner ready: hst_out\run_guarded.ps1 (serial, minimized, silent, 8 pts; waits for >=1.0 GB free before each test, kills tester and re-pauses if RAM <400 MB, stops if MT4_PAUSE reappears). Remaining: 8 unseen-year runs (2014-2016, 2018 for b22 and current best). Starts once RAM >=1.0 GB: needs idle Claude sessions closed or QuotesDownloader stopped.
+- hst_out session [094e32] (2026-10-12): STOPPED. Queue paused, no tester/MetaEditor running, MT4_PAUSE honored (run_tester.ps1 exits 6), status-sync loop stopped. run_tester.ps1 now launches MT4 minimized/no-activate (ShowWindow 7; MT4 had focus in 1 of 638 samples).
+  - PROVEN best (backtest only, NOT approved for live): b22_thu + Z-gate (ZMax 1.0) + daily range 1.0xD1 ATR5 = winners\WIN_GEN1_ZGate_DailyRange_b31.set; 8-period +75,254 vs b22 +48,429 at 8 pts/trade; holds at spread 5 and 8.
+  - Rejected: all 17 PC_TEST_QUEUE candidates on 2017; chop, chop+zH1, chop+ADX (negative 2022); BE200/BE250; Z+range+chop no gain.
+  - Pending when pause lifts: unseen-years check 2013-2016 + 2018 (2013 done for both; 8 runs left).
+  - Blockers: none besides the pause.
