@@ -1,5 +1,5 @@
 # endos-29 Master Hub — State File
-Last updated: 2026-10-12 (signal-ba cloud session)
+Last updated: 2026-10-12 (OOS-gate cloud thread)
 
 ## BLOCKING GATE
 **2021 M1 OOS backtest must exit 0 before ANY EA code changes.**
@@ -7,11 +7,33 @@ Pass bar: PF ≥ 1.10 AND max DD < 5% ($500 on $10k) after 8pt commission.
 
 ---
 
+## GATE STATUS (2026-10-12): NOT RUN — needs local MT4
+- **Cannot run in cloud.** MT4 Strategy Tester + FXOpen 2021 M1 tick history exist only on the PC.
+- **EA mismatch fixed in this file.** Old Job 1 said "b20legs_g1a (Strong2010b_claude.mq4 current branch)".
+  Those are different EAs: the branch `Strong2010b_claude.mq4` (662 lines) is a BUY-only PatRec rewrite;
+  b20legs_g1a is the SELL-leg EA whose 2019 IS numbers are in the leaderboard. Testing the branch file
+  would gate an EA that has no in-sample baseline. Job 1 now targets the compiled
+  `MQL4\Experts\Strong2010b_claude_b20legs_g1a.ex4` (present on the PC, built 2026-10-08).
+- **Scorer verified.** `oos_check.py` on the 2019 g2a report: 403 trades, PF 1.249, DD 1.05%, exit 0.
+  Price-based 8pt recompute gives PF 1.26 / net $138.76, matching data/stats_8pt.md. Note: the report's
+  profit column already carries ~8.6pt/trade broker cost, so `--commission 8` adds only $0.008/trade on top.
+- **One-command runner:** `scripts/run_oos_gate.ps1` (RAM gate, writes tester ini, runs MT4 headless,
+  copies report to data/, runs oos_check, exits 0/1). Set deposit $10,000 in the tester GUI once first.
+
+### Next steps
+1. Close MT4, then from the Signal folder: `powershell -ExecutionPolicy Bypass -File scripts\run_oos_gate.ps1`
+2. Push the .htm from data/, fill in ## RESULTS below.
+3. For the full OOS candidate set (stats_8pt.md, m=21): compile g2a–g2d .mq4 in MetaEditor (no .ex4 yet),
+   rerun with `-Expert Strong2010b_claude_g2a` etc. A winner also needs day-block p ≤ 0.0024.
+4. Only after exit 0: unblock Jobs 2–4.
+
+---
+
 ## Overnight Queue (process in order)
 
 ### JOB 1 — BLOCKING OOS GATE
 ```
-EA:        b20legs_g1a  (Strong2010b_claude.mq4 current branch)
+EA:        Strong2010b_claude_b20legs_g1a.ex4  (MQL4\Experts on the PC — NOT the branch Strong2010b_claude.mq4)
 Pair:      EURUSD
 TF:        M1
 Period:    2021-03-19 to 2022-01-01
@@ -72,7 +94,7 @@ Cross-check 2019 AND 2021 Thursday data first
 ## RESULTS
 *(fill in after Job 1 completes)*
 
-Job 1 result: PENDING
+Job 1 result: PENDING (not run — local MT4 required; runner ready)
 - Trades: 
 - Win rate: 
 - PF: 
