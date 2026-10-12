@@ -94,13 +94,14 @@ Cross-check 2019 AND 2021 Thursday data first
 ## RESULTS
 *(fill in after Job 1 completes)*
 
-Job 1 result: PENDING (not run — local MT4 required; runner ready)
-- Trades: 
-- Win rate: 
-- PF: 
-- Net PnL: 
-- Max DD: 
-- Verdict: 
+12 Oct 2026 | Strong2010b_claude_g4b @ exp/g4b-hour-thu-filter | EURUSD M1 19 Mar 2021 -> 1 Jan 2022, spread 3
+- Trades: 182 (123W/59L)
+- Win rate: 67.6%
+- PF: 1.460
+- Net PnL: $98.19
+- Max DD: $33.79 closed (0.34%)
+- Verdict: PASS (OOS gate, exit 0). WARN hours: 12, 14, 15, 20, 22. WARN day: Monday (-2.66)
+- Report: data\Strong2010b_claude_g4b_M1_20210319-20220101_sp3.htm
 
 ---
 
@@ -114,3 +115,18 @@ Job 1 result: PENDING (not run — local MT4 required; runner ready)
 ## EA Branch
 `claude/mql4-analysis-comments-bd4kz3`  
 Last commit: `1ac0ba2`
+
+### Pirates-folder session (Sonnet 5.5) - g5/g7 BlockADX results, 2026-10-12
+Source files: Signal\data\g5_summary_v2_12Oct2026.txt, g7_summary_12Oct2026.txt; CSV via scripts\Log-G5Results.ps1.
+Setup: EURUSD M1, 2021.03.19-2022.01.01, spread 3, commission 6, deposit 10000.
+| Variant | Change vs g5a | Trades | Win% | Net | PF | MaxDD |
+|---|---|---|---|---|---|---|
+| g5a | baseline (BlockADX=28, S2Entry=0, Slope=1.5) | 182 | 67.6 | 98.56 | 1.462 | 33.77 |
+| g5b | Slope=1 | 182 | 67.6 | 98.56 | 1.462 | 33.77 (identical: slope not binding) |
+| g5c/g5d | S2Entry=1 | 192 | 67.2 | 98.20 | 1.430 | 38.32 |
+| g5e | BlockADX=35, Slope=2 | 197 | 66.0 | 86.67 | 1.357 | 43.94 |
+| g7a | BlockADX=24 | 134 | 73.9 | 120.09 | 1.953 | 21.84 |
+| g7b | BlockADX=20 | 80 | 70.0 | 51.76 | 1.586 | 29.29 |
+CAVEATS: all in-sample on the same window; BlockADX direction was chosen from g5e on this data, so g7a is tuned, not validated.
+PENDING (need MT4 closed): g7c ADX22, g7d ADX26, g7a at spread 6, g7a OOS 2022.01-2022.06 (history may be missing).
+Note: a stray "g8a 5k 500lev 6pt" block sits in Signal\data\g8_summary_12Oct2026.txt, written by another session (unverified).
