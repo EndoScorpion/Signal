@@ -148,5 +148,11 @@ CAVEATS: all in-sample on the same window; BlockADX direction was chosen from g5
 g7a extras (12 Oct 2026, data\g7a_extra_summary_12Oct2026.txt): spread 6 on 2021 window: 138 trades, WR 74.6%, PF 2.040, DD $18.70, PASS (higher PF than spread 3 is odd - 4 more trades; treat as unexplained). 2022.01-2022.07 spread 3: 126 trades, WR 75.4%, PF 1.885, DD $33.76, PASS (first true out-of-window check for g7a).
 g7a on choppy years (12 Oct 2026, data\g7a_years_summary_12Oct2026.txt), all FAIL: 2015 WR 52.1% PF 0.702 (73 tr); 2016 WR 48.4% PF 0.594 (155 tr); 2018 WR 52.4% PF 0.696 (126 tr). ADX 24 does NOT fix choppy years; g7a's 2021/2022H1 PF 1.9-2.0 does not generalise.
 Improvement loop round 1 (master proposals; tune 2015-2018 ONLY, hold out 2019-2022): (1) BlockADX sweep 20/22/24/26, (2) ATR volatility cap, (3) loss-streak pause (last, high overfit risk).
+DECISION RULE for the ADX sweep (written 12 Oct 2026 BEFORE sweep results were seen; do not change after):
+- Winner = highest pooled PF over 2015-2018 (summed gross profit / gross loss). Each year >= 40 trades, pooled max DD < 5%. If within 0.03 PF, take the one with more trades.
+- Real improvement over g4b/g7n baselines: in EACH choppy year (2015, 2016, 2018) PF >= +0.10 and win rate >= +3 pts; total wins >= 60% of baseline; pooled PF beats baseline; PF moves monotonically across ADX values (no lone spike).
+- Reject all if (b) is not met, or gains appear in only 1 of the 3 choppy years; then stop.
+- Holdout 2019-2022 is run exactly ONCE on the single chosen variant; no re-tuning afterwards.
+Sweep results: data\adx_sweep_tuning_12Oct2026.txt.
 PENDING: g5 a-e rerun. Per-year (from .htm): g4b/g6b lose in 2015, 2016, 2018 (PF 0.59-0.86), win 2017/2019/2020/2022/2026; 2023-2025 have 0 trades (history missing or filter blocks all).
 Note: a stray "g8a 5k 500lev 6pt" block sits in Signal\data\g8_summary_12Oct2026.txt, written by another session (unverified).
