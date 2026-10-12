@@ -103,6 +103,20 @@ Cross-check 2019 AND 2021 Thursday data first
 - Verdict: PASS (OOS gate, exit 0). WARN hours: 12, 14, 15, 20, 22. WARN day: Monday (-2.66)
 - Report: data\Strong2010b_claude_g4b_M1_20210319-20220101_sp3.htm
 
+### Other variants, 2021 OOS (from data\g6_summary / g7_summary, cross-checked against the .htm reports)
+Gate numbers (PF, closed DD) differ slightly from the MT4 report numbers (PF, equity DD); both shown.
+| Variant | Gate | Gate PF / DD | MT4 report PF / DD | Trades |
+|---|---|---|---|---|
+| g6a | PASS | 1.462 / $33.77 | 1.47 / 0.47% | 182 |
+| g6b | PASS | 1.476 / $33.77 | 1.48 / 0.47% | 183 |
+| g6c | PASS | 1.462 / $33.77 | not checked | 182 |
+| g6d, g6e | PASS | 1.311 / 1.292 | not checked | - |
+| g7a | PASS | 1.953 / $21.84 | 2.03 / 0.29% | 134 |
+| g7b | PASS | 1.586 / $29.29 | 1.65 / 0.41% | 80 |
+- g5 a-e: failed RAM gate, no results. g7c/g7d: incomplete (RAM gate OK only).
+- g8a: PASS but different settings (5k, 500 lev, 6pt spread); not comparable.
+- g7a is best on paper; unverified beyond 2021 (check per-year OOS before trusting).
+
 ---
 
 ## Session Map
