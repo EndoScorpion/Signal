@@ -21,7 +21,7 @@
 #property strict
 
 // ---- FIX 2: Commission / R:R inputs ------------------------------------
-input int    InpCommissionPts = 6;     // round-turn commission in broker points
+input int    InpCommissionPts = 8;     // round-turn commission in broker points (FXOpen max)
 input double InpMinRR         = 1.5;   // minimum reward:risk ratio
 
 // ---- FIX 3: Regime + Session inputs ------------------------------------
