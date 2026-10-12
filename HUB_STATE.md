@@ -166,6 +166,7 @@ CHOPBRACKET ROUND (2016 M15, data\chopbracket_2016_12Oct2026.txt) - code compile
 fade h1a 431 tr WR 54.3% PF 0.846 | h1b 455 tr WR 61.1% PF 0.652 | h1c 211 tr WR 66.8% PF 0.700 (DD 0.25%)
 breakout h1a 1192 tr WR 47.2% PF 0.775 | h1b 968 tr WR 51.9% PF 0.817 | h1c 960 tr WR 53.1% PF 0.870
 For reference g4b 2016: WR 47.0% PF 0.59; g7a WR 48.4% PF 0.594. Fade h1b/h1c win often (61-67%) but lose on size: stop is bigger than the TP (payoff ratio problem), so PF < 1. Last parameter round (round 3): h1d = h1c fade with smaller stop and TP to mid band.
+h1d RESULT (round 3 of 3, 2016 M15, data\chopbracket_h1d_12Oct2026.txt): 209 tr, WR 37.8%, PF 0.630, DD 0.36% - FAIL. Tighter stop + TP to mid band cut the win rate (66.8% -> 37.8%) and PF fell. CAP REACHED: STOP. No 2015/2018/holdout runs for ChopBracket (nothing chosen). Takeaway: simple range-fade/breakout brackets do not beat the choppy-year problem on this data; best fade (h1c) wins 67% but its payoff ratio keeps PF below 1. Do not keep tuning on 2016.
 HISTORY COVERAGE CHECK (12 Oct 2026, read-only sample of MT4_Backtest\history\...\EURUSD1.hst, ~3.5M bars; a full year is ~372k M1 bars; approximate, sampled every 5000th bar):
 2011 ~350k, 2012 ~360k, 2019 ~360k, 2021 ~335k = full. 2016 ~285k (76%), 2022 ~255k (68%), 2026 ~280k (YTD).
 PATCHY: 2013 ~200k, 2014 ~135k, 2015 ~115k (31%), 2017 ~180k (48%), 2018 ~130k (35%), 2020 ~220k (59%). MISSING: 2023, 2024 (0 bars); 2025 ~105k (28%).
