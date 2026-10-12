@@ -68,3 +68,4 @@ Script: tpsl_oos.py (grid 200-360 x 200-500, 6/8pt, runs, day-block bootstrap+pe
   Offline TP/SL replay on 2021 fills @8: TP250/SL400 68.3% PF 1.28 p=0.176 (best in 2019 too); none passes Bonferroni p<=0.0024. TP250/SL400 = one MT4 confirmation candidate. Next queue job: g2a 2021.
   Files: data/stats_8pt_2021_g1a.md, data/tpsl_oos_2021.md, data/STATUS_signal_20261012.txt. Queue owner now: ClaudeHub master (C:\Users\endos\ClaudeHub). watch_queue.ps1 runs hidden (PID 16480 at handoff).
 - system32-0b closed 2026-10-12 ~04:30: full handoff at MT4_Backtest\reports\HANDOFF_system32-0b.md (g2 diff notes, g2e draft uncompiled, g3a dropped, features.js rerun command; rerun only at >= 1.5 GB RAM).
+- mql4-ec 2026-10-12 04:5x: 2021 OOS g2a @8 = 328 tr, 47.9%, PF 0.87, -$68.24, DD 1.1%, p=0.698 -> g2a FAILS, worse than g1a (PF 1.05). The 2019 time-block filter does not hold OOS. data/stats_8pt_2021_g2a.md
