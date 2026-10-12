@@ -9,9 +9,10 @@ Arguments:
     report.htm       Path to MT4 Strategy Tester detailed HTML report.
     --deposit N      Starting balance used for max-DD % calculation
                      (default: 10000).
-    --commission N   Round-trip commission factor (default: 6); deducts
-                     N * 0.10 * lots from every trade's profit.
-                     Assumes 0.01 lots = $0.10 / point (5-digit broker).
+    --commission N   Commission in POINTS per trade (default: 6); deducts
+                     N * 1.00 * lots dollars from every trade's profit
+                     (1 point = $1 per 1.00 lot, so 6 pt at 0.01 lots = $0.06).
+                     FIXED 12 Oct 2026: old formula N*0.10*lots was 10x too low.
 
 PASS criteria: estimated PF >= 1.10  AND  max closed-trade DD <= 5 % of deposit.
 Exit codes:  0 = PASS,  1 = FAIL or error.
@@ -160,7 +161,7 @@ def parse_report(filepath, commission_n):
             if order not in opens:
                 continue
             open_dt, open_lots = opens.pop(order)
-            commission = commission_n * 0.10 * open_lots
+            commission = commission_n * 1.00 * open_lots
             trades.append({
                 'order':      order,
                 'open_time':  open_dt,
@@ -223,7 +224,7 @@ def main():
     ap.add_argument('--deposit', type=float, default=10000.0,
                     help='Starting deposit in $ for DD%% calculation (default: 10000)')
     ap.add_argument('--commission', type=float, default=6.0,
-                    help='Commission factor N; deducts N*0.10*lots per trade (default: 6)')
+                    help='Commission in points N; deducts N*1.00*lots dollars per trade (default: 6)')
     args = ap.parse_args()
 
     trades, detected_deposit = parse_report(args.report, args.commission)
@@ -252,7 +253,7 @@ def main():
 
     max_dd_usd, max_dd_pct = max_closed_dd(trades, deposit)
 
-    comm_ex = args.commission * 0.10 * 0.01   # example at 0.01 lots
+    comm_ex = args.commission * 1.00 * 0.01   # example at 0.01 lots
 
     print('=' * 62)
     print('SUMMARY STATS')
