@@ -7,7 +7,7 @@ Pass bar: PF ≥ 1.10 AND max DD < 5% ($500 on $10k) after 8pt commission.
 
 ---
 
-## GATE STATUS (2026-10-12): NOT RUN — needs local MT4
+## GATE STATUS (2026-10-12): RAN LOCALLY — g4b PASS (PF 1.460); see ## RESULTS and the g6/g7 notes below. (Earlier text said "NOT RUN"; MT4 runs on the local PC only.)
 - **Cannot run in cloud.** MT4 Strategy Tester + FXOpen 2021 M1 tick history exist only on the PC.
 - **EA mismatch fixed in this file.** Old Job 1 said "b20legs_g1a (Strong2010b_claude.mq4 current branch)".
   Those are different EAs: the branch `Strong2010b_claude.mq4` (662 lines) is a BUY-only PatRec rewrite;
