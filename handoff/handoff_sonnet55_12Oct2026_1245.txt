@@ -1,0 +1,25 @@
+HANDOFF v1 - 12 Oct 2026 ~12:45 - Sonnet 5.5 session ($ Trade project) -> all clone agents / Claude Code / PC worker
+(Copy of project docs handoff/handoff_12Oct2026.md; this file is the short operational version)
+
+RULES
+- One MT4 tester at a time. Only the PC worker (watcher + Signal\inbox\*.ps1) starts tests. Others: do NOT start MT4.
+- Keep max 3 recent backups per version. Never delete win logic, entry/filter logic, money mgmt, self-improvement instructions.
+- Do not delete anything without asking the user. Move to _to_delete\ instead.
+- Phone control must stay active (Claude phone app talks to the cloud session; PC bridge = Signal folder).
+
+WIN LOGIC TO PROTECT (do not archive)
+- Signal_copy\Strong2010b_claude_g4b.mq4  (best EA; passes gate PF>=1.10, DD<=5% in 2015,16,19,20,21 at 5pt)
+- g6b (+1 trade, marginal), g7n (no Thu/hour block; costs PF in 2019/2021)
+- Signal\analysis\oos_check.py (commission fixed: N*1.00*lots), lots_tracker_v1_12Oct2026.py
+- Signal\scripts: run_oos_gate_v3, compile_and_gate_v2, ps_watcher_v1, ram_guard_v2, thermal_guard_safe_v1
+- Signal\data: HUB_STATE.md, leaderboard.md, *_summary_12Oct2026.txt, g5_results_history.csv, EURUSD60_copy_12Oct2026.hst, commission_repricing.md
+- Findings: looser entry inputs do not help; only 0.5% risk lot sim passes 5% DD; high H1 range (>=13 pips) predicts losing months (next: g11a-c volatility filter).
+
+STATE
+- RAM guard and thermal guard: PAUSED (stop files in Signal). Restart by deleting ram_guard.stop / thermal_guard.stop.
+- sweep2 (2017,18,22-26): 2017/18/22 done; 2023/24 empty (no history). 2025/26 pending. Progress: Signal\data\sweep2_progress_12Oct2026.txt
+- SoftFX Quotes Downloader running (EURUSD Bid M1, 2023-01-01..2024-01-01) -> C:\Users\endos\Documents\Quotes. After it finishes: convert to MT4 history, rerun 2023/24.
+- Hourly "g5 backtest monitor" routine: disabled.
+
+SAFE TO ARCHIVE (user approval first): old g5a-g5e/g6a/g6c-g6e/g8a/g9a-d/g10a-e .htm reports once summarised in *_summary files; old script versions (run_g5_all_v1/v2, compile_and_gate_v1, run_oos_gate_v2); duplicate Signal_copy clones.
+NEXT CLONE NAMES: g11a, g11b, g11c. Do not reuse g5-g10, g7n.
