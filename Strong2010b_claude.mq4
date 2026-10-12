@@ -110,14 +110,20 @@ int GetRegimeTP() { return IsRegimeTrending() ? InpTPTrend : InpTPRange; }
 // +------------------------------------------------------------------+
 // |  FIX 3: Session filter                                            |
 // +------------------------------------------------------------------+
+// Hour ranges tightened from 2019 backtest analysis:
+//   h08 London open: 42% WR, -17.79 PnL → skip
+//   h13 Overlap open: 40% WR,  -6.85 PnL → skip
+//   h16 Overlap close: 33% WR, -12.98 PnL → skip
+//   h06 Asian: 17% WR, -37.46 PnL → skip
+//   h19-20 NY late: 39-42% WR,  -30.73 combined → skip
 bool SessionAllowed()
 {
     int h = Hour();
-    if (InpTradeOverlap && h >= 13 && h <= 16) return true;
-    if (InpTradeLondon  && h >=  8 && h <= 12) return true;
-    if (InpTradeNY      && h >= 13 && h <= 17) return true;
-    if (InpTradeAsian   && h >=  0 && h <=  7) return true;
-    if (InpTradeEOD     && h >= 18 && h <= 21) return true;
+    if (InpTradeOverlap && h >= 14 && h <= 15) return true;  // was 13-16
+    if (InpTradeLondon  && h >=  9 && h <= 12) return true;  // was 8-12
+    if (InpTradeNY      && h == 17)             return true;  // was 13-17
+    if (InpTradeAsian   && h >=  2 && h <=  7 && h != 6) return true;  // skip 06:xx
+    if (InpTradeEOD     && (h == 18 || h == 21)) return true; // was 18-21; h19,20 lose
     return false;
 }
 
