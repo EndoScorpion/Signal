@@ -154,6 +154,8 @@ DECISION RULE for the ADX sweep (written 12 Oct 2026 BEFORE sweep results were s
 - Reject all if (b) is not met, or gains appear in only 1 of the 3 choppy years; then stop.
 - Holdout 2019-2022 is run exactly ONCE on the single chosen variant; no re-tuning afterwards.
 Sweep results: data\adx_sweep_tuning_12Oct2026.txt.
+NEW CHOPPY LOGIC TEST: ChopBracket_h1a (C:\Users\endos\Signal_copy\ChopBracket_h1a.mq4), a standalone test EA (does not touch the Strong2010b family). Moving bracket on the last 20 M15 bars' high/low, re-placed every bar: Mode 0 = limit orders just outside the edges (fade, only when ADX<=22), Mode 1 = stop orders outside the edges (breakout). One trade at a time, SL 150 pts, time exit 16 bars. Backtest only.
+Pre-set plan (before results): tune ONLY on 2016 (best-covered choppy year); judge on 2015 and 2018 (partial data); holdout 2019, 2021, 2022 run once on the single chosen setting. Keep if PF >= 1.10 and WR/PF clearly better than g4b on 2016 AND it does not lose on holdout; max 3 parameter rounds, then stop.
 HISTORY COVERAGE CHECK (12 Oct 2026, read-only sample of MT4_Backtest\history\...\EURUSD1.hst, ~3.5M bars; a full year is ~372k M1 bars; approximate, sampled every 5000th bar):
 2011 ~350k, 2012 ~360k, 2019 ~360k, 2021 ~335k = full. 2016 ~285k (76%), 2022 ~255k (68%), 2026 ~280k (YTD).
 PATCHY: 2013 ~200k, 2014 ~135k, 2015 ~115k (31%), 2017 ~180k (48%), 2018 ~130k (35%), 2020 ~220k (59%). MISSING: 2023, 2024 (0 bars); 2025 ~105k (28%).
