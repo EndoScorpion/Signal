@@ -80,6 +80,15 @@
    "created": "2026-10-14T19:11:08",
    "updated": "2026-10-14T19:11:08",
    "note": ""
+  },
+  {
+   "id": 10,
+   "title": "ER M1 study DONE (6.0pt stress label): gross edge <=3 pts in all ER bands, net negative, 0-3/17 yrs positive; H1 ER0.2-0.4 edge NOT confirmed. ER not a standalone signal; test only as exclusion filter on existing EA. See data/er_m1_summary_14Oct2026.txt",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T19:33:31",
+   "updated": "2026-10-14T19:33:31",
+   "note": ""
   }
  ]
 }

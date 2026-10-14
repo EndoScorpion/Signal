@@ -1,0 +1,6 @@
+ER M1 study (read-only, 5,285,216 M1 bars 2010-2026, mt4_tester history), run 14Oct2026 on LenovoLaptop.
+Full output: C:\Users\endos\Signal\agent_readonly\er_m1_result.txt ; script: er_m1.py (pure Python). COST LABEL: 6.0 pts round trip (STRESS figure; canonical = 5 + half avg spread ~5.5).
+Test: fade the last N-bar move, hold H bars, by Kaufman ER band; gross edge in pts (cost not included in 'gross').
+Result: gross edge only 0..+3 pts in every ER band (best ER30 0.2-0.4, gross ~+3.0 pts at H=60/240), below any cost >=3.45. Net negative in all bands; 0-3 of 17 years positive.
+ER >= 0.5: gross about -0.4..-1.2 (trend persistence, no reversion). ER120 bands are sparse and noisy.
+Conclusion: ER is NOT a usable standalone entry/gate edge for naive mean reversion on M1; the earlier H1 +10pt/12h band was not confirmed. Use ER only as a filter to REMOVE losing trades of the existing EA (test as exclusion band), not as a signal.
