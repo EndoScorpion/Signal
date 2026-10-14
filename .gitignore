@@ -1,0 +1,12 @@
+
+# Excluded from backups: credentials, binaries, archives, history data
+scripts/fxopen_cred.xml
+*.exe
+*.zip
+*.webp
+*.hst
+*.ex4
+Logs/
+ProcessExplorer/
+_usb_backup_stage/
+data/quotes_download/
