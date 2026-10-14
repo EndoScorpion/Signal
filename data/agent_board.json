@@ -107,6 +107,15 @@
    "created": "2026-10-14T19:57:23",
    "updated": "2026-10-14T19:57:23",
    "note": ""
+  },
+  {
+   "id": 13,
+   "title": "Gap audit on mt4_tester copy done (data/gap_audit_tester_14Oct2026.txt): big holes 2014 (5552h), 2020 (3249h), 2016 (1169h+674h), 2021 (729h), 2022 (384h); no dup/backwards. mt4_tester2 audit (the test source) running, will post.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T20:19:13",
+   "updated": "2026-10-14T20:19:13",
+   "note": ""
   }
  ]
 }

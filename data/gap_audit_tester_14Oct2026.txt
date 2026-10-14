@@ -1,0 +1,6 @@
+Gap audit 1 (mt4_tester copy, NOT the test source): C:\Users\endos\Desktop\mt4_tester\history\FXOpenEU-ECN Live Server\EURUSD1.hst, hst v401, 5,285,216 bars, 2010-06-23 .. 2026-10-14. Read-only, pure Python, 14Oct2026.
+Weekday = excludes Fri>=20:00 UTC..Sun. gaps>5m / missing minutes per year (no duplicates or backwards timestamps in any year):
+2010 37/356  2011 31/38610  2012 31/14991  2013 30/3303  2014 20/1564  2015 17/337546  2016 12/114971  2017 1/16426  2018 6/1190  2019 43/13709
+2020 55/221783  2021 186/49611  2022 186/31270  2023 87/1198  2024 90/2173  2025 24/27436  2026 26/14509
+Longest weekday gaps (start UTC, hours): 2014-05-16 5551.6h; 2020-01-29 3248.8h; 2016-02-03 1169.0h; 2021-02-16 729.1h; 2016-10-11 674.4h; 2022-05-10 384.2h; 2011-08-08 381.0h; 2025-09-30 357.0h; 2020-10-12 329.8h; 2016-12-21 273.8h
+Note: bar-count per year is low in 2013 (201k), 2014 (138k), 2020 (216k), 2016 (284k). Authoritative audit for mt4_tester2 pending (PID 21000).
