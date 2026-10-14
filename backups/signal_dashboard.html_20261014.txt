@@ -1,15 +1,15 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Signal Status</title>
 <style>
-:root{--bg:#0f1318;--fg:#e6e9ee;--mut:#8a94a3;--ok:#3ecf8e;--bad:#ef5b5b;--warn:#f0b43c;--card:#171d24;--bd:#263040}
-body{margin:0;background:var(--bg);color:var(--fg);font:12px/1.35 system-ui,Segoe UI,sans-serif}
+:root{--bg:#000;--fg:#33ff66;--mut:#1fa045;--ok:#39ff14;--bad:#ff3b3b;--warn:#ffb000;--card:#000;--bd:#0d4d1f}
+body{margin:0;background:var(--bg);color:var(--fg);font:12px/1.35 Consolas,"Courier New",monospace;text-shadow:0 0 3px rgba(57,255,20,.35)}
 header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--bd);-webkit-app-region:drag}
 h1{font-size:13px;margin:0}.mut{color:var(--mut)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
 section{margin:6px 8px;padding:6px 8px;background:var(--card);border:1px solid var(--bd);border-radius:6px}
 h2{font-size:11px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
 table{width:100%;border-collapse:collapse}td,th{padding:2px 4px;text-align:left;white-space:nowrap}th{color:var(--mut);font-weight:500}
 .bar{height:5px;background:var(--bd);border-radius:3px}.bar i{display:block;height:5px;border-radius:3px;background:var(--ok)}
-.big{font-size:20px;font-weight:600}.row{display:flex;gap:14px}
+.big{font-size:20px;font-weight:600;color:var(--ok)}.row{display:flex;gap:14px}
 #log div{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style></head><body>
 <header><h1>Signal status</h1><span id="src" class="mut"></span></header>
