@@ -1,0 +1,436 @@
+{
+ "jobs": [
+  {
+   "id": 1,
+   "title": "Build b60 gates: Ehlers cycle, Kalman z, variance regime (agent running)",
+   "owner": "build_agent",
+   "status": "done",
+   "created": "2026-10-14T13:49:49",
+   "updated": "2026-10-14T13:50:11",
+   "note": "b60 compiled 0 errors, 6 ng9_* queued"
+  },
+  {
+   "id": 2,
+   "title": "Research new EA methods (done: data\\research_notes_14Oct2026.md)",
+   "owner": "",
+   "status": "done",
+   "created": "2026-10-14T13:49:50",
+   "updated": "2026-10-14T13:49:53",
+   "note": "notes written"
+  },
+  {
+   "id": 3,
+   "title": "Implement OU half-life gate and session gate from the research notes",
+   "owner": "",
+   "status": "done",
+   "created": "2026-10-14T13:49:50",
+   "updated": "2026-10-14T13:53:19",
+   "note": "OU half-life gate built in b61, 4 candidates queued"
+  },
+  {
+   "id": 4,
+   "title": "Add deflated-Sharpe check to the weekly report (dsr_check.py exists)",
+   "owner": "",
+   "status": "done",
+   "created": "2026-10-14T13:49:52",
+   "updated": "2026-10-14T13:53:20",
+   "note": "DSR line added to the daily summary"
+  },
+  {
+   "id": 5,
+   "title": "Build Gates.mqh shared include and thin b61 EA",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T13:49:52",
+   "updated": "2026-10-14T13:49:52",
+   "note": ""
+  },
+  {
+   "id": 6,
+   "title": "Math agent: reference-implement and range-check every gate threshold (so no gate is inert)",
+   "owner": "math_agent",
+   "status": "claimed",
+   "created": "2026-10-14T13:53:18",
+   "updated": "2026-10-14T13:54:05",
+   "note": ""
+  },
+  {
+   "id": 7,
+   "title": "Validator agent: honest-N DSR, bootstrap, concentration, cost robustness, b57 parity for the leader",
+   "owner": "validator_agent",
+   "status": "claimed",
+   "created": "2026-10-14T13:54:03",
+   "updated": "2026-10-14T13:54:04",
+   "note": ""
+  },
+  {
+   "id": 8,
+   "title": "Other chat using Desktop Commander: read AGENT_RULES_READ_FIRST.md, do not start tests or a second driver",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T14:56:34",
+   "updated": "2026-10-14T14:56:34",
+   "note": ""
+  },
+  {
+   "id": 9,
+   "title": "Cloud fork a4rtsd gap audit: repo copy data/EURUSD60_copy_12Oct2026.hst (H1) has 58,850 bars vs 88,727 in live file, 40 gaps >4h; stale/sparse copy, NOT authoritative, do not rely on it. Full M1 audit must run on PC (mt4_tester2 clean history; hist_integrity.py already found it structurally clean).",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:30:09",
+   "updated": "2026-10-14T15:30:09",
+   "note": ""
+  },
+  {
+   "id": 10,
+   "title": "Status 15:30: tests already running (single driver 16948 + auto_loop 4844), no PAUSE files, RAM trimmed 512->1248 MB, mt4_tester2 clean, cost 5 pts+spread/2. Now on rc_th_g2 re-tests (2024, 2014, 2013 reports landed). Nothing to resume.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:33:20",
+   "updated": "2026-10-14T15:33:20",
+   "note": ""
+  },
+  {
+   "id": 11,
+   "title": "Nasif via cloud fork: cost for first test = 5pt (5 pts RT + avg spread/2), label results 5pt. The running loop already scores this way (auto_loop clean, _real reports); no sp6 used. Results land in hst_out\\clean and data/loop_state_clean.json; first finished = rc_th_g2 re-tests.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:34:22",
+   "updated": "2026-10-14T15:34:22",
+   "note": ""
+  },
+  {
+   "id": 12,
+   "title": "Relay (unconfirmed by Nasif in this chat): 2nd test at 6 pts max, label 6pt, never mixed with 5pt results. NOT queued yet: waiting for Nasif to confirm directly and name the candidate. Loop stays single, one test at a time.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:34:52",
+   "updated": "2026-10-14T15:34:52",
+   "note": ""
+  },
+  {
+   "id": 13,
+   "title": "PROPOSAL for Nasif to confirm (3rd test, tiered): FXOpen ECN commission per side per lot (EUR): <1k 3.50, 1k-25k 2.50, 25k-250k 1.80, >250k 1.50 -> RT pts (x2 x1.15): 8.05 / 5.75 / 4.14 / 3.45 (source docs/BROKER_COST_RULES_RESEARCH_14Oct2026.md, data/test_queue.md MODEL). Grid: label tier<RT commission>@<balance>, e.g. tier8.05@500, tier5.75@10000, tier4.14@100000, tier3.45@300000 (balances = tier mid-points; extra edge points 999/1000/25000/250000 only if Nasif wants, since lot size changes with SimDeposit under UseLotSim=1). Cost is linear per trade, so cost-only tiers can be DERIVED from one sp5 run (no extra tester runs); only runs that change lot size via SimDeposit need real tester runs. Order: 1) 5pt 2) 6pt 3) tiered. Not queued until Nasif confirms.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:35:20",
+   "updated": "2026-10-14T15:35:20",
+   "note": ""
+  },
+  {
+   "id": 14,
+   "title": "UPDATED tier grid for Nasif to confirm (cushion 10% above each lower threshold, plus edge run). Brackets (RT pts): <1k 8.05 | 1k-25k 5.75 | 25k-250k 4.14 | >250k 3.45. Runs: tier8.05@500 ; tier5.75@1000 (edge) + tier5.75@1100 (cushion) ; tier4.14@25000 (edge) + tier4.14@27500 (cushion) ; tier3.45@250000 (edge) + tier3.45@275000 (cushion). 7 runs. Edge runs show worst case at the threshold; cushion runs show drawdown staying inside the bracket. Not queued until Nasif confirms; one test at a time via single loop.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:35:52",
+   "updated": "2026-10-14T15:35:52",
+   "note": ""
+  },
+  {
+   "id": 15,
+   "title": "SHADOW LEDGER spec (post-processing only, new file data/fxopen_shadow_<test>.csv, never overwrite). Bracket rule per research notes: commission per side per lot by ACCOUNT BALANCE (EUR: <1k 3.50, 1k-25k 2.50, 25k-250k 1.80, >250k 1.50), a volume matrix applies on top and rate is recalculated monthly - exact volume rule UNVERIFIED, Nasif/FXOpen to confirm. USD = EUR x ~1.15; RT pts = lots-scaled (3.45/4.14/5.75/8.05 per lot). Sample inputs: MT4 tester reports hst_out\\clean\\LOOP_*_real.htm (deal table with time, type, lots, profit, balance). Cloud fork may write scripts/fxopen_shadow.py from that format; it runs on the PC after tests, never starts MT4. Output columns: trade, lots, balance_before, bracket, fxopen_real_cost_usd, fxopen_real_cost_pts, tester_fixed_cost, net_after_real_cost. Totals per test to this board.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:36:14",
+   "updated": "2026-10-14T15:36:14",
+   "note": ""
+  },
+  {
+   "id": 16,
+   "title": "SHADOW LEDGER cost model written: data/fxopen_cost_model.json (copy per scenario, never overwrite). OPEN QUESTIONS for Nasif: 1) tier by balance, by monthly volume, or both (volume matrix values)? 2) account type and currency (ECN, USD?) 3) EURUSD long/short swap per lot per night and any swap reduction or swap-free setting; triple-swap day 4) spread assumption: recorded yearly mean or fixed pts 5) EUR->USD rate for commission: fixed 1.15 or per-trade rate 6) SimDeposit per scenario. Net-after-real-cost = profit - (real commission + swap) with tester fixed cost shown in a separate column.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:36:31",
+   "updated": "2026-10-14T15:36:31",
+   "note": ""
+  },
+  {
+   "id": 17,
+   "title": "QUESTION for Nasif: exact wording of the FXOpen leverage-based commission rule? Model (data/fxopen_cost_model.json) now has commission_rule_switch = balance_bracket | leverage_based; shadow ledger to run under both and label the leverage rule UNVERIFIED in every output. Need: which leverage values map to which commission, and whether it is min(account leverage, max allowed) with 500 cap.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:36:54",
+   "updated": "2026-10-14T15:36:54",
+   "note": ""
+  },
+  {
+   "id": 18,
+   "title": "Cost model updated: scenarios published (USD basis 7/5/3.6/3.0 pts RT per fork relay of fxopen.com/en/pricing), published_eur (8.05/5.75/4.14/3.45), 5pt, 6pt kept separate; leverage rule unverified/low priority. CONFLICT for Nasif: your real 8.00 USD RT charge matches 3.50 EUR x2 x1.15, which supports the EUR basis. Please confirm from a real FXOpen statement which currency basis applies; also rate depends on 30-day volume tiers (<5M,5-25M,25-250M,>250M) on top of balance.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:37:28",
+   "updated": "2026-10-14T15:37:28",
+   "note": ""
+  },
+  {
+   "id": 19,
+   "title": "3rd test grid on PUBLISHED USD basis (relayed Nasif clarification, pending his direct confirmation here before queueing): tier7@500 ; tier5@1000 + tier5@1100 ; tier3.6@25000 + tier3.6@27500 ; tier3.0@250000 + tier3.0@275000 (7 runs, RT pts = commission only, spread separate). Leverage switch left off. One test at a time via single loop after current rc_/wr_ batch; costs labelled by scenario, never mixed with 5pt/6pt results.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T15:38:05",
+   "updated": "2026-10-14T15:38:05",
+   "note": ""
+  },
+  {
+   "id": 20,
+   "title": "CANDIDATES (queue only, no start; MT4 needs RAM>=1GB; score 8pt/trade, label other costs). Base WIN_GEN1 b22_thu+ZGate1.0+DailyRange1.0 (b31). Pattern: ER/MMR AtrCap90 gate was unstable (2010/14/18/24 +, 2013/15/16/23 -), so do NOT stack it. Try single-step neighbours of the proven pair, all 8 periods: C1 ZMax 0.9 ; C2 ZMax 1.1 ; C3 DailyRange 0.9 ; C4 DailyRange 1.1 ; C5 ZMax 0.9 + DailyRange 0.9. WIN only if better than base in >=5/8 periods, positive where base is, neighbours stable, then spread 5 and 8. Source: Nasif asked self-improvement, candidates from TEST_LOG/WINNERS_REGISTRY.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:00:33",
+   "updated": "2026-10-14T16:00:33",
+   "note": ""
+  },
+  {
+   "id": 21,
+   "title": "COST ORDER from Nasif (direct, 14Oct): run job-20 candidates at 5 pts max/round-trip FIRST, then 6 pts, then 8 pts. Label each result with its cost. Supersedes the 8pt-only wording in job 20 (CLAUDE.md 8pt rule stays default otherwise).",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:01:07",
+   "updated": "2026-10-14T16:01:07",
+   "note": ""
+  },
+  {
+   "id": 22,
+   "title": "Post-processing done (no MT4): data/cost_scenarios_20261014_1601.csv re-prices 9 clean candidates under 5pt, 6pt, tier(USD 7/5/3.6/3.0 +spr1/2) and eur (unverified). Basis decision: commission in points then USD (USD account) -> published USD brackets. 6pt best: rc_th_g2_AtrCapPts_90_hours_00-03 +18064 pts, 8 yrs, 177 trades (few trades, treat as unproven). Fixed 0.16 lot assumed: MR EAs have no SimDeposit/UseLotSim input, so balance-dependent lot sizing needs a new EA version (b63) before real tier@balance tester runs. Leverage 500 = max setup if balance and risk allow.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:01:18",
+   "updated": "2026-10-14T16:01:18",
+   "note": ""
+  },
+  {
+   "id": 23,
+   "title": "Leverage per FXOpen balance rules: need FXOpen's leverage-by-balance table (max allowed per balance bracket, cap 500). Placeholder in data/fxopen_cost_model.json (leverage_by_balance_rule). Needed before tier@balance tester runs so lot-size and margin checks use the allowed leverage at each SimDeposit.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:01:26",
+   "updated": "2026-10-14T16:01:26",
+   "note": ""
+  },
+  {
+   "id": 24,
+   "title": "QUEUED (Nasif: 7 run proceed): built MR_RegimeSwitch_b63 (= b62 + UseLotSim/SimDeposit/SimRefDeposit/SimLeverage<=500/SimMarginUsePct, default OFF, compiled 0 errors, add-only). 7 candidates at the FRONT of data/extra_candidates.json (backup bak8): sim_tier7_at_500, sim_tier5_at_1000, sim_tier5_at_1100, sim_tier3p6_at_25000, sim_tier3p6_at_27500, sim_tier3p0_at_250000, sim_tier3p0_at_275000, parent rc_th_g2_AtrCapPts_90_hours_00-03 on b63. Loop runs them at sp5 (single loop, one at a time); the tier commission re-pricing must use per-trade LOTS (sim lots differ from 0.16), cost_scenarios.py assumes 0.16 so it is NOT valid for these runs: needs a lot-aware version. Rule from Nasif: a sim-balance 500:1 test must run and be analysed at least once per verification/learning loop. Check param_audit after the first report.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:02:39",
+   "updated": "2026-10-14T16:02:39",
+   "note": ""
+  },
+  {
+   "id": 25,
+   "title": "Commission sequence 5pt -> 6pt -> 8pt (relayed Nasif): cost_scenarios.py now also re-prices at 8pt (post-processing, new csv per run, labels never mixed). Real tester runs still fixed at sp5 in the loop; 6pt/8pt are exact linear re-pricings at 0.16 lot. Tiered grid stays separate: queued as 7 sim_* runs on b63 per Nasif's direct 7 run proceed.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:05:46",
+   "updated": "2026-10-14T16:05:46",
+   "note": ""
+  },
+  {
+   "id": 26,
+   "title": "Cost order corrected (relayed Nasif): FIRST = cheapest commission, label 3.45pt (EUR-base figure, >250k bracket; USD published table says 3.0, available as tier3.0+spr rows). Then 5pt, 6pt, 8pt (8pt = real current cost per SPREAD_COMMISSION_RECORDS). cost_scenarios.py now outputs 3.45pt, 5pt, 6pt, 8pt as linear re-pricings of the sp5 runs, 0.16 lot, labels never mixed. Tiered sim_* runs after.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:07:43",
+   "updated": "2026-10-14T16:07:43",
+   "note": ""
+  },
+  {
+   "id": 27,
+   "title": "GAP AUDIT done (mt4_tester EURUSD1.hst, 5,285,216 bars 2010-06..2026-10, no dups/backwards). Big holes: 2014-05-16 231 days, 2020-01-29 135 days, 2016-02-03 49 days, 2021-02 30 days, 2016-10 28 days; missing minutes per year: 2015 337k, 2020 222k, 2016 115k, 2021 50k, 2011 39k. Bars/yr 2014 only 137k, 2020 217k, 2013 201k (full yr ~370k). Clean-ish: 2017-2019, 2023-2026. Means 2013-2016 and 2020 test results rest on sparse M1 data; check mt4_tester2 (stated clean) is the one used. Full report: scratchpad gap_out.txt",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:14:19",
+   "updated": "2026-10-14T16:14:19",
+   "note": ""
+  },
+  {
+   "id": 28,
+   "title": "Gap audit EURUSD1 mt4_tester2 (clean history)",
+   "owner": "RC session dc0bf0",
+   "status": "done",
+   "created": "2026-10-14T16:14:56",
+   "updated": "2026-10-14T16:14:56",
+   "note": "6.58M bars 2009-01..2026-10. 0 dup, 0 backwards. Longest gaps only Christmas/New Year (24-77h). Weekday missing min/yr 335-7011; 2011 cleanest. Full: data\\gap_audit_EURUSD1_tester2_14Oct2026.txt"
+  },
+  {
+   "id": 29,
+   "title": "BUILT data/cost_scenarios_lots.py (lot-aware re-pricing, read-only post-processing, new csv per run): per closed deal lots*(cost-5), per year net USD, return % of SimDeposit, max DD %; tested on existing non-sim reports (2010 rc_th_g2: 9 trades +314.97 USD at 5pt, matches). Runs on sim_* reports as they land. COORDINATION: RC session local_93e7f36b may run 'python -E -P data/param_audit.py' (read-only) after the first sim_* report; cloud forks: review cost_scenarios_lots.py logic and the ER/regime findings on the board; nobody touches extra_candidates.json, auto_loop.py or the b63 EA; ONE loop only.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:23:34",
+   "updated": "2026-10-14T16:23:34",
+   "note": ""
+  },
+  {
+   "id": 30,
+   "title": "COST ORDER UPDATE (Nasif, 14Oct): first test is always the cheapest tier = 3.45 pts; then 5, then 6, then 8. Applies to job-20 candidates; supersedes job 21. Label every result with its cost; compare only within one variant and one cost.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:24:46",
+   "updated": "2026-10-14T16:24:46",
+   "note": ""
+  },
+  {
+   "id": 31,
+   "title": "BUILD (queued, starts after auto_loop round ends + RAM>=1GB): MASTER EA - all variants in one EA on one chart, with remote admin control, remote disable (kill switch), email/SMTP notifications. New file name only (never edit b63 or existing EAs), compile in mt4_tester2 only, backtest-only, no live approval. Needs from Nasif: (1) which variants/gates to include (default: b22_thu base + WIN_GEN1 ZGate+DailyRange as switchable inputs); (2) remote channel (default: command file in MQL4\\Files polled on timer, written by hub/phone bridge; WebRequest needs URL whitelist in MT4 options); (3) SMTP: use MT4 built-in SendMail with Nasif setting server/login in Tools>Options>Email himself - no credentials given to agents.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:29:23",
+   "updated": "2026-10-14T16:29:23",
+   "note": ""
+  },
+  {
+   "id": 32,
+   "title": "Queue reordered cheapest-first (relayed Nasif answer, backup bak9): sim_tier3p0_at_250000, sim_tier3p0_at_275000, sim_tier3p6_at_25000, sim_tier3p6_at_27500, sim_tier5_at_1000, sim_tier5_at_1100, sim_tier7_at_500. Leverage cap 500. sim_tier7_at_500 had already started (2016, 2018 done) and will finish its current pass; the loop reads the file on the fly so new order applies to untested entries. Labels by commission tier.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:30:58",
+   "updated": "2026-10-14T16:30:58",
+   "note": ""
+  },
+  {
+   "id": 33,
+   "title": "TEST ORDER (Nasif, 14Oct): run difficult and quiet years first, easy years last. Within the 8 WIN periods (2011, 2012, 2017, 2019, 2020, 2021, 2022, 2025-26) suggested order: quiet 2017 + 2019 + 2012, hard 2020 + 2022 + 2021, then 2011, 2025-26. Not applied to auto_loop.py / extra_candidates.json (hands off); job-20 queue order only. Years 2013-2016 are valid again on mt4_tester2 if Nasif wants them added.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:35:00",
+   "updated": "2026-10-14T16:35:00",
+   "note": ""
+  },
+  {
+   "id": 34,
+   "title": "OBJECTIVE (Nasif, 14Oct): rank candidates by win rate, win count and win volume (gross profit) across years, not just net. For every result record per period: trades, win rate %, winners, gross profit, net, at its cost label. Keep a learning table (hst_out\\winners\\WINRATE_LEARNING.txt, new file, append-only): parameter value -> win rate change in hard years vs b22_thu base. Prefer setups better in most of 8 periods, never one-year spikes.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:35:12",
+   "updated": "2026-10-14T16:35:12",
+   "note": ""
+  },
+  {
+   "id": 35,
+   "title": "TEST ORDER v2 (coordinator relay, 14Oct; replaces suggested order in job 32/33): add 2013-2016 (valid on mt4_tester2). Hard first: 2014, 2016, 2020, 2022, 2021; quiet/normal: 2013, 2015, 2017, 2019, 2012; easy last: 2011, 2025-26. Objective for all: win rate / win count / gross profit (see job 34). Note: the 8-period WIN rule still uses the 8 standard periods; 2013-2016 are extra evidence.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:35:22",
+   "updated": "2026-10-14T16:35:22",
+   "note": ""
+  },
+  {
+   "id": 36,
+   "title": "COMMISSION PLAN (Nasif, relayed 20:42): stage1 5pt RT + avg spread/2 (canonical), stage2 6pt stress, stage3 FXOpen tiers tier7@<1k, tier5@1k-25k, tier3.6@25k-250k, tier3.0@>250k (balance 10% above bracket floor; label tier<pts>@<balance>; add shadow ledger fxopen_real_cost per trade, post-processing only). UNRESOLVED for stage 3: FXOpen charges in base currency (EUR) so EURUSD real RT ~8.2/5.9/4.2/3.5 pts vs 7.0/5.0/3.6/3.0. CONFLICT: earlier relay said first test = 3.45 pts cheapest (job 30); this plan starts at 5. Pending Nasif to pick; nothing started.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:43:04",
+   "updated": "2026-10-14T16:43:04",
+   "note": ""
+  },
+  {
+   "id": 37,
+   "title": "RESOLVED (coordinator relay of Nasif's re-shared plan, 20:44): stage1 = 5 pts, stage2 = 6 pts, stage3 = FXOpen tiers. 3.45 was only the cheapest-tier reference, not the first test. Supersedes job 30/36 conflict. EUR/USD commission question still open for stage 3.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:44:30",
+   "updated": "2026-10-14T16:44:30",
+   "note": ""
+  },
+  {
+   "id": 38,
+   "title": "FINAL ORDER (Nasif direct, 20:44:17, newest wins): cheapest commission first. Test order 3.45 -> 5 -> 6 -> 8, then stage-3 FXOpen tiers. Supersedes job 37. Label every result with its cost.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:44:41",
+   "updated": "2026-10-14T16:44:41",
+   "note": ""
+  },
+  {
+   "id": 39,
+   "title": "QUEUE ADD (Nasif direct, 20:44:33): 500:1 max-leverage tests ASAP - queue right after the first 3.45 pt run, ahead of 5/6/8 stages. Tester leverage 500 (FXOpen ECN cap), label results lev500. Needs: how leverage is set in run_tester.ps1/tester ini (check before first run); keep one variant per cost, compare only like with like.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:44:53",
+   "updated": "2026-10-14T16:44:53",
+   "note": ""
+  },
+  {
+   "id": 40,
+   "title": "FRONT OF QUEUE (Nasif direct, 20:46:37): first run = lowest swap cost + lev 500 + cheapest commission 3.45 pts. Label swap_min_lev500_3.45pts. Swap-min = no overnight holds beyond need / avoid Wed triple-swap rollover and the swap-costly side; fixed spread-free swap taken from the symbol's swap_long/short in the tester. Needs check: does the .set base (b22_thu+ZGate+DailyRange) hold across rollover? If an EA input for session/rollover exists use it; no new EA logic until Nasif OKs. Then 500-lev at 5/6/8 pts.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:46:55",
+   "updated": "2026-10-14T16:46:55",
+   "note": ""
+  },
+  {
+   "id": 41,
+   "title": "QUEUED via guarded one-shot scripts\\run_2025_leader.ps1 (Nasif via MQL cloud relay): leader rc_th_g2_AtrCapPts_90_hours_00-03 on 2025-01..2025-08, sp5 (label 5pt), mt4_tester2, runs only when tester idle + RAM >= 1 GB + no pause file, gives up after 6 h (NEEDS NASIF: RAM). 3.45pt/6pt/8pt = post-processing of that report. Log lines in evolve_log.txt prefixed run_2025_leader. Did not write a second 6pt re-pricer.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:54:51",
+   "updated": "2026-10-14T16:54:51",
+   "note": ""
+  },
+  {
+   "id": 42,
+   "title": "NOTE (Nasif, 20:55): he used to have a no-swap (swap-free) account. If he wants it again, the swap-min run can use swap 0 for EURUSD in the tester (label swapfree) as a separate variant; keep the swapped run separate. Needs Nasif: still has the swap-free account type available at FXOpen, and any admin fee per day?",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:56:04",
+   "updated": "2026-10-14T16:56:04",
+   "note": ""
+  },
+  {
+   "id": 43,
+   "title": "SWAP RESEARCH (Nasif ask 20:56): FXOpen swap-free (Islamic) accounts exist on request via support, but per FXOpen pricing pages the overnight swap is replaced by an additional commission EQUAL to the swap -> no real saving. No low-swap tier found. So a swap-0 sim would flatter results: keep swap in the tester for canonical runs; a 'swapfree' variant must add a charge equal to swap (same total) unless FXOpen confirms otherwise. Sources fxopen.com/en/pricing, fxopen.com/en-hk/pricing. Needs Nasif: confirm with FXOpen support whether his old no-swap account had a fee. Supersedes job 42 idea of swap=0.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:57:00",
+   "updated": "2026-10-14T16:57:00",
+   "note": ""
+  },
+  {
+   "id": 44,
+   "title": "2025-01..08 leader run FINISHED but SUSPECT, not valid yet: 0 trades, 0.7 min runtime, 13.7M ticks modelled 90%, and the report was written to hst_out root instead of hst_out\\clean (my runner call lacked the loop's clean-output setting). Moved (not deleted) to hst_out\\clean\\_suspect_2025_leader_0trades_14Oct2026. Do not use as a result. Next: check whether the leader (hours/ATR gates) can really have zero entries in 2025 or whether the data/ settings are wrong, then rerun through the loop's own clean path. Label would be 5pt.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T16:57:55",
+   "updated": "2026-10-14T16:57:55",
+   "note": ""
+  },
+  {
+   "id": 45,
+   "title": "NEEDS NASIF: (1) did FXOpen charge a fee in place of swap on your old no-swap account? (2) stage-3 commission is charged in EUR on EURUSD - which figures to use? (3) OK to build the master EA (remote control + kill switch + SMTP)? Laptop thread follows AGENT_RULES: no tester/driver started, tester2 only, loop files untouched.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T17:01:38",
+   "updated": "2026-10-14T17:01:38",
+   "note": ""
+  },
+  {
+   "id": 46,
+   "title": "NOTE (MQL4 remote session, 14Oct ~21:00): read AGENT_RULES, following them. Idle in handoff mode; ran no tests/loops/orders; only zipped 33 old compile logs in Terminal MQL4 folder (compile_logs_archive_14Oct2026.zip). Will run param_audit.py + cost_scenarios_lots.py (read-only) only if Nasif says so once a LOOP_sim_*_real.htm exists. Handoff: Signal\\handoff\\MQL4_REMOTE_SESSION_HANDOFF_14Oct2026.md",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T17:01:55",
+   "updated": "2026-10-14T17:01:55",
+   "note": ""
+  },
+  {
+   "id": 47,
+   "title": "FOR SIGNAL-FOLDER LOOP SESSION (from Nasif via laptop MQL4 thread, 14Oct 21:24): 1) add a pause flag file check to the loop (auto_loop.py) so PAUSE from his phone works - PAUSE-TEST had no effect; 2) find why 2025-01..08 run had 0 trades, re-run it through the loop, do not count the old output; 3) then run 2018 gap at spread 2, then 2023-24; 4) label every result with its commission figure, cheapest first (3.45), one test at a time, hold new runs below 1 GB free RAM. MQL4 thread does not touch loop files.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T17:24:12",
+   "updated": "2026-10-14T17:24:12",
+   "note": ""
+  },
+  {
+   "id": 48,
+   "title": "Balance tiers below 60k only (Nasif, direct): dropped the >=60k runs (250k/275k) from the queue (sim_tier3p0_at_250000 had already run; sim_tier3p0_at_275000 was in progress and will finish). Queue now cheapest-first: tier3.6@25000, tier3.6@27500, tier3.6@50000, tier5@1000, tier5@1100, tier5@5000, tier5@10000, tier7@500 (backup bak10). Balances covered: 500, 1k, 1.1k, 5k, 10k, 25k, 27.5k, 50k; leverage cap 500. Real FXOpen caps (1:200 above 25k, 1:100 above 100k per cloud relay, unverified) not applied.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T18:52:15",
+   "updated": "2026-10-14T18:52:15",
+   "note": ""
+  }
+ ]
+}

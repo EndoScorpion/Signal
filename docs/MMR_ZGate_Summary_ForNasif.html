@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>MMR and ZGate: plain-language summary</title>
+<style>
+@page { size: A4; margin: 20mm 18mm 22mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #111; }
+h1 { font-size: 20pt; margin: 0 0 2pt; } h2 { font-size: 13pt; margin: 14pt 0 4pt; border-bottom: 1px solid #999; }
+table { border-collapse: collapse; width: 100%; font-size: 10pt; margin: 6pt 0; } th, td { border: 1px solid #888; padding: 3pt 6pt; text-align: left; } th { background: #e8e8e8; }
+.box { border: 1.5px solid #333; padding: 8pt 10pt; margin: 8pt 0; background: #fafafa; } .warn { border-left: 4px solid #b00; padding-left: 8pt; }
+.foot { position: fixed; bottom: -12mm; left: 0; right: 0; text-align: center; font-size: 8pt; color: #444; border-top: 1px solid #aaa; padding-top: 3pt; }
+</style></head><body>
+<div class="foot">Copyright &copy; 2019&ndash;2026 Nasif Hossain &lt;EndoScorpion@gmail.com&gt;. All rights reserved. Summary of the MMR and ZGate technical white paper v1.0. Not financial advice.</div>
+<h1>MMR and ZGate: the short version</h1>
+<p><b>By Nasif Hossain</b> (EndoScorpion@gmail.com) &middot; 13 October 2026 &middot; Full technical paper: <i>MMR_ZGate_WhitePaper_RFC.pdf</i></p>
+<div class="box"><b>Copyright &copy; 2019&ndash;2026 Nasif Hossain, EndoScorpion@gmail.com. All rights reserved.</b> MMR (Max/Min slope Ratio) is Nasif&rsquo;s original concept (2019). ZGate, its parameters, the test methods and this text are his work.</div>
+<h2>What they are, in plain words</h2>
+<p><b>MMR</b> looks at how steep the price trend is over the last 6, 12 and 18 bars and divides the steepest slope by the flattest. A big number means one direction is dominating on every horizon.</p>
+<p><b>ZGate</b> asks: is the last price (and the last volume) unusually high compared with the last 20 bars? It blends the two (70% price, 30% volume). If the blend is 1.0 or higher, the EA will not open a new sell, because it would be selling into a spike.</p>
+<h2>Do they help us win? What the tests say</h2>
+<table><tr><th>Question</th><th>Answer so far</th></tr>
+<tr><td>Does the EA with ZGate win in the years it was tuned on?</td><td>Yes: +75,254 versus +48,429 for the parent over 8 periods (8-point cost), better in 7 of 8.</td></tr>
+<tr><td>Does it win in years it never saw (5-pt commission)?</td><td><b>No.</b> It lost in every unseen year (2010, 2013&ndash;2016, 2018, 2023, 2024), between &minus;690 and &minus;6,494.</td></tr>
+<tr><td>Is ZGate&rsquo;s idea (don&rsquo;t sell strength) right?</td><td><b>Yes, in two different markets.</b> On daily US stocks the lower the ZGate score, the better the next 5 days, in both halves of history. In FX, selling when stochastic is above 80 or price is stretched high lost in every unseen year.</td></tr>
+<tr><td>Does MMR predict direction on EURUSD?</td><td><b>Not reliably.</b> Its top-versus-bottom edge flips sign from year to year (negative in 12 of 17 years at 1 hour) and is about as big as the 5-point commission.</td></tr>
+<tr><td>Does MMR help on stocks?</td><td>Its lowest group had the best next-5-day return in both eras (+0.41% and +0.43%), but that may just be &ldquo;it fell recently&rdquo; in disguise. Not proven independent.</td></tr></table>
+<h2>What did reduce losses</h2>
+<ul><li>A much longer sell regime (about 100 days instead of 50) cut average losses by roughly 40% (+$1,555 a year better than the base), but still lost money overall.</li><li>Adding a Hurst &ldquo;trend&rdquo; gate did similar, with one profitable year (2024: +1,134, profit factor 1.33).</li><li>Calm, orderly markets (low volatility, low entropy) looked much better for sells in every year tested, but it was found on the same years, so it is a lead, not a result.</li></ul>
+<h2>What does not work</h2>
+<ul><li>Scalping 7&ndash;10 point wins at a 5-point commission: you would need to win 91&ndash;99% of trades; the best we saw was 70&ndash;83%.</li><li>Trusting the single-feature &ldquo;chaos&rdquo; measures (Hurst, entropy, Alligator) alone: no stable pattern.</li></ul>
+<h2>The honest status</h2>
+<div class="box warn"><b>MMR: unproven. ZGate: a sensible filter, not a profit engine.</b> Nothing here is approved for live trading. To prove MMR you still need: a second broker&rsquo;s feed, other pairs and markets, net-of-cost tests with real spread and swap, and one clean final test on data that was never used for choosing anything.</div>
+<h2>What to do next</h2>
+<ol><li>Let the test loop finish the calm-tape, Hurst, exit-ratio and old-branch tests, then run the 5-point-commission audit on the leaders.</li><li>Test MMR on its own and mixed with ZGate on stocks and on other FX pairs.</li><li>Keep the weekly history update running (Sundays 11 PM) and the USB backups current.</li></ol>
+</body></html>

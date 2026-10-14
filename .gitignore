@@ -1,2 +1,19 @@
 __pycache__/
 *.pyc
+
+# ntfy topic secret — never commit
+data/ntfy_topic.txt
+**/ntfy_topic.txt
+# WIP triage: bulky/non-research artifacts
+_usb_backup_stage/
+adb_tools/
+ProcessExplorer*
+QuotesDownlo*
+*.exe
+*.webp
+*.hst
+*.zip
+*.stop
+Logs/
+tick_log.csv
+data/quotes_download/

@@ -1,0 +1,18 @@
+{
+  "_note": "LOCKED — original build048 win logic. Do not edit. Branches are copies of this.",
+  "_source": "Signal Live Companion v0.01d build048 | 11 Oct 2026",
+  "_cost": {"comm_pts_rt": 5, "spread_pts": 2, "swap_pct_night": 0.003, "tax_pct": 0},
+  "families": ["STO","CNV","EMA","MACD","BB","BBO","SAR","ADX","CCI","KC","ENV","MOM","AO","ICH","STD"],
+  "exits":    ["hold2","hold3","atp","asl","ctp","csl"],
+  "regimes":  ["adx","cg","us","eu","quiet","trend","vol","ll"],
+  "rules": [
+    {"id":"R001","family":"STO","params":[14,30,2],"tf":"h1","exit":"hold3","exit_val":3,"exit_val2":1,"regimes":["adx"],"active":true},
+    {"id":"R002","family":"EMA","params":[5,20],"tf":"h1","exit":"hold3","exit_val":3,"exit_val2":1,"regimes":["cg"],"active":true},
+    {"id":"R003","family":"MACD","params":[12,26,9],"tf":"h1","exit":"atp","exit_val":2,"exit_val2":1,"regimes":["adx"],"active":true},
+    {"id":"R004","family":"BB","params":[20,20],"tf":"h1","exit":"hold2","exit_val":2,"exit_val2":1,"regimes":[],"active":true},
+    {"id":"R005","family":"CNV","params":[14,20,3,60],"tf":"h1","exit":"ctp","exit_val":3,"exit_val2":1,"regimes":["ll"],"active":true},
+    {"id":"R006","family":"SAR","params":[2,20],"tf":"h1","exit":"hold3","exit_val":3,"exit_val2":1,"regimes":["trend"],"active":true},
+    {"id":"R007","family":"ADX","params":[14,20],"tf":"h1","exit":"atp","exit_val":2,"exit_val2":1,"regimes":[],"active":true},
+    {"id":"R008","family":"CCI","params":[20,100,100],"tf":"h1","exit":"hold3","exit_val":3,"exit_val2":1,"regimes":["adx"],"active":true}
+  ]
+}
