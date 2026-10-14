@@ -1,2 +1,4 @@
 __pycache__/
 *.pyc
+data/agent_board.json.lock
+data/agent_board.json.tmp

@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "rev": 1,
+ "updated": "2026-10-14T19:19:12Z",
+ "agents": {},
+ "items": [],
+ "mt4": {
+  "max_running": 1,
+  "queue": []
+ },
+ "log": []
+}
