@@ -14,6 +14,12 @@ Backtest only. No orders from any agent. Only Nasif lifts a pause or approves an
 - Skipped by Nasif: 2015 sp6 test. Pending (runner/loop only): 2018, 2023, 2024.
 - Approved read-only: .hst gap audit (results to data/agent_board.json).
 
+## Handoff (signal-a2, 2026-10-14 ~20:00 UTC)
+- Done: PR #9 branch cleaned/pushed; ER H1+M1 studies (no standalone edge); read-only results analysis (volume vs edge) on board; this bridge doc.
+- Open for next agent: (1) restart loop when free RAM >= 1.0 GB (Nasif/runner only); (2) hypotheses H1-H3 on data/agent_board.json; (3) approved read-only .hst gap audit not yet run; (4) 2018/2023/2024 tests already produced by runner (m1_m1_*_sp5).
+- Laptop helper files (mine, new only): Signal\agent_readonly\cloud_*.ps1, er_m1.py + outputs. Safe to delete by Nasif.
+- Not done / not allowed: no MT4 start, no pause changes, no rules/memory edits.
+
 ## How the phone session can help without a terminal
 1. Read data/agent_board.json (list of jobs) and this file.
 2. Put requests for the terminal sessions in the "Requests" section below (Nasif pastes or a terminal session commits it).
