@@ -1,0 +1,2 @@
+﻿START safe thermal guard 10/12/2026 10:26:01
+STOP 10/12/2026 12:10:15

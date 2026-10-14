@@ -1,0 +1,22 @@
+2026-10-14 05:09:47 guard started (LowMB=600)
+2026-10-14 05:28:23 guard started (LowMB=600)
+2026-10-14 05:28:41 guard started (LowMB=600)
+2026-10-14 05:30:13 no test running, guard exiting
+2026-10-14 05:30:13 guard stopped
+2026-10-14 05:30:27 guard stopped
+2026-10-14 05:30:39 guard stopped
+2026-10-14 12:30:53 guard started (LowMB=450 cooldown=120 s)
+2026-10-14 12:34:55 no test running, guard exiting
+2026-10-14 12:34:55 guard stopped
+2026-10-14 16:19:51 guard started (LowMB=450 cooldown=120 s)
+2026-10-14 16:21:34 free 306 MB -> trimmed 8 procs -> free 643 MB
+2026-10-14 16:29:04 free 433 MB -> trimmed 11 procs -> free 672 MB
+2026-10-14 16:31:07 free 320 MB -> trimmed 6 procs -> free 591 MB
+2026-10-14 16:41:36 free 443 MB -> trimmed 8 procs -> free 532 MB
+2026-10-14 16:45:21 free 433 MB -> trimmed 6 procs -> free 627 MB
+2026-10-14 16:56:10 free 365 MB -> trimmed 9 procs -> free 474 MB
+2026-10-14 17:08:00 free 353 MB -> trimmed 8 procs -> free 627 MB
+2026-10-14 17:10:01 free 386 MB -> trimmed 8 procs -> free 485 MB
+2026-10-14 17:12:03 free 358 MB -> trimmed 8 procs -> free 422 MB
+2026-10-14 17:18:08 free 404 MB -> trimmed 6 procs -> free 633 MB
+2026-10-14 17:21:12 free 268 MB -> trimmed 9 procs -> free 648 MB
