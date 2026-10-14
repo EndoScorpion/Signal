@@ -10,3 +10,6 @@ Logs/
 ProcessExplorer/
 _usb_backup_stage/
 data/quotes_download/
+QuotesDownloder.3/
+*.dll
+*.pdb
