@@ -32,7 +32,7 @@ def now(): return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"
 
 def empty():
     return {"schema": 1, "rev": 0, "updated": now(),
-            "agents": {}, "items": [], "mt4": {"max_running": 1, "queue": []}, "log": []}
+            "agents": {}, "items": [], "candidates": {}, "mt4": {"max_running": 1, "queue": []}, "log": []}
 
 class Board:
     def __enter__(self):
@@ -56,6 +56,30 @@ def die(m): print("ERROR:", m); sys.exit(1)
 def find(lst, i): return next((x for x in lst if x["id"] == i), None) or die(f"no id {i}")
 def beat(b, a): b["agents"].setdefault(a, {})["last_seen"] = now()
 
+MIN_N = 30  # CLAUDE.md: reject n<30
+
+def fitness(n, wins, net):
+    """Net-of-costs fitness: avg net %/trade x sqrt(n) (t-stat-like), 0 if n<30 or net<=0."""
+    if n < MIN_N or net <= 0: return 0.0
+    return round(net * n ** 0.5, 4)
+
+def score(b, cid, n, wins, net, tid):
+    c = b["candidates"][cid]
+    c["tests"] += 1; c["n"], c["wins"], c["avg_net"] = n, wins, net
+    c["win_rate"] = round(wins / n, 4) if n else None
+    f = fitness(n, wins, net); prev = c["fitness"]
+    par = b["candidates"].get(c["parent"] or "", {}).get("fitness")
+    c["momentum"] = round(f - (prev if prev is not None else (par or 0.0)), 4)
+    c["fitness"] = f
+    c["history"].append({"t": now(), "test": tid, "n": n, "win_rate": c["win_rate"], "avg_net": net, "fitness": f})
+
+def priority(b, j):
+    """Pick next MT4 test: children of rising lineages first, then parent fitness, then FIFO."""
+    c = b["candidates"].get(j.get("cand") or "", {})
+    par = b["candidates"].get(c.get("parent") or "", {})
+    mom = par.get("momentum") or 0.0
+    return (mom > 0, mom, par.get("fitness") or 0.0, -int(j["id"][1:]))
+
 def main():
     p = argparse.ArgumentParser(); s = p.add_subparsers(dest="cmd", required=True)
     s.add_parser("init"); s.add_parser("status")
@@ -65,9 +89,9 @@ def main():
         x = s.add_parser(c); x.add_argument("--id", required=True); x.add_argument("--agent", required=True); x.add_argument("--result"); x.add_argument("--note", default="")
     x = s.add_parser("mt4-queue"); x.add_argument("--agent", required=True)
     for f in ("ea", "symbol", "tf"): x.add_argument("--" + f, required=True)
-    x.add_argument("--from", dest="frm", required=True); x.add_argument("--to", required=True); x.add_argument("--set"); x.add_argument("--item")
+    x.add_argument("--from", dest="frm", required=True); x.add_argument("--to", required=True); x.add_argument("--set"); x.add_argument("--item"); x.add_argument("--cand"); x.add_argument("--parent")
     x = s.add_parser("mt4-next"); x.add_argument("--agent", required=True)
-    x = s.add_parser("mt4-done"); x.add_argument("--id", required=True); x.add_argument("--agent", required=True); x.add_argument("--report", required=True); x.add_argument("--status", default="done", choices=["done", "failed"])
+    x = s.add_parser("mt4-done"); x.add_argument("--id", required=True); x.add_argument("--agent", required=True); x.add_argument("--report", required=True); x.add_argument("--status", default="done", choices=["done", "failed"]); x.add_argument("--n", type=int, default=0); x.add_argument("--wins", type=int, default=0); x.add_argument("--net", type=float, default=0.0, help="avg net %%/trade after ALL costs")
     x = s.add_parser("reap"); x.add_argument("--minutes", type=int, default=90)
     a = p.parse_args()
 
@@ -76,8 +100,11 @@ def main():
         with Board(): pass
         print("created", BOARD); return
     with Board() as b:
+        b.setdefault("candidates", {})
         if a.cmd == "status":
             for it in b["items"]: print(f"{it['id']} {it['status']:8} {it['kind']:6} {it.get('owner') or '-':12} {it['title']}")
+            for k, c in sorted(b["candidates"].items(), key=lambda kv: -(kv[1]["fitness"] or 0)):
+                print(f"{k:12} gen{c['gen']} n={c['n']} win={c['win_rate']} net={c['avg_net']} fit={c['fitness']} mom={c['momentum']}")
             for j in b["mt4"]["queue"]: print(f"{j['id']} {j['status']:8} MT4    {j['ea']} {j['symbol']} {j['tf']} {j['from']}-{j['to']}")
         elif a.cmd == "add":
             it = {"id": nid(b["items"], "W"), "kind": a.kind, "title": a.title, "status": "open",
@@ -99,14 +126,19 @@ def main():
             log(b, a.agent, f"{a.cmd} {a.id}"); beat(b, a.agent)
         elif a.cmd == "mt4-queue":
             j = {"id": nid(b["mt4"]["queue"], "T"), "item": a.item, "by": a.agent, "ea": a.ea, "symbol": a.symbol,
-                 "tf": a.tf, "from": a.frm, "to": a.to, "set": a.set, "status": "queued",
+                 "tf": a.tf, "from": a.frm, "to": a.to, "set": a.set, "cand": a.cand, "status": "queued",
                  "queued": now(), "started": None, "finished": None, "report": None}
+            if a.cand:
+                c = b["candidates"].setdefault(a.cand, {"parent": a.parent, "gen": 0, "tests": 0, "n": 0, "wins": 0,
+                                                       "win_rate": None, "avg_net": None, "fitness": None, "momentum": 0.0, "history": []})
+                if a.parent in b["candidates"]: c["gen"] = b["candidates"][a.parent]["gen"] + 1
             b["mt4"]["queue"].append(j); log(b, a.agent, f"mt4-queue {j['id']}"); print(j["id"])
         elif a.cmd == "mt4-next":
             if a.agent not in MT4_ROLE_AGENTS: die(f"{a.agent} lacks mt4 role (MT4_AGENTS={','.join(MT4_ROLE_AGENTS)})")
             run = [j for j in b["mt4"]["queue"] if j["status"] == "running"]
             if len(run) >= b["mt4"]["max_running"]: die(f"MT4 busy: {run[0]['id']}")
-            j = next((j for j in b["mt4"]["queue"] if j["status"] == "queued"), None)
+            q = [j for j in b["mt4"]["queue"] if j["status"] == "queued"]
+            j = max(q, key=lambda j: priority(b, j)) if q else None
             if not j: print("NONE"); return
             j.update(status="running", started=now(), runner=a.agent); log(b, a.agent, f"mt4-start {j['id']}")
             print(json.dumps(j))
@@ -114,6 +146,7 @@ def main():
             j = find(b["mt4"]["queue"], a.id)
             if j["status"] != "running" or j.get("runner") != a.agent: die("not running under this agent")
             j.update(status=a.status, finished=now(), report=a.report); log(b, a.agent, f"mt4-{a.status} {a.id}")
+            if j.get("cand") and a.status == "done": score(b, j["cand"], a.n, a.wins, a.net, a.id)
             # auto-create a parse item for the report
             b["items"].append({"id": nid(b["items"], "W"), "kind": "parse", "title": f"parse {a.id} {a.report}",
                                "status": "open", "deps": [], "owner": None, "claimed": None, "created": now(),

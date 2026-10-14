@@ -16,3 +16,9 @@ Board: `data/agent_board.json`, CLI: `tools/agent_board.py` (see its docstring).
 ## Pool size: 3 cloud agents + 1 MT4 runner
 - `er` (ER/report analysis) 1, `draft` (candidate EAs/set files) 1, `parse` (MT4 report to results/) 1.
 - More is wasted: MT4 is the bottleneck (one test at a time), so drafting faster than the laptop can test only grows the queue, and every agent costs credits. Add a 2nd drafter only if the queue is empty for a whole MT4 cycle.
+
+## Self-improvement and win rate (added 14 Oct 2026)
+- `candidates{id: {parent, gen, tests, n, wins, win_rate, avg_net, fitness, momentum, history[]}}`. `mt4-queue --cand ID [--parent PID]` registers a candidate; gen = parent gen + 1.
+- `mt4-done ... --n N --wins W --net AVG_NET_PCT` (net of ALL costs) scores it. fitness = avg_net x sqrt(n), 0 when n < 30 or net <= 0 (a "win" only counts after costs). momentum = fitness minus the previous test (or the parent's fitness).
+- `mt4-next` takes the queued test whose parent lineage has the highest positive momentum, then parent fitness, then oldest first. Still one test at a time.
+- Hold-out numbers are what count; backtests are not guarantees.
