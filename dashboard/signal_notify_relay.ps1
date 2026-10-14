@@ -41,6 +41,7 @@ param(
     [string]$MT4QueueFile = $env:MT4_QUEUE_FILE
 )
 
+$ScriptDir = $PSScriptRoot
 # Topic from local secret file (never in git or env vars visible to CI)
 $NtfyTopicFile = if($env:NTFY_TOPIC_FILE) {$env:NTFY_TOPIC_FILE} else {
     # Default: look in Signal/data/ relative to this script, then laptop data/ fallback
@@ -118,7 +119,7 @@ function Send-TwilioSMS($subj, $body) {
 function Send-TextbeltSMS($subj, $body) {
     if (-not $TxtbeltTo) { return }
     try {
-        $msg = "[MasterEA] $subj: " + ($body -replace "`n"," ")
+        $msg = "[MasterEA] ${subj}: " + ($body -replace "`n"," ")
         $data = @{phone=$TxtbeltTo; message=$msg; key=$TxtbeltKey}
         Invoke-RestMethod -Method POST -Uri "https://textbelt.com/text" -Body $data -TimeoutSec 10
         Write-Host "  [SMS/textbelt] sent"
