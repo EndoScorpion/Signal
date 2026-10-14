@@ -1,0 +1,11 @@
+SPY yahoo 2512
+SPY yahoo 2512
+QQQ yahoo 2512
+ULTY yahoo 659
+AAPL yahoo 2512
+MSFT yahoo 2512
+JPM yahoo 2512
+KO yahoo 2512
+XOM yahoo 2512
+GLD yahoo 2512
+SLV yahoo 2512

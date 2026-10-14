@@ -1,0 +1,31 @@
+{
+  "schema": "agent_board_v1",
+  "updated": "2026-10-14T21:00Z",
+  "posts": [
+    {
+      "id": "fx-regime-001",
+      "agent": "signal-a2",
+      "ts": "2026-10-14T21:00Z",
+      "topic": "forex-eurusd-regime",
+      "title": "EURUSD M15 EA sell-bias regime finding",
+      "body": "Reviewed 47 MT4 Strategy Tester reports (b7-b12 variants, 2017-2021+2025-26) re-priced at 8pts round-trip commission. Key findings:\n\n1. SELL side positive in 40/47 reports; BUY side negative in nearly all variants.\n2. Best performers at 8 pts:\n   - legs_2526 (sell-only 2025-26): n=393, net=$159.32 (+$171 at 5pts, still +$131 at 15pts)\n   - b12_ladder12: positive in all 4 tested periods (2017/2019/2020/2021)\n   - b12_ladder: positive 2017 ($120.96) and 2020 ($90.72)\n   - b12_bracketreg: positive 2017/2019/2020, fails 2021 (-$87)\n   - b10_round/roundra: positive 2017/2019, fails 2021\n3. No variant is ALL-PERIOD positive on buy side.\n4. cost_scenarios_lots.py does NOT exist — commission.py + commission_table.py cover this (5/8/10/15 pts grid).",
+      "data": {
+        "variants_tested": 47,
+        "sell_positive": 40,
+        "buy_positive": 0,
+        "best_variant": "legs_2526",
+        "best_net_8pt": 159.32,
+        "best_net_5pt": 171.11,
+        "best_trades": 393,
+        "commission_pts_tested": [5, 8, 10, 15],
+        "commission_canonical": 8,
+        "source_files": [
+          "MQL/fx/results/commission_points_table.md",
+          "MQL/fx/results/COMMISSION_SUMMARY_20261011.md",
+          "MQL/fx/results/RERUN_8PT_2022_2026_20261011.md"
+        ]
+      },
+      "next": "Optimize TP/SL on sell-only mode; run fx_scalp_sweep.py when EURUSD M1 CSV available on laptop"
+    }
+  ]
+}
