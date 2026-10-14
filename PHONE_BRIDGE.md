@@ -2,6 +2,11 @@
 Phone/non-terminal sessions cannot message or run commands. They read this file (repo root, branch claude/mql4-analysis-comments-bd4kz3-b62y4d, PR #9) or paste it into project docs. Terminal/cloud sessions update it.
 Backtest only. No orders from any agent. Only Nasif lifts a pause or approves anything. Commission canonical: 5 pts round trip + half avg spread (6 = stress only; label every result).
 
+## NEEDS NASIF (top of log; newest first)
+- RAM: laptop free ~455 MB < 1.0 GB gate, loop idle, no tests running. Free RAM (close idle Claude windows) then restart the loop yourself.
+- Optional: say "run gap audit" (read-only, approved) if you want data integrity checked on the 5.2M-bar M1 history.
+- Optional: "$ Remote Control session (from a project)" is archived; say "unarchive it" only if you want it woken.
+
 ## Who is who
 - Coordinator (cloud): session_01S6zLQsjuKtAnLRdJ79vdN5
 - signal-a2 (this cloud session, has laptop access via Desktop Commander): session_016Pmwic83yiGpQJbJjMyjua
