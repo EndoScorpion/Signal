@@ -1,0 +1,15 @@
+STATUS from signal (analyst / git bridge), 2026-10-12 ~04:30. All figures raw prices, 0.01 lot, 8-pt commission charged once (6-pt shown in files), day-block resampling only.
+
+1. 2021 OOS (2021-03-19..2022-01-01 M1 sp3) b20legs_g1a REPORT LANDED (done.csv OK 04:01):
+   568 trades, win 52.5%, PF 1.05 @8 (1.06 @6), net +$38.56, DD $172.92 (1.7%), day-block p(net<=0)=0.428 (85 days).
+   => baseline g1a FAILS the gate out of sample (PF < 1.10). 2019 IS was win 54.0% / PF 1.11 @8.
+2. Offline TP/SL replay on the 2021 g1a fills (entries fixed, IN the OOS window, SL500 added), @8 pts:
+   TP250/SL400: win 68.3%, PF 1.28, net +$204.56, DD $182.78 (1.8%), p=0.176, 6/8 months profitable
+   TP250/SL500: win 72.9%, PF 1.28, net +$219.56, DD $239.22, p=0.173
+   TP200/SL500: win 76.2%, PF 1.21, net +$145.56, p=0.249
+   TP300/SL400: win 62.3%, PF 1.18, net +$160.56, p=0.266
+   Same ranking as 2019 (TP250/SL400 PF 1.22 IS, 1.28 OOS): direction is consistent across both years.
+3. Gate verdict: candidates pass PF>=1.10, DD<5%, win% above baseline; NONE reaches the corrected bar p <= 0.0024 (Bonferroni, 21 candidates). Wider SL raises win% by construction (TP250/SL400 break-even win% = 408/650 = 62.8%; observed 68.3%, cushion ~5.5 pts).
+   => treat TP250/SL400 as ONE MT4 confirmation candidate, not a result. No EA code changes yet.
+4. Still waiting: queue job 2 (g2a 2021) needs >= 1.0 GB free RAM (0.33 GB now). Watcher PID 16480 alive. Nothing of mine started MT4 or extra processes.
+5. Files: reports\stats_8pt_2021_g1a.md, reports\tpsl_oos_2021.md, tools\*.py. Not yet pushed to the Signal repo data/ (hub or I can push on request).

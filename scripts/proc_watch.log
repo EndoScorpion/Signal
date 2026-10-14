@@ -1,0 +1,14 @@
+2026-10-12 13:45:15 watch started (Apply=False, LowMB=100000)
+2026-10-12 13:45:17 free=580/5965MB cpu=34% top: claude(1148)=801MB claude(4200)=326MB claude(6424)=253MB MsMpEng(4612)=246MB claude(2296)=222MB explorer(9148)=161MB claude(14868)=129MB Taskmgr(8376)=116MB
+2026-10-12 13:45:17 DRYRUN would set efficiency: RadeonSoftware(17312) 60MB
+2026-10-12 13:45:21 free=593/5965MB cpu=14% top: claude(1148)=802MB claude(4200)=326MB claude(6424)=254MB MsMpEng(4612)=245MB claude(2296)=218MB explorer(9148)=161MB claude(14868)=131MB Taskmgr(8376)=117MB
+2026-10-12 13:45:21 DRYRUN would set efficiency: RadeonSoftware(17312) 60MB
+2026-10-12 13:45:21 watch stopped
+2026-10-14 04:59:43 watch started (Apply=False, LowMB=1000)
+2026-10-14 04:59:46 free=877/5965MB cpu=11% top: claude(19868)=488MB MsMpEng(4236)=302MB claude(4380)=292MB claude(19116)=161MB Memory Compression(3264)=143MB explorer(7772)=123MB claude(13528)=92MB msedge(12996)=91MB
+2026-10-14 04:59:46 DRYRUN would set efficiency: SearchIndexer(12264) 34MB
+2026-10-14 04:59:52 free=896/5965MB cpu=9% top: claude(19868)=489MB claude(4380)=292MB MsMpEng(4236)=268MB claude(19116)=161MB Memory Compression(3264)=142MB explorer(7772)=123MB msedge(12996)=96MB claude(13528)=92MB
+2026-10-14 04:59:52 DRYRUN would set efficiency: SearchIndexer(12264) 34MB
+2026-10-14 04:59:58 free=912/5965MB cpu=9% top: claude(19868)=487MB claude(4380)=285MB MsMpEng(4236)=267MB claude(19116)=160MB Memory Compression(3264)=142MB explorer(7772)=123MB claude(13528)=92MB msedge(12996)=91MB
+2026-10-14 04:59:58 DRYRUN would set efficiency: SearchIndexer(12264) 34MB
+2026-10-14 04:59:58 watch stopped
