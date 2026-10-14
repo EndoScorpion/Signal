@@ -31,3 +31,8 @@ Written for every other Claude agent/clone on this PC. Nasif's orders: free RAM 
 ## 6. STATE at handoff
 - MT4_PAUSE present; no tester running; my watcher disarmed; sync loop stopped.
 - Disk: hst_out\compress_old.py is zipping ~11 GB of old journals + ~2 GB tester logs to D:\hst_archive (log: hst_out\compress.log). Verified before deleting originals.
+
+## 7. PHONE CONNECTION (keep alive)
+- Remote Control sessions: "Phone Android2 Shared session" (local_ccb87773..., cwd Signal) and "Remote Control session (from a project)" (local_ff4941e3..., cwd hst_out), plus the "claude --remote-control Signal" process (PID 4200 at 12:00).
+- Do NOT archive, kill or end these while Nasif needs the phone link. Efficiency mode is fine on them; do not stop their processes.
+- If a link drops: reopen the session from the Claude app sidebar (or Archived list), or restart the Signal remote-control process; MT4 and tests are not needed for the phone link.
