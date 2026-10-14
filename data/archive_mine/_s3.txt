@@ -1,0 +1,62 @@
+63a1d9ef 2026-10-12 Rules in force: cost 8 pts/trade; one test at a time per session; run_tester.ps1 picks mt4_tester or mt4_tester2 via a lock; every .set must list ALL inputs on the b22_thu base; never overwrite another session'
+63a1d9ef 2026-10-12 Current PROVEN best: Z-gate (ZMax 1.0) + daily range 1.0 on b22_thu = winners\WIN_GEN1_ZGate_DailyRange_b31.set, 8-period +75,254 vs b22 +48,429 @8pt.
+63a1d9ef 2026-10-12 - PROVEN best (backtest only, NOT approved for live): b22_thu + Z-gate (ZMax 1.0) + daily range filter (1.0 x D1 ATR5) = winners\WIN_GEN1_ZGate_DailyRange_b31.set.
+63a1d9ef 2026-10-12 - **Best so far:** b22_thu with the Z-gate (ZMax 1.0) and the daily range filter scored +75,254 over 8 periods at 8 pts/trade, against +48,429 for b22.
+706dd7a3 2026-10-12 Commit `4addc85` already records "OOS gate PASS g4b hour-thu-filter PF 1.46 DD 0.34%".
+706dd7a3 2026-10-12 The `## RESULTS` section now holds the 182 trades, PF 1.460, DD 0.34%, the PASS verdict and the WARN hours and day.
+706dd7a3 2026-10-12 Rules in force: cost 8 pts/trade (Nasif 21:35); one test at a time per session; run_tester.ps1 picks mt4_tester or mt4_tester2 via a lock, so don't start testers outside it; every .set must list ALL inputs on t
+706dd7a3 2026-10-12 If that hasn't happened within about 2 hours of when it started, nothing runs.
+706dd7a3 2026-10-12 It says that if RAM hasn't recovered within about 2 hours of when the watcher started, nothing runs.
+706dd7a3 2026-10-12 When free RAM is at least 1.0 GB for two checks in a row, within 2 hours of arming, it deletes `MT4_PAUSE` itself and starts the 8 tests one at a time.
+706dd7a3 2026-10-12 Open pull requests include `Signal#8` ("g4b: Thursday + hour 6/8/19 filter (OOS gate candidate)", updated 9 hours ago), `Signal#1` and `MQL#5`.
+706dd7a3 2026-10-13 print(f'Trading-hours gaps >1min: {len(gaps):,}
+706dd7a3 2026-10-13 - **`SwapHelp/SwapHour=22`** — forex rollover (22:00 server); irrelevant for stocks/crypto
+706dd7a3 2026-10-13 - **`FriBlock/FriHour=19`** — forex weekend gap protection; not applicable to crypto (24/7) or stocks
+706dd7a3 2026-10-14 **Look ahead.** For each bar, record how far price moved 4 bars (1 hour), 16 bars (4 hours) and 96 bars (1 day) later, in points.
+706dd7a3 2026-10-14 - The holds are 12–24 hours with no stop and no swap cost, so real results will be worse.
+706dd7a3 2026-10-14 At about 12 minutes average that is 6–20 hours of tester time, mostly overnight and gated by RAM.
+706dd7a3 2026-10-14 - **Full validation:** the best 3–5 only, so about 3–5 hours.
+706dd7a3 2026-10-14 Order: ask M1 for the whole range, then compute the average spread by hour and year, then fetch the tick sample and compare its modelling quality against the 90% we have now.
+706dd7a3 2026-10-14 Spread jumps at server hours 20–22, with an average of 17 pts at hour 21.
+706dd7a3 2026-10-14 - **Red-zone gates:** stochastic above 80, upper 38% of the 5-day range, ATR cap, rollover hours 20–22 and NFP Fridays.
+706dd7a3 2026-10-14 **Cost-aware mutations:** Add the real spread by hour (about 17 pts at hour 21) as a cost term, so mutations that avoid expensive hours get credit.
+706dd7a3 2026-10-14 The MetaTrader process (`terminal.exe`, PID 19092) is running the `k_hurst` test from `auto_LOOP_k_hurs…` at 12.8% CPU and about 10.9 MB/s of disk, so the Hurst candidate is mid-run.
+706dd7a3 2026-10-14 **Cost filters:** The signal also had to clear ATR below 60 pts and a server hour outside 20–22.
+706dd7a3 2026-10-14 **Hold and exit:** It holds 48 bars (12 hours) and exits on time, here at 1.07472: +133 pts, +128 after the 5 pts cost.
+706dd7a3 2026-10-14 - **Speed:** Recent tests ran at about 4.5 minutes each, which works out to 13–19 per hour.
+706dd7a3 2026-10-14 A rough guess is 6–10 hours for the whole queue.
+706dd7a3 2026-10-14 Regime 2400 cuts that to about $890 a year, and Hurst-trend to about $1,010, so roughly 65–70% of the average loss is gone in about 1.5 hours.
+706dd7a3 2026-10-14 Six trailing-stop candidates are queued: base-EA trails at 100/50, 200/100 and an ATR version, a regime-2400 version, and two b50 versions (sell-only and both sides, trail starting at 150 pts and held 250 pts b
+706dd7a3 2026-10-14 - **Williams %R in the overbought third** (above -41): worse than the year's average in 4 of 5 years.
+706dd7a3 2026-10-14 - **Below the last down-fractal:** worse in 4 of 5 years (selling after support has already broken).
+706dd7a3 2026-10-14 The tighter trail here (start 100, 150 behind) captured about 55% of the move, versus 38% for the time exit.
+706dd7a3 2026-10-14 It starts with the 5-pt commission audit: the two best candidates so far (regime 2400 and Hurst-trend) get re-tested at 5 pts commission plus each year's real average spread.
+706dd7a3 2026-10-14 At the start it would have spent up to about 2 hours re-testing the two leaders before touching any new branch.
+706dd7a3 2026-10-14 If the PC is off or asleep at 11 PM, it runs when it next can, and it stops after 3 hours at most.
+706dd7a3 2026-10-14 - **Calm and orderly tape gate** (sell only in low-volatility, low-entropy markets): in the offline scan it improved results by +16 to +26 pts per trade in all 5 years, but that scan used the same years it was 
+706dd7a3 2026-10-14 - **Weak or ruled out:** scalping 7–10 pts at a 5 pt commission, and the single-feature chaos measures (Hurst, entropy, Alligator on their own).
+706dd7a3 2026-10-14 - **Daily drawdown freeze:** stop new entries after a 2% daily drawdown, tested on the base and on the regime-2400 parent.
+706dd7a3 2026-10-14 - **Support and resistance:** The two nearest fractal levels above and below price, with distances.
+706dd7a3 2026-10-14 The b50 EA keeps small trade counts (18–106 a year) and holds trades 12 hours, selling a z ≥ 2.5 spike only below the long regime.
+706dd7a3 2026-10-14 The loop's automatic neighbours of `m5_sell_atr60` (ATR cap about 48 and 75 pts) are queued, and the realistic pass is now running on `m5_sell_calm`.
+706dd7a3 2026-10-14 | `m5_sell_atr60` (b50 plus ATR cap 60 pts)
+706dd7a3 2026-10-14 - **b51 + ATR cap 60:** **+5,109 pts, profit factor 1.26.** Net swing of about 76,000 pts.
+706dd7a3 2026-10-14 - Strategies: base b31 sell-stop ladder EA (sell regime H1 SMA1200, ZGate 0.7 price z + 0.3 volume z ≥ ZMax 1.0 blocks sells, daily range filter, ladder legs share SL); b50–b52 mean-reversion fade (sell when z 
+706dd7a3 2026-10-14 - Cost model: sp5 floor (commission 5 pts), realistic = 5 + yearly mean spread (2013/15/16/18=8, 2019=10, 2020=9, 2023=7, 2024=6, 2025=7, 2026=8); real spread from FXOpen M1 bid/ask (valid 2019+); rollover spik
+706dd7a3 2026-10-14 - EAs (in _usb_backup_stage\MQL4\Experts, live MQL4\Experts, mt4_tester\MQL4\Experts; b52 also in mt4_tester2): Strong2010b_claude_b31 (copyright comment added above ZGate), b42_mr, b43_chaos, b44_calm, MR_Regi
+706dd7a3 2026-10-14 - Funding is every 8 hours for US perpetuals and hourly in the EU and elsewhere.
+706dd7a3 2026-10-14 Specifically, spread at or under 2 pts and a calm M15 tape, during server hours 10–18 on Monday to Thursday.
+706dd7a3 2026-10-14 A candidate runs 8 test years, each repeated for the extra cost rounds, so one candidate takes roughly 1–2 hours.
+706dd7a3 2026-10-14 The variants are the bottom 25% or 33% of the trailing 5-, 10- and 20-day range, after a 2–3 day pullback, or below a short moving average.
+706dd7a3 2026-10-14 - **Yield ranking:** the doc opens with the top 25 weekly payers by trailing yield, which run from 292% down to 134%.
+706dd7a3 2026-10-14 - **Yield ranking:** the top 25 by trailing yield run from 292% down to 134%.
+706dd7a3 2026-10-14 Add the `forexfactory` server to your configuration using `npx`: [[1](https://github.com/kjpou1/forexfactory-mcp), [2](https://www.youtube.com/watch?v=oQdkFPhqaGk&t=28)]
+844c8c11 2026-10-12 - **Last commit:** "OOS gate PASS g4b hour-thu-filter PF 1.46 DD 0.34%".
+844c8c11 2026-10-12 - **Weekdays:** Monday and Friday are clearly better (about 69% win rate, +$165 and +$147).
+844c8c11 2026-10-12 - **Weak entry hours:** 4h, 6h, 13h, 14h and 19h–22h have win rates of 39–51% and net losses.
+844c8c11 2026-10-12 - Its current best is "Z-gate + daily range on b22_thu", which it reports as +75,254 over 8 periods against +48,429 for b22 at 8 pts.
+844c8c11 2026-10-12 - **Best result so far:** b22_thu with the Z-gate and the daily range filter scored +75,254 over 8 periods at 8 pts per trade, against +48,429 for plain b22.
+844c8c11 2026-10-12 If that doesn't happen within about 2 hours, nothing runs.
+844c8c11 2026-10-12 If you don't answer, the watcher stays armed, but it only acts if RAM recovers within about 2 hours.
+ee50d20a 2026-10-12 It stops when the queue is empty or after 8 hours.
+ee50d20a 2026-10-12 Offline TP/SL replay on the 2021 fills @8 (entries fixed): TP250/SL400 win 68.3% PF 1.28 +$204.56 DD $182.78 p=0.176; TP250/SL500 win 72.9% PF 1.28 p=0.173; TP300/SL400 win 62.3% PF 1.18.

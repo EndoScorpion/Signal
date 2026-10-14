@@ -1,0 +1,624 @@
+[
+ {
+  "name": "g2_AtrCapPts_60",
+  "why": "gen2 single mutation of g2_ZTrigger_2p25_m2: AtrCapPts 75 -> 60",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.812,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_AtrCapPts_90",
+  "why": "gen2 single mutation of g2_ZTrigger_2p25_m2: AtrCapPts 75 -> 90",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.812,
+   "SideMode": 1,
+   "AtrCapPts": 90,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_CalmRvolMax_29p6",
+  "why": "gen2 single mutation of g2_ZTrigger_2p25_m2: CalmRvolMax 0 -> 29.6",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.812,
+   "SideMode": 1,
+   "AtrCapPts": 75,
+   "_expert": "MR_RegimeSwitch_b51",
+   "CalmRvolMax": 29.6
+  }
+ },
+ {
+  "name": "g2_ZTrigger_2p25",
+  "why": "gen2 single mutation of m5_sell_atr60: ZTrigger 2.5 -> 2.25",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.25,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_ZTrigger_2p75",
+  "why": "gen2 single mutation of m5_sell_atr60: ZTrigger 2.5 -> 2.75",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.75,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_ZPeriod_8",
+  "why": "gen2 single mutation of m5_sell_atr60: ZPeriod 10 -> 8",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 8,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_ZPeriod_14",
+  "why": "gen2 single mutation of m5_sell_atr60: ZPeriod 10 -> 14",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 14,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_AtrCapPts_45",
+  "why": "gen2 single mutation of m5_sell_atr60: AtrCapPts 60 -> 45",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 45,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_AtrCapPts_75",
+  "why": "gen2 single mutation of m5_sell_atr60: AtrCapPts 60 -> 75",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 75,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_HoldBars_32",
+  "why": "gen2 single mutation of m5_sell_atr60: HoldBars 48 -> 32",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 32,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_HoldBars_64",
+  "why": "gen2 single mutation of m5_sell_atr60: HoldBars 48 -> 64",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 64,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_SLPts_450",
+  "why": "gen2 single mutation of m5_sell_atr60: SLPts 600 -> 450",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 450,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_SLPts_800",
+  "why": "gen2 single mutation of m5_sell_atr60: SLPts 600 -> 800",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 800,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_RegimePeriod_1200",
+  "why": "gen2 single mutation of m5_sell_atr60: RegimePeriod 2400 -> 1200",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 1200,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_RegimePeriod_4800",
+  "why": "gen2 single mutation of m5_sell_atr60: RegimePeriod 2400 -> 4800",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 4800,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51"
+  }
+ },
+ {
+  "name": "g2_CalmRvolMax_29p6",
+  "why": "gen2 single mutation of m5_sell_atr60: CalmRvolMax 0 -> 29.6",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60,
+   "_expert": "MR_RegimeSwitch_b51",
+   "CalmRvolMax": 29.6
+  }
+ },
+ {
+  "name": "m5_sell_atr60",
+  "why": "b50 winner + ATR cap 60 pts (lab best filter)",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "AtrCapPts": 60
+  }
+ },
+ {
+  "name": "m5_sell_calm",
+  "why": "b50 winner + calm tape: rvol<=29.6 and perm entropy<=0.945",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "CalmRvolMax": 29.6,
+   "CalmPEMax": 0.9452
+  }
+ },
+ {
+  "name": "m5_sell_calm_rvol",
+  "why": "b50 winner + block high realised vol (rvol<=45.6)",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "CalmRvolMax": 45.6
+  }
+ },
+ {
+  "name": "m5_sell_mmr_low",
+  "why": "b50 winner, only when MMR <= 0.421 (low quintiles)",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "UseMmrGate": "true",
+   "MmrMin": -1000,
+   "MmrMax": 0.421
+  }
+ },
+ {
+  "name": "m5_sell_mmr_mid",
+  "why": "b50 winner, only when 0.421 < MMR <= 1.693",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "UseMmrGate": "true",
+   "MmrMin": 0.421,
+   "MmrMax": 1.693
+  }
+ },
+ {
+  "name": "m5_sell_mmr_high",
+  "why": "b50 winner, only when MMR > 1.693",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "UseMmrGate": "true",
+   "MmrMin": 1.693,
+   "MmrMax": 1000
+  }
+ },
+ {
+  "name": "m5_sell_blend15",
+  "why": "ZGate-style trigger: Z = 0.7 z(price) + 0.3 z(volume), 20 bars, fade at Z>=1.5",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 20,
+   "ZTrigger": 1.5,
+   "SideMode": 1,
+   "UseZBlend": "true"
+  }
+ },
+ {
+  "name": "m5_sell_blend20",
+  "why": "ZGate-style trigger, fade at Z>=2.0",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 20,
+   "ZTrigger": 2.0,
+   "SideMode": 1,
+   "UseZBlend": "true"
+  }
+ },
+ {
+  "name": "m5_both_blend15",
+  "why": "ZGate-style trigger both sides (sell below / buy above regime)",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 20,
+   "ZTrigger": 1.5,
+   "SideMode": 0,
+   "UseZBlend": "true"
+  }
+ },
+ {
+  "name": "m5_sell_trail100",
+  "why": "b50 winner + trailing stop (start 100, 150 behind)",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1,
+   "TrailStartPts": 100,
+   "TrailDistPts": 150
+  }
+ },
+ {
+  "name": "m5_sell_r4800",
+  "why": "b50 winner with ~200-day regime",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 4800,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1
+  }
+ },
+ {
+  "name": "m5_sell_h96",
+  "why": "b50 winner holding 96 bars",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 96,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1
+  }
+ },
+ {
+  "name": "m5_sell_sl300",
+  "why": "b50 winner with 300 pt stop",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 300,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1
+  }
+ },
+ {
+  "name": "m5_sell_sl1000",
+  "why": "b50 winner with 1000 pt stop",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 1000,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1
+  }
+ },
+ {
+  "name": "m5_sell_n20z2",
+  "why": "b50 winner, 20-bar z at 2.0",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "true",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 20,
+   "ZTrigger": 2.0,
+   "SideMode": 1
+  }
+ },
+ {
+  "name": "m5_sell_noregime",
+  "why": "control: b50 sell fade without regime",
+  "patch": {
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseRegime": "false",
+   "RegimePeriod": 2400,
+   "SLPts": 600,
+   "HoldBars": 48,
+   "ZPeriod": 10,
+   "ZTrigger": 2.5,
+   "SideMode": 1
+  }
+ },
+ {
+  "name": "l_dailydd",
+  "why": "less losses: freeze new entries after a 2% daily drawdown (UseDailyDDFreeze)",
+  "patch": {
+   "UseDailyDDFreeze": "true",
+   "DailyDDPct": 2
+  }
+ },
+ {
+  "name": "l_adverselock",
+  "why": "less losses: lock out new sells for a day after an adverse extension (UseAdverseExtensionLock)",
+  "patch": {
+   "UseAdverseExtensionLock": "true",
+   "LockoutMinutes": 1440,
+   "AdverseThresholdPoints": 150,
+   "LockLossPts": 280
+  }
+ },
+ {
+  "name": "l_riskguard",
+  "why": "less losses: EA risk guard (UseRiskGuard, daily loss 5%)",
+  "patch": {
+   "UseRiskGuard": "true"
+  }
+ },
+ {
+  "name": "l_maxopen4",
+  "why": "less stacking: max 4 open orders instead of 8",
+  "patch": {
+   "MaxOpenOrders": 4
+  }
+ },
+ {
+  "name": "l_nohedge",
+  "why": "less losses: hedge sells off (UseHedgeSell)",
+  "patch": {
+   "UseHedgeSell": "false"
+  }
+ },
+ {
+  "name": "l_dailydd_r2400",
+  "why": "daily drawdown freeze on the regime-2400 parent",
+  "patch": {
+   "SellRegimePeriod": 2400,
+   "UseDailyDDFreeze": "true",
+   "DailyDDPct": 2
+  }
+ },
+ {
+  "name": "l_adverselock_r2400",
+  "why": "adverse-extension lockout on the regime-2400 parent",
+  "patch": {
+   "SellRegimePeriod": 2400,
+   "UseAdverseExtensionLock": "true",
+   "LockoutMinutes": 1440,
+   "AdverseThresholdPoints": 150,
+   "LockLossPts": 280
+  }
+ },
+ {
+  "name": "d_dayblock_fri",
+  "why": "replay: Friday worst weekday; block Friday instead of Thursday",
+  "patch": {
+   "DayBlock": 5
+  }
+ },
+ {
+  "name": "d_dayblock_wed",
+  "why": "replay: Wednesday second-worst weekday; block Wednesday instead of Thursday",
+  "patch": {
+   "DayBlock": 3
+  }
+ },
+ {
+  "name": "h1_calm_lowZ",
+  "why": "hybrid: quiet-tape only (CalmRvolMax 29.6) with lower trigger 2.25 = more entries in quiet times",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.25,
+   "SideMode": 1,
+   "AtrCapPts": 75,
+   "_expert": "MR_RegimeSwitch_b51",
+   "CalmRvolMax": 29.6
+  }
+ },
+ {
+  "name": "h2_calm45_lowZ",
+  "why": "hybrid: calmer-than-45.6 tape with trigger 2.0 = more entries when quiet",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.0,
+   "SideMode": 1,
+   "AtrCapPts": 75,
+   "_expert": "MR_RegimeSwitch_b51",
+   "CalmRvolMax": 45.6
+  }
+ },
+ {
+  "name": "h3_zblend_oldZGate",
+  "why": "old ZGate idea: volume-blend trigger Z=0.7 price z + 0.3 volume z on the best parent",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.812,
+   "SideMode": 1,
+   "AtrCapPts": 75,
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseZBlend": "true"
+  }
+ },
+ {
+  "name": "h4_zblend_calm",
+  "why": "old ZGate blend plus quiet-tape cap 45.6",
+  "patch": {
+   "UseRegime": "true",
+   "RegimePeriod": 3000,
+   "SLPts": 750,
+   "HoldBars": 60,
+   "ZPeriod": 12,
+   "ZTrigger": 2.812,
+   "SideMode": 1,
+   "AtrCapPts": 75,
+   "_expert": "MR_RegimeSwitch_b51",
+   "UseZBlend": "true",
+   "CalmRvolMax": 45.6
+  }
+ }
+]

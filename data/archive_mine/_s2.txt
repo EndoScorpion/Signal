@@ -1,0 +1,53 @@
+63a1d9ef 2026-10-12 PS C:\Windows\system32> Stop-Process -Name chrome,PhoneExperienceHost -Force -ErrorAction SilentlyContinue; Start-Sleep 3; (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory; powershell -ExecutionPolicy Bypass -File C:\Use
+706dd7a3 2026-10-12 - **Repo:** on `claude/mql4-analysis-comments-bd4kz3`, the only change is a modified `data/Strong2010b_claude_g4b_M1_20210319-20220101_sp3.htm`.
+706dd7a3 2026-10-12 Add-Content $out; $raw = &amp; $gate -Expert "Strong2010b_claude_$n" -Period M1 -Commission 6 2&gt;&amp;1; $raw
+706dd7a3 2026-10-12 (&amp; $gate -Expert Strong2010b_claude_g7a -Period M1 -Commission 6 -From "$y.01.01" -To "$($y+1).01.01" 2&gt;&amp;1)
+706dd7a3 2026-10-12 Pooled PF must beat baseline, and PF must move monotonically across the ADX sweep, not as a lone spike.
+706dd7a3 2026-10-12 Sells need CCI at +50 or higher, and buys need −50 or lower.
+706dd7a3 2026-10-12 (&amp; $gate -Expert "Strong2010b_claude_$v" -Period M1 -Commission 6 -From "$y.01.01" -To "$($y+1).01.01" 2&gt;&amp;1)
+706dd7a3 2026-10-12 The ADX sweep finished, and applying the rule I set in advance, it rejects every variant.
+706dd7a3 2026-10-12 (&amp; $gate -Expert ChopBracket_h1d -Period M15 -Commission 6 -From 2016.01.01 -To 2017.01.01 2&gt;&amp;1)
+706dd7a3 2026-10-12 - **Round 1, the ADX sweep:** rejected.
+706dd7a3 2026-10-12 - **Round 2, the six bracket versions:** none reached PF 1.10 on 2016.
+706dd7a3 2026-10-12 **One caution:** at 91% memory, the PC can freeze again at any moment.
+706dd7a3 2026-10-12 - **The ADX sweep (ADX 20 to 26):** rejected under the rule I fixed in advance.
+706dd7a3 2026-10-13 - `C:\Users\endos\Signal_copy\ChopBracket_h1d.mq4` — h1c with tighter stop (SLK=0.35, SLATRK=1.00) and TP all the way to mid band (TPFadeFrac=1.00).
+706dd7a3 2026-10-13 ADX filter (g7 family) and bracket/fade strategies (ChopBracket) both failed.
+706dd7a3 2026-10-13 powershell -ExecutionPolicy Bypass -File "C:\Users\endos\Desktop\hst_out\run_tester.ps1" -Expert "Strong2010b_claude_b31" -SetFile "WIN_GEN1_ZGate_DailyRange_b31.set" -From "2015.01.01" -To "2015.12.31" -Spread 8 -Model 0 -Tag "WI
+706dd7a3 2026-10-14 The EA already has inputs for most of these: Williams %R, Alligator, AO and AC, Fractal breakout and fail gates, an entropy gate, a chop gate and ADX gates.
+706dd7a3 2026-10-14 - **Regime control (sell regime off, 2023, sp5):** -$7,416 on 753 trades with 85% drawdown, against the base's -$3,998 on 288 trades.
+706dd7a3 2026-10-14 - **Stalled families:** If three candidates in one family (Williams, entropy, mean-reversion and so on) fail the first unseen-year screen in a row, the rest of that family goes to the back of the queue, and the loop notes it in it
+706dd7a3 2026-10-14 The ChopBracket EAs already failed in earlier tests, and the g6–g10 mutations of Strong2010b didn't beat their parent.
+706dd7a3 2026-10-14 The MetaTrader process (`terminal.exe`, PID 19092) is running the `k_hurst` test from `auto_LOOP_k_hurs…` at 12.8% CPU and about 10.9 MB/s of disk, so the Hurst candidate is mid-run.
+706dd7a3 2026-10-14 - **The Hurst-trend candidate passed 2023:** it is now testing 2018, so it beat the base on 2023 and moved on.
+706dd7a3 2026-10-14 - **Backfill:** Any candidate that already passed (the regime-2400 winner) gets the missing years run first.
+706dd7a3 2026-10-14 - **Wins:** There are only two profitable years with real trade counts: 2018 for regime 2400 (+$245, PF 1.02, marginal) and 2024 for Hurst-trend (+$1,134).
+706dd7a3 2026-10-14 Order I'd test them in: the exit ratios first (`r_tp450`, `r_tp600`, then both again on the regime-2400 parent), then the adaptive regime, then the buy-side and soft-gating ideas, which need a small EA edit (b44).
+706dd7a3 2026-10-14 Regime 2400 cuts that to about $890 a year, and Hurst-trend to about $1,010, so roughly 65–70% of the average loss is gone in about 1.5 hours.
+706dd7a3 2026-10-14 Six trailing-stop candidates are queued: base-EA trails at 100/50, 200/100 and an ATR version, a regime-2400 version, and two b50 versions (sell-only and both sides, trail starting at 150 pts and held 250 pts behind).
+706dd7a3 2026-10-14 The tighter trail here (start 100, 150 behind) captured about 55% of the move, versus 38% for the time exit.
+706dd7a3 2026-10-14 It starts with the 5-pt commission audit: the two best candidates so far (regime 2400 and Hurst-trend) get re-tested at 5 pts commission plus each year's real average spread.
+706dd7a3 2026-10-14 - **7 ChopBracket variants:** earlier failures there came from the thin history.
+706dd7a3 2026-10-14 - **Calm and orderly tape gate** (sell only in low-volatility, low-entropy markets): in the offline scan it improved results by +16 to +26 pts per trade in all 5 years, but that scan used the same years it was judged on.
+706dd7a3 2026-10-14 - **Mean-reversion b50 and trailing stops:** the b50 mean-reversion EA, the trailing stops, the exit-ratio changes, and the old rejected branches re-tested on the full history.
+706dd7a3 2026-10-14 - **Weak or ruled out:** scalping 7–10 pts at a 5 pt commission, and the single-feature chaos measures (Hurst, entropy, Alligator on their own).
+706dd7a3 2026-10-14 - **Daily drawdown freeze:** stop new entries after a 2% daily drawdown, tested on the base and on the regime-2400 parent.
+706dd7a3 2026-10-14 - **Odds panel:** Win percentage, average pts gross and net (after the 5 pt commission plus spread), for all setups and for calm-tape setups only, worked out from your chart's own history.
+706dd7a3 2026-10-14 | `l_dailydd` (daily drawdown freeze)
+706dd7a3 2026-10-14 - **`m5_sell_calm`:** the calm-tape version took only about 31 trades, too few to judge.
+706dd7a3 2026-10-14 The loop's automatic neighbours of `m5_sell_atr60` (ATR cap about 48 and 75 pts) are queued, and the realistic pass is now running on `m5_sell_calm`.
+706dd7a3 2026-10-14 | `m5_sell_atr60` (b50 plus ATR cap 60 pts)
+706dd7a3 2026-10-14 - **Regime 2400:** −22,341 pts.
+706dd7a3 2026-10-14 - **b51 + ATR cap 60:** **+5,109 pts, profit factor 1.26.** Net swing of about 76,000 pts.
+706dd7a3 2026-10-14 - Scripts for diagnosis/rebuild: data\rebuild_history.py (streams zip → M1 with UTC→server conversion using `bounds` of US DST windows and `to_server(ts)=ts+7200+3600*(searchsorted(bounds,ts,'right')%2)`, then M5..D1 via day-align
+706dd7a3 2026-10-14 - Implement `--clean` mode in auto_loop.py (HST_OUT=hst_out\clean, RUN=run_tester_b.ps1, STATE=loop_state_clean.json, REPORT=loop_report_clean.md, constant WINNERS dir for _setfile copies, map any MR_RegimeSwitch* expert to MR_Reg
+706dd7a3 2026-10-14 Specifically, spread at or under 2 pts and a calm M15 tape, during server hours 10–18 on Monday to Thursday.
+706dd7a3 2026-10-14 The variants are the bottom 25% or 33% of the trailing 5-, 10- and 20-day range, after a 2–3 day pullback, or below a short moving average.
+706dd7a3 2026-10-14 - **Yield ranking:** the doc opens with the top 25 weekly payers by trailing yield, which run from 292% down to 134%.
+706dd7a3 2026-10-14 - **Yield ranking:** the top 25 by trailing yield run from 292% down to 134%.
+844c8c11 2026-10-12 The risk is memory: at 86% used, it could push RAM so low that the PC freezes or the app gets killed, and that would drop the link.
+c41bfc55 2026-10-12 - **Write error**: Attempted to write commented file to `/home/user/Signal/signal/strong_feb_2011_272_98.16_PatRec_11_Jul_21_commented.mq4` — failed because `signal` is a JavaScript file in the repo root, not a directory.
+c41bfc55 2026-10-12 - **Strong2010b_claude PF near 1.0 before commission**: Proposed three layers of fixes — pip normalisation, cost gate, and regime-based TP selection — to push net PF above 1.0 after 6pt commission.
+c41bfc55 2026-10-12 - `@"/root/.claude/uploads/1822a39e-0314-5df2-bc7b-a82211406fbd/a04c1f8f-strong_feb_2011_272_98.16_PatRec_11_Jul_21.mq4" Make a copy of this mql4 file & analyze the code - i need comments added to the new file also - just a few su
+ee50d20a 2026-10-12 C:\Users\endos\MT4_Backtest\reports\Strong2010b_claude_g2a_M1_20190101-20200101_sp3.htm (g2a, 2019 M1, spread 3, in-sample).
+ee50d20a 2026-10-12 Rescore exactly at 8 points from raw prices (with your tpsl_oos.py logic at TP/SL as traded): MT4_Backtest\reports\Strong2010b_claude_g2a_M1_20190101-20200101_sp3.htm and the b20legs_g1a 2019 report.

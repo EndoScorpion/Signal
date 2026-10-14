@@ -1,0 +1,16 @@
+{
+ "time": "2026-10-14T15:00:14",
+ "leader": "rc_th_g2_AtrCapPts_90_hours_00-03",
+ "options": [
+  {
+   "n": 1,
+   "label": "Keep running as is",
+   "action": "keep"
+  },
+  {
+   "n": 2,
+   "label": "Pause all",
+   "action": "pause_all"
+  }
+ ]
+}

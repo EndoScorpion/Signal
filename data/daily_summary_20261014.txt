@@ -1,0 +1,18 @@
+﻿Daily EA summary: best g2_AtrCapPts_90 +18622 pts/203 trades/8 yrs; 8 candidates tested today, 2 passes done (backtest only).
+
+Daily summary 2026-10-14 13:07 (backtest leads only, never live approval)
+
+Top candidates over the 8 unseen years (pts = profit / 0.16 lots):
+  1. g2_AtrCapPts_90: +18622 pts, 203 trades, 8 yrs (about +194 pts/month, about +116 with a -40% haircut)
+  2. g2_ZTrigger_2p75_m1: +11054 pts, 368 trades, 8 yrs (about +115 pts/month, about +69 with a -40% haircut)
+  3. g2_ZTrigger_2p25_m2: +10417 pts, 110 trades, 8 yrs (about +109 pts/month, about +65 with a -40% haircut)
+  4. h1_calm_lowZ: +9902 pts, 340 trades, 8 yrs (about +103 pts/month, about +62 with a -40% haircut)
+  5. g2_AtrCapPts_60: +5922 pts, 128 trades, 8 yrs (about +62 pts/month, about +37 with a -40% haircut)
+Base system over the same years: -132701 pts
+
+Tested in the last 24 h: 8 candidates (64 year-tests). Passes finished today: 2.
+Candidates today: g2_AtrCapPts_60, g2_AtrCapPts_90, g2_AtrCapPts_90_m2, g2_ZPeriod_10, g2_ZTrigger_2p75, g2_ZTrigger_2p75_m1, h1_calm_lowZ, th_g2_AtrCapPts_90_hours_00-03
+
+Watch for: small samples (best leads have few trades), selection bias from many tests, cost assumptions (about 3-5 pts per trade).
+
+Last driver log line: 2026-10-14 12:35:09 breeder2: parent g2_ZTrigger_2p75_m1; winning genes 0; queued 3 children

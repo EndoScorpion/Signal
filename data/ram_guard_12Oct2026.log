@@ -1,0 +1,26 @@
+13:44:53 [DRY-RUN] start target=2500MB interval=15s suspend=True end=True
+13:44:53 [DRY-RUN] LOW free=713MB
+13:44:53 [DRY-RUN] ECO msedgewebview2 pid 3316 19MB
+13:44:53 [DRY-RUN] ECO msedgewebview2 pid 9044 12MB
+13:44:53 [DRY-RUN] ECO msedgewebview2 pid 12400 115MB
+13:44:53 [DRY-RUN] ECO msedgewebview2 pid 12680 47MB
+13:44:53 [DRY-RUN] ECO msedgewebview2 pid 15688 74MB
+13:44:53 [DRY-RUN] ECO msedgewebview2 pid 16028 38MB
+13:44:53 [DRY-RUN] ECO SearchHost pid 12296 110MB
+13:44:53 [DRY-RUN] ECO Taskmgr pid 8376 116MB
+13:44:53 [DRY-RUN] tick done free=710MB
+13:45:57 [APPLY] start target=99999MB interval=15s suspend=False end=False
+13:45:57 [APPLY] LOW free=425MB
+13:45:57 [APPLY] ECO YourPhone pid 23108 5MB
+13:45:57 [APPLY] tick done free=422MB
+13:45:58 [APPLY] start target=99999MB interval=15s suspend=True end=False
+13:45:58 [APPLY] LOW free=426MB
+13:45:58 [APPLY] ECO YourPhone pid 23108 5MB
+13:45:59 [APPLY] PAUSE YourPhone pid 23108
+13:45:59 [APPLY] tick done free=430MB
+13:45:59 [APPLY] RESUME YourPhone pid 23108 (exit)
+13:46:00 [APPLY] start target=99999MB interval=15s suspend=False end=True
+13:46:00 [APPLY] LOW free=448MB
+13:46:00 [APPLY] ECO YourPhone pid 23108 5MB
+13:46:00 [APPLY] END YourPhone pid 23108 5MB (graceful first)
+13:46:05 [APPLY] tick done free=417MB
