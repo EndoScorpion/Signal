@@ -1,0 +1,78 @@
+﻿=== g4b 2019.01.01-2020.01.01 ===
+Compile OK
+RAM gate OK: 1617424 KB free
+  Total trades      : 242
+  Win rate          : 74.0%  (179W / 63L)
+  Net PnL           : $    215.75
+  PF estimate       : 1.930
+  Max closed-DD     : $   70.14  (0.68% of $10000 deposit)
+  Commission/trade  : $0.0600  (at 0.01 lots, N=6)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g6b 2019.01.01-2020.01.01 ===
+Compile OK
+RAM gate OK: 1808028 KB free
+  Total trades      : 242
+  Win rate          : 74.0%  (179W / 63L)
+  Net PnL           : $    215.75
+  PF estimate       : 1.930
+  Max closed-DD     : $   70.14  (0.68% of $10000 deposit)
+  Commission/trade  : $0.0600  (at 0.01 lots, N=6)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g7n 2019.01.01-2020.01.01 ===
+Compile OK
+RAM gate OK: 1844272 KB free
+  Total trades      : 403
+  Win rate          : 68.0%  (274W / 129L)
+  Net PnL           : $    197.21
+  PF estimate       : 1.408
+  Max closed-DD     : $   95.33  (0.93% of $10000 deposit)
+  Commission/trade  : $0.0600  (at 0.01 lots, N=6)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g4b 2020.01.01-2021.01.01 ===
+Compile OK
+RAM gate OK: 1838476 KB free
+  Total trades      : 32
+  Win rate          : 87.5%  (28W / 4L)
+  Net PnL           : $     55.42
+  PF estimate       : 4.964
+  Max closed-DD     : $   11.14  (0.11% of $10000 deposit)
+  Commission/trade  : $0.0600  (at 0.01 lots, N=6)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g6b 2020.01.01-2021.01.01 ===
+Compile OK
+RAM gate OK: 1793692 KB free
+  Total trades      : 32
+  Win rate          : 87.5%  (28W / 4L)
+  Net PnL           : $     55.42
+  PF estimate       : 4.964
+  Max closed-DD     : $   11.14  (0.11% of $10000 deposit)
+  Commission/trade  : $0.0600  (at 0.01 lots, N=6)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g7n 2020.01.01-2021.01.01 ===
+Compile OK
+RAM gate OK: 1801948 KB free
+  Total trades      : 68
+  Win rate          : 79.4%  (54W / 14L)
+  Net PnL           : $     78.07
+  PF estimate       : 2.418
+  Max closed-DD     : $   38.44  (0.38% of $10000 deposit)
+  Commission/trade  : $0.0600  (at 0.01 lots, N=6)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)

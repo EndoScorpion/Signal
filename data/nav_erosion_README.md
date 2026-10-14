@@ -1,0 +1,7 @@
+# NAV erosion tracker (research only, not investment advice)
+- Script: `data\nav_erosion_update.py`. Re-run: `python -E -P C:\Users\endos\Signal\data\nav_erosion_update.py` (add `--study` to also run the ex-date event study; writes study_results.json in the current folder; set env STUDY_OUT to choose the path).
+- Appends one dated block to `data\nav_erosion_tracker.csv` (append-only; header written only if the file is new; old rows never touched). Re-running the same day adds a duplicate block, so run once per check.
+- Data: Yahoo chart API (unofficial, free, split-adjusted prices, dividends by ex-date), last 365 days. ~0.3 s per symbol, about 3 minutes for 150 symbols, small RAM.
+- Columns: date_checked, symbol, payer_frequency (guessed from median gap between ex-dates), price_start, price_now, price_change_pct, distributions_sum_pct_of_start, total_return_proxy_pct (price change + distributions, no reinvestment), distribution_per_share_trend (avg of 2nd half vs 1st half of window), notes.
+- Flag: notes contain "PRICE FELL MORE THAN DISTRIBUTIONS PAID" when total_return_proxy_pct < 0. Filter in the CSV (or `findstr FELL`).
+- Caveats: funds launched inside the window start at launch price; Yahoo data can have errors; edit the WEEKLY/OTHER lists in the script to change the universe. Baseline block 14 Oct 2026: 150 symbols, 74 flagged (all weekly except O, OBDC, PSEC, BXMT, T, IBM, NVO).

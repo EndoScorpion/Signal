@@ -1,0 +1,60 @@
+# MQL5 articles: relevance to the z-fade EA family (researched 14 Oct 2026)
+
+Method: public pages only, read via fetch tool (a small model summarised each page; not read verbatim, so numbers below are "as reported by the fetch summary" and should be spot-checked before citing). Nothing here is live approval. Our context: EURUSD M15, z of last N closes fade, sell below H1 SMA regime, ATR cap, rollover block, time exit, ZGate and MMR gates, 8-period WIN rule, cost 5-8 pts.
+
+## 1. Does Your EA Depend on Candle Boundaries? A Shifted-Bar Stress Test
+- URL: https://www.mql5.com/en/articles/24077 (13 Oct 2026, Roberto Danilo Riccio)
+- Summary: Rebuilds M15 bars from completed M1 bars with the bar grid shifted by 0..14 minutes, one tester pass per offset. Demo strategy (10/30 SMA cross, XAUUSD, 7 months) stayed profitable at all 15 offsets but net profit ranged about 1.8k to 7.1k and drawdown 18-32%; baseline offset ranked 13 of 15. Read the result as a dispersion profile, never pick the best offset; passes are not independent samples. Real-tick validation changed profits by up to ~21%.
+- Applicable: our z-trigger uses the last N M15 closes, so it is grid-sensitive. Run the entry on M15 grids offset by 0..14 min (needs a shifted-bar builder; in MT4 can be emulated by building shifted-grid .hst/M15 from M1 via our csv_to_hst.py/rebuild_history.py). Report sign stability across offsets per year and the median vs offset 0. A base whose offset-0 result is far above the median is probably grid-lucky: use the median as the clone-vs-base yardstick.
+- Skip: MQL5 builder code (MT5 only); intra-minute stop logic is outside the method. Single symbol/period, so no general claim.
+
+## 2. Master the Z-Score: Building Mean-Reverting MQL5 Trading Systems
+- URL: https://www.mql5.com/en/articles/24652 (8 Oct 2026, Mohamed Abdelmaaboud)
+- Summary: z = (close - SMA)/stdev, default N=20 (range 20-50). Three EAs: classic fade at +/-2 with exit at 0, breakout at +/-2.5, and trend-filtered fade (EMA200 side, entry on re-cross of 1.5, exit at 1.0). Tested ~9 months on gold, US30, BTC; the filtered fade was the only one profitable on all three. No stops, no costs, no OOS; author admits fat tails and single-sample weakness.
+- Applicable: confirms our structure (fade only with the regime filter) independently, but weak evidence. One cheap idea: re-cross entry (enter when z falls back through the trigger, not on first touch) as an extra clone mutation, and exit at a partial z (e.g. 1.0) instead of time only.
+- Skip: all performance numbers (idealised, no spread). Skip breakout variant.
+
+## 3. Strategy Optimization and Forward Analysis (Part 1): The Pardo Method
+- URL: https://www.mql5.com/en/articles/19520 (9 Oct 2026, Roman Shiredchenko)
+- Summary: Basic walk-forward cycle: optimise on ~48 months, test forward on next ~25% (about 10-25%), roll the window, re-optimise every 1/8-1/4 of the in-sample length. Prefer a stable plateau of parameters over the single best run; filters PF>1.5, DD<20%, >=100 trades; test across symbols/timeframes. No efficiency ratio defined and no numeric results in the text.
+- Applicable: our year-by-year 8-period WIN rule is already a wide walk-forward. Add the Pardo discipline explicitly: choose parents by plateau (neighbours stable, already in WIN rule), and freeze a candidate before looking at the next unseen year. Related article (not read in full): https://www.mql5.com/en/articles/23250 (walk-forward efficiency scoring) - unverified, worth a look for an OOS/IS ratio.
+- Skip: the example EA/ranges; the text is internally inconsistent on window sizes.
+
+## 4. Market Microstructure in MQL5 (Part 9): Pullback Quality
+- URL: https://www.mql5.com/en/articles/23628 (1 Oct 2026, Max Brown)
+- Summary: Measures pullback depth as the share of a 20-bar swing already retraced (classes at 23.6/38.2/61.8%), gated by EMA(5)/EMA(13) spread > 5% of ATR(14), plus H1-range position and lag-1 autocorrelation into a heuristic score. Studied on NQ M1 NY sessions (514 days): a distribution study only, no forward returns; weights are unvalidated heuristics; autocorrelation was negative in every regime, so that term was mostly inactive.
+- Applicable: (a) negative lag-1 return autocorrelation at short horizon is itself the mean-reversion premise; a per-bar "autocorr of last N returns < 0" gate is a cheap filter candidate for fades, distinct from ZGate/MMR. (b) swing-depth of the last 20 M15 bars as a fade-quality gate: fade only when price has run far (depth near 0 from the extension side) vs partially retraced.
+- Skip: the composite weights, NQ numbers, the score as binary trigger (author suggests sizing only). Source link reported broken in comments.
+
+## 5. Evolutionary Selection of LLM Agents + How to Implement Competition Among LLM Agents
+- URLs: https://www.mql5.com/en/articles/21878 (13 Oct 2026) and https://www.mql5.com/en/articles/21785 (30 Sep 2026), both Yevgeniy Koshtenko. Predecessor: https://www.mql5.com/en/articles/20071 (11 Aug 2026, profit-based rotation).
+- Summary: 21878: 20 prompt-defined agents; fitness = Sharpe(points PnL) x sqrt(trades), agents with <3 trades get 0; every 20 trades cull the bottom ~25%, clone the top ~25% with prompt mutation (adjective, concept, thresholds +/-5-15%, extra rule, each p=0.3); parents drawn by softmax roulette with ~30% probability reserved for under-sampled agents; elite+cull <= 0.6 to avoid collapse; no crossover. Its EURUSD M15 test: 22 trades, +1.51 USD, PF 1.04 (one evolution cycle only, proves nothing). 21785: notional capital per agent rewarded by PnL fed back into the prompt; 68 trades, PF 1.06, DD 11.4%, author calls it unbalanced; correlated simultaneous losses noted. 20071: rank score 0.5 win rate + 0.3 PF + 0.2 profit>0; crossover blends 70/30 weak toward strong with small mutation (details partly unverified, code excerpts).
+- Applicable (parent selection for our clone loop): fitness = mean/std of per-period or per-trade points x sqrt(n) rather than raw profit, with a minimum-trades floor; softmax-weighted parent choice plus a reserved exploration share for untested mutants; cap elite+cull fractions so the pool cannot collapse to one lineage (our LINEAGE_DNA keeps ancestors, so culling = deprioritise, never delete). Note their fitness ignores regime/period spread; ours (8-period WIN rule) is stronger - use theirs only to rank within the WIN set.
+- Skip: LLM/Grok API parts, psychological prompt states, all performance numbers (tiny samples, costs not stated, lookahead unaddressed).
+
+## 6. Markov Chains in Trading and Price Forecasting
+- URL: https://www.mql5.com/en/articles/21822 (5 Oct 2026, Aleksej Poljakov)
+- Summary: States = bins of N-bar price change (9 equal-frequency bins) or trend/flat/trend, win/loss; transition matrix by counting, row-normalised, smoothing for unseen transitions; multi-step forecast by matrix powers decays toward independence with horizon. A win/loss-chain demo (100 simulated trades) suggests sizing up after a loss; no real-market backtest.
+- Applicable: a transition table P(next-bar-bin | current z-bin) built from our .hst gives a direct, cheap check of whether z extremes mean-revert at the horizon of our time exit (offline, no tester). Also test win/loss dependence in our trade lists (does a loss predict the next result?) - likely noise.
+- Skip: price-level forecast paths, the sizing-after-loss conclusion (martingale-like, small simulated sample; conflicts with our no-martingale posture).
+
+## 7. Developing a Quantitative Session Analysis Tool (Part 1)
+- URL: https://www.mql5.com/en/articles/24068 (6 Oct 2026, Francis Nyoike Thumbi)
+- Summary: A measurement tool, not a strategy: per-session records (OHLC, high/low times, range, net move, which extreme came first) and range development at 25/50/75/100% of session time. No statistics or results yet; DST/overnight sessions deferred.
+- Applicable: idea only: compute, per trade-entry hour, the range already used at 25/50% of the session before entry (a "range-used" gate, close to our daily-range 1.0 gate) and net-move-vs-fade outcome by session; do offline in Python on .hst with labelled server clock (UTC+2/+3 US DST).
+- Skip: the MQL5 UI/panel code (display only), anything claiming a session edge (none shown).
+
+## 8. Creating and Testing a Council of 15 Models in MetaTrader 5
+- URL: https://www.mql5.com/en/articles/21782 (6 Oct 2026, Yevgeniy Koshtenko)
+- Summary: 10 LLM analysts vote, 4 risk managers each return approve/caution/block, a chair decides; vote and block counts act as a gate (3 blocks force hold, 7+ of 10 votes = strong). One month EURUSD M15, 43 trades, PF 1.47, no costs, no lookahead explanation, correlated voters (same model).
+- Applicable: only the gate structure: independent veto gates counted (ZGate, MMR, ATR cap, rollover, range) with a rule like "enter only if no more than k gates vote caution", an ensemble of cheap gates scored not hard-ANDed. Low priority.
+- Skip: LLM calls (latency, cost, nondeterminism, unverifiable in the tester), all results.
+
+## Ranked experiments (cheap, exact design; all with the 8 pts/trade scoring unless Nasif/FXOpen rule says 6, label it; base = b22_thu + ZGate 1.0 + daily range 1.0 = WIN_GEN1 b31)
+1. Grid-offset stress of the current best (article 1). Build M15 series from the clean M1 with grid offsets 0,3,5,7,10,12 min (no new EA logic; the EA runs on the offset chart/history). Run b31 and plain base on 4 of the 8 years (2012, 2017, 2020, 2022), one test at a time via run_tester.ps1. Metrics: net pts, PF, trades per offset. Pass: b31 positive in >=5 of 6 offsets each year and offset-0 within the median band; if offset 0 is the best by a wide margin, mark the WIN as grid-sensitive. Offline pre-check in Python first (no MT4): re-simulate the entry rule on shifted grids.
+2. Offline z-extreme Markov/transition check (article 6). From M1->M15 closes (2011-2025), bin z (N as in base) into 9 equal-frequency bins; tabulate mean and sign of forward return at the time-exit horizon, per year and per bin; compare to cost of 8 pts. Pass: the top z bin has negative forward return (after a sell fade) in >=6 of 8 years with mean magnitude clearly above 8 pts; otherwise the gate thresholds are the bottleneck. Zero tester cost.
+3. Lag-1 autocorrelation gate (article 4). New input AcMax: skip entries when the lag-1 autocorrelation of the last 20 M15 returns > AcMax (try 0.0, 0.1, -0.1) ; first replay offline on the trade list from reject_audit/shadow_audit (does low autocorr split winners from losers per year), then 3 values in MT4 on 8 periods. WIN rule applies, then spread 5 and 8. Document that it is not independent of ZGate (check correlation with the Z-gate state first).
+4. Parent selection upgrade for the clone loop (article 5). Replace raw-profit ranking with fitness = mean(per-period pts)/std(per-period pts) x sqrt(periods with >=30 trades), floor of 30 trades per period, softmax parent draw, 30% of draws reserved for never-tested mutants, elite+cull <= 0.6. A/B on the offline surrogate: run the existing breeder.py/candidate_gen.py for 5 generations each with old and new rule on the same seed pool and compare how many WIN-rule passes appear in the next MT4-verified batch of 10. Cost: script change only.
+5. Re-cross entry and partial-z exit as mutations (article 2). Two new inputs: EntryRecross (enter on the bar where z falls back below trigger after having been above it, instead of the first touch) and ZExit (close when z <= 1.0 or 0.5, time exit retained as the cap). Four .sets (recross on/off x ZExit 1.0/off), all inputs listed on b22_thu base; 8 periods; expect fewer trades, so check the trades>=100 style floor per year before judging.
+
+Unverified/limits: all figures come from a fetch-tool summary of each page, article 3's WFE article (23250) and the Pardo "model shelf life" numbers were not independently verified; article 5's code excerpts and the 24-hour rotation logic were not visible; no article here provides cost-aware, multi-year EURUSD evidence, so none supports any live claim.

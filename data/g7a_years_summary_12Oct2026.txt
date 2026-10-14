@@ -1,0 +1,31 @@
+=== g7a 2016.01.01-2017.01.01 ===
+  Total trades      : 155
+  Win rate          : 48.4%  (75W / 80L)
+  Net PnL           : $   -125.17
+  PF estimate       : 0.594
+  Max closed-DD     : $  142.73  (1.43% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.594  [FAIL]
+  *** FAIL ***
+=== g7a 2015.01.01-2016.01.01 ===
+  Total trades      : 73
+  Win rate          : 52.1%  (38W / 35L)
+  Net PnL           : $    -39.65
+  PF estimate       : 0.702
+  Max closed-DD     : $   66.10  (0.66% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.702  [FAIL]
+  *** FAIL ***
+=== g7a 2018.01.01-2019.01.01 ===
+  Total trades      : 126
+  Win rate          : 52.4%  (66W / 60L)
+  Net PnL           : $    -70.31
+  PF estimate       : 0.696
+  Max closed-DD     : $  167.15  (1.66% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.696  [FAIL]
+  *** FAIL ***
+DONE

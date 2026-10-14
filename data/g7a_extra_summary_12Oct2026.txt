@@ -1,0 +1,19 @@
+=== g7a spread 6 (2021.03.19-2022.01.01) ===
+  Total trades      : 138
+  Win rate          : 74.6%  (103W / 35L)
+  Net PnL           : $    131.02
+  PF estimate       : 2.040
+  Max closed-DD     : $   18.70  (0.19% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+=== g7a 2022.01.01-2022.07.01 spread 3 ===
+  Total trades      : 126
+  Win rate          : 75.4%  (95W / 31L)
+  Net PnL           : $    109.65
+  PF estimate       : 1.885
+  Max closed-DD     : $   33.76  (0.34% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+DONE

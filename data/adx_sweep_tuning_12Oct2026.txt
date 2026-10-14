@@ -1,0 +1,127 @@
+=== g7b 2015 ===
+  Total trades      : 49
+  Win rate          : 42.9%  (21W / 28L)
+  Net PnL           : $    -55.79
+  PF estimate       : 0.483
+  Max closed-DD     : $   65.73  (0.66% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.483  [FAIL]
+  *** FAIL ***
+=== g7c 2015 ===
+  Total trades      : 67
+  Win rate          : 50.7%  (34W / 33L)
+  Net PnL           : $    -42.81
+  PF estimate       : 0.662
+  Max closed-DD     : $   59.82  (0.60% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.662  [FAIL]
+  *** FAIL ***
+=== g7d 2015 ===
+  Total trades      : 93
+  Win rate          : 51.6%  (48W / 45L)
+  Net PnL           : $    -53.37
+  PF estimate       : 0.688
+  Max closed-DD     : $   74.58  (0.75% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.688  [FAIL]
+  *** FAIL ***
+=== g7b 2016 ===
+  Total trades      : 95
+  Win rate          : 52.6%  (50W / 45L)
+  Net PnL           : $    -49.29
+  PF estimate       : 0.712
+  Max closed-DD     : $   86.92  (0.87% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.712  [FAIL]
+  *** FAIL ***
+=== g7c 2016 ===
+  Total trades      : 133
+  Win rate          : 51.1%  (68W / 65L)
+  Net PnL           : $    -85.13
+  PF estimate       : 0.660
+  Max closed-DD     : $  108.56  (1.08% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.660  [FAIL]
+  *** FAIL ***
+=== g7d 2016 ===
+  Total trades      : 177
+  Win rate          : 46.9%  (83W / 94L)
+  Net PnL           : $   -159.23
+  PF estimate       : 0.559
+  Max closed-DD     : $  179.60  (1.79% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.559  [FAIL]
+  *** FAIL ***
+=== g7b 2017 ===
+  Total trades      : 28
+  Win rate          : 82.1%  (23W / 5L)
+  Net PnL           : $     39.18
+  PF estimate       : 3.095
+  Max closed-DD     : $   18.70  (0.19% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+=== g7c 2017 ===
+  Total trades      : 34
+  Win rate          : 85.3%  (29W / 5L)
+  Net PnL           : $     54.35
+  PF estimate       : 3.906
+  Max closed-DD     : $   18.70  (0.19% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+=== g7d 2017 ===
+  Total trades      : 60
+  Win rate          : 83.3%  (50W / 10L)
+  Net PnL           : $     85.74
+  PF estimate       : 3.235
+  Max closed-DD     : $   18.70  (0.19% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+=== g7a 2017 ===
+  Total trades      : 54
+  Win rate          : 83.3%  (45W / 9L)
+  Net PnL           : $     77.07
+  PF estimate       : 3.251
+  Max closed-DD     : $   18.70  (0.19% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+=== g7b 2018 ===
+  Total trades      : 70
+  Win rate          : 50.0%  (35W / 35L)
+  Net PnL           : $    -47.47
+  PF estimate       : 0.643
+  Max closed-DD     : $  110.27  (1.10% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.643  [FAIL]
+  *** FAIL ***
+=== g7c 2018 ===
+  Total trades      : 99
+  Win rate          : 52.5%  (52W / 47L)
+  Net PnL           : $    -53.53
+  PF estimate       : 0.704
+  Max closed-DD     : $  145.65  (1.44% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.704  [FAIL]
+  *** FAIL ***
+=== g7d 2018 ===
+  Total trades      : 151
+  Win rate          : 55.0%  (83W / 68L)
+  Net PnL           : $    -59.81
+  PF estimate       : 0.772
+  Max closed-DD     : $  165.81  (1.64% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.772  [FAIL]
+  *** FAIL ***
+DONE

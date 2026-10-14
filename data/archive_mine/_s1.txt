@@ -1,0 +1,161 @@
+63a1d9ef 2026-10-12 The last commit recorded the g4b OOS gate PASS (PF 1.46, DD 0.34%).
+63a1d9ef 2026-10-12 Current PROVEN best: Z-gate (ZMax 1.0) + daily range 1.0 on b22_thu = winners\WIN_GEN1_ZGate_DailyRange_b31.set, 8-period +75,254 vs b22 +48,429 @8pt.
+63a1d9ef 2026-10-12 8-period +75,254 vs b22 +48,429 at 8 pts/trade; holds at spread 5 and 8.
+63a1d9ef 2026-10-12 - **Best so far:** b22_thu with the Z-gate (ZMax 1.0) and the daily range filter scored +75,254 over 8 periods at 8 pts/trade, against +48,429 for b22.
+706dd7a3 2026-10-12 Commit `4addc85` already records "OOS gate PASS g4b hour-thu-filter PF 1.46 DD 0.34%".
+706dd7a3 2026-10-12 The `## RESULTS` section now holds the 182 trades, PF 1.460, DD 0.34%, the PASS verdict and the WARN hours and day.
+706dd7a3 2026-10-12 Its one task is to summarize which g5–g8 variants passed the OOS gate and which had the best PF.
+706dd7a3 2026-10-12 g7a's PF is 1.953 in the gate summary and 2.03 in MT4's report, so that discrepancy is recorded and not settled.
+706dd7a3 2026-10-12 State: The OOS gate passed for g4b (PF 1.46, DD 0.34%).
+706dd7a3 2026-10-12 - **g7a overfitting:** it uses `BlockADX=24`, which was tuned on the same data, so its 1.95–2.03 PF is probably flattered.
+706dd7a3 2026-10-12 Select-String 'Total trades|Win rate|PF estimate|Net PnL|Max closed|PASS|FAIL|COMPILE|RAM gate|cannot be loaded'
+706dd7a3 2026-10-12 - ADX 20: PF 1.586 (g7b).
+706dd7a3 2026-10-12 - ADX 24: PF 1.953 (g7a).
+706dd7a3 2026-10-12 **Stale text.** I replaced the old "NOT RUN" gate heading in `HUB_STATE.md` with "RAN LOCALLY — g4b PASS (PF 1.460)" and a pointer to the results.
+706dd7a3 2026-10-12 - **Higher win rate isn't the same as more profit.** The ADX filter in g7a raised the win rate to 73.9%, but it did so by cutting trades from 182 to 134.
+706dd7a3 2026-10-12 - **2023–2025 show 0 trades.** Either the history is missing for those years or the filters block every entry.
+706dd7a3 2026-10-12 ADX regime sweep: BlockADX at 22, 24 and 26, picked on 2015-2018 only.
+706dd7a3 2026-10-12 Expect a smaller drawdown with little change in win rate.
+706dd7a3 2026-10-12 $pat='Total trades|Win rate|PF estimate|Net PnL|Max closed|PASS|FAIL|COMPILE|RAM gate|history|No data|error'
+706dd7a3 2026-10-12 (&amp; $gate -Expert Strong2010b_claude_g7a -Period M1 -Commission 6 -From "$y.01.01" -To "$($y+1).01.01" 2&gt;&amp;1)
+706dd7a3 2026-10-12 Pooled PF must beat baseline, and PF must move monotonically across the ADX sweep, not as a lone spike.
+706dd7a3 2026-10-12 The 2019-2022 holdout is run exactly once, on the single chosen variant.
+706dd7a3 2026-10-12 - **Winner:** the ADX value with the highest pooled PF over 2015–2018.
+706dd7a3 2026-10-12 PF has to move steadily across ADX 20 to 26, with no single spike.
+706dd7a3 2026-10-12 - **2023–2025 "0 trades":** this is missing history, not a filter bug.
+706dd7a3 2026-10-12 - Keep it only if PF is at least 1.10 on the tuning year, clearly beats g4b there, and doesn't lose on the holdout.
+706dd7a3 2026-10-12 Sells need CCI at +50 or higher, and buys need −50 or lower.
+706dd7a3 2026-10-12 $pat='Total trades|Win rate|PF estimate|Net PnL|Max closed|PASS|FAIL|COMPILE|RAM gate|history|No data'
+706dd7a3 2026-10-12 (&amp; $gate -Expert "Strong2010b_claude_$v" -Period M1 -Commission 6 -From "$y.01.01" -To "$($y+1).01.01" 2&gt;&amp;1)
+706dd7a3 2026-10-12 No variant improves 2015 or 2018, and PF doesn't move steadily with the ADX value.
+706dd7a3 2026-10-12 $pat='Total trades|Win rate|PF estimate|Net PnL|Max closed|PASS|FAIL|COMPILE|Compile|RAM gate|Source missing|No report|error'
+706dd7a3 2026-10-12 h1c also had the smallest drawdown (0.25%).
+706dd7a3 2026-10-12 If it doesn't reach PF 1.10, I stop and don't tune further.
+706dd7a3 2026-10-12 The smaller stop and the farther take-profit cut the win rate from 66.8% (h1c) to 37.8%, and PF went down.
+706dd7a3 2026-10-12 - **Round 2, the six bracket versions:** none reached PF 1.10 on 2016.
+706dd7a3 2026-10-12 - **Its best result so far:** a Z-gate plus daily-range setup, +75,254 over 8 periods, against +48,429 for the earlier b22 base.
+706dd7a3 2026-10-12 If you do pick 8, it would need changing again, and the earlier 6-point results (like the g4b PASS at PF 1.46) would stop being comparable.
+706dd7a3 2026-10-12 A commit from earlier in the session, "Add g4a OOS gate result (FAIL: PF 1.085)", records g4a as a FAIL.
+706dd7a3 2026-10-12 The best in-sample setting is g7a: BlockADX=24, 134 trades, PF 1.953, DD 21.84.
+706dd7a3 2026-10-13 - OOS gate rule: PF >= 1.10, max DD <= 5%, RAM gate >= 1.0 GB
+706dd7a3 2026-10-13 - `C:\Users\endos\Signal_copy\ChopBracket_h1d.mq4` — h1c with tighter stop (SLK=0.35, SLATRK=1.00) and TP all the way to mid band (TPFadeFrac=1.00).
+706dd7a3 2026-10-13 Each open session can hold 100-300 MB.
+706dd7a3 2026-10-13 Chrome is the last one — killing it should free another 300-400 MB and push you over the 1.5 GB gate.
+706dd7a3 2026-10-13 Each idle session holds 100-300 MB.
+706dd7a3 2026-10-13 - **RAM too low to start download (83-318 MB free)**: Download gate is 1.5 GB.
+706dd7a3 2026-10-13 If done correctly, your Modelling quality bar will be green and read 90.00%, with 0 mismatched charts errors.
+706dd7a3 2026-10-13 If you want to go that route, the USB stick + tick downloads would work — but 90% is what the b22/b31 backtests have been using and the ZGate win was confirmed on that basis.
+706dd7a3 2026-10-13 Let me stop trying to go to 2008 and instead focus on downloading 2009-2014 to fill the pre-2015 gap.
+706dd7a3 2026-10-13 It only matters for margin stop-outs — with 500:1 and the EA's `MarginReservePct=50` guard, you'd need an extreme drawdown to get stopped on margin.
+706dd7a3 2026-10-13 What you'd actually experience live: on a small balance you'd pay the max rate (6 pts), so the backtest at 6 pts *is* the correct model for your situation right now.
+706dd7a3 2026-10-13 - **ER (Kaufman, 1995)**: Efficiency Ratio = |net change| / sum(|bar changes|); range 0–1, measures trend quality
+706dd7a3 2026-10-13 - **2015 sp6 official test**: Re-run 2015 at sp6 for official log entry (sp8 result was -$2,370, PF 0.60)
+706dd7a3 2026-10-13 **Variable commission plan:** 6 pts is FXOpen's worst-case tier (small balance).
+706dd7a3 2026-10-13 That's why 2023 came back 0 trades — the tester probably used an insane default spread and filtered everything out.
+706dd7a3 2026-10-13 180 pts offline default = no trades ever pass the spread filter.
+706dd7a3 2026-10-14 **2023 = 0 trades is a real market condition result** — the EA's filters (ZGate + DailyRange) blocked every single entry opportunity in 2023.
+706dd7a3 2026-10-14 **2024: also 0 trades.** Same as 2023 — the EA's ZGate + DailyRange filters blocked every entry in both 2023 and 2024.
+706dd7a3 2026-10-14 - **2023 test returning 0 trades after data fix (4.7 min, model=25%)**: NOT a bug — EA's ZGate + DailyRange filters blocked all entries in 2023.
+706dd7a3 2026-10-14 - **EA inactive in 2023-2024**: ZGate (ZMax=1.0) and DailyRange filters together blocked all entry opportunities.
+706dd7a3 2026-10-14 - **Regime control (sell regime off, 2023, sp5):** -$7,416 on 753 trades with 85% drawdown, against the base's -$3,998 on 288 trades.
+706dd7a3 2026-10-14 For each report it computes the average M15 SMA20 slope and the long regime-SMA slope at entry, and the profit and win rate by slope bucket.
+706dd7a3 2026-10-14 The registry lists it as `WIN_GEN0_zgate` (parent b22, built in EA b25+, 8-period +57,788 against +45,664), which shows it was discovered and tested as a generation-0 mutation.
+706dd7a3 2026-10-14 The lab fades a stretch above or below the recent mean (z-score of M15 closes) across lookbacks, thresholds and hold times, at 5 pts cost.
+706dd7a3 2026-10-14 **Most robust so far:** lookback 10, z of 2.5, hold 48 bars, sells only, skipping entries when ATR14 is above 60 pts.
+706dd7a3 2026-10-14 - **Lab's best:** z ≥ 2.5, lookback 10, ATR14 below 60 pts.
+706dd7a3 2026-10-14 - **Red-zone gates:** stochastic above 80, upper 38% of the 5-day range, ATR cap, rollover hours 20–22 and NFP Fridays.
+706dd7a3 2026-10-14 The MetaTrader process (`terminal.exe`, PID 19092) is running the `k_hurst` test from `auto_LOOP_k_hurs…` at 12.8% CPU and about 10.9 MB/s of disk, so the Hurst candidate is mid-run.
+706dd7a3 2026-10-14 - **Backfill:** Any candidate that already passed (the regime-2400 winner) gets the missing years run first.
+706dd7a3 2026-10-14 The 2013 and 2014 "wins" are mostly sitting out: they placed only 5–7 trades, because the regime rule blocks sells while price is above its long average.
+706dd7a3 2026-10-14 - **Wins:** There are only two profitable years with real trade counts: 2018 for regime 2400 (+$245, PF 1.02, marginal) and 2024 for Hurst-trend (+$1,134).
+706dd7a3 2026-10-14 **Exits, not entries (best bet).** Your sells win 37–47% of the time with winners and losers about the same size (+46.7 average winner vs -49.3 average loser).
+706dd7a3 2026-10-14 At a 1:1 stop and target plus 5 pts cost, you need roughly a 52% win rate to break even, and we never get there.
+706dd7a3 2026-10-14 Raising the target-to-stop ratio (for example 450 or 600 vs 300) lowers the win rate needed to about 42% or 37%.
+706dd7a3 2026-10-14 **Buy-side counterpart.** In 2013 and 2014 the regime rule left the EA almost out of the market (5–7 trades).
+706dd7a3 2026-10-14 Order I'd test them in: the exit ratios first (`r_tp450`, `r_tp600`, then both again on the regime-2400 parent), then the adaptive regime, then the buy-side and soft-gating ideas, which need a small EA edit (b44).
+706dd7a3 2026-10-14 **Cost filters:** The signal also had to clear ATR below 60 pts and a server hour outside 20–22.
+706dd7a3 2026-10-14 **Hold and exit:** It holds 48 bars (12 hours) and exits on time, here at 1.07472: +133 pts, +128 after the 5 pts cost.
+706dd7a3 2026-10-14 - **Offline lab (no stops, no swap):** sell-only, lookback 10, z of 2.5, ATR below 60 pts averaged about +35 pts per trade on 2010–17 and +33 on 2018–26, which is promising.
+706dd7a3 2026-10-14 Regime 2400 cuts that to about $890 a year, and Hurst-trend to about $1,010, so roughly 65–70% of the average loss is gone in about 1.5 hours.
+706dd7a3 2026-10-14 Six trailing-stop candidates are queued: base-EA trails at 100/50, 200/100 and an ATR version, a regime-2400 version, and two b50 versions (sell-only and both sides, trail starting at 150 pts and held 250 pts behind).
+706dd7a3 2026-10-14 The tighter trail here (start 100, 150 behind) captured about 55% of the move, versus 38% for the time exit.
+706dd7a3 2026-10-14 It starts with the 5-pt commission audit: the two best candidates so far (regime 2400 and Hurst-trend) get re-tested at 5 pts commission plus each year's real average spread.
+706dd7a3 2026-10-14 - **Calm and orderly tape gate** (sell only in low-volatility, low-entropy markets): in the offline scan it improved results by +16 to +26 pts per trade in all 5 years, but that scan used the same years it was judged on.
+706dd7a3 2026-10-14 - **Weak or ruled out:** scalping 7–10 pts at a 5 pt commission, and the single-feature chaos measures (Hurst, entropy, Alligator on their own).
+706dd7a3 2026-10-14 - **Daily drawdown freeze:** stop new entries after a 2% daily drawdown, tested on the base and on the regime-2400 parent.
+706dd7a3 2026-10-14 - **Trigger lines:** The price where the next bar would trigger a sell or buy fade (z-score at 2.5), with the distance in pts.
+706dd7a3 2026-10-14 - **The trade count is small:** about 174 trades over 8 years (none in 2013 and 2014, where the regime blocks sells).
+706dd7a3 2026-10-14 The loop's automatic neighbours of `m5_sell_atr60` (ATR cap about 48 and 75 pts) are queued, and the realistic pass is now running on `m5_sell_calm`.
+706dd7a3 2026-10-14 | `m5_sell_atr60` (b50 plus ATR cap 60 pts)
+706dd7a3 2026-10-14 **At realistic cost** (5 comm + each year's real spread), `m5_sell_atr60` still shows about +2,870 pts, or +16.5 per trade.
+706dd7a3 2026-10-14 - **`m5_sell_atr60` earns about 19 points per trade**, but over just 174 trades.
+706dd7a3 2026-10-14 The lot size scales with balance at the same risk, about 0.96% of balance per trade at the 600-pt stop.
+706dd7a3 2026-10-14 - **Return on balance is about +0.6% a year at every balance** for `m5_sell_atr60` (0.2% for `b5`).
+706dd7a3 2026-10-14 - **Small sample:** 174 trades in 8 years, with no trades in 2013 and 2014, and losses in 2010 and 2016.
+706dd7a3 2026-10-14 To get meaningful returns, the strategy needs more trades per year (looser filters that still hold up) or more markets, not just bigger lots, since bigger lots scale the drawdown by the same factor.
+706dd7a3 2026-10-14 - **Regime 2400:** −22,341 pts.
+706dd7a3 2026-10-14 - **b51 + ATR cap 60:** **+5,109 pts, profit factor 1.26.** Net swing of about 76,000 pts.
+706dd7a3 2026-10-14 - The winners have small samples (174 and 359 trades).
+706dd7a3 2026-10-14 - **Winners unaffected:** `m5_sell_atr60` (the +3,228-pt winner) ran first with default inputs, `b5_sell_z25_n10` is a different EA, and all the base-EA candidates were fine because the base set lists every input.
+706dd7a3 2026-10-14 - **Two smaller fixes:** report names no longer contain dots (that stopped the earlier test from writing a report), and "promoted" now requires at least 100 trades, because zero-trade years were counting as wins.
+706dd7a3 2026-10-14 - **Steadiest candidate:** `g2_ZTrigger_2p25` has more trades (364) and only one losing year (2010: −304 pts).
+706dd7a3 2026-10-14 - **2024 month example for that leader:** May −331 pts, Jun +1,059, Jul −350, Oct +1,133, Nov +258, Dec +1,529, with no trades in Jan–Apr and Aug–Sep because the regime blocks sells.
+706dd7a3 2026-10-14 plz see if we have no tnetires due to logic or errors or missing data - if the data is fine , then deconstruct &/ simplify entry logic and diagnose
+706dd7a3 2026-10-14 - data\auto_loop.py: main loop (RAM gate with ram.ps1 -Trim and waiting; BUSY wait; report reuse; tag.replace('.','p'); build_set/ea_defaults writing all EA inputs; extra_candidates.json reload; backfill; audit-after; crossover fix with egr
+706dd7a3 2026-10-14 Clock: MT4 SERVER time = UTC+2, UTC+3 in US DST…"; rollover default RollFrom=23, RollTo=1 with wrap logic `bool inr=(RollFrom<=RollTo)?(h>=RollFrom && h<=RollTo):(h>=RollFrom || h<=RollTo)`; warm-up `iBars(Symbol(),PERIOD_H1)<RegimePeriod+1
+706dd7a3 2026-10-14 - Scripts for diagnosis/rebuild: data\rebuild_history.py (streams zip → M1 with UTC→server conversion using `bounds` of US DST windows and `to_server(ts)=ts+7200+3600*(searchsorted(bounds,ts,'right')%2)`, then M5..D1 via day-aligned chunks,
+706dd7a3 2026-10-14 - User corrections noted: "i mean i used the process explorer to get some and then trimmed" (RAM not hardware); "15amn8" (model confirmed); results should be in points; low-volume threshold changed to 15 trades.
+706dd7a3 2026-10-14 - Earlier in this segment: "try", "should i let u or ps control that ram disk thing", "well i can ask it to make a bigger har ddrive file to get us more ram right?", "i mean what if i dedicate its RAM to u or unmount the RAM so u can use it
+706dd7a3 2026-10-14 - Answer/record the user's remark about FXOpen server time zone history (Mauritius/Malta/Mauritania recollection): note our measured eras (about +0/+1h vs UTC in 2010–13, +0 in 2015-10..2018, +2/+3 US-DST from 2019 and from 2025-08-28) and 
+706dd7a3 2026-10-14 - Implement `--clean` mode in auto_loop.py (HST_OUT=hst_out\clean, RUN=run_tester_b.ps1, STATE=loop_state_clean.json, REPORT=loop_report_clean.md, constant WINNERS dir for _setfile copies, map any MR_RegimeSwitch* expert to MR_RegimeSwitch_
+706dd7a3 2026-10-14 - Smoke-test clean history (2013 and 2014 with g2_ZTrigger_2p25 patch: expected sim ~10 and ~7 trades) and check whether the early-year warm-up artifact persists; consider continuous multi-year runs (e.g., 2012-01-01..2026-10-01) with per-y
+706dd7a3 2026-10-14 Respond to the user's latest remarks about the FXOpen server time zone ("i know at one point, fx time was maurutius or malta time zone or something" / "i think my metatrader showed their time zone" / "or mauritania i cant remember"): explai
+706dd7a3 2026-10-14 - **Log contents:** each row has the server time (UTC+2, UTC+3 in US daylight saving), direction, z-score, bid, ask, spread, and the first gate that blocked it.
+706dd7a3 2026-10-14 It reports results in points after cost, per gate: count, average, win rate, and years positive.
+706dd7a3 2026-10-14 I want you to help me design a High-Frequency/Scalping Forex Robot that utilizes a Neural Network to improve entry probability, filtering, and adaptive exit logic.
+706dd7a3 2026-10-14 TARGET MODEL: A Multi-Layer Perceptron (MLP) or Long Short-Term Memory (LSTM) network built in Python (PyTorch or TensorFlow/Keras) that outputs a trading signal probability (0.0 to 1.0) or classification (0 = Sell, 1 = Hold, 2 = Buy).
+706dd7a3 2026-10-14 OUTPUT DESTINATION: The network will generate predictions that are exported via ONNX (Open Neural Network Exchange) or a local API bridge into a MetaTrader 4/5 (MQL4/5) or cTrader (C#) Expert Advisor for execution.
+706dd7a3 2026-10-14 Pass the market state features to the Neural Network at the exact moment of the rule-based trigger.
+706dd7a3 2026-10-14 Train the Neural Network to predict a binary outcome: `1` if the rule-based trade hits its Profit Target, and `0` if it hits its Stop Loss.
+706dd7a3 2026-10-14 The Result: The robot only executes the trade if the rule-based setup triggers and the AI confirms the probability of success is above a high threshold (e.g., >65%).
+706dd7a3 2026-10-14 - **Results:** per-symbol and per-year results, win rate, average net, worst case, and how many days you'd have to hold to break even.
+706dd7a3 2026-10-14 - **Exits on the ex-date:** selling at the ex-date close is negative even gross (-14 and -19 bps, win rate 30-38%).
+706dd7a3 2026-10-14 - **Exits 1 to 4 days later:** net of 20 bps round-trip cost these gave +11 to +71 bps.
+706dd7a3 2026-10-14 The +5 day exit is negative (-36 and -99 bps).
+706dd7a3 2026-10-14 - **Tail risk:** the worst single trade was -470 to -730 bps for the 1 to 4 day exits.
+706dd7a3 2026-10-14 - **Break-even:** the ex-date-open exit nets positive only if round-trip costs are under about 11-17 bps.
+706dd7a3 2026-10-14 - **Exits 1–4 days later:** these showed +11 to +71 bps net at 20 bps cost.
+706dd7a3 2026-10-14 - The same exits and cost levels as the weekly funds, plus win rate and worst trade.
+706dd7a3 2026-10-14 It will rank all payers by net result and stability, with small-sample caveats.
+706dd7a3 2026-10-14 Each variant reports net result after the 4 and 20 bps cost levels, win rate, trade count (flagged when too few), worst trade, and whether the gain holds in both halves of the data.
+706dd7a3 2026-10-14 - The first-half results are negative, and average drawdowns inside a hold are 5-16%, worst 62-81%.
+706dd7a3 2026-10-14 - The win rates of 65-67% for the "+5%" and "top of range" exits are partly built in, and trades still open at the data end were dropped, which favors the rule.
+706dd7a3 2026-10-14 The erosion shows up in the full-year hold and the drawdowns.
+706dd7a3 2026-10-14 - **Holds:** every hold variant lost to SPY by 100 bps or more over the same dates, with drawdowns inside holds averaging 5–16%.
+706dd7a3 2026-10-14 Small trade counts make heavy optimization an overfitting risk, which is the same reason I'd keep the neural network work to a small meta-label model.
+706dd7a3 2026-10-14 One thing on your chart worth flagging: the TriggerMap header reads "SELL fade odds (all): n46, win 33%, avg −1121 pts gross".
+844c8c11 2026-10-12 - **Best variant:** g5a leads on profit factor, net profit and drawdown, but its edge is small and may be due to the test period.
+844c8c11 2026-10-12 Your strategy's win rate is about 67%, which suggests mean reversion, so this is the first thing to check.
+844c8c11 2026-10-12 - **Many small changes.** Test one change at a time and require a clear gain in profit factor and drawdown, not just win rate.
+844c8c11 2026-10-12 - **Small profit.** $120 on a $10,000 deposit is about 1.2% over roughly 9 months.
+844c8c11 2026-10-12 === g7a ADX24 OOS 2022.01.01-2022.06.01 ===
+844c8c11 2026-10-12 Its summary says g4a failed the gate on profit factor (1.085, needing 1.10).
+844c8c11 2026-10-12 - **Last commit:** "OOS gate PASS g4b hour-thu-filter PF 1.46 DD 0.34%".
+844c8c11 2026-10-12 - **Weak entry hours:** 4h, 6h, 13h, 14h and 19h–22h have win rates of 39–51% and net losses.
+844c8c11 2026-10-12 - Its current best is "Z-gate + daily range on b22_thu", which it reports as +75,254 over 8 periods against +48,429 for b22 at 8 pts.
+844c8c11 2026-10-12 At 83%, free RAM is probably still under 1.5 GB, so I'd hold the tick download until it's higher.
+844c8c11 2026-10-12 - **Best result so far:** b22_thu with the Z-gate and the daily range filter scored +75,254 over 8 periods at 8 pts per trade, against +48,429 for plain b22.
+844c8c11 2026-10-12 - Lowering `BlockADX` from 28 to 24 (g7a) gave PF 1.953, a 73.9% win rate and a $21.84 drawdown in-sample.
+c41bfc55 2026-10-12 - **Strong2010b_claude PF near 1.0 before commission**: Proposed three layers of fixes — pip normalisation, cost gate, and regime-based TP selection — to push net PF above 1.0 after 6pt commission.
+c41bfc55 2026-10-12 - `@"/root/.claude/uploads/1822a39e-0314-5df2-bc7b-a82211406fbd/a04c1f8f-strong_feb_2011_272_98.16_PatRec_11_Jul_21.mq4" Make a copy of this mql4 file & analyze the code - i need comments added to the new file also - just a few summaries fo
+d5a8df61 2026-10-12 My findings, including g7a (BlockADX 24, PF 1.953, tuned on one window and not validated), are in `HANDOFF_pirates_session_12Oct2026.md` and `HUB_STATE.md`.
+ee50d20a 2026-10-12 - Why: g2a's virtual buy signal has a 15-point take-profit against a 290-point stop-loss, so a high win rate can hide large losses.
+ee50d20a 2026-10-12 The win rate rises only because the stop-loss widens.
+ee50d20a 2026-10-12 That is the same small-TP/big-SL pattern as g2a, where a high win rate can hide large losses.
+ee50d20a 2026-10-12 - **It doesn't raise win rate:** it fails your gate, which requires a win-rate gain with PF at least 1.10 and drawdown under 5% out of sample.
+ee50d20a 2026-10-12 I'm holding off on any new work to improve the win rate, because the 2021 out-of-sample report doesn't exist yet.
+ee50d20a 2026-10-12 I'm not mining the 2019 trades for new filters.
+ee50d20a 2026-10-12 The earlier replay already showed that win rate rises only because the stop-loss widens, which is not a real improvement.
+ee50d20a 2026-10-12 The useful gate here is break-even win rate, about 51% at 8 points, checked against the measured win rate.
+ee50d20a 2026-10-12 Apply the four corrections above (commission $0.08/0.01 lot, cost gate = break-even win rate, full OOS bar with p <= 0.0024, raw-price scoring).
+ee50d20a 2026-10-12 Baseline FAILS the gate (needs PF >= 1.10).

@@ -1,0 +1,25 @@
+﻿=== g8a 5k 500lev 6pt ===
+Compile OK
+RAM gate OK: 1966780 KB free
+  Total trades      : 182
+  Win rate          : 67.6%  (123W / 59L)
+  Net PnL           : $    524.38
+  PF estimate       : 1.355
+  Max closed-DD     : $  237.26  (2.35% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g7c ADX22 base ===
+Compile OK
+RAM gate OK: 937272 KB free
+=== g7d ADX26 base ===
+Compile OK
+RAM gate OK: 1046760 KB free
+=== g7a ADX24 spread6 ===
+Compile OK
+RAM gate OK: 1058316 KB free
+=== g7a ADX24 OOS 2022.01.01-2022.06.01 ===
+Compile OK
+RAM gate OK: 911440 KB free
+DONE

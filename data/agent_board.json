@@ -1,0 +1,76 @@
+{
+ "jobs": [
+  {
+   "id": 1,
+   "title": "Build b60 gates: Ehlers cycle, Kalman z, variance regime (agent running)",
+   "owner": "build_agent",
+   "status": "done",
+   "created": "2026-10-14T13:49:49",
+   "updated": "2026-10-14T13:50:11",
+   "note": "b60 compiled 0 errors, 6 ng9_* queued"
+  },
+  {
+   "id": 2,
+   "title": "Research new EA methods (done: data\\research_notes_14Oct2026.md)",
+   "owner": "",
+   "status": "done",
+   "created": "2026-10-14T13:49:50",
+   "updated": "2026-10-14T13:49:53",
+   "note": "notes written"
+  },
+  {
+   "id": 3,
+   "title": "Implement OU half-life gate and session gate from the research notes",
+   "owner": "",
+   "status": "done",
+   "created": "2026-10-14T13:49:50",
+   "updated": "2026-10-14T13:53:19",
+   "note": "OU half-life gate built in b61, 4 candidates queued"
+  },
+  {
+   "id": 4,
+   "title": "Add deflated-Sharpe check to the weekly report (dsr_check.py exists)",
+   "owner": "",
+   "status": "done",
+   "created": "2026-10-14T13:49:52",
+   "updated": "2026-10-14T13:53:20",
+   "note": "DSR line added to the daily summary"
+  },
+  {
+   "id": 5,
+   "title": "Build Gates.mqh shared include and thin b61 EA",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T13:49:52",
+   "updated": "2026-10-14T13:49:52",
+   "note": ""
+  },
+  {
+   "id": 6,
+   "title": "Math agent: reference-implement and range-check every gate threshold (so no gate is inert)",
+   "owner": "math_agent",
+   "status": "claimed",
+   "created": "2026-10-14T13:53:18",
+   "updated": "2026-10-14T13:54:05",
+   "note": ""
+  },
+  {
+   "id": 7,
+   "title": "Validator agent: honest-N DSR, bootstrap, concentration, cost robustness, b57 parity for the leader",
+   "owner": "validator_agent",
+   "status": "claimed",
+   "created": "2026-10-14T13:54:03",
+   "updated": "2026-10-14T13:54:04",
+   "note": ""
+  },
+  {
+   "id": 8,
+   "title": "Other chat using Desktop Commander: read AGENT_RULES_READ_FIRST.md, do not start tests or a second driver",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T14:56:34",
+   "updated": "2026-10-14T14:56:34",
+   "note": ""
+  }
+ ]
+}

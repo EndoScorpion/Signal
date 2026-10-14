@@ -1,0 +1,7 @@
+﻿HISTORY LABEL (written 2026-10-14) - FXOpen EURUSD, 5-digit ECN (broker feed: FXOpenEU-ECN)
+SOURCE : FXOpen QuotesDownloader raw M1 BID file "M1 bid.csv" inside EURUSD_M1_2009-01-01-14-00-51_2026-10-06-00-00-00.zip (6,566,338 M1 bars, complete: every month present). Ask file exists in the same zip but is NOT in these .hst files (bid only).
+RAW CLOCK : the CSV times are UTC.
+THIS FOLDER'S CLOCK : MT4 SERVER TIME = UTC+2, and UTC+3 during US daylight saving (2nd Sunday of March 07:00 UTC to 1st Sunday of November 06:00 UTC). Measured from the original server-time months of the old files (2019-2021 and 2025-08-28 onward). D1 bars therefore open at 00:00 server time (17:00 New York).
+RANGE : 2009-01-02 08:01 to 2026-10-06 02:59 (server clock). No gaps over 4 days. Built by Signal\data\rebuild_history.py; checked by Signal\data\verify_rebuild.py.
+NEXT UPDATE : weekly (scripts\weekly_history_update.ps1) - must apply the same UTC -> server conversion.
+OLD PATCHWORK FILES (folder _OLD_PATCHWORK_mixed_clocks_and_holes_DO_NOT_USE, also MT4_Backtest and the USB backup): mixed clocks by era - about +0/+1 h from raw UTC in 2010-2013, +0 in 2015-10..2018, correct +2/+3 in 2019-2021 and from 2025-08-28, and +4/+5 h (US Eastern, a merge bug) in CSV-filled months of 2015, 2017, 2018, 2022-2025; plus holes: 2013-03-22..08-30, 2014-05-16..2015-01-02, 2016-02-03..03-23, 2016-10-11..11-08, 2020-01-29..06-12, 2021-02-16..03-18 and shorter ones. Results measured on that history before 2026-10-14 are labelled PATCHWORK.

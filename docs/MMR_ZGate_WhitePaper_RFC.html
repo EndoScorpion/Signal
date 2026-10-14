@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>MMR and ZGate: Technical White Paper (RFC-style)</title>
+<style>
+@page { size: A4; margin: 22mm 18mm 24mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #111; }
+h1 { font-size: 21pt; margin: 0 0 4pt; } h2 { font-size: 14pt; margin: 18pt 0 6pt; border-bottom: 1px solid #999; padding-bottom: 2pt; page-break-after: avoid; }
+h3 { font-size: 11.5pt; margin: 12pt 0 4pt; page-break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.2pt; page-break-inside: avoid; }
+th, td { border: 1px solid #888; padding: 3pt 5pt; text-align: left; vertical-align: top; } th { background: #e8e8e8; }
+pre { background: #f3f3f3; border: 1px solid #ccc; padding: 6pt; font-size: 8.4pt; line-height: 1.3; white-space: pre-wrap; page-break-inside: avoid; }
+code { font-family: Consolas, monospace; font-size: 9pt; }
+.cover { padding: 30mm 0 10mm; } .sub { font-size: 12pt; color: #333; } .box { border: 1.5px solid #333; padding: 8pt 10pt; margin: 10pt 0; background: #fafafa; }
+.foot { position: fixed; bottom: -14mm; left: 0; right: 0; text-align: center; font-size: 8pt; color: #444; border-top: 1px solid #aaa; padding-top: 3pt; }
+.pb { page-break-before: always; } .warn { border-left: 4px solid #b00; padding-left: 8pt; }
+</style></head><body>
+<div class="foot">Copyright &copy; 2019&ndash;2026 Nasif Hossain &lt;EndoScorpion@gmail.com&gt;. All rights reserved. MMR and ZGate technical white paper, v1.0 (2026-10-13). Research documentation, not financial advice.</div>
+
+<div class="cover">
+<h1>MMR and ZGate</h1>
+<div class="sub">Technical white paper (RFC-style): definitions, parameters, reference implementations, evidence and limitations</div>
+<p><b>Author and copyright holder:</b> Nasif Hossain<br><b>Contact:</b> EndoScorpion@gmail.com<br><b>Version:</b> 1.0 &nbsp; <b>Date:</b> 13 October 2026<br><b>Instrument studied:</b> EURUSD, FXOpen EU ECN, 5-digit quotes, M15 (primary)</p>
+<div class="box"><b>Copyright notice.</b> Copyright &copy; 2019&ndash;2026 Nasif Hossain (EndoScorpion@gmail.com). All rights reserved. The MMR metric (Max/Min slope Ratio) is the original concept of Nasif Hossain (2019). The ZGate (multivariate price and volume z-score entry gate) design, the parameter choices, the test methodology and the written text of this document are the work of Nasif Hossain. No part may be copied, redistributed or used commercially without written permission from the copyright holder.</div>
+<div class="box warn"><b>Status of the evidence (read first).</b> As of this version, <b>neither MMR nor ZGate has been proven profitable out of sample after costs</b>. The evidence supports ZGate as a filter that avoids selling into strength, and shows MMR to be weakly and inconsistently informative on EURUSD. Backtest results are never approval for live trading. Section 8 gives the numbers; Section 9 lists what has not been shown.</div>
+<p><b>Document map.</b> 1 Abstract &middot; 2 Terminology &middot; 3 MMR specification &middot; 4 ZGate specification &middot; 5 Parameters &middot; 6 Reference implementations &middot; 7 Methodology &middot; 8 Results &middot; 9 Limitations &middot; 10 Credits and prior art &middot; 11 Reproducibility &middot; Appendices.</p>
+</div>
+
+<h2 class="pb">1. Abstract</h2>
+<p>This paper specifies two entry-quality components used in a family of M15 sell-side Expert Advisors for MetaTrader 4, and reports how they behaved in a structured set of tests. <b>MMR</b> measures how strongly one price direction dominates across several lookback windows by comparing the steepest and shallowest linear-regression slopes. <b>ZGate</b> blocks new sell entries when a blend of the price z-score and the volume z-score over the last N closed bars is at or above a ceiling, so that the system does not sell into stretched strength.</p>
+<p>Tests used the repaired FXOpen EURUSD history (2010&ndash;2026), real per-year spread statistics, an explicit commission model, unseen-year evaluation, a shuffle null for interaction searches, and a cross-market check on daily US stock and ETF data. Headline findings: (i) the base EA that contains both components is profitable in its training periods but loses in every unseen year at a 5-point commission; (ii) ZGate-style z-scores carry consistent mean-reversion information in two independent markets and two eras, so the &ldquo;do not sell strength&rdquo; direction is supported; (iii) MMR on EURUSD shows no stable sign of its top-versus-bottom forward-return edge across 17 years, while on daily stocks its lowest quintile shows the best forward returns in both eras; (iv) a longer sell-regime and a Hurst-trend gate reduced losses by roughly 40% but did not create profit.</p>
+
+<h2>2. Terminology and notation</h2>
+<table><tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>Bar 1</td><td>Most recent <i>closed</i> bar (shift 1 in MQL4). Bar 0 is the forming bar and is never used in gates.</td></tr>
+<tr><td>pt, point</td><td>0.00001 on a 5-digit EURUSD quote; 10 points = 1 pip.</td></tr>
+<tr><td>C<sub>k</sub>, V<sub>k</sub></td><td>Close and tick volume of the bar k bars ago (k = 1 is the last closed bar).</td></tr>
+<tr><td>OLS slope</td><td>Ordinary-least-squares slope of closes against bar index over a window.</td></tr>
+<tr><td>Unseen year</td><td>A year not used when the EA parameters were chosen. Training periods were 2011, 2012, 2017, 2019&ndash;2022, 2025&ndash;26; unseen years used here are 2010, 2013&ndash;2016, 2018, 2023, 2024.</td></tr>
+<tr><td>sp<i>n</i></td><td>Strategy-tester fixed spread of <i>n</i> points, used in this work as the total round-trip cost (commission plus spread).</td></tr>
+<tr><td>Key words</td><td>MUST, SHOULD, MAY are used as in RFC 2119 for the reference behaviour in Sections 3&ndash;4.</td></tr></table>
+
+<h2>3. MMR specification (Max/Min slope Ratio)</h2>
+<h3>3.1 Definition</h3>
+<p>For each window length w in W = {6, 12, 18} (M15 bars), compute the OLS slope s<sub>w</sub> of the last w closes against their bar index, expressed in points per bar. Then:</p>
+<p style="text-align:center"><b>MMR = max(s<sub>6</sub>, s<sub>12</sub>, s<sub>18</sub>) &nbsp;/&nbsp; | min(s<sub>6</sub>, s<sub>12</sub>, s<sub>18</sub>) |</b></p>
+<p>Stated purpose (author): a high MMR indicates that one direction dominates across horizons, an entry-quality signal. Behaviour of the ratio: it is dimensionless, scale-free across instruments, and can be negative, zero or large when the shallowest slope is near zero.</p>
+<h3>3.2 Requirements</h3>
+<ul><li>An implementation MUST use closed bars only and MUST return &ldquo;undefined&rdquo; (no signal) if |min slope| = 0, if fewer than two slopes are available, or if fewer than max(W)+5 bars of history exist.</li>
+<li>Slopes MUST be computed on the same timeframe in which the ratio is later interpreted (M15 here).</li>
+<li>Thresholds MUST be recalibrated per market: the concept is portable, the numeric cut-offs are not.</li></ul>
+<h3>3.3 Empirical distribution on EURUSD M15 (2010&ndash;2026, 354,629 bars)</h3>
+<table><tr><th>Quintile edge</th><th>20%</th><th>40%</th><th>60%</th><th>80%</th></tr><tr><td>MMR value</td><td>&minus;0.165</td><td>0.421</td><td>1.693</td><td>3.953</td></tr></table>
+<p>The EA parameter set also carries <code>FlatMmrMin = &minus;1.5</code> for its flat-entry branch; the branch logic is part of the EA source (Appendix C reference) and is not re-specified here.</p>
+
+<h2>4. ZGate specification</h2>
+<h3>4.1 Definition</h3>
+<p>Over the last N = ZPeriod closed bars on timeframe ZTF, let &mu;<sub>p</sub>, &sigma;<sub>p</sub> be the mean and population standard deviation of the closes, and &mu;<sub>v</sub>, &sigma;<sub>v</sub> those of the tick volumes. Then:</p>
+<p style="text-align:center">z<sub>p</sub> = (C<sub>1</sub> &minus; &mu;<sub>p</sub>) / &sigma;<sub>p</sub> &nbsp;&nbsp; z<sub>v</sub> = (V<sub>1</sub> &minus; &mu;<sub>v</sub>) / &sigma;<sub>v</sub> &nbsp;&nbsp; <b>Z = 0.7 z<sub>p</sub> + 0.3 z<sub>v</sub></b></p>
+<p><b>Gate rule:</b> a new sell entry is permitted only when Z &lt; ZMax. If &sigma;<sub>p</sub> &le; 0 or &sigma;<sub>v</sub> &le; 0 the gate MUST deny the entry.</p>
+<h3>4.2 Interpretation and design intent</h3>
+<p>Z is high when price and activity are both stretched above their own recent norm. Blocking sells there avoids shorting a spike. The 70/30 weighting and ZMax = 1.0 are fitted constants (Section 9). The original price-only variant (a separate input, UseSellZGate) omits the volume term.</p>
+<h3>4.3 Dependencies and cautions</h3>
+<ul><li>V is broker <i>tick volume</i>, which differs between feeds and between live trading and the tester&rsquo;s modelled ticks; the 30% volume term is therefore not reproducible across brokers.</li>
+<li>The gate is a filter: it removes entries, it does not create them.</li></ul>
+
+<h2>5. Parameters</h2>
+<table><tr><th>Input</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>UseZGate</td><td>true (winner set)</td><td>Enable ZGate.</td></tr><tr><td>ZTF</td><td>15</td><td>Timeframe in minutes for Z.</td></tr><tr><td>ZPeriod</td><td>20</td><td>Closed bars in the window.</td></tr><tr><td>ZMax</td><td>1.0</td><td>Ceiling; sells blocked at Z &ge; ZMax.</td></tr>
+<tr><td>MMR windows</td><td>6, 12, 18</td><td>OLS slope windows (M15 bars).</td></tr><tr><td>Sell regime</td><td>H1 SMA 1200</td><td>Base EA sells only below this average (a separate component).</td></tr>
+<tr><td>Cost model</td><td>sp5 (floor)</td><td>5-point commission; realistic pass: 5 + yearly mean real spread.</td></tr></table>
+
+<h2>6. Reference implementations</h2>
+<h3>6.1 ZGate (MQL4, from the EA source)</h3>
+<pre>if(UseZGate==1){ int n=MathMax(2,ZPeriod); double sp=0,sv=0,qp=0,qv=0;
+  for(int k=1;k&lt;=n;k++){ double c=iClose(Symbol(),ZTF,k), v=(double)iVolume(Symbol(),ZTF,k);
+     sp+=c; sv+=v; qp+=c*c; qv+=v*v; }
+  double mp=sp/n, mv=sv/n, dp=MathSqrt(MathMax(0,qp/n-mp*mp)), dv=MathSqrt(MathMax(0,qv/n-mv*mv));
+  if(dp&lt;=0 || dv&lt;=0){ return(false); }
+  double z=0.7*(iClose(Symbol(),ZTF,1)-mp)/dp+0.3*((double)iVolume(Symbol(),ZTF,1)-mv)/dv;
+  if(z&gt;=ZMax){ return(false); } }</pre>
+<h3>6.2 MMR (Python reference)</h3>
+<pre>def slope_pts(closes, i, period):          # OLS slope of closes[i-period+1..i], points per bar
+    y = closes[i-period+1:i+1]; x = range(period)
+    mx = sum(x)/period; my = sum(y)/period
+    den = sum((xj-mx)**2 for xj in x)
+    return (sum((xj-mx)*(yj-my) for xj, yj in zip(x, y))/den)*100000 if den else None
+
+def mmr(closes, i, periods=(6, 12, 18)):
+    if i &lt; max(periods)+5: return None
+    s = [slope_pts(closes, i, p) for p in periods]
+    mx, mn = max(s), min(s)
+    return None if mn == 0 else mx/abs(mn)</pre>
+
+<h2>7. Methodology</h2>
+<ul>
+<li><b>Data.</b> FXOpen EURUSD M1/M5/M15/&hellip;/MN history, 2010-06-23 to 2026-10. A gap in the tester&rsquo;s M1 copy (200 MB versus the 302 MB source) silently skipped months in early tests; it was repaired on 2026-10-13 and all results below use the repaired history. Real spread statistics come from FXOpen M1 bid and ask files (valid from 2019; earlier files have ask equal to bid).</li>
+<li><b>Costs.</b> Commission confirmed from the live account: 5 pts round trip (2023&ndash;early 2024), 8 pts (2025&ndash;26), 6 pts maximum for a long period earlier. Screen tests use sp5; the audit pass uses 5 + yearly mean spread.</li>
+<li><b>Out-of-sample discipline.</b> Candidates are screened on the worst unseen year first, abandoned if they do not beat the base there, then evaluated on all unseen years and promoted only if they hold on at least 4 of 5 never-tested years and 2 of 3 previously seen ones.</li>
+<li><b>Interaction searches.</b> Pairwise tercile cells; a cell counts only if the sign of its delta versus the year average holds in at least 4 of 5 years with at least 12 trades per cell-year. A shuffle null (pnl permuted within year) estimates chance passes.</li>
+<li><b>Cross-market check.</b> Daily US stocks and ETFs, 36 liquid names, 2000&ndash;2026, survivor-only, no costs or dividends, overlapping 5-day windows.</li></ul>
+
+<h2 class="pb">8. Results</h2>
+<h3>8.1 Base EA containing ZGate and daily-range filter (WIN_GEN1)</h3>
+<table><tr><th>Evidence</th><th>Result</th></tr>
+<tr><td>Training periods, 8 periods, 8-pt cost (registry)</td><td>+75,254 versus +48,429 for the parent, better in 7 of 8 periods</td></tr>
+<tr><td>ZGate stage alone (GEN0), 8 periods</td><td>+57,788 versus +45,664 for the parent</td></tr></table>
+<table><tr><th>Unseen year (sp5, repaired history)</th><th>2010</th><th>2013</th><th>2014</th><th>2015</th><th>2016</th><th>2018</th><th>2023</th><th>2024</th></tr>
+<tr><td>Net profit (account units)</td><td>&minus;953</td><td>&minus;2,400</td><td>&minus;690</td><td>&minus;1,735</td><td>&minus;6,494</td><td>&minus;3,638</td><td>&minus;3,998</td><td>&minus;1,976</td></tr></table>
+<p><b>Reading:</b> the filters work where they were tuned and do not generalise to unseen years at a 5-point commission. Earlier &ldquo;EA inactive in 2023/2024&rdquo; and partial-year results were data artefacts and are withdrawn.</p>
+
+<h3>8.2 MMR forward-return test on EURUSD M15 (gross of costs)</h3>
+<p>For each year, bars were sorted into MMR quintiles and the mean forward move was compared between the top and bottom quintile (edge = Q5 &minus; Q1).</p>
+<table><tr><th>Horizon</th><th>Years with edge &lt; 0</th><th>Years with edge &gt; 0</th><th>Typical size</th></tr>
+<tr><td>1 hour (4 bars)</td><td>12 of 17</td><td>5 (2010, 2012, 2018, 2023, 2026)</td><td>about &minus;2 to &minus;7 pts</td></tr>
+<tr><td>4 hours (16 bars)</td><td>11 of 17</td><td>6</td><td>about &minus;3 to &minus;30 pts</td></tr>
+<tr><td>1 day (96 bars)</td><td>10 of 17</td><td>7</td><td>&minus;62 to +104 pts, noisy</td></tr></table>
+<p>Example extremes: 2014, 1 hour, edge &minus;16.8 pts (z &minus;4.9); 2010, 1 day, edge +103.9 pts (z +3.5). The 1-hour gap is of the same size as the 5-point commission, and overlapping bars inflate the z-scores. <b>Conclusion: MMR alone has no stable directional edge on EURUSD M15.</b></p>
+
+<h3>8.3 Cross-market check: daily US stocks and ETFs</h3>
+<table><tr><th>Test</th><th>Bucket</th><th>Avg 5-day return</th><th>Win rate</th></tr>
+<tr><td>Price z (10 bars), above SMA200</td><td>z &le; &minus;2 (n = 4,845)</td><td>+0.49%</td><td>58.2%</td></tr>
+<tr><td>Price z, above SMA200</td><td>z &ge; 2 (n = 7,549)</td><td>+0.09%</td><td>53.0%</td></tr>
+<tr><td>Price z, below SMA200</td><td>z &ge; 2 (n = 2,156)</td><td>&minus;0.12%</td><td>50.1%</td></tr>
+<tr><td>ZGate blend (0.7 / 0.3, 20 bars)</td><td>pre-2013: &le;&minus;2 / &minus;2..&minus;1 / &minus;1..1 / 1..2 / &ge;2</td><td>+1.07 / +0.44 / +0.12 / &minus;0.06 / &minus;0.02 %</td><td>59.1 / 55.1 / 52.7 / 51.6 / 50.8 %</td></tr>
+<tr><td>ZGate blend</td><td>post-2013, same buckets</td><td>+1.11 / +0.45 / +0.22 / +0.13 / +0.14 %</td><td>60.3 / 57.3 / 55.3 / 53.8 / 53.1 %</td></tr>
+<tr><td>MMR quintile (6/12/18-day slopes)</td><td>Q1 lowest, pre-2013 / post-2013</td><td>+0.41% / +0.43%</td><td>54.5% / 57.6%</td></tr>
+<tr><td>MMR quintile</td><td>Q2&ndash;Q5 pre-2013</td><td>+0.18 / +0.04 / &minus;0.02 / +0.04 %</td><td>51.7&ndash;53.3%</td></tr></table>
+<p><b>Reading:</b> the ZGate blend is monotone in both eras on daily stocks: the lower Z, the higher the following return. The same direction (do not sell strength, strength is followed by weak returns) is what the FX gate encodes. MMR&rsquo;s lowest quintile is best in both eras on stocks, but this may overlap with a simple recent-decline measure; independence from Z has not been tested.</p>
+
+<h3>8.4 Related findings that frame the use of both components</h3>
+<ul><li><b>Sell regime length (EA input, H1 SMA bars).</b> 2023 net: 600 &rarr; &minus;4,034; 1,200 (base) &rarr; &minus;3,998; 2,400 &rarr; &minus;2,767; 4,800 &rarr; &minus;1,025. A 2,400-bar regime beat the base in all five years with at least 100 trades (average +$1,555 per year), still losing overall (one profitable year of five). In years when sells are blocked (2013, 2014) it placed only 5 to 7 trades, so &ldquo;beats the base&rdquo; there mostly means sitting out.</li>
+<li><b>Hurst-trend gate on the 2,400 regime</b>: 2015 &minus;1,700; 2016 &minus;4,858; 2018 &minus;2,437; 2023 &minus;1,023; 2024 +1,134 (profit factor 1.33, drawdown 9.8%, 168 trades).</li>
+<li><b>Red zones for sell entries</b> (same sign in every unseen year tested): stochastic K above 80; Williams %R in the overbought third (4 of 5 years); price in the upper 38% of the 5-day range; first-Friday (NFP) days; high ATR; up-and-accelerating EMA phase (5 of 5). Theme: shorts lose when price is strong and accelerating.</li>
+<li><b>Interaction scan</b>: 54 tercile-pair cells passed the consistency test versus an average of 5.3 (maximum 12) in 40 shuffled datasets. Calm, orderly tape (low realised volatility, low ATR, low permutation entropy) added about +16 to +26 pts per trade in all five years; high realised volatility subtracted about 15 to 20. These were found and judged on the same five years, so they need an untouched test.</li>
+<li><b>Scalping 7&ndash;10 point targets</b> at a 5-point commission: hit rates of 70&ndash;83% against 91&ndash;99% needed to break even; no variant was positive in any of 17 years.</li></ul>
+
+<h2>9. Limitations and threats to validity</h2>
+<ul><li><b>No proven out-of-sample profit.</b> Both components sit inside a system that loses in unseen years at current costs.</li>
+<li><b>Fitted constants.</b> ZMax = 1.0, the 0.7/0.3 weights, ZPeriod = 20, the MMR windows and cut-offs were chosen on specific years.</li>
+<li><b>Multiple testing.</b> Roughly 60 candidate variants and about 30 replay features were examined; some apparent patterns are luck. Best-of-N results are biased upward.</li>
+<li><b>Tick volume</b> is feed-specific; broker and tester differences break the volume term.</li>
+<li><b>Survivorship and costs</b> in the stock check (survivor-only universe, no costs, no dividend adjustment, overlapping windows). It is evidence about the direction of the effect, not a trading result.</li>
+<li><b>Data.</b> Spread records before 2019 are unusable; history gaps affected earlier results until repaired; the tester models 90% quality bars, not real ticks.</li>
+<li><b>MMR proof gate (author&rsquo;s own standard).</b> Rung 1 (EURUSD, gross of costs): weak and inconsistent. Rung 2 (other markets): partial, daily stocks only. Rungs 3&ndash;4 (other brokers and feeds; net of spread, swap and commission variants including MT5 variable spread) are pending. MMR is therefore described as <i>unproven</i>.</li>
+<li><b>Swap.</b> Not modelled in the offline lab or the fixed-spread tester. FXOpen offers swap-free Islamic accounts, but its support documentation states the commission equals the swap; a low-swap ECN offer could not be confirmed.</li></ul>
+
+<h2>10. Credits and prior art</h2>
+<ul><li>Kaufman Efficiency Ratio: Perry J. Kaufman, <i>Smarter Trading</i> (1995).</li><li>Williams %R, Fractals, Alligator, AO and AC: Bill Williams (public indicators).</li><li>Hurst exponent by rescaled range; permutation entropy; Katz fractal dimension: standard published methods.</li><li>The z-score is standard statistics. What is claimed here is the specific multivariate gate design and parameterisation (ZGate), the MMR ratio, the test methodology, and the text of this document, as stated in the copyright notice.</li><li>Origin of the long sell-regime rule in the EA source is unattributed (found by data replay); it is not claimed here.</li></ul>
+
+<h2>11. Reproducibility</h2>
+<table><tr><th>Item</th><th>Where</th></tr>
+<tr><td>EA sources and compiled files</td><td>MQL4\Experts (b31 base; b42&ndash;b44 and b50 clones; MQL5 port of b50); USB: win_logic_backup_13Oct2026</td></tr>
+<tr><td>Winner sets, registry, test log</td><td>hst_out\winners (WIN_GEN1_ZGate_DailyRange_b31.set, WINNERS_REGISTRY.txt, TEST_LOG.txt)</td></tr>
+<tr><td>MMR and metrics code</td><td>Signal\data\analyze_hst.py, mmr_edge_test.py, alt_corr.py, chaos_replay.py</td></tr>
+<tr><td>Loop and states</td><td>Signal\data\auto_loop.py, loop_state.json, extra_candidates.json</td></tr>
+<tr><td>Cost records</td><td>Signal\data\SPREAD_COMMISSION_RECORDS.md, spread_stats.csv</td></tr>
+<tr><td>History</td><td>USB: hst_backup_13Oct2026 (9 timeframes), fxopen_eurusd_m1_bid_ask_raw, fxopen_eurusd_ticks</td></tr></table>
+
+<h2>Appendix A. Revision history</h2>
+<table><tr><th>Version</th><th>Date</th><th>Change</th></tr><tr><td>1.0</td><td>2026-10-13</td><td>First complete specification and evidence summary.</td></tr></table>
+<h2>Appendix B. Checks before relying on either component</h2>
+<ol><li>Recompute Z and MMR on a second broker&rsquo;s EURUSD feed and compare cut-offs.</li><li>Test MMR conditional on Z (independence) and on recent-return.</li><li>Evaluate on an untouched final window (2021&ndash;2026) once, after all selection is finished.</li><li>Repeat with real tick data and per-tick spread; add swap.</li><li>Report trade counts per cell and the number of variants tried.</li></ol>
+<h2>Appendix C. Notices</h2>
+<p>This document is research documentation for the author&rsquo;s own use and for readers who receive it from the author. It is not investment advice, an offer, or a recommendation. Trading carries risk of loss. Copyright &copy; 2019&ndash;2026 Nasif Hossain (EndoScorpion@gmail.com). All rights reserved.</p>
+</body></html>

@@ -1,0 +1,10 @@
+2026-10-14 05:09:47 guard started (LowMB=600)
+2026-10-14 05:28:23 guard started (LowMB=600)
+2026-10-14 05:28:41 guard started (LowMB=600)
+2026-10-14 05:30:13 no test running, guard exiting
+2026-10-14 05:30:13 guard stopped
+2026-10-14 05:30:27 guard stopped
+2026-10-14 05:30:39 guard stopped
+2026-10-14 12:30:53 guard started (LowMB=450 cooldown=120 s)
+2026-10-14 12:34:55 no test running, guard exiting
+2026-10-14 12:34:55 guard stopped

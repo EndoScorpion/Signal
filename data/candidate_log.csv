@@ -1,0 +1,11 @@
+name,year,tag,rationale,result
+er10_gate_low,2017,ER_er10_gate_low_2017_sp6,Kaufman ER10 < 0.35 = too choppy to enter; gate off random entries,PENDING
+er10_gate_low,2019,ER_er10_gate_low_2019_sp6,Kaufman ER10 < 0.35 = too choppy to enter; gate off random entries,PENDING
+er10_gate_mid,2017,ER_er10_gate_mid_2017_sp6,Kaufman ER10 > 0.25 AND < 0.70 = efficient but not blow-off; sweet spot,PENDING
+er10_gate_mid,2019,ER_er10_gate_mid_2019_sp6,Kaufman ER10 > 0.25 AND < 0.70 = efficient but not blow-off; sweet spot,PENDING
+mmr_boost_strict,2017,ER_mmr_boost_strict_2017_sp6,Nasif MMR > 2.0 on M15 (stronger one-direction dominance than current default ~1.0 via ZGate),PENDING
+mmr_boost_strict,2019,ER_mmr_boost_strict_2019_sp6,Nasif MMR > 2.0 on M15 (stronger one-direction dominance than current default ~1.0 via ZGate),PENDING
+mmr_relaxed_er,2017,ER_mmr_relaxed_er_2017_sp6,"Relax ZMax to 1.5 but require ER10 > 0.30 (quality from ER, not just Z)",PENDING
+mmr_relaxed_er,2019,ER_mmr_relaxed_er_2019_sp6,"Relax ZMax to 1.5 but require ER10 > 0.30 (quality from ER, not just Z)",PENDING
+er_replaces_zgate,2017,ER_er_replaces_zgate_2017_sp6,"Turn off ZGate, use only DailyRange filter; ER is a purer choppiness measure",PENDING
+er_replaces_zgate,2019,ER_er_replaces_zgate_2019_sp6,"Turn off ZGate, use only DailyRange filter; ER is a purer choppiness measure",PENDING

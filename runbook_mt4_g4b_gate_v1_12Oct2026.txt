@@ -1,0 +1,56 @@
+RUNBOOK - MT4 g4b compile + OOS gate (verified working 12 Oct 2026)
+File: runbook_mt4_g4b_gate_v1_12Oct2026.txt
+
+PATHS
+  Repo (main):      C:\Users\endos\Signal
+  Repo (clone):     C:\Users\endos\Signal_copy   (branch exp/g4b-hour-thu-filter; holds Strong2010b_claude_g4b.mq4)
+  MT4 data folder:  C:\Users\endos\AppData\Roaming\MetaQuotes\Terminal\6278E353D77D4E501C6775ACEC85F415
+  Scripts folder:   C:\Users\endos\Signal\scripts
+  Reports:          C:\Users\endos\Signal\data
+
+SCRIPTS (all in C:\Users\endos\Signal\scripts)
+  run_oos_gate.ps1                      original gate (M1 only) - untouched
+  run_oos_gate_backup_12Oct2026.txt     text backup of the original
+  run_oos_gate_v2_12Oct2026.ps1         gate with -Period (default M15) and -Model (default 0 = every tick)
+  compile_and_gate_v1_12Oct2026.ps1     copies .mq4 from Signal_copy, compiles, then runs the v2 gate
+
+BEFORE EVERY RUN
+  1. Close MT4 (script refuses to run if terminal.exe is open).
+  2. Free RAM must be above the gate limit. Check:
+       (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory
+     Gate limit in v2 is currently 1000000 KB (was 800000 only if you ran the lower-limit edit).
+     Biggest RAM users: chrome, claude CLI windows, PhoneExperienceHost.
+  3. Make sure Signal_copy is on the right branch:
+       git -C C:\Users\endos\Signal_copy branch --show-current
+
+RUN (defaults: g4b, M15, every tick, 2021.03.19 -> 2022.01.01, spread 3, commission 8)
+  powershell -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\compile_and_gate_v1_12Oct2026.ps1
+
+OPTIONS
+  -Expert Strong2010b_claude_g4b    EA name (no extension)
+  -Period M15                       M1, M5, M15 ...
+  -Model 0                          0 = every tick
+  -From 2020.01.01 -To 2020.12.31   holdout year
+  -Spread 6 -Commission 8           harsher cost test
+
+OUTPUT
+  Report saved as Signal\data\Strong2010b_claude_<tag>_<Period>_<from>-<to>_sp<spread>.htm
+  Console shows SUMMARY STATS, HOURLY, DAILY, VERDICT (PASS needs PF >= 1.10 and max DD <= 5%).
+
+KNOWN RESULTS (g4b, EURUSD M1, 19 Mar 2021 -> 1 Jan 2022, spread 3, $10k)
+  182 trades (123W/59L), WR 67.6%, PF 1.460, net +$98.19, max closed DD $33.79 (0.34%) = PASS
+  g4a baseline: 328 trades, PF 1.085 = FAIL
+  M15 every-tick result: pending (run started 12 Oct 2026)
+
+GOTCHAS
+  - Pasting long multi-line scripts into PowerShell gets cut off. Use one-line commands or files.
+  - Pipeline v3 (auto_g4b_pipeline_v3_12Oct2026.ps1) builds the old _M1_ report name; do not use it for M15 runs yet.
+  - The $ in a folder name (Desktop\$) breaks the Claude launcher's folder naming; use "Claude - Signal" shortcut.
+  - Commission in gate is $0.008/trade; real FXOpen ECN is 6-8 pt, unconfirmed.
+  - Hour/day blocks in g4b were chosen from the same 2021 window (in-sample risk).
+
+STILL TO DO
+  - Read the M15 verdict and compare with M1.
+  - Holdout year other than 2021 (need list of EURUSD history years on the PC).
+  - Confirm real commission (6 or 8 pt).
+  - Commit HUB_STATE.md results (g4a FAIL + g4b PASS) to claude/mql4-analysis-comments-bd4kz3, then drop the stash.
