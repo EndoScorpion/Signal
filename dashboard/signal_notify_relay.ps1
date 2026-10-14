@@ -20,6 +20,11 @@
 # $env:TEXTBELT_TO  = "+15559876543"
 # $env:TEXTBELT_KEY = "textbelt"   # free tier; pay for more
 #
+# --- Telegram bot (reads credentials from data/telegram_creds.txt: line1=token, line2=chat_id) ---
+# Or set env vars: TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID
+# $env:TELEGRAM_BOT_TOKEN = "7xxxxxxxxx:AAF..."
+# $env:TELEGRAM_CHAT_ID   = "123456789"
+#
 # --- Claude project thread (hearthbot webhook) ---
 # $env:CLAUDE_WEBHOOK_URL = "https://hearthbot.anthropic.com/..."
 # $env:CLAUDE_WEBHOOK_KEY = "..."
@@ -55,6 +60,16 @@ $TwilioSid   = $env:TWILIO_SID;   $TwilioToken = $env:TWILIO_TOKEN
 $TwilioFrom  = $env:TWILIO_FROM;  $TwilioTo    = $env:TWILIO_TO
 $TxtbeltTo   = $env:TEXTBELT_TO;  $TxtbeltKey  = if($env:TEXTBELT_KEY) {$env:TEXTBELT_KEY} else {"textbelt"}
 $ClaudeUrl   = $env:CLAUDE_WEBHOOK_URL; $ClaudeKey = $env:CLAUDE_WEBHOOK_KEY
+
+# Telegram: read from telegram_creds.txt (line1=token, line2=chat_id) or env vars
+$TelegramCredsFile = Join-Path (Split-Path $ScriptDir -Parent) "data\telegram_creds.txt"
+$TelegramToken = $null; $TelegramChatId = $null
+if (Test-Path $TelegramCredsFile) {
+    $tgLines = Get-Content $TelegramCredsFile -ErrorAction SilentlyContinue
+    if ($tgLines.Count -ge 2) { $TelegramToken = $tgLines[0].Trim(); $TelegramChatId = $tgLines[1].Trim() }
+}
+if (-not $TelegramToken) { $TelegramToken = $env:TELEGRAM_BOT_TOKEN }
+if (-not $TelegramChatId) { $TelegramChatId = $env:TELEGRAM_CHAT_ID }
 
 # --- Auto-detect MT4 queue file ---
 if (-not $MT4QueueFile) {
@@ -110,6 +125,17 @@ function Send-TextbeltSMS($subj, $body) {
     } catch { Write-Warning "Textbelt SMS failed: $_" }
 }
 
+function Send-Telegram($subj, $body) {
+    if (-not $TelegramToken -or -not $TelegramChatId) { return }
+    try {
+        $msg = "[MasterEA] $subj`n$body"
+        $url = "https://api.telegram.org/bot$TelegramToken/sendMessage"
+        $data = @{chat_id=$TelegramChatId; text=$msg; parse_mode="HTML"} | ConvertTo-Json
+        Invoke-RestMethod -Method POST -Uri $url -ContentType "application/json" -Body $data -TimeoutSec 10
+        Write-Host "  [Telegram] sent"
+    } catch { Write-Warning "Telegram failed: $_" }
+}
+
 function Send-ClaudeWebhook($subj, $body) {
     if (-not $ClaudeUrl) { return }
     try {
@@ -127,9 +153,10 @@ function Dispatch($line) {
     if ($parts.Count -lt 2) { return }
     $subj = $parts[1]; $body = if ($parts.Count -gt 2) { $parts[2] } else { "" }
     Write-Host "$(Get-Date -Format HH:mm:ss) NOTIFY: $subj"
-    Send-Ntfy         $subj $body
-    Send-TwilioSMS    $subj $body
-    Send-TextbeltSMS  $subj $body
+    Send-Ntfy          $subj $body
+    Send-Telegram      $subj $body
+    Send-TwilioSMS     $subj $body
+    Send-TextbeltSMS   $subj $body
     Send-ClaudeWebhook $subj $body
 }
 
