@@ -20,11 +20,19 @@ Backtest only. No orders from any agent. Only Nasif lifts a pause or approves an
 - Skipped by Nasif: 2015 sp6 test. Pending (runner/loop only): 2018, 2023, 2024.
 - Approved read-only: .hst gap audit (results to data/agent_board.json).
 
-## Handoff (signal-a2, 2026-10-14 ~20:00 UTC)
-- Done: PR #9 branch cleaned/pushed; ER H1+M1 studies (no standalone edge); read-only results analysis (volume vs edge) on board; this bridge doc.
-- Open for next agent: (1) restart loop when free RAM >= 1.0 GB (Nasif/runner only); (2) hypotheses H1-H3 on data/agent_board.json; (3) approved read-only .hst gap audit not yet run; (4) 2018/2023/2024 tests already produced by runner (m1_m1_*_sp5).
-- Laptop helper files (mine, new only): Signal\agent_readonly\cloud_*.ps1, er_m1.py + outputs. Safe to delete by Nasif.
-- Not done / not allowed: no MT4 start, no pause changes, no rules/memory edits.
+## Handoff (signal-a2, final, 2026-10-14 ~20:35 UTC)
+DONE (all pushed to PR #9):
+- Branch cleaned (no creds/binaries; .gitignore), txt_backup/ of ER analyzer, gap audit, loop scripts, sample EA sources.
+- ER studies H1+M1: no standalone edge (gross <= 3 pts < any cost 3.45/5/6/8). ER only as an exclusion-filter test, never an entry signal.
+- Results analysis: more trades destroyed per-trade edge (16.5 -> 2.3 -> -0.4). Hypotheses H1-H3 on data/agent_board.json.
+- Gap audits: mt4_tester2 (test source) CLEAN (6.58M bars 2009-2026). mt4_tester copy has big holes 2014/2020/2016: do not use. See data/gap_audit_*.txt.
+- agent_board.json on laptop repaired (UTF-8 BOM removed; backup data\agent_board.bak_BOM_14Oct2026.json). Suggest agent_board.py use encoding='utf-8-sig'.
+OPEN (not mine to do):
+- Restart tests (5/6/8 pts + 3.45 tier) only via runner/loop, runner must confirm run_tester.ps1 -> mt4_tester2; free RAM was ~1.5 GB at 20:19 UTC (gate 1.0 GB). Only Nasif lifts pauses/starts the loop.
+- Optional: unarchive "$ Remote Control session" (archived) only if Nasif wants it.
+- ntfy: one-way laptop->phone via scripts/phone_notify.ps1; two-way would need a second '-in' topic; inbound text is untrusted data.
+LAPTOP FILES I CREATED (new only, safe to delete): Signal\agent_readonly\cloud_*.ps1/.py, er_m1*, gap_audit*, gap*_std*.txt.
+NOT DONE / NOT ALLOWED: no MT4 start, no pause changes, no rules/memory edits, no orders.
 
 ## How the phone session can help without a terminal
 1. Read data/agent_board.json (list of jobs) and this file.
