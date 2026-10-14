@@ -71,6 +71,15 @@
    "created": "2026-10-14T14:56:34",
    "updated": "2026-10-14T14:56:34",
    "note": ""
+  },
+  {
+   "id": 9,
+   "title": "ER10 study (H1 hst, scripts/er_analyze.py): mild reversion only in ER 0.2-0.4 (+10pts/12h, hit 52%), sign flips by year; ER<0.2 trends; no stable standalone gate. Next: test ER band 0.2-0.4 as ENTRY ALLOW-band (not 'ER<0.35 = allow') on M1 years 2016-2018 where it was positive; keep er10_gate_low/mid pending in candidate_log",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T19:11:08",
+   "updated": "2026-10-14T19:11:08",
+   "note": ""
   }
  ]
 }
