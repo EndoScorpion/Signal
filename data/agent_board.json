@@ -89,6 +89,15 @@
    "created": "2026-10-14T19:33:31",
    "updated": "2026-10-14T19:33:31",
    "note": ""
+  },
+  {
+   "id": 11,
+   "title": "Read-only: newest runner set rc_th_g2_AtrCapPts_90 m1_m1_*_sp5 (cost label: file 'sp5' only; commission in EA not verified): 2016 net -595 PF0.68 99tr win42.4%; 2018 +876 PF1.33 157tr 52.2%; 2023 -955 PF0.54 92tr 39.1%; 2024 +495 PF1.29 121tr 50.4%. 2 of 4 unseen years positive, 2023 worst. Earlier (non-m1_m1) variants in same folder differ a lot (e.g. 2018 PF2.63 41tr): do not compare without matching variant.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T19:50:12",
+   "updated": "2026-10-14T19:50:12",
+   "note": ""
   }
  ]
 }
