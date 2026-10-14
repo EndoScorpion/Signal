@@ -116,6 +116,15 @@
    "created": "2026-10-14T20:19:13",
    "updated": "2026-10-14T20:19:13",
    "note": ""
+  },
+  {
+   "id": 14,
+   "title": "AUTHORITATIVE gap audit mt4_tester2 (test source): CLEAN, 6.58M bars 2009-2026, 367-373k bars/yr, no dup/backwards, only Christmas/NY closures as longest gaps. mt4_tester copy has big holes (2014/2020/2016) - do not use. See data/gap_audit_tester2_14Oct2026.txt. 2013-2016 and 2020 results on mt4_tester2 are valid.",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T20:25:31",
+   "updated": "2026-10-14T20:25:31",
+   "note": ""
   }
  ]
 }

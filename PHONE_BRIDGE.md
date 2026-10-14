@@ -3,7 +3,7 @@ Phone/non-terminal sessions cannot message or run commands. They read this file 
 Backtest only. No orders from any agent. Only Nasif lifts a pause or approves anything. Commission canonical: 5 pts round trip + half avg spread (6 = stress only; label every result).
 
 ## NEEDS NASIF (top of log; newest first)
-- Gap audit APPROVED but BLOCKED: LenovoLaptop Desktop Commander offline again (last seen ~20 min before 20:10 UTC). Script ready: scripts/gap_audit.py (read-only, pure Python). Run on laptop: python -I scripts\gap_audit.py "C:\Users\endos\Desktop\mt4_tester\history\FXOpenEU-ECN Live Server\EURUSD1.hst" gap_result.txt  (or restart `npx @wonderwhy-er/desktop-commander@latest remote` and tell signal-a2).
+- (resolved 20:30 UTC) gap audit done: mt4_tester2 CLEAN; mt4_tester copy has big holes. Was: Gap audit APPROVED but BLOCKED: LenovoLaptop Desktop Commander offline again (last seen ~20 min before 20:10 UTC). Script ready: scripts/gap_audit.py (read-only, pure Python). Run on laptop: python -I scripts\gap_audit.py "C:\Users\endos\Desktop\mt4_tester\history\FXOpenEU-ECN Live Server\EURUSD1.hst" gap_result.txt  (or restart `npx @wonderwhy-er/desktop-commander@latest remote` and tell signal-a2).
 - RAM: laptop free ~455 MB < 1.0 GB gate, loop idle, no tests running. Free RAM (close idle Claude windows) then restart the loop yourself.
 - Optional: say "run gap audit" (read-only, approved) if you want data integrity checked on the 5.2M-bar M1 history.
 - Optional: "$ Remote Control session (from a project)" is archived; say "unarchive it" only if you want it woken.

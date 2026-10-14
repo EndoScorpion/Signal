@@ -1,0 +1,5 @@
+AUTHORITATIVE gap audit (the test source): C:\Users\endos\Desktop\mt4_tester2\history\FXOpenEU-ECN Live Server\EURUSD1.hst, hst v401, 6,576,164 bars, 2009-01-02 .. 2026-10-14. Read-only, pure Python, 14Oct2026.
+Result: CLEAN. 367k-373k bars per full year 2009-2025 (2026 partial 293k), no duplicate or backwards timestamps in any year. Longest weekday gaps are only Christmas/New Year closures (max 77h on 2015-12-24, 2009-12-24/31, 2020-12-24/31).
+Per year weekday gaps>5m / missing minutes: 2009 62/5325, 2010 35/5161, 2011 19/335, 2012 2/2228, 2013 2/3899, 2014 15/4254, 2015 20/7011, 2016 8/5023, 2017 106/1416, 2018 13/1560, 2019 90/3460, 2020 117/6820, 2021 86/5045, 2022 130/1056, 2023 87/1198, 2024 90/2173, 2025 21/3015, 2026 7/1498.
+Contrast: mt4_tester copy has 5552h hole in 2014, 3249h in 2020, 1169h+674h in 2016 (see data/gap_audit_tester_14Oct2026.txt). Results from mt4_tester2 in 2013-2016 and 2020 are NOT affected by those holes.
+Note: my ER M1 study read the mt4_tester copy; its per-year columns for 2013-2016/2020 are lower confidence (conclusion unchanged: gross edge <=3 pts).
