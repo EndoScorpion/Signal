@@ -98,6 +98,15 @@
    "created": "2026-10-14T19:50:12",
    "updated": "2026-10-14T19:50:12",
    "note": ""
+  },
+  {
+   "id": 12,
+   "title": "Analysis (read-only, sp5 label, account-currency net; commission not verified): variant robustness. 'base' set (no m1_ prefix; timeframe unconfirmed): 177 trades/8yrs, net +2919, 7/8 yrs positive, ex-best-year +1927 = robust but ~22 trades/yr. 'm1_' set: 575 trades, net +1299, 4/8 yrs+, ex-best-year -264 (edge = one year, 2014). Newest 'm1_m1_': 469 trades, net -179, 2/4 yrs+. => raising trade volume 3-6x destroyed per-trade edge (16.5 -> 2.3 -> -0.4). Hypotheses for next candidates: H1 keep base entry, add volume via a 2nd uncorrelated entry only in hours/regimes where base wins; H2 find what the m1 variants changed (timeframe? ZTrigger?) and test one change at a time; H3 treat win VOLUME target as net-positive trades per year, not trade count. Exploration slot: regime filter on ADX/vol-of-vol (not ER; ER M1 study showed no edge).",
+   "owner": "",
+   "status": "open",
+   "created": "2026-10-14T19:57:23",
+   "updated": "2026-10-14T19:57:23",
+   "note": ""
   }
  ]
 }
