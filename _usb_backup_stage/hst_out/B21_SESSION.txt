@@ -1,0 +1,12 @@
+b21_lm_2011            sells  657 win    47%  pts  -23957  DD  34313
+b21_lm_2012            sells  664 win  51.8%  pts   -4840  DD  25442
+b21_lm_2017            sells  111 win  72.1%  pts   12863  DD   4810
+b21_lm_2019            sells  572 win  55.2%  pts    7892  DD  16869
+b21_lm_2020            sells   96 win  70.8%  pts    9822  DD   6063
+b21_lm_2021            sells  557 win  53.9%  pts    4119  DD  19345
+b21_lm_2022            sells  640 win  52.2%  pts   -2250  DD  19291
+b21_lm_2526            sells  341 win  59.5%  pts   14945  DD  10135
+b21_lm1113_2019        sells  642 win  53.9%  pts    3655  DD  21962
+b21_lm1113_2022        sells  690 win  52.3%  pts   -1867  DD  21203
+b21_lm1014_2019        sells  567 win    55%  pts    7079  DD  17727
+b21_lm1014_2022        sells  605 win  52.1%  pts   -2561  DD  18370

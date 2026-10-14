@@ -1,0 +1,3 @@
+- [PC RAM and master hub](pc-ram-and-master-hub.md) — 5.8 GB RAM gates, ClaudeHub master, admin windows break paste
+- [Blocked marker](blocked-marker.md) — start replies needing Nasif with "🛑 NEED YOU:" (theme hides highlights)
+- [Model cap](model-cap-sonnet.md) — Sonnet 5.5 only, floor and ceiling, for now

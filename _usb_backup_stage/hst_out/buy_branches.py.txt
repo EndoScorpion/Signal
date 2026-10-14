@@ -1,0 +1,95 @@
+# Untried BUY branches, replayed on history (honest path: entry bar close only, then full bars). 9 commission, 2 spread.
+#  A) EA buy entries with WIDE targets (like the winning sells) instead of 10/290, split by H1 regime (close vs SMA1200)
+#  B) HEDGE BUY: when a filled sell (stop/hedge) is X pts under water, buy with TP/SL 300, split by regime
+#  C) BUY STOP above the H1 50-bar high + 20 pts, 24-bar expiry, one at a time, split by regime
+#  D) BUY STRADDLE: buy stop +h above / buy limit -h below each H1 close, 2-h expiry, first fill wins, split by regime
+# usage: python3 buy_branches.py EURUSD5.hst EURUSD60.hst <journal> [<journal>...]
+import sys, datetime as D
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO, ratio_tables as RT
+COMM = 9; SPR = 2e-5; P = 1e-5
+m5 = RT.read_hst(sys.argv[1]); T, O, H, L, C = m5['t'], m5['o'], m5['h'], m5['l'], m5['c']
+h1 = RT.read_hst(sys.argv[2]); T60, H60, L60, C60 = h1['t'], h1['h'], h1['l'], h1['c']; S1200 = RT.sma(C60, 1200)
+def up_regime(ts):  # last CLOSED H1 bar before ts
+    i = max(1300, np.searchsorted(T60, ts - 3600, side='right') - 1); return C60[i] > S1200[i]
+bar = lambda t0: max(0, np.searchsorted(T, t0, side='right') - 1)
+def path(i, maxbars):
+    j = min(len(C), i + 1 + maxbars); return np.concatenate([[C[i]], H[i + 1:j]]), np.concatenate([[C[i]], L[i + 1:j]])
+def buy_from(i, ask, tp, sl, maxbars=5000, trail=0):
+    hh, ll = path(i, maxbars)
+    if trail:
+        sll = ask - sl * P; best = ask
+        for k in range(len(hh)):
+            if ll[k] <= sll: return (sll - ask) * 1e5 - COMM
+            if hh[k] >= ask + tp * P: return tp - COMM
+            best = max(best, hh[k]); sll = max(sll, best - trail * P)
+        return (C[min(len(C) - 1, i + maxbars)] - ask) * 1e5 - COMM
+    tpl = ask + tp * P; sll = ask - sl * P
+    a_tp = np.argmax(hh >= tpl) if (hh >= tpl).any() else 10 ** 9; a_sl = np.argmax(ll <= sll) if (ll <= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM
+    if a_tp < 10 ** 9: return tp - COMM
+    return (C[min(len(C) - 1, i + maxbars)] - ask) * 1e5 - COMM
+def summ(x):
+    x = np.array(x); return '%4d  win%% %5.1f  avg %7.1f  total %8.0f' % (len(x), 100 * (x > 0).mean(), x.mean(), x.sum()) if len(x) else '   0'
+def split(rows):  # rows: (up, net)
+    up = [n for u, n in rows if u]; dn = [n for u, n in rows if not u]
+    return 'all %s | H1 above SMA1200 %s | below %s' % (summ([n for _, n in rows]), summ(up), summ(dn))
+ts_of = lambda o: o.get('t_fill', o['t_open']).replace(tzinfo=D.timezone.utc).timestamp()
+out = []
+for log in sys.argv[3:]:
+    orders = EO.parse(log); buys = [o for o in orders.values() if o['kind'] == 'buy' and 'net' in o]
+    sells = [o for o in orders.values() if o['kind'] != 'buy' and o.get('filled') and 'net' in o]
+    yr = log.split('_')[1]
+    out.append('=== %s: %d EA buys, %d filled sells' % (log, len(buys), len(sells)))
+    out.append('A) EA buy entries, wide targets (TP/SL/trail):')
+    for tp, sl, tr in [(10, 290, 0), (100, 100, 0), (200, 200, 0), (300, 300, 0), (300, 100, 0), (300, 300, 50), (300, 300, 100)]:
+        rows = [(up_regime(ts_of(o)), buy_from(bar(ts_of(o)), o['open'], tp, sl, trail=tr)) for o in buys]
+        out.append('   %3d/%3d/%3d  %s' % (tp, sl, tr, split(rows)))
+    if sells:
+        out.append('B) hedge BUY when a sell is X pts under water, buy TP/SL 300/300 (sell leg not counted):')
+        for X in (30, 60, 100):
+            rows = []
+            for o in sells:
+                i0 = bar(ts_of(o)); hh, ll = path(i0, 5000); trig = o['open'] + X * P
+                k = np.argmax(hh >= trig) if (hh >= trig).any() else -1
+                if k < 0: continue
+                ib = i0 + k; ask = (trig if k else max(trig, C[i0])) + SPR
+                rows.append((up_regime(T[ib]), buy_from(ib, ask, 300, 300)))
+            out.append('   X=%3d  %s' % (X, split(rows)))
+    # C and D use the year's H1 bars only
+    y = int(yr) if yr.isdigit() else None
+    if y:
+        t_a = D.datetime(y, 1, 1, tzinfo=D.timezone.utc).timestamp(); t_b = D.datetime(y + 1, 1, 1, tzinfo=D.timezone.utc).timestamp()
+        idx = np.where((T60 >= t_a) & (T60 < t_b))[0]
+        out.append('C) buy STOP at H1 50-bar high + 20 pts, placed each closed H1 bar, 24-bar expiry, one open trade at a time:')
+        for tp, sl in [(100, 100), (300, 300), (300, 100)]:
+            rows = []; busy_until = 0
+            for i in idx[50:]:
+                t0 = T60[i + 1] if i + 1 < len(T60) else T60[i] + 3600
+                if t0 < busy_until: continue
+                lvl = H60[i - 49:i + 1].max() + 20 * P; j0 = bar(t0); j1 = min(len(C), j0 + 288)
+                seg = H[j0:j1]; k = np.argmax(seg >= lvl) if (seg >= lvl).any() else -1
+                if k < 0: continue
+                ib = j0 + k; ask = max(lvl, O[ib]) + SPR if k == 0 else max(lvl, O[ib]) + SPR
+                rows.append((C60[i] > S1200[i], buy_from(ib, ask, tp, sl))); busy_until = T[min(len(T) - 1, ib + 5000)]
+                # busy only until exit: approximate by re-scanning exit bar
+                hh, ll = path(ib, 5000); e_tp = np.argmax(hh >= ask + tp * P) if (hh >= ask + tp * P).any() else 10 ** 9; e_sl = np.argmax(ll <= ask - sl * P) if (ll <= ask - sl * P).any() else 10 ** 9
+                busy_until = T[min(len(T) - 1, ib + min(e_tp, e_sl, 5000))]
+            out.append('   TP/SL %3d/%3d  %s' % (tp, sl, split(rows)))
+        out.append('D) buy STRADDLE each closed H1 bar: buy stop +h above and buy limit -h below the close, 2-h expiry, first fill wins, TP/SL 300/300:')
+        for h in (30, 50, 100):
+            rows = []; busy_until = 0; fills = {'stop': 0, 'limit': 0}
+            for i in idx:
+                t0 = T60[i + 1] if i + 1 < len(T60) else T60[i] + 3600
+                if t0 < busy_until: continue
+                up_l = C60[i] + h * P; dn_l = C60[i] - h * P; j0 = bar(t0); j1 = min(len(C), j0 + 24)
+                ku = np.argmax(H[j0:j1] >= up_l) if (H[j0:j1] >= up_l).any() else 10 ** 9; kd = np.argmax(L[j0:j1] <= dn_l) if (L[j0:j1] <= dn_l).any() else 10 ** 9
+                if min(ku, kd) == 10 ** 9: continue
+                if ku <= kd: ib = j0 + ku; ask = max(up_l, O[ib]) + SPR; fills['stop'] += 1
+                else: ib = j0 + kd; ask = min(dn_l, O[ib]) + SPR; fills['limit'] += 1
+                rows.append((C60[i] > S1200[i], buy_from(ib, ask, 300, 300)))
+                hh, ll = path(ib, 5000); e_tp = np.argmax(hh >= ask + 300 * P) if (hh >= ask + 300 * P).any() else 10 ** 9; e_sl = np.argmax(ll <= ask - 300 * P) if (ll <= ask - 300 * P).any() else 10 ** 9
+                busy_until = T[min(len(T) - 1, ib + min(e_tp, e_sl, 5000))]
+            out.append('   h=%3d  %s   (stop fills %d, limit fills %d)' % (h, split(rows), fills['stop'], fills['limit']))
+    out.append('')
+print('\n'.join(out))

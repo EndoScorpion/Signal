@@ -1,0 +1,39 @@
+17:23:41 OK pc_base_2017 in 1.7 min -> C:\Users\endos\Desktop\hst_out\pc_base_2017.htm
+17:24:55 OK pc_B36_chop_zH1_2017 in 1.2 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_zH1_2017.htm
+17:26:29 OK pc_MP1_fracprox_er_2017 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_MP1_fracprox_er_2017.htm
+17:27:59 OK pc_B36_chop_adx_2017 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_adx_2017.htm
+17:29:24 OK pc_B36_chop_2017 in 1.4 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_2017.htm
+17:30:46 OK pc_B38_smooth_jitter_adx_2017 in 1.3 min -> C:\Users\endos\Desktop\hst_out\pc_B38_smooth_jitter_adx_2017.htm
+17:31:58 OK pc_GEN3_B1_fd_ahrate_2017 in 1.2 min -> C:\Users\endos\Desktop\hst_out\pc_GEN3_B1_fd_ahrate_2017.htm
+17:33:14 OK pc_G4_2_er100_dr_2017 in 1.3 min -> C:\Users\endos\Desktop\hst_out\pc_G4_2_er100_dr_2017.htm
+17:34:40 OK pc_G4_3_er_dr_nofri_2017 in 1.4 min -> C:\Users\endos\Desktop\hst_out\pc_G4_3_er_dr_nofri_2017.htm
+17:36:02 OK pc_MP6_erH1_2017 in 1.3 min -> C:\Users\endos\Desktop\hst_out\pc_MP6_erH1_2017.htm
+17:37:52 OK pc_MP2_zH1_er_2017 in 1.8 min -> C:\Users\endos\Desktop\hst_out\pc_MP2_zH1_er_2017.htm
+17:39:16 OK pc_G4_1_er_dr_2017 in 1.4 min -> C:\Users\endos\Desktop\hst_out\pc_G4_1_er_dr_2017.htm
+17:40:47 OK pc_B37_m1slope100_2017 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_B37_m1slope100_2017.htm
+17:42:06 OK pc_B36_chop_zH1_cci_2017 in 1.3 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_zH1_cci_2017.htm
+17:43:57 OK pc_B36_adx_2017 in 1.8 min -> C:\Users\endos\Desktop\hst_out\pc_B36_adx_2017.htm
+17:46:14 OK pc_B38_smooth_samesign_er_2017 in 2.3 min -> C:\Users\endos\Desktop\hst_out\pc_B38_smooth_samesign_er_2017.htm
+17:48:11 OK pc_B38_smooth_samesign_2017 in 1.9 min -> C:\Users\endos\Desktop\hst_out\pc_B38_smooth_samesign_2017.htm
+17:50:12 OK pc_B38_smooth_jitter_2017 in 2 min -> C:\Users\endos\Desktop\hst_out\pc_B38_smooth_jitter_2017.htm
+17:50:12 BATCH DONE
+17:50:12 SKIP pc_base_2017 (report exists)
+17:50:12 SKIP pc_B36_chop_zH1_2017 (report exists)
+17:50:12 SKIP pc_MP1_fracprox_er_2017 (report exists)
+17:50:12 SKIP pc_B36_chop_adx_2017 (report exists)
+17:50:12 SKIP pc_B36_chop_2017 (report exists)
+17:50:12 SKIP pc_B38_smooth_jitter_adx_2017 (report exists)
+17:50:12 SKIP pc_GEN3_B1_fd_ahrate_2017 (report exists)
+17:50:12 SKIP pc_G4_2_er100_dr_2017 (report exists)
+17:50:12 SKIP pc_G4_3_er_dr_nofri_2017 (report exists)
+17:50:12 SKIP pc_MP6_erH1_2017 (report exists)
+17:50:12 SKIP pc_MP2_zH1_er_2017 (report exists)
+17:50:12 SKIP pc_G4_1_er_dr_2017 (report exists)
+17:50:12 SKIP pc_B37_m1slope100_2017 (report exists)
+17:50:12 SKIP pc_B36_chop_zH1_cci_2017 (report exists)
+17:50:12 SKIP pc_B36_adx_2017 (report exists)
+17:50:12 SKIP pc_B38_smooth_samesign_er_2017 (report exists)
+17:50:12 SKIP pc_B38_smooth_samesign_2017 (report exists)
+17:50:12 SKIP pc_B38_smooth_jitter_2017 (report exists)
+17:50:12 BATCH DONE
+PCQ STAGE1 DONE

@@ -1,0 +1,75 @@
+{
+ "AtrCapPts=60": {
+  "status": "salvaging",
+  "from": "g2_AtrCapPts_60",
+  "variants": [
+   "s_g2_AtrCapPts_60_AtrCapPts_x08"
+  ]
+ },
+ "AtrCapPts=75": {
+  "status": "salvaging",
+  "from": "g2_ZTrigger_2p25_m2",
+  "variants": [
+   "s_g2_ZTrigger_2p25_m2_AtrCapPts_x125"
+  ]
+ },
+ "AtrCapPts=75+CalmRvolMax=29.6+ZTrigger=2.25": {
+  "status": "salvaging",
+  "from": "h1_calm_lowZ",
+  "variants": [
+   "s_h1_calm_lowZ_ZTrigger_x08",
+   "s_h1_calm_lowZ_AtrCapPts_x08",
+   "s_h1_calm_lowZ_AtrCapPts_x125",
+   "s_h1_calm_lowZ_CalmRvolMax_x08",
+   "s_h1_calm_lowZ_CalmRvolMax_x125"
+  ]
+ },
+ "HourFrom=4+HourTo=23": {
+  "status": "salvaging",
+  "from": "th_g2_AtrCapPts_90_hours_00-03",
+  "variants": [
+   "s_th_g2_AtrCapPts_90_hours_00-03_HourFrom_x08",
+   "s_th_g2_AtrCapPts_90_hours_00-03_HourFrom_x125",
+   "s_th_g2_AtrCapPts_90_hours_00-03_HourTo_x08",
+   "s_th_g2_AtrCapPts_90_hours_00-03_HourTo_x125"
+  ]
+ },
+ "HourFrom=4+HourTo=22": {
+  "status": "salvaging",
+  "from": "th_g2_AtrCapPts_90_hours_00-03_m1_m2",
+  "variants": [
+   "s_th_g2_AtrCapPts_90_hours_00-03_m1_m2_HourFrom_x08",
+   "s_th_g2_AtrCapPts_90_hours_00-03_m1_m2_HourFrom_x125",
+   "s_th_g2_AtrCapPts_90_hours_00-03_m1_m2_HourTo_x125"
+  ]
+ },
+ "AtrCapPts=90+HourFrom=4+HourTo=23": {
+  "status": "salvaging",
+  "from": "th_g2_AtrCapPts_90_hours_00-03",
+  "variants": [
+   "s_th_g2_AtrCapPts_90_hours_00-03_AtrCapPts_x08",
+   "s_th_g2_AtrCapPts_90_hours_00-03_AtrCapPts_x125"
+  ]
+ },
+ "AtrCapPts=90+HourFrom=4+HourTo=22": {
+  "status": "salvaging",
+  "from": "th_g2_AtrCapPts_90_hours_00-03_m1_m2",
+  "variants": [
+   "s_th_g2_AtrCapPts_90_hours_00-03_m1_m2_AtrCapPts_x08",
+   "s_th_g2_AtrCapPts_90_hours_00-03_m1_m2_AtrCapPts_x125"
+  ]
+ },
+ "AtrCapPts=120": {
+  "status": "salvaging",
+  "from": "rt_g2_AtrCapPts_120",
+  "variants": [
+   "s_rt_g2_AtrCapPts_120_AtrCapPts_x08",
+   "s_rt_g2_AtrCapPts_120_AtrCapPts_x125"
+  ]
+ },
+ "HourTo=22": {
+  "status": "salvaging",
+  "from": "th_g2_AtrCapPts_90_hours_00-03_m1_m2",
+  "variants": []
+ }
+}

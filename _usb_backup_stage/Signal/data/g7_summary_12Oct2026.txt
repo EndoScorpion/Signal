@@ -1,0 +1,25 @@
+=== g7a ===
+Compile OK
+RAM gate OK: 1454184 KB free
+  Total trades      : 134
+  Win rate          : 73.9%  (99W / 35L)
+  Net PnL           : $    120.09
+  PF estimate       : 1.953
+  Max closed-DD     : $   21.84  (0.22% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g7b ===
+Compile OK
+RAM gate OK: 1353372 KB free
+  Total trades      : 80
+  Win rate          : 70.0%  (56W / 24L)
+  Net PnL           : $     51.76
+  PF estimate       : 1.586
+  Max closed-DD     : $   29.29  (0.29% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+DONE

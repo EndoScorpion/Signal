@@ -1,0 +1,86 @@
+# Pending BUY branches replayed on the EA's own entries (honest: entry bar close only, then full bars):
+#  A) BUY LIMIT below the signal (pullback buy), BUY STOP above (breakout buy), 2-hour expiry, several exits
+#  B) RE-BREAK buy: after the 20-pt sell stop (branch 7) is stopped out (+300 above its level), buy at that moment
+#  C) HEDGE-TP buy: when the hedge sell (branch 8) reaches its 300-pt target, buy there (bounce after a 300-pt drop)
+# usage: python3 pending_buys.py <journal> <EURUSD5.hst>
+import sys, re, datetime as D
+import numpy as np
+log, hst = sys.argv[1:3]
+b = open(hst, 'rb').read()
+a = np.frombuffer(b[148:148 + ((len(b) - 148) // 60) * 60], dtype=np.dtype([('t', '<i8'), ('o', '<f8'), ('h', '<f8'), ('l', '<f8'), ('c', '<f8'), ('v', '<i8'), ('s', '<i4'), ('rv', '<i8')]))
+T, H, L, C = a['t'], a['h'], a['l'], a['c']
+COMM = 9; SPR = 2e-5
+ents = []
+for ln in open(log, errors='ignore'):
+    m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+.*?open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', ln)
+    if m: ents.append((int(D.datetime.strptime(m.group(1), '%Y.%m.%d %H:%M:%S').replace(tzinfo=D.timezone.utc).timestamp()), float(m.group(3))))
+ents.sort()
+bar = lambda t0: max(0, np.searchsorted(T, t0, side='right') - 1)
+def path(i, maxbars=5000):
+    j = min(len(C), i + 1 + maxbars); return np.concatenate([[C[i]], H[i + 1:j]]), np.concatenate([[C[i]], L[i + 1:j]])
+def buy_from(i, ask, tp, sl, trail=0):
+    hh, ll = path(i); tpl = ask + tp * 1e-5; sll = ask - sl * 1e-5
+    if trail:
+        stop = sll; best = ask
+        for j in range(len(hh)):
+            if ll[j] <= stop: return (stop - ask) * 1e5 - COMM
+            if hh[j] > best: best = hh[j]
+            if best - ask >= tp * 1e-5: stop = max(stop, best - trail * 1e-5)
+        return (C[min(len(C) - 1, i + 5000)] - ask) * 1e5 - COMM
+    a_tp = np.argmax(hh >= tpl) if (hh >= tpl).any() else 10 ** 9; a_sl = np.argmax(ll <= sll) if (ll <= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM
+    if a_tp < 10 ** 9: return tp - COMM
+    return (C[min(len(C) - 1, i + 5000)] - ask) * 1e5 - COMM
+def sell_from(i, bid, tp, sl):
+    hh, ll = path(i); hh = hh + SPR; ll = ll + SPR; tpl = bid - tp * 1e-5; sll = bid + sl * 1e-5
+    a_tp = np.argmax(ll <= tpl) if (ll <= tpl).any() else 10 ** 9; a_sl = np.argmax(hh >= sll) if (hh >= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM, i + 1 + a_sl, 'sl'
+    if a_tp < 10 ** 9: return tp - COMM, i + 1 + a_tp, 'tp'
+    return 0, None, 'open'
+def summ(x):
+    x = np.array(x); return '%4d trades  win%% %5.1f  avg %7.1f  total %8.0f' % (len(x), 100 * (x > 0).mean(), x.mean(), x.sum()) if len(x) else '   0 trades'
+out = ['PENDING / FOLLOW-UP BUY BRANCHES on %d EA entries from %s (M5, honest replay, 9 commission + 2 spread)' % (len(ents), log)]
+out.append('reference buys TP10/SL290 (replay): ' + summ([buy_from(bar(t0), e, 10, 290) for t0, e in ents]))
+out += ['', 'A) BUY LIMIT below / BUY STOP above the signal, 2-hour expiry']
+EX = [(30, 100), (100, 100), (300, 300), (50, 300)]
+for kind, dist in [('limit', 20), ('limit', 50), ('limit', 100), ('stop', 20), ('stop', 50), ('stop', 100)]:
+    for tp, sl in EX:
+        res = []
+        for t0, e in ents:
+            i = bar(t0); lvl = e - dist * 1e-5 if kind == 'limit' else e + dist * 1e-5; hit = None
+            if (kind == 'limit' and C[i] <= lvl) or (kind == 'stop' and C[i] >= lvl): hit = i + 1
+            for j in range(i + 1, min(len(C), i + 25)):
+                if hit is not None: break
+                if kind == 'limit' and L[j] <= lvl: hit = j; break
+                if kind == 'stop' and H[j] >= lvl: hit = j; break
+            if hit is not None and hit < len(C): res.append(buy_from(hit, lvl + (SPR if kind == 'stop' else 0), tp, sl))
+        out.append('  buy %-5s %3d pts %s, TP %3d SL %3d : %s   (filled %d of %d)' % (kind, dist, 'below' if kind == 'limit' else 'above', tp, sl, summ(res), len(res), len(ents)))
+out += ['', 'B) RE-BREAK BUY: sell stop 20 below (TP300/SL300) gets stopped out => buy at that moment']
+for tp, sl, tr in [(100, 100, 0), (300, 300, 0), (50, 300, 0), (50, 300, 50)]:
+    res = []
+    for t0, e in ents:
+        i = bar(t0); lvl = e - SPR - 20e-5; hit = None
+        if C[i] <= lvl: hit = i + 1
+        for j in range(i + 1, min(len(C), i + 25)):
+            if hit is not None: break
+            if L[j] <= lvl: hit = j; break
+        if hit is None or hit >= len(C): continue
+        net, k, how = sell_from(hit, lvl, 300, 300)
+        if how == 'sl' and k < len(C): res.append(buy_from(k, lvl + 300e-5 + SPR, tp, sl, tr))
+    out.append('  re-break buy TP %3d SL %3d%s : %s' % (tp, sl, (' trail %d' % tr) if tr else '', summ(res)))
+out += ['', 'C) HEDGE-TARGET BUY: hedge sell (30 under water, TP300/SL300) hits its target => buy there']
+for tp, sl, tr in [(100, 100, 0), (300, 300, 0), (50, 300, 0), (50, 300, 50), (100, 300, 100)]:
+    res = []
+    for t0, e in ents:
+        i = bar(t0); lvl = e - 30e-5; hit = None
+        if C[i] >= e + 10e-5: continue
+        if C[i] <= lvl: hit = i + 1
+        for j in range(i + 1, min(len(C), i + 5001)):
+            if hit is not None: break
+            if H[j] >= e + 10e-5: break
+            if L[j] <= lvl: hit = j; break
+        if hit is None or hit >= len(C): continue
+        net, k, how = sell_from(hit, lvl, 300, 300)
+        if how == 'tp' and k < len(C): res.append(buy_from(k, lvl - 300e-5 + SPR, tp, sl, tr))
+    out.append('  hedge-target buy TP %3d SL %3d%s : %s' % (tp, sl, (' trail %d' % tr) if tr else '', summ(res)))
+print('\n'.join(out))

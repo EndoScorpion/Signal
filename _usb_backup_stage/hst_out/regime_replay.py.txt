@@ -1,0 +1,49 @@
+# 2011-2012 check of the down-regime hypothesis on REPLAYED sells (hedge at 30 under water TP300/SL300; sell stop 20 below, 2h expiry, TP300/SL300)
+# usage: python3 regime_replay.py <journal> EURUSD5.hst EURUSD60.hst
+import sys, re, datetime as D
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import ratio_tables as RT
+log, m5, h1 = sys.argv[1:4]
+a = RT.read_hst(m5); T, H, L, C = a['t'], a['h'], a['l'], a['c']
+b = RT.read_hst(h1); TH, CH = b['t'], b['c']; s1200 = RT.sma(CH, 1200); s200 = RT.sma(CH, 200); sl200 = s200 - RT.lag(s200, 24)
+COMM = 9; SPR = 2e-5
+ents = []
+for ln in open(log, errors='ignore'):
+    m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+.*?open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', ln)
+    if m: ents.append((int(D.datetime.strptime(m.group(1), '%Y.%m.%d %H:%M:%S').replace(tzinfo=D.timezone.utc).timestamp()), float(m.group(3))))
+ents.sort(); bar = lambda t0: max(0, np.searchsorted(T, t0, side='right') - 1)
+def regime(t0):
+    i = np.clip(np.searchsorted(TH, t0 - 3600, side='right') - 1, 1300, len(TH) - 1); return CH[i] < s1200[i], sl200[i] < 0
+def path(i, maxbars=5000):
+    j = min(len(C), i + 1 + maxbars); return np.concatenate([[C[i]], H[i + 1:j]]), np.concatenate([[C[i]], L[i + 1:j]])
+def sell_from(i, bid, tp, sl):
+    hh, ll = path(i); hh = hh + SPR; ll = ll + SPR; tpl = bid - tp * 1e-5; sll = bid + sl * 1e-5
+    a_tp = np.argmax(ll <= tpl) if (ll <= tpl).any() else 10 ** 9; a_sl = np.argmax(hh >= sll) if (hh >= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM
+    if a_tp < 10 ** 9: return tp - COMM
+    return (bid - (C[min(len(C) - 1, i + 5000)] + SPR)) * 1e5 - COMM
+rows = []   # (year, kind, below, down, net)
+for t0, e in ents:
+    yr = D.datetime.fromtimestamp(t0, D.timezone.utc).year; below, down = regime(t0); i = bar(t0)
+    lvl = e - SPR - 20e-5; hit = None
+    if C[i] <= lvl: hit = i + 1
+    for j in range(i + 1, min(len(C), i + 25)):
+        if hit is not None: break
+        if L[j] <= lvl: hit = j; break
+    if hit is not None and hit < len(C): rows.append((yr, 'sell stop', below, down, sell_from(hit, lvl, 300, 300)))
+    lvl = e - 30e-5; hit = None
+    if C[i] < e + 10e-5:
+        if C[i] <= lvl: hit = i + 1
+        for j in range(i + 1, min(len(C), i + 5001)):
+            if hit is not None: break
+            if H[j] >= e + 10e-5: break
+            if L[j] <= lvl: hit = j; break
+        if hit is not None and hit < len(C): rows.append((yr, 'hedge', below, down, sell_from(hit, lvl, 300, 300)))
+R = np.array([(r[0], r[2], r[3], r[4]) for r in rows], dtype=float); K = np.array([r[1] for r in rows])
+out = ['DOWN-REGIME check on replayed 2011-2012 sells (%s)' % log]
+for yr in sorted(set(R[:, 0].astype(int))):
+    for kind in ('sell stop', 'hedge'):
+        m0 = (R[:, 0] == yr) & (K == kind)
+        for name, m in [('all', m0), ('R1 below 50-day SMA', m0 & (R[:, 1] == 1)), ('R1 above', m0 & (R[:, 1] == 0)), ('R3 below AND slope down', m0 & (R[:, 1] == 1) & (R[:, 2] == 1)), ('R3 opposite', m0 & (R[:, 1] == 0) & (R[:, 2] == 0))]:
+            x = R[m, 3]; out.append('  %d %-10s %-26s n %4d  win%% %5.1f  avg %7.1f' % (yr, kind, name, len(x), 100 * (x > 0).mean() if len(x) else 0, x.mean() if len(x) else 0))
+print('\n'.join(out))

@@ -1,0 +1,27 @@
+# make_b30.py - b30 = b29 + Shannon-entropy gate for NEW sells (closed bars, OFF by default).
+# Entropy of up/down closes over EntBars bars on EntTF: H = -p log2 p - (1-p) log2(1-p), 0 = one-directional, 1 = coin-flip noise.
+# UseEntropyGate=1: sell only if H < EntMax (structure, not noise).
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('extern double DailyDDPct=2.0;\n','''extern double DailyDDPct=2.0;
+// b30 entropy gate (noise vs structure)
+extern bool   UseEntropyGate=0;
+extern int    EntTF=15;
+extern int    EntBars=32;
+extern double EntMax=0.95;
+''')
+rep('/*b29*/','/*b29*/ if(!FilterEntropy()){ return(false); } /*b30*/')
+src=src.rstrip()+'''
+
+bool FilterEntropy(){ if(UseEntropyGate!=1){ return(true); } int n=MathMax(8,EntBars), up=0, cnt=0;
+   for(int i=1;i<=n;i++){ double d=iClose(Symbol(),EntTF,i)-iClose(Symbol(),EntTF,i+1); if(d>0){ up++; cnt++; } else if(d<0){ cnt++; } }
+   if(cnt<4){ return(true); } double p=(double)up/cnt; if(p<=0 || p>=1){ return(true); }
+   double h=-(p*MathLog(p)+(1-p)*MathLog(1-p))/MathLog(2.0); return(h<EntMax); }
+'''
+src=src.replace('#property version   "1.00-claude_b29"','#property version   "1.00-claude_b30"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

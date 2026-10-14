@@ -1,0 +1,70 @@
+{
+  "enabledPlugins": {
+    "amplitude@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-plugins-official.git"
+      }
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Read(~/AppData/Roaming/MetaQuotes/**)",
+      "Edit(~/AppData/Roaming/MetaQuotes/Terminal/*/MQL4/**)",
+      "Edit(~/AppData/Roaming/MetaQuotes/Terminal/*/MQL5/**)",
+      "Edit(~/AppData/Roaming/MetaQuotes/Terminal/*/tester/**)",
+      "Read(~/Desktop/$/**)",
+      "Edit(~/Desktop/$/Grow/**)",
+      "Read(//c/Program Files (x86)/FXOpen EU MT4 Terminal/**)",
+      "Read(//c/Program Files/FXOpen EU MT5 Terminal/**)",
+      "Bash(*metaeditor.exe*)",
+      "Bash(*MetaEditor64.exe*)",
+      "PowerShell(*metaeditor.exe*)",
+      "PowerShell(*MetaEditor64.exe*)",
+      "PowerShell(Get-CimInstance Win32_OperatingSystem*)",
+      "PowerShell(*MT4_Backtest*run_queue.ps1*)",
+      "Bash(*MT4_Backtest*run_queue.ps1*)",
+      "Read(~/MT4_Backtest/**)",
+      "Edit(~/MT4_Backtest/queue.txt)"
+    ],
+    "ask": [
+      "Bash(rm *)",
+      "PowerShell(Remove-Item *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/endos/.claude/hooks/mt4-guard.ps1"
+          },
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/endos/.claude/hooks/clone-guard.ps1"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/endos/.claude/hooks/clone-guard.ps1"
+          }
+        ]
+      }
+    ]
+  },
+  "outputStyle": "Proactive",
+  "autoUpdatesChannel": "latest",
+  "theme": "dark-ansi",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true
+}
+

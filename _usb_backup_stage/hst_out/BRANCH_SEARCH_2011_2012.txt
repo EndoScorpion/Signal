@@ -1,0 +1,49 @@
+BASELINE (EA as is): all n=498 win%=90 net=-29.1 | 1st half n=249 win%=90 net=-27.3 | 2nd half n=249 win%=89 net=-30.9
+Rules below are filters ADDED to the existing entry. A rule passes only if avg net > 0 and n >= 30 in BOTH halves.
+
+SINGLE RULES tested: 1406. Top 25 by the WORSE half (worst-half avg net):
+rule                                   all n/win%/net        1st half             2nd half
+h1_green3 < 0                             0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+h1_red3 < 0                               0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+h1_res_bounces < 1                        0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+h1_sup_bounces < 1                        0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+m15_green3 < 0                            0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+m15_red3 < 0                              0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+m5_green3 < 0                             0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+m5_red3 < 0                               0   0%     0.0 |    0   0%     0.0 |    0   0%     0.0 
+m5_sup_bounces < 2                        1 100%     1.0 |    1 100%     1.0 |    0   0%     0.0 
+m15_atr < 73.7                           48  98%    -4.6 |    1 100%     1.0 |   47  98%    -4.7 
+m15_prv < 75.4                           49  98%    -4.7 |   14 100%     1.6 |   35  97%    -7.1 
+h1_mmr >= -0.321                         51  96%   -10.1 |   17 100%     1.3 |   34  94%   -15.9 
+m15_roa >= 14.1                          50  94%   -15.8 |   34  94%   -16.0 |   16  94%   -15.5 
+h1_vol >= 1.43e+04                       51  96%   -10.2 |   33  94%   -16.6 |   18 100%     1.6 
+m15_volrel < 0.692                       99  94%   -16.4 |   49  94%   -16.6 |   50  94%   -16.3 
+m15_n_swing_lows < 13                    22  95%   -11.9 |    6 100%     1.0 |   16  94%   -16.7 
+h1_candle_run < -2                       22  95%   -11.0 |    8 100%     1.0 |   14  93%   -17.8 
+m5_res_bounces < 2                       16  94%   -16.8 |   15  93%   -18.1 |    1 100%     4.0 
+h1_minslope >= -77                       50  94%   -16.5 |    5 100%     1.0 |   45  93%   -18.4 
+m15_macdh < -17.9                        49  94%   -16.8 |   30  93%   -18.5 |   19  95%   -14.1 
+m15_macdh < -3.17                       149  93%   -18.5 |   76  93%   -18.3 |   73  93%   -18.7 
+h1_stochKD < -8.63                       48  94%   -17.2 |   19  95%   -14.5 |   29  93%   -18.9 
+m15_sup_bounces >= 4                     71  93%   -19.3 |   15  93%   -17.7 |   56  93%   -19.7 
+m15_stochK < 30.7                        49  96%   -10.9 |   28  93%   -19.7 |   21 100%     1.0 
+h1_mmr >= -0.433                        100  93%   -19.3 |   44  93%   -18.6 |   56  93%   -19.9 
+
+PAIRED RULES tested: 15 (n>=30 both halves). Top 15:
+m15_volrel < 0.692 AND m15_mmr < -0.699                      all   68  99%    -2.7 | 1st   34  97%    -7.1 | 2nd   34 100%     1.8 
+m15_mmr < -0.699 AND m15_volrel < 0.816                      all   99  97%    -7.4 | 1st   49  96%   -10.7 | 2nd   50  98%    -4.3 
+m15_macdh < -3.17 AND m15_sara_prv < -0.00983                all   73  95%   -14.9 | 1st   36  94%   -14.8 | 2nd   37  95%   -14.9 
+m15_macdh < -3.17 AND m15_sara < -1.35                       all   72  94%   -15.1 | 1st   36  94%   -14.8 | 2nd   36  94%   -15.4 
+m15_macdh < -3.17 AND m5_dist_res < 17                       all   65  95%   -11.9 | 1st   34  97%    -7.2 | 2nd   31  94%   -17.0 
+m15_sara_prv < -0.00983 AND m15_mmr < -0.699                 all  131  94%   -16.8 | 1st   70  94%   -15.7 | 2nd   61  93%   -18.1 
+m15_sara < -1.35 AND m15_mmr < -0.699                        all  129  94%   -17.1 | 1st   70  94%   -15.7 | 2nd   59  93%   -18.7 
+m15_mmr < -0.699 AND m5_dist_res < 17                        all  126  94%   -17.3 | 1st   59  93%   -18.9 | 2nd   67  94%   -15.8 
+m15_macdh < -3.17 AND m15_mmr < -0.699                       all  118  93%   -18.7 | 1st   63  94%   -17.6 | 2nd   55  93%   -19.9 
+m15_sara < -1.35 AND m15_sara_prv < -0.00983                 all  197  93%   -19.8 | 1st  102  93%   -19.0 | 2nd   95  93%   -20.7 
+m15_mmr < -0.699 AND m15_slopeavg < -0.964                   all  123  93%   -20.1 | 1st   63  92%   -22.4 | 2nd   60  93%   -17.6 
+m15_sara < -1.35 AND m15_slopeavg < -0.964                   all   84  94%   -16.4 | 1st   50  92%   -22.6 | 2nd   34  97%    -7.2 
+m15_sara_prv < -0.00983 AND m15_slopeavg < -0.964            all   85  94%   -16.2 | 1st   50  92%   -22.6 | 2nd   35  97%    -7.0 
+m15_sara_prv < -0.00983 AND m5_dist_res < 17                 all   84  92%   -23.6 | 1st   38  92%   -22.2 | 2nd   46  91%   -24.8 
+m15_sara < -1.35 AND m5_dist_res < 17                        all   83  92%   -23.9 | 1st   38  92%   -22.2 | 2nd   45  91%   -25.3 
+
+Rules passing both halves: 0 of 1421 tested. With this many tries, expect a few passes by luck; a real one must also hold on 2019/2021.

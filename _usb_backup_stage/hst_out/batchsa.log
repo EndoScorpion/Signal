@@ -1,0 +1,10 @@
+10:25:33 NO REPORT - check C:\Users\endos\Desktop\mt4_tester\tester\logs
+10:26:24 BUSY: portable tester already running (pid 24764)
+10:29:52 OK gem25_2019 in 0.3 min -> C:\Users\endos\Desktop\hst_out\gem25_2019.htm
+10:30:15 OK gem26_t25_2019 in 0.4 min -> C:\Users\endos\Desktop\hst_out\gem26_t25_2019.htm
+10:30:31 OK gem26_t05_2019 in 0.3 min -> C:\Users\endos\Desktop\hst_out\gem26_t05_2019.htm
+10:30:50 OK gem26_t03_2019 in 0.3 min -> C:\Users\endos\Desktop\hst_out\gem26_t03_2019.htm
+10:31:06 OK emaatr_m15_2019 in 0.3 min -> C:\Users\endos\Desktop\hst_out\emaatr_m15_2019.htm
+10:31:21 OK calcprobe_m5_201901 in 0.2 min -> C:\Users\endos\Desktop\hst_out\calcprobe_m5_201901.htm
+10:31:51 OK emaatr_m1_2019 in 0.5 min -> C:\Users\endos\Desktop\hst_out\emaatr_m1_2019.htm
+10:31:51 BATCH DONE

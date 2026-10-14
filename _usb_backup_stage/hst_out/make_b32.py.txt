@@ -1,0 +1,120 @@
+# make_b32.py - b32 = b31 + trade-analysis gates (b22 sells 2025-26, sp2+sp5). All OFF by default.
+# Usage: python make_b32.py <b31.mq4> <b32.mq4>
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('extern bool   UseFracBuy=0;\n','''extern bool   UseFracBuy=0;
+// b32 gates from trade analysis (GateTF closed bars). Losing sells were "chasing": entered oversold / below a falling MA.
+extern bool   UseStochSellGate=0;  // sell only if Stoch(StochK,3,3) main >= StochSellMin
+extern int    StochK=14;
+extern double StochSellMin=45;
+extern bool   UseStochBuyWarn=0;   // buy orders: Print warning + count when Stoch >= StochOB (OB = overbought)
+extern double StochOB=80;
+extern bool   StochBuyBlock=0;     // 1 = also block those buys
+extern int    OBCountBars=50;      // overbought bar count window
+extern int    OBCountMax=0;        // sells blocked if more than this many OB bars in window. 0 = off (test 12)
+extern bool   UseCciSellGate=0;    // sell only if CCI(CciPer) >= CciSellMin
+extern int    CciPer=14;
+extern double CciSellMin=-30;
+extern bool   UseMacdSellGate=0;   // sell only if MACD(12,26,9) histogram / ATR14 >= MacdHMin
+extern double MacdHMin=-0.18;
+extern bool   UseSlopeSellGate=0;  // sell only if SMA(SlopePer) slope over 5 bars / ATR >= SlopeMin (test SlopePer 100,125,150,200,250,300)
+extern int    SlopePer=150;
+extern double SlopeMin=-0.23;
+extern bool   UseAccelSellGate=0;  // sell only if accel of SMA(AccelPer) >= AccelMin (accel = slope - slope 5 bars ago)
+extern int    AccelPer=10;
+extern double AccelMin=-0.72;
+extern bool   UseJerkSellGate=0;   // rate of accel (accel - accel 5 bars ago) >= JerkMin
+extern int    JerkPer=10;
+extern double JerkMin=-0.86;
+extern bool   UseDistSellGate=0;   // sell only if (Close-SMA(DistPer))/ATR >= DistMin (not overextended down)
+extern int    DistPer=150;
+extern double DistMin=-2.2;
+extern bool   UsePosSellGate=0;    // sell only if position in PosPer-bar range (0=low,1=high) >= PosMin
+extern int    PosPer=125;
+extern double PosMin=0.30;
+extern bool   UseAccHeightGate=0;  // accel x (position-0.5) inside [AHLo,AHHi]
+extern int    AHPer=125;
+extern double AHLo=-0.004;
+extern double AHHi=0.015;
+extern bool   UseChaosErGate=0;    // chaos: Kaufman efficiency ratio over ErPer must be <= ErMax (choppy, mean-reverting)
+extern int    ErPer=100;
+extern double ErMax=0.10;
+extern bool   UseUpFracNearGate=0; // fractal: sell only within FracNearATR x ATR below the last confirmed up fractal (near resistance)
+extern double FracNearATR=1.5;
+extern bool   UseHurstGate=0;      // chaos: Hurst R/S exponent of HurstPer M15 log returns <= HurstMax (not persistent trend)
+extern int    HurstPer=100;
+extern double HurstMax=0.55;
+extern bool   UseWprFloorGate=0;   // Williams %R(WprFloorPer) >= WprFloorMin (not at bottom of long range)
+extern int    WprFloorPer=150;
+extern double WprFloorMin=-80;
+// revised rejects: old momentum/calculus gates sold INTO falls (chasing); the fade version sells into strength
+extern bool   UseFadeMomGate=0;    // sell only if (Close1-Close11)/ATR >= FadeMomMin
+extern double FadeMomMin=-0.5;
+extern bool   UseBbzSellGate=0;    // M15 BB z-score (20) >= BbzMin (old H4 BB used wrong TF)
+extern double BbzMin=0.5;
+extern bool   UseNoFriday=0;       // no new sells on Friday (server time)
+extern bool   UseSkipAfterLoss=0;  // short cooldown: no new sell for SkipAfterLossN GateTF bars after the last closed sell lost (test 1,2,4,8)
+extern int    SkipAfterLossN=4;
+extern bool   UseFlipOnTrend=0;    // when the ER gate blocks a sell (clean trend), open a BUY instead (reverse est. +$211 on 2025-26). Needs UseChaosErGate=1
+extern int    FlipTP=300;
+extern int    FlipSL=300;
+extern bool   UseAHRateGate=0;     // change-over-time: block sell if 3-bar rate of change of accel(AHRPer) x (height-0.5) > AHRateMax (best change feature, AUC .76/.70)
+extern int    AHRPer=50;
+extern double AHRateMax=0.013;
+extern bool   UseSlopeVelGate=0;   // derivative of long trend: 1-bar change of SMA(SVPer) slope must be >= SVMin (long trend not turning down faster)
+extern int    SVPer=300;
+extern double SVMin=-0.005;
+int ObBuyWarnCount=0; datetime flipBar32=0;
+''')
+rep('if(!FilterEntropy()){ return(false); } /*b30*/','if(!FilterEntropy()){ return(false); } /*b30*/ if(!Gates32()){ return(false); } /*b32*/')
+rep('void OnDeinit(const int reason){ DrawDeinit();','void OnDeinit(const int reason){ if(UseStochBuyWarn==1){ Print("b32 OB buy warnings: ",ObBuyWarnCount); } DrawDeinit();')
+rep('int SendX(string sy,int ty,double lt,double pr,int sp,double sl,double tp,string cm=NULL,int mg=0,datetime ex=0,color c=clrNONE){',
+'''int SendX(string sy,int ty,double lt,double pr,int sp,double sl,double tp,string cm=NULL,int mg=0,datetime ex=0,color c=clrNONE){
+   if(UseStochBuyWarn==1 && (ty==OP_BUY || ty==OP_BUYLIMIT || ty==OP_BUYSTOP)){ double st=iStochastic(sy,GateTF,StochK,3,3,MODE_SMA,0,MODE_MAIN,1);
+      if(st>=StochOB){ ObBuyWarnCount++; Print("b32 WARN buy with Stoch ",DoubleToStr(st,1)," >= ",DoubleToStr(StochOB,0)," count=",ObBuyWarnCount); if(StochBuyBlock==1){ return(-1); } } } /*b32*/''')
+src=src.rstrip()+'''
+
+//---- b32 gates (closed bars only, shift>=1)
+double Sma32(int per,int sh){ return(iMA(Symbol(),GateTF,per,0,MODE_SMA,PRICE_CLOSE,sh)); }
+double Slope32(int per,int sh,double a){ return((Sma32(per,sh)-Sma32(per,sh+5))/a); }
+double Accel32(int per,int sh,double a){ return(Slope32(per,sh,a)-Slope32(per,sh+5,a)); }
+double Pos32(int per){ int tf=GateTF; double hh=iHigh(Symbol(),tf,iHighest(Symbol(),tf,MODE_HIGH,per,1)); double ll=iLow(Symbol(),tf,iLowest(Symbol(),tf,MODE_LOW,per,1)); if(hh-ll<=0){ return(0.5); } return((iClose(Symbol(),tf,1)-ll)/(hh-ll)); }
+bool Gates32(){ int tf=GateTF; double a=iATR(Symbol(),tf,14,1); if(a<=0){ return(true); }
+   if(UseStochSellGate==1 && iStochastic(Symbol(),tf,StochK,3,3,MODE_SMA,0,MODE_MAIN,1)<StochSellMin){ return(false); }
+   if(OBCountMax>0){ int n=0; for(int i=1;i<=OBCountBars;i++){ if(iStochastic(Symbol(),tf,StochK,3,3,MODE_SMA,0,MODE_MAIN,i)>=StochOB){ n++; } } if(n>OBCountMax){ return(false); } }
+   if(UseCciSellGate==1 && iCCI(Symbol(),tf,CciPer,PRICE_TYPICAL,1)<CciSellMin){ return(false); }
+   if(UseMacdSellGate==1){ double h=iMACD(Symbol(),tf,12,26,9,PRICE_CLOSE,MODE_MAIN,1)-iMACD(Symbol(),tf,12,26,9,PRICE_CLOSE,MODE_SIGNAL,1); if(h/a<MacdHMin){ return(false); } }
+   if(UseSlopeSellGate==1 && Slope32(SlopePer,1,a)<SlopeMin){ return(false); }
+   if(UseAccelSellGate==1 && Accel32(AccelPer,1,a)<AccelMin){ return(false); }
+   if(UseJerkSellGate==1 && Accel32(JerkPer,1,a)-Accel32(JerkPer,6,a)<JerkMin){ return(false); }
+   if(UseDistSellGate==1 && (iClose(Symbol(),tf,1)-Sma32(DistPer,1))/a<DistMin){ return(false); }
+   if(UsePosSellGate==1 && Pos32(PosPer)<PosMin){ return(false); }
+   if(UseAccHeightGate==1){ double v=Accel32(AHPer,1,a)*(Pos32(AHPer)-0.5); if(v<AHLo || v>AHHi){ return(false); } }
+   if(UseChaosErGate==1){ double s=0; for(int i=1;i<=ErPer;i++){ s+=MathAbs(iClose(Symbol(),tf,i)-iClose(Symbol(),tf,i+1)); } if(s>0 && MathAbs(iClose(Symbol(),tf,1)-iClose(Symbol(),tf,ErPer+1))/s>ErMax){ Flip32(); return(false); } }
+   if(UseUpFracNearGate==1){ double uf=0; for(int i=3;i<300;i++){ double f=iFractals(Symbol(),tf,MODE_UPPER,i); if(f>0){ uf=f; break; } } if(uf>0 && (uf-iClose(Symbol(),tf,1))/a>FracNearATR){ return(false); } }
+   if(UseWprFloorGate==1 && iWPR(Symbol(),tf,WprFloorPer,1)<WprFloorMin){ return(false); }
+   if(UseFadeMomGate==1 && (iClose(Symbol(),tf,1)-iClose(Symbol(),tf,11))/a<FadeMomMin){ return(false); }
+   if(UseBbzSellGate==1){ double sd=iStdDev(Symbol(),tf,20,0,MODE_SMA,PRICE_CLOSE,1); if(sd>0 && (iClose(Symbol(),tf,1)-Sma32(20,1))/sd<BbzMin){ return(false); } }
+   if(UseNoFriday==1 && DayOfWeek()==5){ return(false); }
+   if(UseSkipAfterLoss==1 && SkipLoss32()){ return(false); }
+   if(UseAHRateGate==1){ double v1=AH32(AHRPer,1,a),v4=AH32(AHRPer,4,a),v7=AH32(AHRPer,7,a); if(v1-2*v4+v7>AHRateMax){ return(false); } }
+   if(UseSlopeVelGate==1 && Slope32(SVPer,1,a)-Slope32(SVPer,2,a)<SVMin){ return(false); }
+   if(UseHurstGate==1 && Hurst32(HurstPer)>HurstMax){ return(false); }
+   return(true); }
+bool SkipLoss32(){ datetime ct=0; double pl=0; for(int i=OrdersHistoryTotal()-1;i>=0;i--){ if(!OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)){ continue; } if(OrderSymbol()!=Symbol() || OrderType()!=OP_SELL){ continue; } if(OrderCloseTime()>ct){ ct=OrderCloseTime(); pl=OrderProfit()+OrderSwap()+OrderCommission(); } if(ct>0 && OrderCloseTime()<ct-86400){ break; } }
+   if(ct==0 || pl>=0){ return(false); } return(TimeCurrent()-ct < SkipAfterLossN*GateTF*60); }
+void Flip32(){ if(UseFlipOnTrend!=1){ return; } datetime b=iTime(Symbol(),GateTF,0); if(b==flipBar32 || CountC("Q")>0){ return; } flipBar32=b; RefreshRates();
+   int t=SendX(Symbol(),OP_BUY,0.01,Ask,slip,NormalizeDouble(Ask-FlipSL*Point,Digits),NormalizeDouble(Ask+FlipTP*Point,Digits),"Q",magic,0,clrGold); if(t>0){ Print("b32 FLIP buy #",t); } }
+double PosAt32(int per,int sh){ int tf=GateTF; double hh=iHigh(Symbol(),tf,iHighest(Symbol(),tf,MODE_HIGH,per,sh)); double ll=iLow(Symbol(),tf,iLowest(Symbol(),tf,MODE_LOW,per,sh)); if(hh-ll<=0){ return(0.5); } return((iClose(Symbol(),tf,sh)-ll)/(hh-ll)); }
+double AH32(int per,int sh,double a){ return(Accel32(per,sh,a)*(PosAt32(per,sh)-0.5)); }
+double Hurst32(int n){ if(n<20){ n=20; } double r[]; ArrayResize(r,n); double m=0; for(int i=0;i<n;i++){ r[i]=MathLog(iClose(Symbol(),GateTF,i+1)/iClose(Symbol(),GateTF,i+2)); m+=r[i]; } m/=n;
+   double y=0,mx=-1e9,mn=1e9,v=0; for(int k=n-1;k>=0;k--){ y+=r[k]-m; if(y>mx){ mx=y; } if(y<mn){ mn=y; } v+=(r[k]-m)*(r[k]-m); }
+   double sd=MathSqrt(v/(n-1)); if(sd<=0 || mx-mn<=0){ return(0.5); } return(MathLog((mx-mn)/sd)/MathLog(n)); }
+'''
+src=src.replace('#property version   "1.00-claude_b31"','#property version   "1.00-claude_b32"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

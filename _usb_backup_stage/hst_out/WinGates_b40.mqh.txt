@@ -1,0 +1,10 @@
+// WinGates_b40.mqh - GEN4 volatility-regime gate (G4-4). OFF by default.
+// Sell only in a calm regime: ATR(VrFast)/ATR(VrSlow) on VrTF <= VrMax  (2025-26: H1 14/200 <= 0.99).
+extern bool   UseVolRegimeGate=0;
+extern int    VrTF=60;
+extern int    VrFast=14;
+extern int    VrSlow=200;
+extern double VrMax=0.99;
+bool Gates40(){
+   if(UseVolRegimeGate==1){ double s=iATR(Symbol(),VrTF,VrSlow,1); if(s>0 && iATR(Symbol(),VrTF,VrFast,1)/s>VrMax){ return(false); } }
+   return(true); }

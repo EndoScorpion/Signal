@@ -1,0 +1,64 @@
+B23/B24 RESUME STATE (if remote control is lost, a new session reads this file and continues)
+Last update: 2026-10-11 ~14:05 (PC local time ~10:05)
+
+DONE
+- b23: 2 bugs fixed and copied back (Strong2010b_claude_b23.mq4 + .txt), compiles 0 errors:
+  (1) inline //b23 comment cut off the end of SellRegimeOK (did not compile)
+  (2) SellBEMng stop-level guard was written for a buy (Ask-be) -> BE never fired; now be-Ask
+- Sets (mt4_tester\tester\b23_*.set, every input listed) built by scratchpad mksets.py from b22_thu.set.
+- Scorer: stat_corr\score_b23.py  (pts = net*100 - 9*trades, DD = max DD*100; matches B22_THU.txt exactly)
+- Batch runner: run_b23.ps1 -Jobs "set:period[:spread],..." [-Expert ...]  (skips reports that exist -> rerun same list to resume)
+- 2017 tuning (pts): base 12426 (= b22_thu) | BE100/10 8825 | BE150/10 9261 | BE200/10 11867 | BE200/100 10028 | BE250/150 11976
+  CCI-54.5 2803 (12 sells) | CCI-30 1403 | CCI0 4237 | CCI50 11468 | CCI80 14142 | CCI100 13194 | CCI150 13060
+- Rearm check 2019 (b12 bracket set, UseBracket=1): rearm0 722 sells -3368 pts | rearm1 747 sells -14308 -> rearm now changes trades (fix works), rearm worse.
+- OOS done: cci80, cci100 all 7 periods (see score_b23.py "b23_cci*").
+- b24 built: make_b24.py b23 -> Strong2010b_claude_b24.mq4 (+.txt), compiles 0 errors. Adds SendX/ModifyX (retries, NormalizeDouble, error logs),
+  UseECNSend, UseSellEmaGate(EmaFast/EmaSlow/EmaTF), UseAtrTrail(AtrTF/AtrPeriod/AtrTrailStart/AtrTrailMult). All default off.
+- Other deliverables: EMA_ATR_Scalper_M1.mq4 (standalone reference, 0/0), safe_chunk\ folder (fixed converter/parser/engines, REVIEW.txt),
+  SafeChunkCalculusMQL4 indicator in live Indicators (0/0), CalcProbe EA (0/0).
+
+RUNNING / TODO (in order)
+1. b23 OOS batch: cci150, be200, be250L150 x 2011,2012,2019,2020,2021,2022,2526 + b23_base:2019.  Resume = rerun:
+   powershell -File run_b23.ps1 -Jobs (b23_cci150|b23_be200|b23_be250L150 x periods) ,b23_base:2019
+2. Spread 5 for b23 survivors on 2019/2021/2022/2526.
+3. b24: sets from b24 externs (base = b22_thu + all new off); b24_base 2017 must equal 12426; tune 2017 on best b23 config:
+   EmaGate TF 1/5/15; AtrTrail TF15 Start/Mult 1.0/1.0, 1.5/1.0, 2.0/1.5; survivors -> OOS + spread 5; UseECNSend=1 2019 vs off must match.
+4. CalcProbe on M5 2019.01 (checks indicator values update every bar).
+5. Write B23_RESULTS.txt, B24_RESULTS.txt, append b23 + b24 sections to WIN_LOGIC_LOG.txt; report to Nasif (points, not dollars).
+WIN rule: better than b22_thu in most periods, positive where b22 is, neighbours stable.
+b22_thu ref pts: 2011 -12707 | 2012 1008 | 2017 12426 | 2019 15152 | 2020 5365 | 2021 11528 | 2022 8535 | 2526 4357
+
+UPDATE ~14:12 (Nasif: "test whether anything I sent today helps, in addition to existing win logic")
+- b23 OOS batch STOPPED after cci150_2011 (+ the running cci150_2012). Resume later with the same job list (runner skips done reports).
+- b24 rebuilt with extra gates (UseSessWindow, UseCalcGate, UseZGate, UseVolGate); sets via stat_corr\mksets24.py (17 variants).
+  Running detached: batch24.log (all b24 variants on 2017 + b24_base/b24_ecn 2019).
+- b25 built (make_b25.py from coordinator: SellWin, VolRise, MomGate, SlopeGate, price ZGate, AtrBrackets), 0 errors; sets stat_corr\mksets25.py.
+  Queued detached after b24: batch25.log (10 variants on 2017).
+- Then: survivors -> OOS + spread 5; standalone EMA_ATR_Scalper_M1 2019 (M15 and M1); Gemini SafeChunkEA_MT4_b25 not received on this PC yet.
+- Final: per-idea verdict helps / no effect / hurts; B24_RESULTS.txt, B25_RESULTS.txt, WIN_LOGIC_LOG.txt sections.
+
+UPDATE ~14:16
+- b24_base_2017 = 12426 (exact match). b24_ecn = identical. EMA gate M1 4400 / M5 2688 -> hurts.
+- b25 now also has Nasif's 5 Gemini filters (DailyRange, H4 BB anchor, Sharpness, A/D divergence, Adverse lockout; idea 5 compile bugs fixed).
+  b25 queue (batch25.log) = 20 variants on 2017, starts after batch24 BATCH DONE.
+- Standalone queue (run_standalone.ps1 -> batchsa.log) after batch25: gem25, gem26 v2 (InpThreshAtr 2.5/0.5/0.3, lot 0.01), EMA_ATR M15 + M1, CalcProbe.
+- Gemini sources: hst_out\gemini\ (b26_v1 kept aside).
+
+UPDATE ~14:20 (Nasif: make_b27.py from b25, ideas 1-5 grid, B27_RESULTS.txt)
+- make_b25.py restored to coordinator version (my idea code saved as make_b25_with_ideas.py.bak). b25 + b27 rebuilt, 0 errors.
+- make_b27.py (+.txt) = Nasif's script verbatim. Sets: stat_corr\mksets27.py (14: base + rng 1.0/1.25/1.5, h4bb 1.8/2.0/2.3, sharp .70/.75/.85, addiv, lock 240/720/1440 @150).
+- Queue chain: batch24 -> batch25 (10) -> batch27 (14) -> run_standalone.ps1 (waits batch27.log).
+- After 2017: anything beating b22 (12426) -> OOS 2011,2012,2019,2020,2021,2022,2526 + spread 5 (2019/2021/2022/2526). Write B27_RESULTS.txt.
+
+UPDATE ~15:45 ("do all recommended tests")
+- DONE: b24 (z1 = CANDIDATE: better 6/8 OOS, neighbours 0.75/1.5 better), b25, b27, standalone (all standalone EAs lose), CalcProbe OK.
+- Another process on this PC replaced live b23/b24/b25 at 11:15 -> my new tests use b28..b31 only (built from local b27).
+- Chain (all detached, ALL PASSES DONE markers): batch28 (WPR/chaos) -> batch29 (Nasif make_b29, anchors adapted) -> batch30 (entropy)
+  -> batch31 (frac buy, adaptive WPR) -> batch28b (z1 spread5, rng100/atrb30/addiv OOS on b28) -> batch31b (b23 leftovers cci150/be200/be250L150 OOS on b31).
+- Then: spread 5 for any new survivor; write B27/B29/RESULTS files + WIN_LOGIC_LOG; final report.
+
+UPDATE ~16:10 Claude app was closed and reopened. Chained waiters had cascaded (BUSY skips since the other session added mt4_tester2 + lock in run_tester.ps1). All waiters killed; run_b23.ps1 now retries BUSY; ONE queue: run_master.ps1 -> master.log ('MASTER DONE'). Restart it the same way if needed.
+
+UPDATE ~17:45 z1 = PROVEN (s5 3/4 better, all positive). rng100 strong (7/8 better). atrb30/addiv REJECTED. WPR/chaos/entropy/fractal A,C hurt; DD freeze no effect; frac buy +1.8k in 2017. Queue 2: run_master2.ps1 -> master2.log ('MASTER2 DONE'): rng100 s5, rng neighbours, z+rng combo (OOS+s5), frac buy OOS. MT4 sounds: mt4_tester*\sounds renamed sounds_muted.
+
+RULE 21:35 (Nasif): cost = 8 pts/trade for ALL scoring (stat_corr\score_b23.py COMM=8; --comm=N overrides). Noted in winners\TEST_LOG.txt header. New baselines @8: b22_thu 2017 12,527, 8-period +48,429; ZGate+Range 8-period +75,254 (7/8 better), s5 3/4 better all positive -> verdict unchanged. PC queue (pcq.log) running on b38, scored at 8.

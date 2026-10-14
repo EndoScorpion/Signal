@@ -1,0 +1,73 @@
+WIN_LOGIC_LOG (safe-chunk record; started 2026-10-10)
+Rule: tune on 2017 only; WIN only if net >= 0 unchanged on 2019, 2020, 2021, >=100 trades/yr, survives spread 5-8 and +/-20% neighbours.
+Tester: deposit 10000, lot 0.01, spread 2 unless noted. Report shows NO commission line -> results are before commission (TODO: confirm).
+Tags: SMALL-ACCOUNT OK = works at 0.01 lot; NEEDS DEPOSIT = depends on balance/margin; CURVE-FIT = fails neighbours/OOS.
+
+CANDIDATE
+- b12 SellLadder (3 sell stops at 20/50/100, b7 sell TP/SL/expiry): 2017 +121.71, 2019 +84.56, 2020 +80.12, 2021 +0.46. Profit is all sells. SMALL-ACCOUNT OK. Neighbours (B12_LADDER_NEIGHBOURS.txt): spacing x0.8 and x1.2 positive after 9-pt commission in all 4 years; spread 5 positive all years; spread 8 negative in 2019/2021. -> WIN if live spread <= 5. Buy side still to be restricted.
+- b7 sell-stop side alone: 2019 +116.40, 2021 +36.49 (s2); 2019 +45.59, 2021 -5.61 (s8).
+
+FILTER CANDIDATES (RLOG2_TABLES.txt, sells, 4/4 years positive): rr60 < 0.169, rr15 < 0.163, adx15 < 17.4, cci15 < -54.5, volratio 1.2-1.51. Buys: no positive bucket. Not yet tested as EA filters (next chunk: tune on 2017, check OOS).
+
+b13-b15 (see B13_QUIET.txt, B14_PARK.txt, B15_ALL.txt):
+- b13 quiet gate: big per-sell gain but too few trades; 2020 negative. Not a win.
+- b14 park buys: 2017/2020 better, 2019/2021 worse (hedge sells need a real buy). b15v virtual buy fixes most of that: AC ~ +229/-33/+89/-124 vs base +53/-102/+27/-153. Best whole-EA so far, still negative 2019/2021.
+- b15 news-day block: +100/+420/+2/-225 AC. Fails 2021. Straddle/fade: negligible. Lot sim $2000 1:500 + guard: worse every year (NEEDS DEPOSIT, not useful while buys lose).
+- b15 has chart drawing (fibs, S/R, regime label) and RLOG3 fib-distance logging; fib-vs-win correlation not yet analysed.
+
+b16/b17 (B16_VIRTUAL_CHECKS.txt, B17_INVERSION.txt):
+- b16 exit variants (first profit +2, TP10): no fix for 2019/2021. Keep TP15.
+- b17 inverted ladder (buy stops / buy limits / market buy, both regimes): 2017 AC -77..+69; best two (up regime limits, up regime market) fail 2019 and 2021 (-263/-140, -140/-99). REJECTED.
+- b17 first-leg distance 15 / 25: same as base within a few USD (2017 +238/+223, 2019 -36/-33). Neighbour-stable, no gain.
+- Buys after commission: TP ~10-15 pts barely covers 0.09/0.01 lot commission; buy win rate after commission ~0%. Structural.
+
+LOSERS / RESTRICT
+- Buy side of b7..b12 in every set: -44 to -212 per year. 90%+ win rate, but losers are bigger than winners.
+- b9/b10 wide TP300 (TP rewritten to 10 by original code), b11 wide 300/100: 19-24% win rate, needs ~27.5% -> loses every year.
+- Round-number buy limits: only 3-10% fill; filled ones won 7-18%.
+- b12 Bracket OCO: -190 / +126 / -25 / -213. With regime filter: +147 / +74 / +31 / -96 (2021 fails).
+- b12 Rearm: same as Bracket (re-armed legs never filled).
+- Bracket_b12 standalone morning-range breakout: 2017 +19 -> 2019 -48, 2021 -8. CURVE-FIT.
+
+BUGS FOUND
+- Original OrderMng "tp verify" rewrites buy TP > 8 pts to 10 pts (fixed in b10 via UseWideBuy).
+- Original close-at-first-profit exit closes buys early (skipped in b11 via UseWideBuy).
+- Tester keeps last-used inputs when a .set omits them -> always list every flag.
+
+b18 ladder entry delay (B18_DELAY.txt): 5 s delay AC 17 +235 | 19 -26 | 20 +105 | 21 -71 vs no-delay +229/-33/+89/-124. Better in all 4 years (+6..+53); 15 s and 60 s in 2017 also within -4..+6 of base (stable). Still negative 2019/2021. CANDIDATE refinement, not a PROVEN win.
+
+*** PROVEN (2026-10-10) b20 UseSellBlock=1 (BlockADX=28, BlockHour=2) on b19_off/b18 base (virtual buys, sell ladder): pts after commission 17 +18,536 | 19 +5,845 | 20 +10,954 | 21 +6,995 -- ALL 4 years positive, 3 of 4 better than base (+22,885/-3,267/+8,900/-12,400), trades 100-671/yr, max DD 5,200-21,400 pts (base 2019 ~30,000).
+    Neighbours 2021: ADX24 +12,255 | ADX32 +2,243 | hour1 +213 | hour3 +13,787 -> all positive. SMALL-ACCOUNT OK. From DD diagnosis (BIGLOSS/DD_DIAGNOSIS.txt).
+- b20 counter-hedge (opposite buy at 250/200 pts against): 2017 +17,430, 2019 -13,072 / -20,241; buy-stop mode -4,913. Increases DD. REJECTED.
+- b19 low-reversal buy: weak lead (3/4 yrs +, neighbours flip). EMA cross buy rejected.
+
+b20 robustness (2026-10-10): block beats no-block in all 4 new periods (2011 -29,795 vs -30,571 | 2012 -15,014 vs -29,567 | 2021H1 +2,287 vs -5,757 | 2021H2 +2,153 vs -11,330). Spread 5 positive 4/4 (+17,967/+1,942/+9,409/+11,805). Spread 8: 2019 -5,447, 2021 +9,193.
+!! BUT the whole strategy LOSES heavily in 2011 and 2012 even with the block (-30k / -15k pts, DD 28-38k). The sell-ladder edge is era-dependent (2017-2021 only). Block = PROVEN IMPROVEMENT; strategy as a whole = NOT PROVEN.
+
+STREAK PAUSE (ERA_ANALYSIS.txt): first offline result (+4.8k..+33k all years) used LOOK-AHEAD (results of still-open trades). Closed-only recompute: wr>=0.40/20: 11 -14,836 | 12 -7,108 | 17 +18,526 | 19 -1,167 | 20 +6,698 | 21 +3,941 vs none -29,816/-15,085/+18,526/+5,923/+10,943/+7,070. Better only 2/6 -> REJECTED, b21 not built. Cooldown variant also used entry-order info -> discard. Era features (ATR%, momentum) do not separate bad months. 2011/12 data clean.
+
+LEGS (LEGS.txt): sell stop (SellStopDist 20) and ladder leg 20 open at the SAME price = double position, identical P/L. New untouched periods b20 block: 2022 Jan-Sep -3,622 | 2025-09..2026-09 +12,274. Every component loses in 2011/2012. Drop L100 better 4/6 (worse 2022, 2025-26); drop duplicate L20 better 3/6; drop VH better 3/6. No 5/6 survivor.
+
+b21 London-midday block 11-14 server (B21_SESSION.txt), pts AC vs b20: 2011 -23,957 (b20 -29,795) | 2012 -4,840 (-15,014) | 2017 +12,863 (+18,536) | 2019 +7,892 (+5,845) | 2020 +9,822 (+10,954) | 2021 +4,119 (+6,995) | 2022 -2,250 (-3,596) | 25-26 +14,945 (+12,252). Better 5/8, DD lower in 6/8. Neighbours 10-14 better 2019+2022; 11-13 worse 2019. CANDIDATE pending spread 5. Next: + news-day block 12h combo.
+
+*** b21 London-midday block PROVEN (5/8 better than b20, spread 5 positive 17 +12,010 | 19 +3,176 | 21 +7,692 | 25-26 +13,492). New best = b21 (UseSellBlock 28/2 + SessBlock 11-14).
+- b21 + news 12h block: better 3 of 6 news-covered periods, 2021 turns -2,930. REJECTED. (News date lists only cover 2011-12 and 2017-21.)
+
+*** b22 Thursday block PROVEN (DayBlock=4 on b21): pts AC 2011 -12,707 | 2012 +1,008 | 2017 +12,426 | 2019 +15,152 | 2020 +5,365 | 2021 +11,528 | 2022 +8,535 | 25-26 +4,357 -> positive 7/8, better than b21 5/8. Spread 5: 19 +12,736 | 21 +13,526 | 22 +8,249 | 25-26 +2,903. Placebo Tuesday block worse than b21 in 3/4 -> Thursday effect specific. NEW BEST = b22. Watch: 2020 only 76 trades; 25-26 down vs b21.
+Stopping this loop: entry volume falling (76-101 trades in 2017/2020), further day/hour cuts would overfit.
+
+b23-b31 (2026-10-11, Claude on PC; pts after 9-pt commission, 0.01 lot, vs b22_thu):
+- b23 fixes: compile error (inline comment), SellBE stop-level check written for buys (never fired). BE 100-250: all worse 2017. CCI gate 80/100/150: mixed OOS (80: better 5/8, worse 20/21/2526). Rearm fix works (trades differ) but rearm worse (-14,308 vs -3,368, 2019 bracket).
+- b24 ECN two-step + retries: identical results (safe for live). EMA9/21 gate, ATR trail, session window, calculus vel/acc, volume-rise: all HURT.
+*** PROVEN b24 multivariate z-score gate ZMax 1.0 (0.7 z(close) + 0.3 z(volume), 20 M15 bars): s2 better 6/8 (8-period +57,788 vs +45,664),
+    s5 19 +14,820 | 21 +14,932 | 22 +9,001 | 25-26 +641 (all positive, 3/4 better). Neighbours 0.75 / 1.5 better in 2017. NEW BEST = b22 + ZGate.
+- b27 (Nasif/Gemini ideas): daily range 1.0 x D1 ATR = CANDIDATE (better 7/8, total +61,897; 1.25/1.5 no effect) -> s5 + neighbours pending.
+  H4 BB anchor, sharpness, adverse lockout: hurt. A/D divergence: worse 7/8 OOS -> REJECTED.
+- b25 ATR brackets x3: 2017 +20,193 but 2011 -103,149 -> REJECTED. Momentum/slope gates hurt.
+- b28-b30 Williams %R, Alligator, AO, AC, Choppiness, entropy, b29 fractal paradigms A/C: all hurt or block nearly all trades. Daily DD freeze: no effect at 0.01 lot.
+- b31 fractal breakout BUY (own magic): 2017 +14,272..+14,341 vs +12,426 (first buy entry that adds points) -> OOS pending. Adaptive WPR: never triggers.
+- Standalone EAs 2019 (EMA_ATR scalper, Gemini b25/b26): all lose (-23,888 to -347,028) except Gemini b26 2.5xATR +138 on 25 trades.
+*** PROVEN (2026-10-11 evening) Z-gate (ZMax 1.0) + Daily range filter (1.0 x D1 ATR5) on b22_thu: s2 11 -5,387 | 12 +6,141 | 17 +18,120 | 19 +19,691 | 20 +6,009 | 21 +13,113 | 22 +7,142 | 25-26 +8,097
+    = +72,926 vs b22 +45,664, better 7/8. s5 19 +17,310 | 21 +15,430 | 22 +7,172 | 25-26 +7,596 (all positive, 3/4 better). NEW BEST. Set: winners\WIN_GEN1_ZGate_DailyRange_b31.set.
+- Daily range 1.0 alone also PROVEN (better 7/8, s5 all positive 3/4 better). Frac buy REJECTED OOS (worse 6/7).
+- GEN2 mutations (corrected run): no mutation beats the parent; neighbours stable (Z 0.8-1.5, range 0.8-1.0). ChaosER/AHRate crosses worse. Stop per rule.

@@ -1,0 +1,21 @@
+=== journal_2019_b4_trail.log: 119 orders
+  buy original         119 trades  win%  91.6  avg    -8.2  total     -977
+  ALL BUYS             119 trades  win%  91.6  avg    -8.2  total     -977
+  EVERYTHING           119 trades  win%  91.6  avg    -8.2  total     -977
+  exits: buy original/close 105, buy original/stop loss 12, buy original/take profit 2
+=== journal_2019_b5_sells.log: 1860 orders
+  buy flat(4)          632 trades  win%  96.2  avg   -10.2  total    -6469
+  buy original         176 trades  win%  94.9  avg   -14.3  total    -2512
+  hedge sell(8)        239 trades  win%  54.8  avg    19.9  total     4749
+  sell stop(7)         594 trades  win%  53.7  avg    13.2  total     7854   (+212 expired unfilled)
+  ALL BUYS             808 trades  win%  95.9  avg   -11.1  total    -8981
+  ALL SELLS            833 trades  win%  54.0  avg    15.1  total    12603
+  EVERYTHING          1641 trades  win%  74.6  avg     2.2  total     3622
+  sells by month: 2019-01 +132 (52), 2019-02 -285 (65), 2019-03 -10209 (101), 2019-04 +4788 (68), 2019-05 +6408 (88), 2019-06 -5157 (73), 2019-07 +10170 (70), 2019-08 +14298 (78), 2019-09 -2922 (58), 2019-10 +225 (75), 2019-11 +3642 (62), 2019-12 -8487 (43)
+  exits: buy flat(4)/stop loss 24, buy flat(4)/take profit 608, buy original/close 6, buy original/stop loss 9, buy original/take profit 161, hedge sell(8)/stop loss 108, hedge sell(8)/take profit 131, sell stop(7)/expired 212, sell stop(7)/stop loss 275, sell stop(7)/take profit 319
+=== journal_2019_b1.log: 807 orders
+  buy flat(4)          632 trades  win%  96.2  avg   -10.2  total    -6469
+  buy original         174 trades  win%  94.8  avg   -14.4  total    -2514
+  ALL BUYS             806 trades  win%  95.9  avg   -11.1  total    -8983
+  EVERYTHING           806 trades  win%  95.9  avg   -11.1  total    -8983
+  exits: buy flat(4)/stop loss 24, buy flat(4)/take profit 608, buy original/close 5, buy original/stop loss 9, buy original/take profit 160

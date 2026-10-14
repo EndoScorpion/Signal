@@ -1,0 +1,17 @@
+b17_d15_2017 net=253.61 | buy 0 | sell 177, 75.1%, avg 1.43, tot 253.53 | EA AC=237.68
+b17_d15_2019 net=54.16 | buy 0 | sell 1007, 52.3%, avg 0.05, tot 55.24 | EA AC=-36.47
+b17_d25_2017 net=238.83 | buy 0 | sell 174, 74.1%, avg 1.37, tot 238.76 | EA AC=223.17
+b17_d25_2019 net=52.70 | buy 0 | sell 953, 52.4%, avg 0.06, tot 53.67 | EA AC=-33.07
+b17_inv1dn_2017 net=-63.53 | buy 81, 17.3%, avg -2.09, tot -169.28 | sell 67, 77.6%, avg 1.58, tot 105.88 | EA AC=-76.85
+b17_inv1up_2017 net=33.06 | buy 596, 49.8%, avg -0.12, tot -72.45 | sell 67, 77.6%, avg 1.58, tot 105.88 | EA AC=-26.61
+b17_inv2dn_2017 net=-58.68 | buy 109, 26.6%, avg -1.51, tot -164.45 | sell 67, 77.6%, avg 1.58, tot 105.88 | EA AC=-74.52
+b17_inv2up_2017 net=85.48 | buy 587, 51.3%, avg -0.03, tot -20 | sell 67, 77.6%, avg 1.58, tot 105.88 | EA AC=26.62
+b17_inv2up_2019 net=-197.64 | buy 290, 36.9%, avg -0.97, tot -282.42 | sell 439, 54.7%, avg 0.2, tot 85.62 | EA AC=-263.25
+b17_inv2up_2020 net=61.97 | buy 452, 53.8%, avg 0.04, tot 17.86 | sell 64, 64.1%, avg 0.69, tot 44.44 | EA AC=15.53
+b17_inv2up_2021 net=-80.64 | buy 266, 48.1%, avg -0.25, tot -66.26 | sell 395, 50.6%, avg -0.03, tot -13.68 | EA AC=-140.13
+b17_inv3dn_2017 net=13.40 | buy 51, 21.6%, avg -1.81, tot -92.44 | sell 67, 77.6%, avg 1.58, tot 105.88 | EA AC=2.78
+b17_inv3up_2017 net=104.12 | buy 321, 51.7%, avg 0, tot -1.56 | sell 67, 77.6%, avg 1.58, tot 105.88 | EA AC=69.2
+b17_inv3up_2019 net=-79.66 | buy 227, 41%, avg -0.72, tot -164.48 | sell 439, 54.7%, avg 0.2, tot 85.62 | EA AC=-139.6
+b17_inv3up_2020 net=73.62 | buy 277, 54.9%, avg 0.11, tot 29.37 | sell 64, 64.1%, avg 0.69, tot 44.44 | EA AC=42.93
+b17_inv3up_2021 net=-49.57 | buy 155, 48.4%, avg -0.23, tot -35.28 | sell 395, 50.6%, avg -0.03, tot -13.68 | EA AC=-99.07
+b17_sane_2019 net=55.98 | buy 0 | sell 985, 52.4%, avg 0.06, tot 57.04 | EA AC=-32.67

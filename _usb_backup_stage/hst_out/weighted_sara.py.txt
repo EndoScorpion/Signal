@@ -1,0 +1,63 @@
+# Weighted SARA variants: w_s*slope + w_a*accel + w_r*rate-of-accel, divided by PRV / RV / range / stoch / nothing, plus sign flags
+# (RA>0, accel>0, all three positive). Buys: from the EA's own RLOG lines (M1/M5/M15/H1, pd 2/5/10/15, last closed candle).
+# Sells (stops + hedges): history features at fill (M5/M15/H1). Keeper rule: same sign of rho in 2017, 2019 and 2020 and above shuffle.
+# usage: python3 weighted_sara.py journal_2017_b6.log journal_2019_b6_rlog.log journal_2020_b6.log
+import sys, io, runpy, contextlib, datetime as D
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO, ratio_tables as RT
+LOGS = list(sys.argv[1:])  # rlog_tables overwrites sys.argv
+W = [(1, 1, 1), (2, 1, 1), (1, 2, 1), (1, 1, 2), (3, 2, 1), (1, 2, 3), (1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (0, 1, 1), (1, 0, 1)]
+def variants(slp, ac, ra, rng, vol, sto, pre):
+    d = {}; rv = rng + vol / 10.0; prv = rv + sto / 10.0
+    for ws, wa, wr in W:
+        num = ws * slp + wa * ac + wr * ra; tag = '%s_S%dA%dR%d' % (pre, ws, wa, wr)
+        d[tag] = num; d[tag + '_PRV'] = RT.sdiv(num, prv); d[tag + '_RV'] = RT.sdiv(num, rv); d[tag + '_rng'] = RT.sdiv(num, rng); d[tag + '_sto'] = RT.sdiv(num, sto)
+    d[pre + '_RApos'] = (ra > 0).astype(float); d[pre + '_ACpos'] = (ac > 0).astype(float); d[pre + '_npos3'] = (slp > 0).astype(float) + (ac > 0).astype(float) + (ra > 0).astype(float)
+    d[pre + '_RApos_ACpos'] = ((ra > 0) & (ac > 0)).astype(float)
+    return d
+sp = lambda x, y: RT.spearman(x, y)[0] if isinstance(RT.spearman(x, y), tuple) else RT.spearman(x, y)
+def rlog_buys(log):
+    sys.argv = ['rlog_tables.py', log]
+    with contextlib.redirect_stdout(io.StringIO()): g = runpy.run_path('/mnt/project-files/stat_corr/rlog_tables.py')
+    C, NET = g['COLS'], g['NET']; d = {}
+    for tf in (1, 5, 15, 60):
+        for pd in (2, 5, 10, 15):
+            p = 'tf%d_p%d_' % (tf, pd); d.update(variants(C[p + 'slp_sh1'], C[p + 'ac_sh1'], C[p + 'RA_sh1'], C[p + 'rng_sh1'], C[p + 'vol_sh1'], C[p + 'sto_sh1'], 'tf%d_p%d' % (tf, pd)))
+    return d, NET, g['qtable']
+HST = {'M5': ('/mnt/project-files/hst/EURUSD5.hst', 300), 'M15': ('/mnt/project-files/hst/EURUSD15.hst', 900), 'H1': ('/mnt/project-files/hst/EURUSD60.hst', 3600)}
+FEAT = {k: (lambda a: (a['t'], RT.features(a), a['v'].astype(float)))(RT.read_hst(path)) for k, (path, _) in HST.items()}
+def hist_sells(log):
+    orders = EO.parse(log); sells = [o for o in orders.values() if o['kind'] != 'buy' and o.get('filled') and 'net' in o]
+    T0 = np.array([o.get('t_fill', o['t_open']).replace(tzinfo=D.timezone.utc).timestamp() for o in sells]); NET = np.array([o['net'] for o in sells]); d = {}
+    for tf, (path, sec) in HST.items():
+        T, F, V = FEAT[tf]; idx = np.clip(np.searchsorted(T, T0 - sec, side='right') - 1, 70, len(T) - 1)
+        for pd in (2, 5, 10, 15):
+            k = 'p%d_' % pd; d.update(variants(F[k + 'slp'][idx], F[k + 'ac'][idx], F[k + 'RA'][idx], F[k + 'rng'][idx], V[idx], F[k + 'sto'][idx], '%s_p%d' % (tf, pd)))
+    return d, NET
+def minrho(r): return min(abs(x) for x in r) if len(set(np.sign(r))) == 1 and all(np.isfinite(r)) else 0.0
+out = []
+rng_ = np.random.default_rng(2)
+for side in ('BUYS (EA ratio log)', 'SELLS (history at fill)'):
+    years = []
+    for log in LOGS:
+        if side.startswith('BUY'): d, net, qtable = rlog_buys(log)
+        else: d, net = hist_sells(log)
+        years.append((d, net))
+    names = list(years[0][0].keys())
+    real = {k: [sp(d[k], n) for d, n in years] for k in names}
+    ctrl = [max(minrho([sp(d[k], rng_.permutation(n)) for d, n in years]) for k in names) for _ in range(3)]
+    keep = sorted(names, key=lambda k: -minrho(real[k]))
+    out.append('=== %s: %d weighted-SARA variants, years %s, trades %s' % (side, len(names), [l.split('_')[1] for l in LOGS], [len(n) for _, n in years]))
+    out.append('Shuffled-net control best min|rho|: %s.  Consistent variants > 0.08: %d, > 0.10: %d' % (', '.join('%.3f' % c for c in ctrl), sum(minrho(real[k]) > 0.08 for k in names), sum(minrho(real[k]) > 0.10 for k in names)))
+    D_all = {k: np.concatenate([d[k] for d, _ in years]) for k in names}; N_all = np.concatenate([n for _, n in years])
+    out.append('TOP 15 (min|rho| over years, rho per year, pooled quintiles n / win% / avg net):')
+    for k in keep[:15]:
+        out.append('%-28s %.3f  %s' % (k, minrho(real[k]), ' '.join('%+.3f' % r for r in real[k]))); out.append('      ' + qtable(D_all[k], N_all))
+    out.append('POSITIVE RATE-OF-ACCEL flag (RA>0 vs RA<=0), avg net per year, by tf/pd:')
+    for k in [n for n in names if n.endswith('_RApos')]:
+        cells = []
+        for d, n in years:
+            m = d[k] > 0; cells.append('%+6.1f(%d) vs %+6.1f(%d)' % (n[m].mean() if m.any() else 0, m.sum(), n[~m].mean() if (~m).any() else 0, (~m).sum()))
+        out.append('  %-10s %s' % (k[:-6], ' | '.join(cells)))
+    out.append('')
+print('\n'.join(out))

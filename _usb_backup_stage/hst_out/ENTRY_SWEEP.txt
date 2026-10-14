@@ -1,0 +1,109 @@
+ENTRY SWEEP: 1092 rule x exit combinations on M5/M15/H1. Costs 9 commission + 2 spread. Years 2011, 2012, 2019, 2021.
+HOLDS = avg net > 0 and n >= 30 in all four years. Sorted by the WORST year.
+tf   rule                                                             TP/SL holds  | 2011 n/avg/win% | 2012 n/avg/win% | 2019 n/avg/win% | 2021 n/avg/win%
+H1   mom sell: EMA5 slope<0 for 3 bars & stoch5<20                  300/300        |  338   -0.1  51 |  366   -0.8  51 |  371    6.4  53 |  372    2.3  52
+H1   mom sell: EMA50 slope<0 for 3 bars & stoch14<10                300/300        |  185   -4.1  51 |  179    6.1  53 |  223   48.8  60 |  231   10.5  53
+M15  mom sell: EMA50 slope<0 for 3 bars & stoch14<20                300/300        | 1236    4.6  52 | 1269   11.1  53 | 1384   26.5  56 | 1414   -5.2  51
+H1   mom sell: EMA5 slope<0 for 3 bars & stoch14<10                 300/300        |  207   -4.7  51 |  209    6.8  53 |  228    4.2  52 |  257   -5.5  51
+H1   mom sell: EMA20 slope<0 for 3 bars & stoch14<10                300/300        |  220   -6.3  50 |  201   22.3  55 |  250   24.6  56 |  261   -3.3  51
+H1   mom sell: EMA50 slope<0 for 3 bars & stoch5<20                 300/300        |  286   -6.9  50 |  304   16.7  54 |  328   55.0  61 |  344   -2.0  51
+H1   mom sell: EMA10 slope<0 for 3 bars & stoch5<20                 300/300        |  335   -4.5  51 |  343   21.6  55 |  359   16.9  54 |  368   -7.4  50
+M15  mom sell: EMA50 slope<0 for 3 bars & stoch5<10                 300/300        |  742   -2.5  51 |  724    0.1  52 |  930   25.2  56 |  943   -7.4  50
+M15  mom sell: EMA50 slope<0 for 3 bars & stoch5<20                 100/300        | 1201   -8.9  75 | 1194   -6.5  76 | 1372   -5.8  76 | 1363   -7.0  75
+H1   mom sell: EMA10 slope<0 for 3 bars & stoch14<10                300/300        |  226   -9.0  50 |  218   18.5  55 |  253   13.5  54 |  270   -9.0  50
+M5   mom sell: EMA50 slope<0 for 3 bars & stoch5<10                 300/300        | 2436   -9.2  50 | 2448   -9.7  50 | 2878   16.2  54 | 2926    2.3  52
+M15  flat buy: |EMA20 slopeavg6|<1, low vol & range, green close     30/100        |  152   -5.5  80 |  248   -9.9  76 |  401   -9.5  77 |  277   -8.1  78
+H1   flat sell: |EMA50 slopeavg6|<3, low vol & range, red close      10/290        |   39   -6.7  97 |   54  -10.1  96 |  125   -8.6  97 |  100   -8.0  97
+M15  mom sell: EMA20 slope<0 for 3 bars & stoch5<20                 300/300        | 1284   -5.7  51 | 1306   -3.0  51 | 1413   18.4  55 | 1400  -10.3  50
+M15  mom sell: EMA50 slope<0 for 3 bars & stoch14<10                300/300        |  774   -5.1  51 |  760   12.3  54 |  874   18.5  55 |  941  -10.6  50
+H1   mom sell: EMA5 slope<0 for 3 bars & stoch5<20                  100/300        |  338  -10.8  75 |  366   -8.5  75 |  371   -7.1  75 |  372   -0.4  77
+H1   mom sell: EMA50 slope<0 for 3 bars & stoch14<20                300/300        |  338  -10.8  50 |  350  -10.7  50 |  362   44.0  59 |  363   -8.2  50
+M15  mom sell: EMA50 slope<0 for 3 bars & stoch14<20                100/300        | 1236   -7.4  75 | 1269  -10.8  75 | 1384   -0.3  77 | 1414   -8.9  75
+M5   flat buy: |EMA20 slopeavg6|<3, low vol & range, green close     30/100        | 1991  -10.2  76 | 3034   -9.3  77 | 3631  -11.0  75 | 2839  -10.5  76
+M15  control sell: every 40th bar                                   300/300        |  579    0.8  52 |  602  -11.0  50 |  608   19.6  55 |  571   17.8  54
+M15  flat sell: |EMA50 slopeavg6|<1, low vol & range, red close      10/290        |  138   -9.9  96 |  220  -11.3  96 |  425   -5.4  98 |  305   -6.9  97
+M5   flat buy: |EMA50 slopeavg6|<3, low vol & range, green close     30/100        | 2193   -9.9  76 | 3271   -8.6  77 | 3869  -10.8  76 | 3076  -11.3  75
+M5   flat buy: |EMA10 slopeavg6|<3, low vol & range, green close     30/100        | 2056  -11.4  75 | 3065   -9.2  77 | 3595  -10.8  76 | 2864  -11.1  75
+M15  run sell: 3 red candles                                        300/300        | 1393   -7.5  50 | 1381  -11.4  50 | 1398   12.0  54 | 1370   10.7  53
+M5   flat buy: |EMA20 slopeavg6|<1, low vol & range, green close     30/100        |  838   -9.7  76 | 1370   -8.9  77 | 1809  -11.4  75 | 1335   -9.4  77
+M15  flat buy: |EMA10 slopeavg6|<1, low vol & range, green close     30/100        |  194  -10.5  76 |  275   -9.3  77 |  444  -11.5  75 |  344  -11.1  75
+M15  mom sell: EMA20 slope<0 for 3 bars & stoch14<20                300/300        | 1422  -11.5  50 | 1463   -5.5  51 | 1565   20.3  55 | 1567   -6.1  50
+H1   mom sell: EMA10 slope<0 for 3 bars & stoch5<20                 100/300        |  335  -11.7  74 |  343    5.9  79 |  359   -5.9  76 |  368   -6.8  76
+M5   flat buy: |EMA5 slopeavg6|<3, low vol & range, green close      50/50         | 1942  -11.5  48 | 2925  -10.8  48 | 3465  -10.9  48 | 2780  -11.7  47
+H1   flat buy: |EMA10 slopeavg6|<1, low vol & range, green close     10/290        |   30   -9.0  97 |   36   -7.3  97 |   58   -4.2  98 |   47  -11.8  96
+M15  flat buy: |EMA10 slopeavg6|<1, low vol & range, green close     10/290        |  194  -11.4  96 |  275   -9.9  96 |  444  -11.8  96 |  344  -11.2  96
+M5   flat buy: |EMA10 slopeavg6|<3, low vol & range, green close     50/50         | 2056  -11.0  48 | 3065   -9.9  49 | 3595  -11.3  48 | 2864  -11.9  47
+M5   flat buy: |EMA20 slopeavg6|<3, low vol & range, green close     50/50         | 1991   -9.7  49 | 3034   -9.6  49 | 3631  -11.7  47 | 2839  -11.9  47
+M15  flat buy: |EMA10 slopeavg6|<1, low vol & range, green close     50/50         |  194  -10.0  49 |  275   -8.1  51 |  444  -10.4  49 |  344  -11.9  47
+M15  run sell: 3 red candles                                        200/200        | 1393  -11.7  49 | 1381  -12.0  49 | 1398   -5.9  51 | 1370   -1.1  52
+M5   flat buy: |EMA5 slopeavg6|<1, low vol & range, green close      30/100        |  790  -12.1  75 | 1319   -7.8  78 | 1784  -10.6  76 | 1399  -11.7  75
+M5   flat buy: |EMA50 slopeavg6|<3, low vol & range, green close     50/50         | 2193   -9.3  50 | 3271   -9.4  50 | 3869  -11.2  48 | 3076  -12.2  47
+M5   flat buy: |EMA50 slopeavg6|<1, low vol & range, green close     30/100        |  902   -7.2  78 | 1416   -7.5  78 | 2076  -12.2  74 | 1465  -10.9  75
+M5   mom sell: EMA50 slope<0 for 3 bars & stoch14<20                300/300        | 3874  -12.3  49 | 3935   -5.1  51 | 4213   13.9  54 | 4172    1.5  52
+M5   flat buy: |EMA20 slopeavg6|<1, low vol & range, green close     10/290        |  838  -11.5  96 | 1370  -12.4  96 | 1809   -9.8  96 | 1335  -12.3  96
+M5   mom sell: EMA20 slope<0 for 3 bars & stoch14<20                300/300        | 4473  -12.4  49 | 4546  -10.5  50 | 4854   14.9  54 | 4701    3.1  52
+M5   mom sell: EMA50 slope<0 for 3 bars & stoch14<10                300/300        | 2505  -12.5  49 | 2415  -10.6  50 | 2855   16.3  54 | 2914    0.1  52
+M5   flat buy: |EMA50 slopeavg6|<3, low vol & range, green close     10/290        | 2193  -10.4  96 | 3271  -12.2  96 | 3869   -9.9  96 | 3076  -12.6  95
+M15  mom sell: EMA10 slope<0 for 3 bars & stoch14<20                100/300        | 1504  -12.2  74 | 1518  -12.6  74 | 1590   -2.8  77 | 1611  -11.5  74
+M5   flat buy: |EMA10 slopeavg6|<1, low vol & range, green close     50/50         |  889  -11.2  48 | 1429  -11.5  48 | 1919  -12.2  47 | 1426  -12.6  46
+M5   flat sell: |EMA20 slopeavg6|<1, low vol & range, red close      10/290        |  879  -12.7  95 | 1303  -12.6  95 | 1909   -9.7  96 | 1368   -6.5  98
+M5   flat buy: |EMA50 slopeavg6|<1, low vol & range, green close     50/50         |  902   -5.7  53 | 1416   -7.0  52 | 2076  -12.2  47 | 1465  -12.7  46
+M15  mom sell: EMA50 slope<0 for 3 bars & stoch14<20                200/200        | 1236   -6.7  51 | 1269    1.6  53 | 1384  -12.5  49 | 1414  -12.7  49
+M15  mom sell: EMA10 slope<0 for 3 bars & stoch14<20                200/200        | 1504  -12.7  49 | 1518   -2.1  52 | 1590  -12.0  49 | 1611  -10.9  50
+M5   control buy: every 40th bar                                     50/50         | 1736  -12.2  47 | 1806  -11.0  48 | 1826  -12.7  46 | 1706  -12.7  46
+M5   mom sell: EMA50 slope<0 for 3 bars & stoch5<20                 300/300        | 3761  -12.7  49 | 3853   -9.4  50 | 4106   17.2  54 | 4030    3.2  52
+M5   flat buy: |EMA5 slopeavg6|<1, low vol & range, green close      50/50         |  790  -10.0  49 | 1319  -12.4  47 | 1784  -10.9  48 | 1399  -12.8  46
+M5   control sell: every 40th bar                                   100/100        | 1736  -11.2  49 | 1806  -12.8  48 | 1826  -10.0  50 | 1706   -6.0  52
+M15  mom sell: EMA10 slope<0 for 3 bars & stoch5<20                 300/300        | 1351  -12.8  49 | 1357   -6.1  50 | 1485   15.8  54 | 1456   -4.9  51
+M5   flat buy: |EMA5 slopeavg6|<1, low vol & range, green close     100/100        |  790  -10.5  49 | 1319  -10.0  50 | 1784  -12.8  48 | 1399   -9.4  50
+M15  flat buy: |EMA10 slopeavg6|<3, low vol & range, green close     30/100        |  458  -11.1  75 |  665   -9.1  77 |  952  -10.4  76 |  761  -12.8  74
+M5   mom sell: EMA10 slope<0 for 3 bars & stoch14<20                300/300        | 4609  -10.9  50 | 4715  -12.9  49 | 4955   16.1  54 | 4841    4.8  52
+M5   control buy: every 40th bar                                     30/100        | 1736  -11.7  75 | 1806  -10.2  76 | 1826  -11.1  75 | 1706  -12.9  74
+M5   flat sell: |EMA50 slopeavg6|<3, low vol & range, red close      10/290        | 2299  -10.9  96 | 3275  -13.0  95 | 3960   -9.4  97 | 3146   -8.7  97
+M15  flat buy: |EMA20 slopeavg6|<3, low vol & range, green close     50/50         |  368  -13.1  46 |  581  -11.8  47 |  903  -10.7  48 |  681  -12.6  46
+
+Rules that hold in all four years: 0 of 1092
+
+CONTROLS (random-bar entries) by exit, for comparison:
+M15  control sell: every 40th bar   300/300 |  579    0.8  52 |  602  -11.0  50 |  608   19.6  55 |  571   17.8  54
+M5   control buy: every 40th bar     50/50  | 1736  -12.2  47 | 1806  -11.0  48 | 1826  -12.7  46 | 1706  -12.7  46
+M5   control sell: every 40th bar   100/100 | 1736  -11.2  49 | 1806  -12.8  48 | 1826  -10.0  50 | 1706   -6.0  52
+M5   control buy: every 40th bar     30/100 | 1736  -11.7  75 | 1806  -10.2  76 | 1826  -11.1  75 | 1706  -12.9  74
+M5   control sell: every 40th bar    30/100 | 1736  -13.9  73 | 1806  -11.4  75 | 1826   -8.5  77 | 1706   -8.4  77
+M5   control sell: every 40th bar    50/50  | 1736  -13.9  45 | 1806  -12.3  47 | 1826   -9.5  49 | 1706  -10.1  49
+M15  control sell: every 40th bar    10/290 |  579  -14.5  95 |  602  -13.5  95 |  608  -11.8  96 |  571  -10.6  96
+M15  control sell: every 40th bar   100/300 |  579  -11.2  74 |  602  -14.6  74 |  608    0.2  77 |  571    2.0  78
+M5   control buy: every 40th bar     10/290 | 1736  -13.3  95 | 1806  -12.8  95 | 1826   -9.4  97 | 1706  -14.7  95
+M5   control sell: every 40th bar    10/290 | 1736  -15.1  95 | 1806  -12.5  96 | 1826   -8.4  97 | 1706   -9.2  97
+M5   control buy: every 40th bar    100/100 | 1736  -11.0  49 | 1806   -9.8  50 | 1826  -12.1  48 | 1706  -15.7  47
+M5   control sell: every 40th bar   200/200 | 1736   -6.9  51 | 1806  -15.9  48 | 1826   -2.2  52 | 1706   -3.6  51
+M15  control buy: every 40th bar     10/290 |  579  -16.1  94 |  602  -14.4  95 |  608  -10.8  96 |  571  -15.8  94
+M5   control sell: every 40th bar   300/300 | 1736    0.3  52 | 1806  -16.3  49 | 1826   28.5  56 | 1706   10.0  53
+M15  control sell: every 40th bar   200/200 |  579  -16.9  48 |  602  -13.0  49 |  608   -7.7  50 |  571    9.6  55
+M15  control buy: every 40th bar     50/50  |  579  -17.0  42 |  602  -14.8  44 |  608  -10.8  48 |  571  -15.0  44
+H1   control sell: every 40th bar   200/200 |  145  -18.7  48 |  151  -15.6  48 |  152    1.5  53 |  142   -6.2  51
+M5   control sell: every 40th bar   100/300 | 1736  -11.8  74 | 1806  -19.1  72 | 1826    6.0  79 | 1706    5.0  78
+M15  control buy: every 40th bar     30/100 |  579  -20.1  68 |  602  -15.3  72 |  608  -10.6  76 |  571  -13.4  74
+M15  control sell: every 40th bar    50/50  |  579  -21.5  37 |  602  -14.1  45 |  608  -12.0  47 |  571   -7.9  51
+M5   control buy: every 40th bar    100/300 | 1736  -15.7  73 | 1806  -11.1  74 | 1826  -14.1  74 | 1706  -21.5  72
+M5   control buy: every 40th bar    200/200 | 1736  -15.9  48 | 1806   -5.5  51 | 1826  -21.7  47 | 1706  -19.8  47
+M15  control buy: every 40th bar    100/100 |  579   -5.0  52 |  602   -7.3  51 |  608   -8.7  50 |  571  -22.1  43
+M15  control sell: every 40th bar   100/100 |  579  -22.3  43 |  602  -14.3  47 |  608  -13.9  48 |  571    0.6  55
+M15  control sell: every 40th bar    30/100 |  579  -22.8  66 |  602  -17.9  70 |  608  -10.6  76 |  571   -7.0  78
+H1   control sell: every 40th bar   100/100 |  145  -23.5  43 |  151   -9.7  50 |  152  -12.9  48 |  142  -21.7  44
+H1   control buy: every 40th bar    100/300 |  145   -2.8  77 |  151  -12.3  74 |  152  -24.8  71 |  142   -7.6  75
+M15  control buy: every 40th bar    100/300 |  579    3.3  78 |  602   -9.3  75 |  608  -12.3  74 |  571  -27.4  70
+H1   control sell: every 40th bar    50/50  |  145  -28.0  31 |  151  -19.9  39 |  152  -12.9  46 |  142  -13.9  45
+H1   control buy: every 40th bar    100/100 |  145  -29.0  40 |  151  -18.9  45 |  152  -10.3  49 |  142   -7.6  51
+M15  control buy: every 40th bar    200/200 |  579   -5.2  51 |  602   -9.7  50 |  608  -17.6  48 |  571  -31.8  44
+H1   control sell: every 40th bar   100/300 |  145   -0.0  77 |  151  -33.5  69 |  152    9.4  80 |  142    0.9  77
+H1   control sell: every 40th bar    10/290 |  145  -34.2  88 |  151  -24.8  91 |  152   -8.9  97 |  142  -11.7  96
+H1   control buy: every 40th bar    200/200 |  145  -13.1  49 |  151   -7.7  50 |  152  -35.3  43 |  142  -20.3  47
+H1   control buy: every 40th bar     10/290 |  145  -36.2  88 |  151  -14.9  95 |  152  -10.8  96 |  142  -11.7  96
+H1   control buy: every 40th bar     50/50  |  145  -36.2  23 |  151  -24.6  34 |  152  -16.2  43 |  142   -9.0  50
+H1   control sell: every 40th bar   300/300 |  145  -19.3  48 |  151  -38.8  45 |  152   30.5  57 |  142    3.7  52
+H1   control sell: every 40th bar    30/100 |  145  -42.7  51 |  151  -22.9  66 |  152  -13.2  74 |  142  -21.1  68
+M15  control buy: every 40th bar    300/300 |  579  -26.1  47 |  602   -9.0  50 |  608  -44.5  44 |  571  -41.0  45
+H1   control buy: every 40th bar     30/100 |  145  -48.0  47 |  151  -28.1  62 |  152  -11.5  75 |  142  -14.7  73
+M5   control buy: every 40th bar    300/300 | 1736  -22.1  48 | 1806   -6.7  50 | 1826  -52.0  43 | 1706  -33.3  46
+H1   control buy: every 40th bar    300/300 |  145   -2.8  51 |  151   12.9  54 |  152  -60.3  41 |  142  -30.1  46

@@ -1,0 +1,17 @@
+# One job per line: EA_suffix|Period|From|To|Spread   (lines starting with # are ignored)
+# Add jobs here; run_queue.ps1 runs one per call and skips anything already OK in done.csv.
+# Optional 6th column = initial deposit, e.g. ...|3|5000 (leverage can't be set: tester uses the account's)
+# No EURUSD history Sep 28 2022 - Aug 28 2025: don't queue dates inside that gap.
+b20legs_g1a|M1|2021.03.19|2022.01.01|3
+g2a|M1|2021.03.19|2022.01.01|3
+g2d|M1|2019.01.01|2020.01.01|3
+g2d|M1|2021.03.19|2022.01.01|3
+b20legs_g1a|M15|2012.01.01|2013.01.01|2
+g2a|M15|2012.01.01|2013.01.01|2
+g2b|M1|2019.01.01|2020.01.01|3
+g2b|M1|2021.03.19|2022.01.01|3
+g2c|M1|2019.01.01|2020.01.01|3
+g2c|M1|2021.03.19|2022.01.01|3
+b20legs_g1a|M15|2011.01.01|2012.01.01|2
+g2a|M15|2011.01.01|2012.01.01|2
+# PAUSED (not OOS, no win-rate effect): b20legs_g1a|M1|2019.01.01|2020.01.01|3|5000

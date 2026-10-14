@@ -1,0 +1,11 @@
+=== ChopBracket_h1d 2016 M15 ===
+  Total trades      : 209
+  Win rate          : 37.8%  (79W / 130L)
+  Net PnL           : $    -34.39
+  PF estimate       : 0.630
+  Max closed-DD     : $   36.36  (0.36% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.630  [FAIL]
+  *** FAIL ***
+DONE

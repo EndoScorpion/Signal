@@ -1,0 +1,60 @@
+﻿=== g6a ===
+Compile OK
+RAM gate OK: 1559648 KB free
+  Total trades      : 182
+  Win rate          : 67.6%  (123W / 59L)
+  Net PnL           : $     98.56
+  PF estimate       : 1.462
+  Max closed-DD     : $   33.77  (0.34% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g6b ===
+Compile OK
+RAM gate OK: 1768368 KB free
+  Total trades      : 183
+  Win rate          : 67.8%  (124W / 59L)
+  Net PnL           : $    101.47
+  PF estimate       : 1.476
+  Max closed-DD     : $   33.77  (0.34% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g6c ===
+Compile OK
+RAM gate OK: 1767496 KB free
+  Total trades      : 182
+  Win rate          : 67.6%  (123W / 59L)
+  Net PnL           : $     98.56
+  PF estimate       : 1.462
+  Max closed-DD     : $   33.77  (0.34% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g6d ===
+Compile OK
+RAM gate OK: 1721976 KB free
+  Total trades      : 222
+  Win rate          : 65.8%  (146W / 76L)
+  Net PnL           : $     87.42
+  PF estimate       : 1.311
+  Max closed-DD     : $   75.30  (0.75% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)
+=== g6e ===
+Compile OK
+RAM gate OK: 1723848 KB free
+  Total trades      : 231
+  Win rate          : 65.4%  (151W / 80L)
+  Net PnL           : $     86.56
+  PF estimate       : 1.292
+  Max closed-DD     : $   82.22  (0.82% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+OOS GATE: PASS (exit 0)

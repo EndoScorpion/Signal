@@ -1,0 +1,102 @@
+EXIT REPLAY on 498 EA entries from journal_2011_2012.log (M5 path, 9 commission, 2 spread already in the ask entry)
+
+FIXED EXITS
+  TP  10 SL 290 :   498 trades  win%  87.1  avg   -37.6  total   -18702
+  TP  15 SL 290 :   498 trades  win%  85.9  avg   -36.9  total   -18362
+  TP  20 SL 290 :   498 trades  win%  85.1  avg   -35.1  total   -17462
+  TP  30 SL 290 :   498 trades  win%  81.5  avg   -38.1  total   -18982
+  TP  50 SL 290 :   498 trades  win%  75.3  avg   -43.0  total   -21402
+  TP 100 SL 290 :   498 trades  win%  65.5  avg   -43.7  total   -21762
+  TP  30 SL 100 :   498 trades  win%  16.1  avg   -88.1  total   -43882
+  TP  50 SL  50 :   498 trades  win%   1.4  avg   -57.6  total   -28682
+  TP 100 SL 100 :   498 trades  win%  10.0  avg   -88.9  total   -44282
+  TP 200 SL 200 :   498 trades  win%  37.1  avg   -60.4  total   -30082
+  TP 300 SL 300 :   498 trades  win%  41.6  avg   -59.6  total   -29682
+
+STEPPING TAKE PROFIT (SL 290): start 10, +up after a win, -down after a loss (or reset to start)
+  +1/-1 :   498 trades  win%  63.7  avg   -50.6  total   -25211   TP reached max 146, mean 106.8
+  +1/-5 :   498 trades  win%  82.5  avg   -37.9  total   -18855   TP reached max  59, mean  26.7
+  +1/-reset :   498 trades  win%  85.5  avg   -36.6  total   -18250   TP reached max  50, mean  16.6
+  +5/-5 :   498 trades  win%  53.4  avg   -58.1  total   -28937   TP reached max 270, mean 168.0
+  +5/-reset :   498 trades  win%  81.9  avg   -38.4  total   -19132   TP reached max 100, mean  28.9
+  +10/-10 :   498 trades  win%  52.0  avg   -54.6  total   -27202   TP reached max 390, mean 187.7
+  +2/-1 :   498 trades  win%  51.0  avg   -61.7  total   -30724   TP reached max 276, mean 194.2
+
+TRAILING STOPS (initial SL 290)
+  trail   5 after + 10       :   498 trades  win%  81.9  avg     1.8  total      903
+  trail  10 after + 20       :   498 trades  win%  85.1  avg    -2.0  total     -993
+  trail  15 after + 30       :   498 trades  win%  81.5  avg    -9.2  total    -4563
+  trail  25 after + 50       :   498 trades  win%  75.1  avg   -21.2  total   -10561
+  trail  50 after +100       :   498 trades  win%  65.3  avg   -35.3  total   -17593
+  trail  10 after + 20 TP 100 :   498 trades  win%  85.1  avg   -10.5  total    -5252
+  trail  20 after + 30 TP 200 :   498 trades  win%  81.5  avg   -14.1  total    -7002
+  trail  30 after + 50 TP 300 :   498 trades  win%  75.1  avg   -24.5  total   -12196
+  trail  10 after + 10 TP 50 :   498 trades  win%  75.9  avg   -18.8  total    -9341
+EXIT REPLAY on 174 EA entries from journal_2019_orig.log (M5 path, 9 commission, 2 spread already in the ask entry)
+
+FIXED EXITS
+  TP  10 SL 290 :   174 trades  win%  81.6  avg   -54.2  total    -9426
+  TP  15 SL 290 :   174 trades  win%  78.7  avg   -58.9  total   -10241
+  TP  20 SL 290 :   174 trades  win%  77.6  avg   -58.5  total   -10176
+  TP  30 SL 290 :   174 trades  win%  75.3  avg   -58.1  total   -10106
+  TP  50 SL 290 :   174 trades  win%  71.3  avg   -56.7  total    -9866
+  TP 100 SL 290 :   174 trades  win%  62.6  avg   -54.7  total    -9516
+  TP  30 SL 100 :   174 trades  win%   8.6  avg   -97.8  total   -17016
+  TP  50 SL  50 :   174 trades  win%   1.1  avg   -57.9  total   -10066
+  TP 100 SL 100 :   174 trades  win%   4.6  avg   -99.8  total   -17366
+  TP 200 SL 200 :   174 trades  win%  37.4  avg   -59.6  total   -10366
+  TP 300 SL 300 :   174 trades  win%  37.9  avg   -81.4  total   -14166
+
+STEPPING TAKE PROFIT (SL 290): start 10, +up after a win, -down after a loss (or reset to start)
+  +1/-1 :   174 trades  win%  70.1  avg   -60.2  total   -10478   TP reached max  84, mean  53.3
+  +1/-5 :   174 trades  win%  77.0  avg   -58.6  total   -10188   TP reached max  54, mean  21.8
+  +1/-reset :   174 trades  win%  78.2  avg   -56.2  total    -9780   TP reached max  54, mean  19.1
+  +5/-5 :   174 trades  win%  58.0  avg   -61.5  total   -10696   TP reached max 195, mean 128.0
+  +5/-reset :   174 trades  win%  75.3  avg   -50.2  total    -8741   TP reached max 145, mean  36.6
+  +10/-10 :   174 trades  win%  53.4  avg   -63.4  total   -11026   TP reached max 320, mean 161.4
+  +2/-1 :   174 trades  win%  63.2  avg   -54.6  total    -9503   TP reached max 173, mean 105.7
+
+TRAILING STOPS (initial SL 290)
+  trail   5 after + 10       :   174 trades  win%  72.4  avg    13.1  total     2275
+  trail  10 after + 20       :   174 trades  win%  77.0  avg     3.7  total      642
+  trail  15 after + 30       :   174 trades  win%  75.3  avg    -0.6  total     -112
+  trail  25 after + 50       :   174 trades  win%  71.3  avg   -11.4  total    -1979
+  trail  50 after +100       :   174 trades  win%  62.6  avg   -34.2  total    -5947
+  trail  10 after + 20 TP 100 :   174 trades  win%  77.0  avg   -27.7  total    -4812
+  trail  20 after + 30 TP 200 :   174 trades  win%  75.3  avg   -14.5  total    -2519
+  trail  30 after + 50 TP 300 :   174 trades  win%  71.3  avg   -16.9  total    -2932
+  trail  10 after + 10 TP 50 :   174 trades  win%  67.2  avg   -39.4  total    -6857
+EXIT REPLAY on 633 EA entries from journal_2019_flat.log (M5 path, 9 commission, 2 spread already in the ask entry)
+
+FIXED EXITS
+  TP  10 SL 290 :   633 trades  win%  96.2  avg   -10.4  total    -6567
+  TP  15 SL 290 :   633 trades  win%  94.6  avg   -10.4  total    -6572
+  TP  20 SL 290 :   633 trades  win%  92.3  avg   -13.0  total    -8227
+  TP  30 SL 290 :   633 trades  win%  89.4  avg   -12.9  total    -8147
+  TP  50 SL 290 :   633 trades  win%  83.9  avg   -13.8  total    -8727
+  TP 100 SL 290 :   633 trades  win%  75.4  avg    -5.1  total    -3237
+  TP  30 SL 100 :   633 trades  win%  75.4  avg   -11.0  total    -6987
+  TP  50 SL  50 :   633 trades  win%  50.1  avg    -8.9  total    -5647
+  TP 100 SL 100 :   633 trades  win%  52.0  avg    -5.1  total    -3197
+  TP 200 SL 200 :   633 trades  win%  46.3  avg   -23.8  total   -15097
+  TP 300 SL 300 :   633 trades  win%  45.8  avg   -34.1  total   -21597
+
+STEPPING TAKE PROFIT (SL 290): start 10, +up after a win, -down after a loss (or reset to start)
+  +1/-1 :   633 trades  win%  66.4  avg   -16.6  total   -10518   TP reached max 219, mean 143.3
+  +1/-5 :   633 trades  win%  84.5  avg   -10.9  total    -6928   TP reached max  96, mean  51.5
+  +1/-reset :   633 trades  win%  93.0  avg    -8.5  total    -5387   TP reached max  59, mean  22.3
+  +5/-5 :   633 trades  win%  55.0  avg   -24.2  total   -15312   TP reached max 350, mean 216.6
+  +5/-reset :   633 trades  win%  89.4  avg     1.6  total      983   TP reached max 175, mean  46.8
+  +10/-10 :   633 trades  win%  53.6  avg   -25.4  total   -16047   TP reached max 400, mean 225.1
+  +2/-1 :   633 trades  win%  52.1  avg   -29.8  total   -18859   TP reached max 370, mean 249.0
+
+TRAILING STOPS (initial SL 290)
+  trail   5 after + 10       :   633 trades  win%  65.1  avg    -3.3  total    -2063
+  trail  10 after + 20       :   633 trades  win%  92.1  avg    -6.5  total    -4121
+  trail  15 after + 30       :   633 trades  win%  89.1  avg    -6.4  total    -4054
+  trail  25 after + 50       :   633 trades  win%  83.9  avg    -6.8  total    -4289
+  trail  50 after +100       :   633 trades  win%  75.2  avg    -0.2  total     -144
+  trail  10 after + 20 TP 100 :   633 trades  win%  92.1  avg    -8.8  total    -5557
+  trail  20 after + 30 TP 200 :   633 trades  win%  89.1  avg    -8.9  total    -5632
+  trail  30 after + 50 TP 300 :   633 trades  win%  83.9  avg    -8.4  total    -5347
+  trail  10 after + 10 TP 50 :   633 trades  win%  50.9  avg    -7.1  total    -4520

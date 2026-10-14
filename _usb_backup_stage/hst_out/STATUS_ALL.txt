@@ -1,0 +1,99 @@
+﻿STATUS_ALL - consolidated view of all sessions on this PC. Auto-refreshed every 10 min by sync_status.ps1 (stop: create hst_out\sync.stop).
+Updated: 2026-10-12 12:49:40 local. Cost rule: 8 pts/trade (Nasif 21:35). Lot 0.01. Base = b22_thu.
+
+== CURRENT BEST (PROVEN) ==
+Z-gate (ZMax 1.0) + Daily range filter (1.0 x D1 ATR5) on b22_thu. Set: winners\WIN_GEN1_ZGate_DailyRange_b31.set (EA Strong2010b_claude_b31).
+
+== KEY SCORES (pts after 8-pt cost) ==
+b22_thu_2011           sells  503 win  48.9%  pts  -12204  DD  24689
+b22_thu_2012           sells  491 win  53.4%  pts    1499  DD  20095
+b22_thu_2013           sells  208 win  43.3%  pts  -11962  DD  14275
+b22_thu_2017           sells  101 win  73.3%  pts   12527  DD   4810
+b22_thu_2019           sells  430 win  58.8%  pts   15582  DD  13740
+b22_thu_2020           sells   76 win  65.8%  pts    5441  DD   6168
+b22_thu_2021           sells  438 win  57.3%  pts   11966  DD  19539
+b22_thu_2022           sells  477 win  55.8%  pts    9012  DD  13282
+b22_thu_2526           sells  249 win  55.8%  pts    4606  DD  11069
+b31_zr_2011            sells  399 win  50.9%  pts   -4988  DD  19019
+b31_zr_2012            sells  390 win  55.6%  pts    6531  DD  16316
+b31_zr_2013            sells  185 win  39.5%  pts  -14870  DD  14635
+b31_zr_2014            sells   82 win  42.7%  pts   -5062  DD   8447
+b31_zr_2015            sells  199 win  41.2%  pts  -13724  DD  15933
+b31_zr_2017            sells   83 win  89.2%  pts   18203  DD   3578
+b31_zr_2019            sells  378 win  61.6%  pts   20069  DD  12636
+b31_zr_2020            sells   57 win  71.9%  pts    6066  DD   4733
+b31_zr_2021            sells  416 win  58.2%  pts   13529  DD  18306
+b31_zr_2022            sells  398 win  55.8%  pts    7540  DD  10272
+b31_zr_2526            sells  207 win  59.4%  pts    8304  DD  10688
+b22_thu_s5_2019        sells  413 win  58.1%  pts   13149  DD  13744
+b22_thu_s5_2021        sells  409 win  58.4%  pts   13935  DD  16100
+b22_thu_s5_2022        sells  476 win  55.7%  pts    8725  DD  12946
+b22_thu_s5_2526        sells  246 win  54.9%  pts    3149  DD  12222
+b31_zr_s5_2019         sells  359 win  61.0%  pts   17669  DD  12635
+b31_zr_s5_2021         sells  386 win  59.6%  pts   15816  DD  14867
+b31_zr_s5_2022         sells  396 win  55.8%  pts    7568  DD  10175
+b31_zr_s5_2526         sells  201 win  59.2%  pts    7797  DD   9646
+
+== QUEUES (last line of each log, newest first) ==
+pcq.log        17:50  PCQ STAGE1 DONE
+gen2b.log      17:18  GEN2B STAGE1 DONE
+master2.log    15:30  MASTER2 DONE
+gen2.log       14:18  GEN2 STAGE1 DONE
+master.log     14:13  MASTER DONE
+batch30.log    12:06  12:06:22 BUSY: both tester copies are running
+batch29.log    12:06  12:06:22 BUSY: both tester copies are running
+batch31b.log   12:06  12:06:05 OK b31_cci150_2020 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b31_cci150_2020.htm
+batch28b.log   11:56  11:56:29 OK b28_z1_s5_2019 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b28_z1_s5_2019.htm
+batch31.log    11:48  11:48:00 OK b31_base_2017 in 1.1 min -> C:\Users\endos\Desktop\hst_out\b31_base_2017.htm
+batch27.log    11:05  11:05:21 BATCH DONE
+batch25.log    10:51  10:51:18 BATCH DONE
+Running now: nothing
+
+== LATEST TESTS (newest 25 reports, all sessions) ==
+b22_thu_2013           sells  208 win  43.3%  pts  -11962  DD  14275
+b31_zr_2015            sells  199 win  41.2%  pts  -13724  DD  15933
+b31_zr_2014            sells   82 win  42.7%  pts   -5062  DD   8447
+b31_zr_2013            sells  185 win  39.5%  pts  -14870  DD  14635
+pc_B36_chop_adx_2022   sells  248 win  45.2%  pts  -11119  DD  21367
+pc_B36_chop_adx_2021   sells  194 win  63.9%  pts   13026  DD   8662
+pc_B36_chop_adx_2020   sells   46 win  60.9%  pts    1730  DD   5631
+pc_B36_chop_adx_2012   sells  260 win  55.0%  pts    3361  DD  19603
+pc_B36_chop_adx_2011   sells  313 win  50.5%  pts   -4664  DD  18829
+pc_zr_chop_2526        sells  128 win  84.4%  pts   24281  DD   4972
+pc_zr_chop_2022        sells  235 win  52.8%  pts     200  DD  15014
+pc_zr_chop_2021        sells  222 win  59.5%  pts    8967  DD  12804
+pc_zr_chop_2020        sells   49 win  67.3%  pts    3797  DD   4733
+pc_zr_chop_2019        sells  277 win  62.8%  pts   16632  DD  10439
+pc_zr_chop_2017        sells   62 win  87.1%  pts   12837  DD   3578
+pc_zr_chop_2012        sells  227 win  58.1%  pts    7230  DD  16842
+pc_zr_chop_2011        sells  292 win  53.1%  pts     202  DD  16139
+pc_zr_chopzH1_2526     sells  115 win  90.4%  pts   26000  DD   3240
+pc_zr_chopzH1_2022     sells  206 win  48.5%  pts   -5045  DD  15917
+pc_zr_chopzH1_2021     sells  216 win  58.3%  pts    7270  DD  12804
+pc_zr_chopzH1_2020     sells   44 win  63.6%  pts    2376  DD   4733
+pc_zr_chopzH1_2019     sells  268 win  64.2%  pts   18278  DD   8693
+pc_zr_chopzH1_2017     sells   57 win  86.0%  pts   11419  DD   3018
+pc_zr_chopzH1_2012     sells  214 win  60.3%  pts    9551  DD  16842
+pc_zr_chopzH1_2011     sells  268 win  52.6%  pts    -567  DD  15149
+
+== SHARED FILES ==
+winners\WINNERS_REGISTRY.txt   updated 17:43
+winners\TEST_LOG.txt           updated 12:19
+winners\PC_TEST_QUEUE.txt      updated 16:52
+WIN_LOGIC_LOG.txt              updated 17:19
+B23_B24_RESUME.txt             updated 17:36
+B32_RESULTS.txt                updated 17:19
+
+== WINNERS REGISTRY (tail) ==
+CAND_B41_bbw_range      b38     b41   CAND     Bbw H4/8 + MpRange H1/150/1.26              offline $597 (334/263), 7/9
+CAND_B41_bbw_zH1        b38     b41   CAND     Bbw H4/8 + MpZ H1/75/1.04                   offline $579 (293/286), 9/9 (no gain over bbw alone)
+CAND_B41_ao_chop        b38     b41   CAND     UseAoGate M5 44/300 <=5.03 + chop M5/350    offline $558 (276/282), 6/9
+b41 = b38 + WinGates_b41.mqh (UseBbwGate, UseAoGate; off). make_b41.py. Not compiled. Excludes b39/b40 changes.
+b40 = b41 + WinGates_b40.mqh (UseVolRegimeGate: H1 ATR14/ATR200 <= 0.99; off). make_b40.py. Not compiled. (Numbered b40 but built on b41, so it has every gate.)
+CAND_G4_1_er_dr          b33+  CAND  ER 150/0.074 + daily range 30/0.93                 offline $461 (239/222) 263 sells
+CAND_G4_2_er100_dr       b33+  CAND  ER 100/0.064 + daily range 10/0.82                 offline $468 (252/216) 206 sells
+CAND_G4_3_er_dr_nofri    b33+  CAND  G4-1 + UseNoFriday (calendar part = fit risk)        offline $487 (259/228) 239 sells
+CAND_G4_4_er_volregime   b40   CAND  ER 150/0.074 + VolRegime H1 14/200 <= 0.99          offline $462 (221/241) 210 sells
+WIN_GEN1_ZGate_DailyRange b22   b31   PROVEN   UseZGate=1 ZTF15 ZPeriod20 ZMax1.0 + UseDailyRangeFilter=1 RangeAtrPeriod5 Max1.0   @8pt: 8-period +75,254 vs +48,429, better 7/8; sp5 4/4 positive, 3/4 better  <- CURRENT BEST
+WIN_GEN0_dailyrange      status update: PROVEN (sp5 2019 +17.8k|2021 +14.4k|2022 +6.8k|2526 +10.1k @8pt vs b22 13.1k/13.9k/8.7k/3.1k; neighbours 0.8/0.9 stable)
+GEN2 mutations (g2b_*, corrected b22_thu base): none beat parent; old g2_* runs INVALID (sets missing b22_thu base).

@@ -1,0 +1,89 @@
+# Inverted branches, replayed on the EA's own entries (journal) with M5 history:
+#  A) SELL at the same moment as each buy signal (market sell), several exits
+#  B) SELL LIMIT above / SELL STOP below the buy entry, 2-hour expiry
+#  C) HEDGE: when the buy is X points underwater, open a sell; measure the sell leg alone
+# usage: python3 inverted_branches.py <journal> <EURUSD5.hst>
+# v2: the entry happens mid-bar, so the entry bar's high/low are NOT used (part of them happened before the order).
+#     Only the entry bar's CLOSE counts, then full bars from the next one on. v1 wrongly used the whole entry bar.
+import sys, re, struct, datetime as D
+import numpy as np
+log, hst = sys.argv[1:3]
+b = open(hst, 'rb').read()
+a = np.frombuffer(b[148:148 + ((len(b) - 148) // 60) * 60], dtype=np.dtype([('t', '<i8'), ('o', '<f8'), ('h', '<f8'), ('l', '<f8'), ('c', '<f8'), ('v', '<i8'), ('s', '<i4'), ('rv', '<i8')]))
+T, H, L, C = a['t'], a['h'], a['l'], a['c']
+COMM = 9; SPR = 2e-5
+ents = []
+for ln in open(log, errors='ignore'):
+    m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+.*?open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', ln)
+    if m: ents.append((int(D.datetime.strptime(m.group(1), '%Y.%m.%d %H:%M:%S').replace(tzinfo=D.timezone.utc).timestamp()), float(m.group(3))))
+ents.sort()
+bar = lambda t0: max(0, np.searchsorted(T, t0, side='right') - 1)
+def path(i, maxbars):
+    """hh, ll seen AFTER an entry inside bar i: the entry bar's close, then full bars."""
+    j = min(len(C), i + 1 + maxbars)
+    return np.concatenate([[C[i]], H[i + 1:j]]), np.concatenate([[C[i]], L[i + 1:j]])
+def sell_from(i, entry_bid, tp, sl, maxbars=5000):
+    """sell at bid 'entry_bid' from bar i; exits at ask = price + spread. SL first if both in one bar."""
+    hh, ll = path(i, maxbars); hh = hh + SPR; ll = ll + SPR
+    tpl = entry_bid - tp * 1e-5; sll = entry_bid + sl * 1e-5
+    a_tp = np.argmax(ll <= tpl) if (ll <= tpl).any() else 10 ** 9; a_sl = np.argmax(hh >= sll) if (hh >= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM
+    if a_tp < 10 ** 9: return tp - COMM
+    return (entry_bid - (C[min(len(C) - 1, i + maxbars)] + SPR)) * 1e5 - COMM
+def sell_from_open(i, lvl, tp, sl, maxbars=5000):
+    """pending sell filled inside bar i at lvl: rest of bar i unknown, so same conservative path (close of i, then full bars)."""
+    return sell_from(min(i, len(C) - 1), lvl, tp, sl, maxbars)
+def buy_from(i, entry_ask, tp, sl, maxbars=5000):
+    hh, ll = path(i, maxbars); tpl = entry_ask + tp * 1e-5; sll = entry_ask - sl * 1e-5
+    a_tp = np.argmax(hh >= tpl) if (hh >= tpl).any() else 10 ** 9; a_sl = np.argmax(ll <= sll) if (ll <= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM
+    if a_tp < 10 ** 9: return tp - COMM
+    return (C[min(len(C) - 1, i + maxbars)] - entry_ask) * 1e5 - COMM
+def summ(x):
+    x = np.array(x); return '%4d trades  win%% %5.1f  avg %7.1f  total %8.0f' % (len(x), 100 * (x > 0).mean(), x.mean(), x.sum()) if len(x) else '   0 trades'
+out = ['INVERTED BRANCHES v2 (entry bar: close only; no look-back into the entry bar) replayed on %d EA buy entries from %s (M5 bars, 9 commission, 2 spread)' % (len(ents), log)]
+buy_base = [buy_from(bar(t0), e, 10, 290) for t0, e in ents]
+out.append('reference, the buys as they are (TP10/SL290): ' + summ(buy_base))
+out += ['', 'A) MARKET SELL at the same moment as every buy signal']
+for tp, sl in [(10, 290), (30, 100), (50, 50), (100, 100), (100, 300), (300, 300), (290, 10)]:
+    out.append('  sell TP %3d SL %3d : %s' % (tp, sl, summ([sell_from(bar(t0), e - SPR, tp, sl) for t0, e in ents])))
+out += ['', 'B) PENDING SELLS around the buy signal, 2-hour expiry (24 M5 bars)']
+for kind, dist in [('limit', 20), ('limit', 50), ('limit', 100), ('stop', 20), ('stop', 50), ('stop', 100)]:
+    for tp, sl in [(30, 100), (100, 100), (300, 300)]:
+        res = []
+        for t0, e in ents:
+            i = bar(t0); bid0 = e - SPR; lvl = bid0 + dist * 1e-5 if kind == 'limit' else bid0 - dist * 1e-5
+            hit = None
+            if (kind == 'limit' and C[i] >= lvl) or (kind == 'stop' and C[i] <= lvl): hit = i + 1   # filled by the entry bar's close; order runs from next bar
+            for j in range(i + 1, min(len(C), i + 1 + 24)):
+                if hit is not None: break
+                if kind == 'limit' and H[j] >= lvl: hit = j; break
+                if kind == 'stop' and L[j] <= lvl: hit = j; break
+            if hit is not None: res.append(sell_from_open(hit, lvl, tp, sl))
+        out.append('  sell %-5s %3d pts %s, TP %3d SL %3d : %s   (filled %d of %d)' % (kind, dist, 'above' if kind == 'limit' else 'below', tp, sl, summ(res), len(res), len(ents)))
+out += ['', 'C) HEDGE SELL when the buy is X points underwater (sell leg only; the buy still runs to its own 10/290)']
+for x in (30, 50, 100, 150):
+    for tp, sl in [(50, 100), (100, 100), (240, 100), (100, 300)]:
+        res = []
+        for t0, e in ents:
+            i = bar(t0); lvl = e - x * 1e-5; hit = None
+            if C[i] >= e + 10e-5: continue
+            if C[i] <= lvl: hit = i + 1
+            for j in range(i + 1, min(len(C), i + 5001)):
+                if hit is not None: break
+                if H[j] >= e + 10e-5: break          # buy hit its target first: no hedge
+                if L[j] <= lvl: hit = j; break
+            if hit is not None: res.append(sell_from_open(hit, lvl, tp, sl))
+        out.append('  underwater %3d -> sell TP %3d SL %3d : %s   (triggered %d of %d)' % (x, tp, sl, summ(res), len(res), len(ents)))
+out += ['', 'D) INVERTED EXIT on the buys: trail 5 after +10, no target (what the b4 EA run should reproduce)']
+def trail(i, entry, start, step, sl, maxbars=5000):
+    stop = entry - sl * 1e-5; best = entry
+    hh, ll = path(i, maxbars)
+    for j in range(len(hh)):
+        if ll[j] <= stop: return (stop - entry) * 1e5 - COMM
+        if hh[j] > best: best = hh[j]
+        if best - entry >= start * 1e-5: stop = max(stop, best - step * 1e-5)
+    return (C[min(len(C) - 1, i + maxbars)] - entry) * 1e5 - COMM
+for start, step in [(10, 5), (15, 5), (20, 10)]:
+    out.append('  buys, trail %d after +%d : %s' % (step, start, summ([trail(bar(t0), e, start, step, 290) for t0, e in ents])))
+print('\n'.join(out))

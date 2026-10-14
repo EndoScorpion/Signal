@@ -1,0 +1,66 @@
+=== journal_2017_b6.log: 559 EA buys, 643 filled sells
+A) EA buy entries, wide targets (TP/SL/trail):
+    10/290/  0  all  559  win%  92.5  avg   -21.5  total   -12041 | H1 above SMA1200  456  win%  92.3  avg   -22.0  total   -10044 | below  103  win%  93.2  avg   -19.4  total    -1997
+   100/100/  0  all  559  win%  49.0  avg   -11.0  total    -6131 | H1 above SMA1200  456  win%  52.6  avg    -3.7  total    -1704 | below  103  win%  33.0  avg   -43.0  total    -4427
+   200/200/  0  all  559  win%  51.0  avg    -5.1  total    -2831 | H1 above SMA1200  456  win%  51.1  avg    -4.6  total    -2104 | below  103  win%  50.5  avg    -7.1  total     -727
+   300/300/  0  all  559  win%  53.1  avg     9.8  total     5469 | H1 above SMA1200  456  win%  54.4  avg    17.3  total     7896 | below  103  win%  47.6  avg   -23.6  total    -2427
+   300/100/  0  all  559  win%  30.4  avg    12.6  total     7069 | H1 above SMA1200  456  win%  32.0  avg    19.1  total     8696 | below  103  win%  23.3  avg   -15.8  total    -1627
+   300/300/ 50  all  559  win%  36.1  avg    -0.2  total      -84 | H1 above SMA1200  456  win%  38.2  avg     2.4  total     1083 | below  103  win%  27.2  avg   -11.3  total    -1167
+   300/300/100  all  559  win%  36.1  avg    -5.9  total    -3285 | H1 above SMA1200  456  win%  37.9  avg     0.7  total      306 | below  103  win%  28.2  avg   -34.9  total    -3591
+B) hedge BUY when a sell is X pts under water, buy TP/SL 300/300 (sell leg not counted):
+   X= 30  all  643  win%  54.3  avg    16.7  total    10713 | H1 above SMA1200  512  win%  55.3  avg    22.6  total    11592 | below  131  win%  50.4  avg    -6.7  total     -879
+   X= 60  all  643  win%  55.1  avg    21.3  total    13713 | H1 above SMA1200  514  win%  54.5  avg    17.8  total     9174 | below  129  win%  57.4  avg    35.2  total     4539
+   X=100  all  643  win%  55.1  avg    21.3  total    13713 | H1 above SMA1200  512  win%  53.7  avg    13.3  total     6792 | below  131  win%  60.3  avg    52.8  total     6921
+C) buy STOP at H1 50-bar high + 20 pts, placed each closed H1 bar, 24-bar expiry, one open trade at a time:
+   TP/SL 100/100  all  133  win%  54.1  avg    -0.7  total      -97 | H1 above SMA1200  124  win%  53.2  avg    -2.5  total     -316 | below    9  win%  66.7  avg    24.3  total      219
+   TP/SL 300/300  all   69  win%  52.2  avg     4.0  total      279 | H1 above SMA1200   63  win%  52.4  avg     5.3  total      333 | below    6  win%  50.0  avg    -9.0  total      -54
+   TP/SL 300/100  all   88  win%  33.0  avg    22.8  total     2008 | H1 above SMA1200   82  win%  32.9  avg    22.7  total     1862 | below    6  win%  33.3  avg    24.3  total      146
+D) buy STRADDLE each closed H1 bar: buy stop +h above and buy limit -h below the close, 2-h expiry, first fill wins, TP/SL 300/300:
+   h= 30  all  287  win%  50.9  avg    -3.8  total    -1083 | H1 above SMA1200  226  win%  51.3  avg    -1.0  total     -234 | below   61  win%  49.2  avg   -13.9  total     -849   (stop fills 177, limit fills 110)
+   h= 50  all  297  win%  51.2  avg    -1.9  total     -573 | H1 above SMA1200  229  win%  52.0  avg     2.8  total      639 | below   68  win%  48.5  avg   -17.8  total    -1212   (stop fills 166, limit fills 131)
+   h=100  all  283  win%  53.0  avg     9.0  total     2553 | H1 above SMA1200  217  win%  53.9  avg    14.5  total     3147 | below   66  win%  50.0  avg    -9.0  total     -594   (stop fills 136, limit fills 147)
+
+=== journal_2019_b6_rlog.log: 808 EA buys, 833 filled sells
+A) EA buy entries, wide targets (TP/SL/trail):
+    10/290/  0  all  808  win%  92.6  avg   -21.3  total   -17192 | H1 above SMA1200  298  win%  93.3  avg   -19.1  total    -5702 | below  510  win%  92.2  avg   -22.5  total   -11490
+   100/100/  0  all  808  win%  51.7  avg    -5.5  total    -4472 | H1 above SMA1200  298  win%  57.4  avg     5.8  total     1718 | below  510  win%  48.4  avg   -12.1  total    -6190
+   200/200/  0  all  808  win%  47.5  avg   -18.9  total   -15272 | H1 above SMA1200  298  win%  50.7  avg    -6.3  total    -1882 | below  510  win%  45.7  avg   -26.3  total   -13390
+   300/300/  0  all  808  win%  46.2  avg   -32.0  total   -25872 | H1 above SMA1200  298  win%  48.7  avg   -17.1  total    -5082 | below  510  win%  44.7  avg   -40.8  total   -20790
+   300/100/  0  all  808  win%  23.5  avg   -14.9  total   -12072 | H1 above SMA1200  298  win%  30.2  avg    11.8  total     3518 | below  510  win%  19.6  avg   -30.6  total   -15590
+   300/300/ 50  all  808  win%  32.8  avg    -3.9  total    -3187 | H1 above SMA1200  298  win%  34.6  avg     8.1  total     2408 | below  510  win%  31.8  avg   -11.0  total    -5595
+   300/300/100  all  808  win%  35.3  avg    -9.6  total    -7761 | H1 above SMA1200  298  win%  36.2  avg    -0.5  total     -140 | below  510  win%  34.7  avg   -14.9  total    -7621
+B) hedge BUY when a sell is X pts under water, buy TP/SL 300/300 (sell leg not counted):
+   X= 30  all  823  win%  45.7  avg   -34.9  total   -28707 | H1 above SMA1200  293  win%  48.1  avg   -20.3  total    -5937 | below  530  win%  44.3  avg   -43.0  total   -22770
+   X= 60  all  809  win%  45.4  avg   -36.8  total   -29781 | H1 above SMA1200  284  win%  47.9  avg   -21.7  total    -6156 | below  525  win%  44.0  avg   -45.0  total   -23625
+   X=100  all  791  win%  44.6  avg   -41.2  total   -32619 | H1 above SMA1200  290  win%  47.2  avg   -25.6  total    -7410 | below  501  win%  43.1  avg   -50.3  total   -25209
+C) buy STOP at H1 50-bar high + 20 pts, placed each closed H1 bar, 24-bar expiry, one open trade at a time:
+   TP/SL 100/100  all  170  win%  49.4  avg   -10.2  total    -1730 | H1 above SMA1200   79  win%  51.9  avg    -5.2  total     -411 | below   91  win%  47.3  avg   -14.5  total    -1319
+   TP/SL 300/300  all   87  win%  54.0  avg    15.1  total     1317 | H1 above SMA1200   37  win%  54.1  avg    15.3  total      567 | below   50  win%  54.0  avg    15.0  total      750
+   TP/SL 300/100  all  114  win%  30.7  avg    13.8  total     1574 | H1 above SMA1200   46  win%  34.8  avg    30.1  total     1386 | below   68  win%  27.9  avg     2.8  total      188
+D) buy STRADDLE each closed H1 bar: buy stop +h above and buy limit -h below the close, 2-h expiry, first fill wins, TP/SL 300/300:
+   h= 30  all  322  win%  47.2  avg   -25.8  total    -8298 | H1 above SMA1200  118  win%  39.0  avg   -75.1  total    -8862 | below  204  win%  52.0  avg     2.8  total      564   (stop fills 165, limit fills 157)
+   h= 50  all  308  win%  47.7  avg   -22.6  total    -6972 | H1 above SMA1200  110  win%  40.0  avg   -69.0  total    -7590 | below  198  win%  52.0  avg     3.1  total      618   (stop fills 159, limit fills 149)
+   h=100  all  287  win%  49.5  avg   -12.1  total    -3483 | H1 above SMA1200  109  win%  45.0  avg   -39.3  total    -4281 | below  178  win%  52.2  avg     4.5  total      798   (stop fills 132, limit fills 155)
+
+=== journal_2020_b6.log: 443 EA buys, 474 filled sells
+A) EA buy entries, wide targets (TP/SL/trail):
+    10/290/  0  all  443  win%  91.2  avg   -25.4  total   -11257 | H1 above SMA1200  374  win%  90.4  avg   -27.9  total   -10426 | below   69  win%  95.7  avg   -12.0  total     -831
+   100/100/  0  all  443  win%  51.0  avg    -7.0  total    -3087 | H1 above SMA1200  374  win%  51.3  avg    -6.3  total    -2366 | below   69  win%  49.3  avg   -10.4  total     -721
+   200/200/  0  all  443  win%  49.4  avg   -11.3  total    -4987 | H1 above SMA1200  374  win%  50.8  avg    -5.8  total    -2166 | below   69  win%  42.0  avg   -40.9  total    -2821
+   300/300/  0  all  443  win%  50.6  avg    -5.6  total    -2487 | H1 above SMA1200  374  win%  53.2  avg    10.3  total     3834 | below   69  win%  36.2  avg   -91.6  total    -6321
+   300/100/  0  all  443  win%  26.0  avg    -5.2  total    -2287 | H1 above SMA1200  374  win%  27.8  avg     2.2  total      834 | below   69  win%  15.9  avg   -45.2  total    -3121
+   300/300/ 50  all  443  win%  36.1  avg    -8.8  total    -3888 | H1 above SMA1200  374  win%  37.7  avg    -8.8  total    -3283 | below   69  win%  27.5  avg    -8.8  total     -605
+   300/300/100  all  443  win%  34.5  avg   -13.5  total    -5975 | H1 above SMA1200  374  win%  36.4  avg    -9.5  total    -3564 | below   69  win%  24.6  avg   -34.9  total    -2411
+B) hedge BUY when a sell is X pts under water, buy TP/SL 300/300 (sell leg not counted):
+   X= 30  all  472  win%  52.1  avg     3.7  total     1752 | H1 above SMA1200  402  win%  53.7  avg    13.4  total     5382 | below   70  win%  42.9  avg   -51.9  total    -3630
+   X= 60  all  472  win%  50.4  avg    -6.5  total    -3048 | H1 above SMA1200  401  win%  50.9  avg    -3.8  total    -1509 | below   71  win%  47.9  avg   -21.7  total    -1539
+   X=100  all  472  win%  55.9  avg    26.6  total    12552 | H1 above SMA1200  392  win%  53.1  avg     9.4  total     3672 | below   80  win%  70.0  avg   111.0  total     8880
+C) buy STOP at H1 50-bar high + 20 pts, placed each closed H1 bar, 24-bar expiry, one open trade at a time:
+   TP/SL 100/100  all  169  win%  45.0  avg   -19.1  total    -3221 | H1 above SMA1200  149  win%  45.0  avg   -19.1  total    -2841 | below   20  win%  45.0  avg   -19.0  total     -380
+   TP/SL 300/300  all   84  win%  46.4  avg   -30.4  total    -2556 | H1 above SMA1200   74  win%  47.3  avg   -25.2  total    -1866 | below   10  win%  40.0  avg   -69.0  total     -690
+   TP/SL 300/100  all  118  win%  22.0  avg   -20.9  total    -2462 | H1 above SMA1200  105  win%  21.9  avg   -21.4  total    -2245 | below   13  win%  23.1  avg   -16.7  total     -217
+D) buy STRADDLE each closed H1 bar: buy stop +h above and buy limit -h below the close, 2-h expiry, first fill wins, TP/SL 300/300:
+   h= 30  all  365  win%  54.2  avg    16.5  total     6015 | H1 above SMA1200  312  win%  53.5  avg    12.2  total     3792 | below   53  win%  58.5  avg    41.9  total     2223   (stop fills 201, limit fills 164)
+   h= 50  all  361  win%  53.7  avg    13.4  total     4851 | H1 above SMA1200  312  win%  52.9  avg     8.3  total     2592 | below   49  win%  59.2  avg    46.1  total     2259   (stop fills 191, limit fills 170)
+   h=100  all  336  win%  53.0  avg     8.9  total     2976 | H1 above SMA1200  285  win%  52.3  avg     4.7  total     1335 | below   51  win%  56.9  avg    32.2  total     1641   (stop fills 174, limit fills 162)
+

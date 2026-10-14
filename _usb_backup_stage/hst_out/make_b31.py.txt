@@ -1,0 +1,51 @@
+# make_b31.py - b31 = b30 + (1) buy-side fractal breakout (mirror of Paradigm A) on its own magic number,
+# (2) fixed adaptive %R rule: the %R gate uses period AdaptWprShort after AdaptLosses consecutive losing sells. All OFF by default.
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('extern double EntMax=0.95;\n','''extern double EntMax=0.95;
+// b31 buy fractal breakout: closed M15 bar closes above the last up fractal, acceleration > 0, %R crosses up through FracWprBuy.
+// Separate magic (magic+FracBuyMagicOfs) so the original buy management never touches these orders. One position at a time.
+extern bool   UseFracBuy=0;
+extern bool   FracBuyRegime=1;
+extern double FracWprBuy=-80;
+extern int    FracBuySL=300;
+extern int    FracBuyTP=300;
+extern int    FracBuyMagicOfs=101;
+// b31 adaptive %R: after AdaptLosses consecutive losing sells the %R gate uses AdaptWprShort instead of WprPeriod
+extern bool   UseAdaptWpr=0;
+extern int    AdaptLosses=3;
+extern int    AdaptWprShort=7;
+''')
+rep('iWPR(Symbol(),WprTF,WprPeriod,1)','iWPR(Symbol(),WprTF,WprP31(),1)')
+rep('void OnTick(){ ','void OnTick(){ if(UseFracBuy==1){ FracBuyMng(); } /*b31*/ ')
+src=src.rstrip()+'''
+
+//---- b31
+int g31Hist=-1, g31Streak=0;
+int WprP31(){ if(UseAdaptWpr!=1){ return(WprPeriod); } int ht=OrdersHistoryTotal();
+   if(ht!=g31Hist){ g31Hist=ht; g31Streak=0; datetime t[]; double pr[]; int n=0; ArrayResize(t,0); ArrayResize(pr,0);
+      for(int i=ht-1;i>=0 && n<50;i--){ if(!OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)){ continue; } if(OrderSymbol()!=Symbol() || OrderMagicNumber()!=magic || OrderType()!=OP_SELL){ continue; }
+         n++; ArrayResize(t,n); ArrayResize(pr,n); t[n-1]=OrderCloseTime(); pr[n-1]=OrderProfit()+OrderCommission()+OrderSwap(); }
+      for(int a=0;a<n;a++){ int best=a; for(int b=a+1;b<n;b++){ if(t[b]>t[best]){ best=b; } } if(best!=a){ datetime tt=t[a]; t[a]=t[best]; t[best]=tt; double pp=pr[a]; pr[a]=pr[best]; pr[best]=pp; } // newest first
+         if(pr[a]<0){ g31Streak++; } else { break; } } }
+   return(g31Streak>=AdaptLosses ? AdaptWprShort : WprPeriod); }
+datetime g31Bar=0;
+void FracBuyMng(){ int tf=GateTF; if(iTime(Symbol(),tf,0)==g31Bar){ return; } g31Bar=iTime(Symbol(),tf,0);
+   int mg=magic+FracBuyMagicOfs;
+   for(int i=OrdersTotal()-1;i>=0;i--){ if(OrderSelect(i,SELECT_BY_POS,MODE_TRADES) && OrderSymbol()==Symbol() && OrderMagicNumber()==mg){ return; } }
+   if(FracBuyRegime==1 && !BuyRegimeOK()){ return; }
+   double up=0; for(int k=3;k<=FracLook;k++){ double f=iFractals(Symbol(),tf,MODE_UPPER,k); if(f>0){ up=f; break; } } if(up<=0){ return; }
+   double c1=iClose(Symbol(),tf,1), c2=iClose(Symbol(),tf,2), c3=iClose(Symbol(),tf,3);
+   if(!(c1>up) || !((c1-2.0*c2+c3)>0)){ return; }
+   if(!(iWPR(Symbol(),tf,FracWprPeriod,1)>=FracWprBuy)){ return; }
+   bool crossed=false; for(int j=2;j<=FracWprBars+1;j++){ if(iWPR(Symbol(),tf,FracWprPeriod,j)<FracWprBuy){ crossed=true; break; } } if(!crossed){ return; }
+   RefreshRates(); int t=SendX(Symbol(),OP_BUY,0.01,Ask,slip,Ask-FracBuySL*Point,Ask+FracBuyTP*Point,"FB",mg,0,clrLime);
+   if(t>0){ Print("FRACBUY #",t," up fractal ",DoubleToStr(up,Digits)); } }
+'''
+src=src.replace('#property version   "1.00-claude_b30"','#property version   "1.00-claude_b31"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

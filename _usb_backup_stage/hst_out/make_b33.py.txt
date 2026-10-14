@@ -1,0 +1,48 @@
+# make_b33.py - b33 = b32 + alternative chaos measures (OFF by default): Sevcik fractal dimension gate, Choppiness Index gate.
+# Usage: python make_b33.py <b32.mq4> <b33.mq4>
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('int ObBuyWarnCount=0;','''// b33 chaos measures (2025-26 sells: low fractal dimension / low choppiness = smooth trend = losing sell)
+extern bool   UseFdGate=0;       // Sevcik fractal dimension of FdPer GateTF closes must be >= FdMin (1=smooth line, 2=pure noise)
+extern int    FdPer=100;
+extern double FdMin=1.30;
+extern bool   UseChopGate=0;     // Choppiness Index(ChopPer) must be >= ChopMin (high = choppy range)
+extern int    ChopPer=100;
+extern double ChopMin=46.9;
+extern int    ErMode=0;          // b33 mutation of the chaos ER gate pattern: 0 fixed ErMax, 1 volatility-scaled (ErMax / (ATR14 / avg ATR14 over ErVolBars)), 2 session split (ErMaxDay in ErDayFrom..ErDayTo hours, else ErMax)
+extern int    ErVolBars=480;
+extern double ErMaxDay=0.12;
+extern int    ErDayFrom=12;
+extern int    ErDayTo=18;
+extern bool   UseClusterCap=0;   // sells come in bursts; the 5th+ sell in a burst lost money. Block if >= ClusterMax sells opened in last ClusterWinMin minutes
+extern int    ClusterMax=4;
+extern int    ClusterWinMin=240;
+int ObBuyWarnCount=0;''')
+rep('   if(UseHurstGate==1','''   if(UseFdGate==1 && Fd33(FdPer)<FdMin){ return(false); }
+   if(UseClusterCap==1 && Cluster33()>=ClusterMax){ return(false); }
+   if(UseChopGate==1 && Chop33(ChopPer)<ChopMin){ return(false); }
+   if(UseHurstGate==1''')
+old='if(s>0 && MathAbs(iClose(Symbol(),tf,1)-iClose(Symbol(),tf,ErPer+1))/s>ErMax){'
+rep(old,'if(s>0 && MathAbs(iClose(Symbol(),tf,1)-iClose(Symbol(),tf,ErPer+1))/s>ErLimit33(a)){')
+src=src.rstrip()+'''
+
+//---- b33 chaos measures (closed bars only)
+double Fd33(int n){ int tf=GateTF; if(n<10){ n=10; } double mx=-1e9,mn=1e9; for(int i=1;i<=n;i++){ double c=iClose(Symbol(),tf,i); if(c>mx){ mx=c; } if(c<mn){ mn=c; } } if(mx-mn<=0){ return(2.0); }
+   double L=0,dx=1.0/(n-1); for(int k=n;k>1;k--){ double y1=(iClose(Symbol(),tf,k)-mn)/(mx-mn),y2=(iClose(Symbol(),tf,k-1)-mn)/(mx-mn); L+=MathSqrt((y2-y1)*(y2-y1)+dx*dx); }
+   return(1.0+MathLog(L)/MathLog(2.0*(n-1))); }
+int Cluster33(){ datetime t0=TimeCurrent()-ClusterWinMin*60; int n=0;
+   for(int i=OrdersTotal()-1;i>=0;i--){ if(OrderSelect(i,SELECT_BY_POS,MODE_TRADES) && OrderSymbol()==Symbol() && OrderType()==OP_SELL && OrderOpenTime()>=t0){ n++; } }
+   for(int j=OrdersHistoryTotal()-1;j>=0;j--){ if(OrderSelect(j,SELECT_BY_POS,MODE_HISTORY) && OrderSymbol()==Symbol() && OrderType()==OP_SELL && OrderOpenTime()>=t0){ n++; } }
+   return(n); }
+double ErLimit33(double a){ if(ErMode==1){ double m=0; int n=MathMax(20,ErVolBars); for(int i=1;i<=n;i+=4){ m+=iATR(Symbol(),GateTF,14,i); } m/=((n-1)/4+1); if(m>0 && a>0){ return(ErMax/(a/m)); } }
+   if(ErMode==2){ int h=TimeHour(TimeCurrent()); if(h>=ErDayFrom && h<ErDayTo){ return(ErMaxDay); } } return(ErMax); }
+double Chop33(int n){ int tf=GateTF; double s=0; for(int i=1;i<=n;i++){ s+=iATR(Symbol(),tf,1,i); } double hh=iHigh(Symbol(),tf,iHighest(Symbol(),tf,MODE_HIGH,n,1)),ll=iLow(Symbol(),tf,iLowest(Symbol(),tf,MODE_LOW,n,1)); if(hh-ll<=0){ return(100); }
+   return(100.0*MathLog10(s/(hh-ll))/MathLog10(n)); }
+'''
+src=src.replace('#property version   "1.00-claude_b32"','#property version   "1.00-claude_b33"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

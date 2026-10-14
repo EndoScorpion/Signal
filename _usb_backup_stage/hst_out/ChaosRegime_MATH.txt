@@ -1,0 +1,50 @@
+ChaosRegime_MATH.txt  -  formulas used in MQL4\Include\ChaosRegime.mqh (EA copy: Strong2010b_claude_b24.mq4)
+All switches default to false. With every switch off, b24 behaves exactly like b22.
+
+1. HURST EXPONENT (rescaled range), on CR_TF closes (M15 default), window n = CR_Window (128), last closed bars only
+   r_i = ln(C_i / C_(i-1)),  i = 1..n
+   For chunk size m in {8, 16, 32, 64}: k = floor(n/m) chunks. For each chunk:
+      mu = mean(r in chunk)
+      Y_t = sum_(s=1..t) (r_s - mu)            (mean-adjusted cumulative deviation)
+      R = max(Y) - min(Y);  S = sqrt( mean( (r - mu)^2 ) )
+      RS_chunk = R / S
+   RS_m = average of RS_chunk over the k chunks
+   H = least-squares slope of ln(RS_m) against ln(m)
+   Regime: H > 0.55 trend (+1); H < 0.45 mean-reverting (-1); 0.45..0.55 NO-MEMORY (0) = dead band around 0.5. Note: H near 0.5 only means no persistence; it does not mean the series is random noise, and it says nothing about chaos (deterministic, sensitive to start)
+   Modes (switches): CR_FreezeNoMemory = no new sells in the no-memory state; CR_TrendOnly = new sells only when trending.
+   (A short-target "anti-persistent scalp mode" is NOT built: buys/sells with small targets lost to commission in every test.)
+
+2. KATZ FRACTAL DIMENSION, last 64 M15 closes
+   L = sum |C_i - C_(i-1)|;  d = max |C_i - C_first|;  N = n-1
+   FD = log10(N) / ( log10(N) + log10(d / L) )       ~1 = smooth trend, ~2 = very choppy
+
+3. PHASE SPACE (M15, ATR14-normalised), n = PS_N (5)
+   v_t = (C_t - C_(t-n)) / n / ATR14
+   a_t = v_t - v_(t-n)
+   Down-move exhaustion: v_(t-n) < 0  AND  |v_t| < PS_Drop * |v_(t-n)|  AND  a_t > 0   -> block new sells (UseExhaustion)
+
+4. ADAPTIVE LOT (UseAdaptive), CLOSED trades only, never open ones
+   wr = winning closed trades / last AD_Window (30) closed trades of this magic; profit includes commission and swap
+   lot = AD_LotMin + (AD_LotMax - AD_LotMin) * clamp( (wr - 0.5) / 0.2, 0, 1 );  fewer than AD_Window trades -> AD_LotMin
+   Bounds 0.01 .. 0.10 (1.00 not allowed). RiskGuard (b15) still caps every order.
+   Safe lot per deposit (worst backtest drawdown about 30,000 pts = $300 per 0.01 lot; keep it <= 20% of deposit):
+      $2,000 -> 0.013 | $5,000 -> 0.034 | $10,000 -> 0.067 | $15,000 -> 0.10 | $20,000 -> 0.13
+   So 0.10 is only safe from about $15,000; 1.00 would need about $150,000.
+
+5. BREAK-EVEN SLIDE (UseBESlide)
+   Once open profit >= BE_Buffer (60) pts: stop -> entry minus/plus BE_Costs (11 pts = spread 2 + commission 9).
+   BE_HighFDOnly: slide only when Katz FD >= BE_FDMin (1.8), i.e. in choppy windows.
+
+6. CIRCUIT BREAKER (UseCircuit) - fixed rule, not changeable by the adaptive layer
+   At each new server day: E0 = AccountEquity().  If AccountEquity() < E0 * (1 - CB_DailyDDPct/100):
+   close all positions of this magic, delete its pendings, freeze new orders until the next server day.
+
+7. COSTS
+   Results are judged after spread (tester spread 2 / 5 / 8), commission 9 pts per round turn per 1.0 lot (0.09 per 0.01 lot) and tester swap.
+
+8. HONEST NOTE ON "SELF-LEARNING"
+   A live layer that rewrites its own thresholds will very likely overfit recent noise. So the EA never mutates itself.
+   Proposals come from the offline loop (Python on closed trades, tune on some periods, judge on untouched ones),
+   and only those that pass ship as new default-off switches.
+   Offline screen so far: Hurst / fractal / entropy / Lyapunov filters did NOT beat b22 in 5 of 8 periods; trend and %R filters did.
+

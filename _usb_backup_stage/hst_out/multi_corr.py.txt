@@ -1,0 +1,210 @@
+# Multivariate check: EA journal orders + indicators from MT4 .hst history (M15, H1).
+# usage: python3 multi_corr.py <tester log> <EURUSD15.hst> <EURUSD60.hst> > MULTI_TABLES.txt
+import re, sys, struct, datetime as D, math, random
+log, f15, f60 = sys.argv[1:4]; f5 = sys.argv[4] if len(sys.argv) > 4 else None
+
+def read_hst(p):
+    b = open(p, 'rb').read(); ver = struct.unpack_from('<i', b, 0)[0]
+    out = []
+    if ver == 401:
+        for off in range(148, len(b) - 59, 60):
+            t, o, h, l, c, v = struct.unpack_from('<qddddq', b, off); out.append((t, o, h, l, c, v))
+    else:
+        for off in range(148, len(b) - 43, 44):
+            t, o, l, h, c, v = struct.unpack_from('<iddddd', b, off); out.append((t, o, h, l, c, v))
+    return out
+
+def ind(bars):
+    """Per-bar indicators using only closed bars up to i (inclusive)."""
+    n = len(bars); C = [b[4] for b in bars]; H = [b[2] for b in bars]; L = [b[3] for b in bars]; V = [b[5] for b in bars]
+    def ema(x, p):
+        k = 2 / (p + 1); e = [x[0]]
+        for v in x[1:]: e.append(e[-1] + k * (v - e[-1]))
+        return e
+    e9, e20, e50, e12, e26 = ema(C, 9), ema(C, 20), ema(C, 50), ema(C, 12), ema(C, 26)
+    macd = [a - b for a, b in zip(e12, e26)]; sig = ema(macd, 9)
+    rsi = [50] * n; g = l = 0
+    for i in range(1, n):
+        d = C[i] - C[i - 1]; g = (g * 13 + max(d, 0)) / 14; l = (l * 13 + max(-d, 0)) / 14
+        rsi[i] = 100 - 100 / (1 + g / l) if l else 100
+    stk = [50] * n
+    for i in range(14, n):
+        hh = max(H[i - 13:i + 1]); ll = min(L[i - 13:i + 1]); stk[i] = 100 * (C[i] - ll) / (hh - ll) if hh > ll else 50
+    std = [sum(stk[max(0, i - 2):i + 1]) / 3 for i in range(n)]
+    atr = [0] * n
+    for i in range(1, n):
+        tr = max(H[i] - L[i], abs(H[i] - C[i - 1]), abs(L[i] - C[i - 1])); atr[i] = (atr[i - 1] * 13 + tr) / 14
+    rows = []
+    for i in range(60, n):
+        s20 = [(e20[i - k] - e20[i - k - 1]) * 1e5 for k in range(6)]        # EMA20 slope, last 6 bars (pts/bar)
+        s9 = (e9[i] - e9[i - 1]) * 1e5; s50 = (e50[i] - e50[i - 1]) * 1e5
+        acc = s20[0] - s20[1]; roa = acc - (s20[1] - s20[2])
+        slopes = [(C[i - k] - C[i - k - 1]) * 1e5 for k in range(12)]
+        mx, mn = max(slopes), min(slopes)
+        mmr = mn / mx if mx > 0 else -9                                     # min/max slope ratio (negative = sell pressure)
+        sara = s20[0] + acc + roa
+        rng = (H[i] - L[i]) * 1e5; vol = V[i]; vrel = vol / (sum(V[i - 20:i]) / 20 or 1)
+        prv = rng + vrel * 10 + (stk[i] - std[i]) + stk[i] / 10
+        W = 120; tol = 10e-5
+        lows = [L[j] for j in range(max(3, i - W), i - 1) if L[j] < L[j-1] and L[j] < L[j-2] and L[j] < L[j+1] and L[j] < L[j+2]]
+        highs = [H[j] for j in range(max(3, i - W), i - 1) if H[j] > H[j-1] and H[j] > H[j-2] and H[j] > H[j+1] and H[j] > H[j+2]]
+        def cluster(ls):
+            best = (0, None)
+            for a in ls:
+                c = sum(abs(b - a) <= tol for b in ls)
+                if c > best[0]: best = (c, a)
+            return best
+        sb, sup = cluster(lows); rb, res = cluster(highs)
+        below = [x for x in lows if x <= C[i]]; above = [x for x in highs if x >= C[i]]
+        d_sup = (C[i] - max(below)) * 1e5 if below else 999; d_res = (min(above) - C[i]) * 1e5 if above else 999
+        sr = dict(sup_bounces=sb, res_bounces=rb, sup_minus_res=sb - rb, dist_sup=d_sup, dist_res=d_res, n_swing_lows=len(lows), n_swing_highs=len(highs))
+        run = 0
+        for k in range(12):
+            sg = 1 if C[i - k] > bars[i - k][1] else -1 if C[i - k] < bars[i - k][1] else 0
+            if k == 0: run = sg
+            elif sg == (1 if run > 0 else -1): run += sg
+            else: break
+        body3 = sum((C[i - k] - bars[i - k][1]) * 1e5 for k in range(3))
+        d = dict(sr, candle_run=run, green3=int(run >= 3), red3=int(run <= -3), body3=body3, rsi=rsi[i], stochK=stk[i], stochD=std[i], stochKD=stk[i] - std[i], macd=macd[i] * 1e5,
+                 macdh=(macd[i] - sig[i]) * 1e5, atr=atr[i] * 1e5, range=rng, vol=vol, volrel=vrel,
+                 slope9=s9, slope20=s20[0], slope50=s50, slopeavg=sum(s20) / 6, accel=acc, roa=roa,
+                 ssr9_50=s9 / s50 if s50 else 0, ssr20_50=s20[0] / s50 if s50 else 0,
+                 mmr=mmr, maxslope=mx, minslope=mn, sara=sara, prv=prv, sara_prv=sara / prv if prv else 0,
+                 slope_stoch=s20[0] / (stk[i] or 1), c_e20=(C[i] - e20[i]) * 1e5, c_e50=(C[i] - e50[i]) * 1e5)
+        rows.append((bars[i][0], d))
+    return rows
+
+def at(rows, t):  # last closed bar strictly before t
+    lo, hi = 0, len(rows)
+    while lo < hi:
+        m = (lo + hi) // 2
+        if rows[m][0] < t: lo = m + 1
+        else: hi = m
+    return rows[lo - 1][1] if lo else None
+
+# --- orders from journal ---
+T = lambda s: int(D.datetime.strptime(s, '%Y.%m.%d %H:%M:%S').replace(tzinfo=D.timezone.utc).timestamp())
+orders = {}
+for ln in open(log, errors='ignore'):
+    m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+(.*)', ln)
+    if not m: continue
+    t, b = m.groups()
+    m2 = re.search(r'open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', b)
+    if m2: orders[int(m2.group(1))] = dict(open=float(m2.group(2)), t0=T(t))
+    m3 = re.search(r'(?:take profit|stop loss) #(\d+) at ([\d.]+)', b) or re.search(r'close #(\d+) .* at price ([\d.]+)', b)
+    if m3 and int(m3.group(1)) in orders: orders[int(m3.group(1))]['net'] = (float(m3.group(2)) - orders[int(m3.group(1))]['open']) * 1e5 - 9
+R15, R60 = ind(read_hst(f15)), ind(read_hst(f60)); R5 = ind(read_hst(f5)) if f5 else None
+data = []
+for n, o in sorted(orders.items()):
+    if 'net' not in o: continue
+    a, b = at(R15, o['t0']), at(R60, o['t0'])
+    if not a or not b: continue
+    f = {('m15_' + k): v for k, v in a.items()}; f.update({('h1_' + k): v for k, v in b.items()})
+    if R5:
+        c = at(R5, o['t0'])
+        if not c: continue
+        f.update({('m5_' + k): v for k, v in c.items() if k.startswith(('sup', 'res', 'dist', 'n_swing', 'candle', 'green', 'red', 'rsi', 'stochK', 'mmr', 'sara'))})
+    data.append(dict(n=n, t0=o['t0'], net=o['net'], win=o['net'] > 0, f=f))
+keys = sorted(data[0]['f'])
+out = ['ORDERS matched to history: %d  losers: %d' % (len(data), sum(not d['win'] for d in data))]
+out.append('Features tested: %d (M15 and H1 each)' % len(keys))
+
+def rank(x):  # average ranks for ties
+    s = sorted(range(len(x)), key=lambda i: x[i]); r = [0] * len(x); i = 0
+    while i < len(s):
+        j = i
+        while j + 1 < len(s) and x[s[j + 1]] == x[s[i]]: j += 1
+        for k in range(i, j + 1): r[s[k]] = (i + j) / 2
+        i = j + 1
+    return r
+def spear(a, b):
+    ra, rb = rank(a), rank(b); n = len(a); ma = sum(ra) / n; mb = sum(rb) / n
+    c = sum((x - ma) * (y - mb) for x, y in zip(ra, rb)); d = (sum((x - ma) ** 2 for x in ra) * sum((y - mb) ** 2 for y in rb)) ** .5
+    return c / d if d else 0
+
+# --- univariate: loser percentile among winners, split in-sample / out-of-sample by date midpoint ---
+ts = sorted(d['t0'] for d in data); mid = ts[len(ts) // 2]
+A = [d for d in data if d['t0'] < mid]; B = [d for d in data if d['t0'] >= mid]
+out += ['', 'Split: first half %d orders (%d losers), second half %d orders (%d losers)' % (len(A), sum(not d['win'] for d in A), len(B), sum(not d['win'] for d in B))]
+out += ['', 'UNIVARIATE: Spearman r(feature, net pts). Significance needs |r| > %.2f (all), %.2f (half)' % (2 / len(data) ** .5, 2 / len(A) ** .5),
+        'feature            r_all  r_1st  r_2nd']
+res = []
+for k in keys:
+    ra = spear([d['f'][k] for d in data], [d['net'] for d in data])
+    r1 = spear([d['f'][k] for d in A], [d['net'] for d in A]); r2 = spear([d['f'][k] for d in B], [d['net'] for d in B])
+    res.append((k, ra, r1, r2))
+for k, ra, r1, r2 in sorted(res, key=lambda z: -abs(z[1]))[:60]: out.append('%-18s %6.2f %6.2f %6.2f' % (k, ra, r1, r2))
+out.append('(a real effect keeps the same sign and size in both halves)')
+
+# --- loser profile ---
+out += ['', 'LOSERS: percentile of each loser among winners (0 = below all winners, 100 = above all). Pattern = all losers on one side.']
+prof = []
+for k in keys:
+    w = sorted(d['f'][k] for d in data if d['win']); l = [d['f'][k] for d in data if not d['win']]
+    pc = [round(100 * (sum(x < v for x in w) + 0.5 * sum(x == v for x in w)) / len(w)) for v in l]
+    prof.append((abs(sum(pc) / len(pc) - 50), k, pc))
+for s, k, pc in sorted(prof, reverse=True)[:15]: out.append('%-18s %s' % (k, pc))
+
+# --- multivariate: logistic regression (ridge) on standardised features, fit 1st half, test 2nd half ---
+def fit(ds, ks, lam=1.0, it=300, lr=0.05):
+    mu = {k: sum(d['f'][k] for d in ds) / len(ds) for k in ks}
+    sd = {k: (sum((d['f'][k] - mu[k]) ** 2 for d in ds) / len(ds)) ** .5 or 1 for k in ks}
+    X = [[(d['f'][k] - mu[k]) / sd[k] for k in ks] for d in ds]; y = [1 if d['win'] else 0 for d in ds]
+    w = [0] * len(ks); b = 0
+    for _ in range(it):
+        gw = [0] * len(ks); gb = 0
+        for xi, yi in zip(X, y):
+            p = 1 / (1 + math.exp(-min(30, max(-30, sum(a * c for a, c in zip(w, xi)) + b)))); e = p - yi
+            gb += e
+            for j in range(len(ks)): gw[j] += e * xi[j]
+        w = [wj - lr * (g / len(ds) + lam * wj / len(ds)) for wj, g in zip(w, gw)]; b -= lr * gb / len(ds)
+    return mu, sd, w, b
+def score(model, d, ks):
+    mu, sd, w, b = model
+    return 1 / (1 + math.exp(-min(30, max(-30, sum(w[j] * (d['f'][k] - mu[k]) / sd[k] for j, k in enumerate(ks)) + b))))
+def auc(ds, model, ks):
+    pos = [score(model, d, ks) for d in ds if d['win']]; neg = [score(model, d, ks) for d in ds if not d['win']]
+    if not pos or not neg: return float('nan')
+    return sum((p > q) + 0.5 * (p == q) for p in pos for q in neg) / (len(pos) * len(neg))
+sets = {'EA-style SARA/PRV/MMR (M15+H1)': [k for k in keys if any(s in k for s in ('sara', 'prv', 'mmr', 'ssr', 'accel', 'roa', 'slope'))],
+        'Classic (RSI/Stoch/MACD/ATR/vol)': [k for k in keys if any(s in k for s in ('rsi', 'stoch', 'macd', 'atr', 'range', 'vol'))],
+        'Support/resistance only': [k for k in keys if any(x in k for x in ('sup', 'res', 'dist', 'swing'))], 'All features': keys}
+# --- candle-run and other small-pattern buckets ---
+out += ['', 'PATTERN BUCKETS (win% and avg net per bucket; n<30 is TOO FEW)']
+def bucket(name, fn):
+    g = {}
+    for d in data: g.setdefault(fn(d), []).append(d)
+    out.append(name)
+    for k in sorted(g):
+        v = g[k]; out.append('  %-14s n=%3d win%%=%3.0f avg_net=%7.1f%s' % (k, len(v), 100 * sum(x['win'] for x in v) / len(v), sum(x['net'] for x in v) / len(v), '' if len(v) >= 30 else '  TOO FEW'))
+for tf in ('m15', 'h1'):
+    bucket(tf + ' candle run (+ = green in a row, - = red)', lambda d, tf=tf: max(-4, min(4, d['f'][tf + '_candle_run'])))
+    bucket(tf + ' RSI', lambda d, tf=tf: ('<30', '30-50', '50-70', '>70')[sum(d['f'][tf + '_rsi'] > x for x in (30, 50, 70))])
+    bucket(tf + ' stoch K', lambda d, tf=tf: ('<20', '20-50', '50-80', '>80')[sum(d['f'][tf + '_stochK'] > x for x in (20, 50, 80))])
+    bucket(tf + ' EMA20 slope', lambda d, tf=tf: 'down' if d['f'][tf + '_slope20'] < 0 else 'up')
+    bucket(tf + ' MMR (min/max slope)', lambda d, tf=tf: '<-2' if d['f'][tf + '_mmr'] < -2 else '-2..-1' if d['f'][tf + '_mmr'] < -1 else '-1..0' if d['f'][tf + '_mmr'] < 0 else '>=0')
+    bucket(tf + ' SARA/PRV', lambda d, tf=tf: 'neg' if d['f'][tf + '_sara_prv'] < 0 else 'pos')
+for tf in ('m5', 'm15', 'h1'):
+    if tf + '_sup_bounces' not in keys: continue
+    bucket(tf + ' support bounces (swing lows clustered within 10 pts, last 120 bars)', lambda d, tf=tf: min(4, d['f'][tf + '_sup_bounces']))
+    bucket(tf + ' resistance bounces', lambda d, tf=tf: min(4, d['f'][tf + '_res_bounces']))
+    bucket(tf + ' distance to support (pts)', lambda d, tf=tf: ('<10', '10-30', '30-100', '>100')[sum(d['f'][tf + '_dist_sup'] > x for x in (10, 30, 100))])
+    bucket(tf + ' distance to resistance (pts)', lambda d, tf=tf: ('<10', '10-30', '30-100', '>100')[sum(d['f'][tf + '_dist_res'] > x for x in (10, 30, 100))])
+bucket('hour of day (server)', lambda d: D.datetime.fromtimestamp(d["t0"], D.timezone.utc).hour)
+out += ['', 'MULTIVARIATE: ridge logistic regression, win vs loss. AUC 0.5 = coin flip, 1.0 = perfect. Fit on 1st half, test on 2nd half.',
+        'feature set                          n_feat  AUC_fit  AUC_test']
+for name, ks in sets.items():
+    m = fit(A, ks); out.append('%-36s %5d  %7.2f  %8.2f' % (name, len(ks), auc(A, m, ks), auc(B, m, ks)))
+    if name == 'All features':
+        mu, sd, w, b = m
+        out.append('  largest weights (fit half): ' + ', '.join('%s %+.2f' % (k, wj) for k, wj in sorted(zip(ks, w), key=lambda z: -abs(z[1]))[:8]))
+# reversed split too
+out.append('Reverse (fit 2nd half, test 1st):')
+for name, ks in sets.items():
+    m = fit(B, ks); out.append('%-36s %5d  %7.2f  %8.2f' % (name, len(ks), auc(B, m, ks), auc(A, m, ks)))
+# random-feature control
+random.seed(1)
+for d in data: d['f'] = dict(d['f'], **{'rand%d' % j: random.random() for j in range(10)})
+rk = ['rand%d' % j for j in range(10)]
+m = fit(A, rk); out.append('%-36s %5d  %7.2f  %8.2f   <- control: pure noise features' % ('10 random numbers', 10, auc(A, m, rk), auc(B, m, rk)))
+print('\n'.join(out))

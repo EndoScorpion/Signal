@@ -1,0 +1,3 @@
+2026-10-14 17:15 self-improvement is stuck. Leader rc_th_g2_AtrCapPts_90_hours_00-03; candidates since last improvement 3.
+Ask Claude to: search the web and papers for new mean-reversion/regime/volatility methods for EURUSD M15, turn the best 3 into new gates in a new MR_RegimeSwitch version, queue them, and report.
+Options logged in last_options.json.

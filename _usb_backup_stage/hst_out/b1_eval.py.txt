@@ -1,0 +1,54 @@
+# Evaluate a Strong2010b_claude_b1 tester journal: per entry type, and branch A/B/C flags logged on original entries.
+import re, sys, datetime as D
+L = open(sys.argv[1], errors='ignore').read().splitlines()
+pend = {}; orders = {}
+for ln in L:
+    m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+(.*)', ln)
+    if not m: continue
+    t, b = m.groups()
+    mb = re.search(r': BR A (\d) B (\d) C (\d) \| (.*)', b)
+    if mb:
+        pend = dict(type='0', A=int(mb.group(1)), B=int(mb.group(2)), C=int(mb.group(3)))
+        for k, v in re.findall(r'(\w+) (-?[\d.]+)', mb.group(4)): pend['f_' + k] = float(v)
+    mf = re.search(r': FLAT m15 (.*)', b)
+    if mf:
+        pend = dict(type='4'); 
+        for k, v in re.findall(r'(\w+) (-?[\d.]+)', mf.group(1)): pend['f_' + k] = float(v)
+    ms = re.search(r': SIGNAL S(\d)', b)
+    if ms: pend = dict(type=ms.group(1))
+    m2 = re.search(r'open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', b)
+    if m2: orders[int(m2.group(1))] = dict(pend, open=float(m2.group(2)), t0=t); pend = {}
+    m3 = re.search(r'(?:take profit|stop loss) #(\d+) at ([\d.]+)', b) or re.search(r'close #(\d+) .* at price ([\d.]+)', b)
+    if m3 and int(m3.group(1)) in orders:
+        o = orders[int(m3.group(1))]; o['net'] = (float(m3.group(2)) - o['open']) * 1e5 - 9
+rows = [o for o in orders.values() if 'net' in o]
+def st(ds): n = len(ds); return (n, 100 * sum(d['net'] > 0 for d in ds) / n if n else 0, sum(d['net'] for d in ds) / n if n else 0, sum(d['net'] for d in ds))
+out = ['JOURNAL %s: %d closed orders, %s to %s' % (sys.argv[1], len(rows), min(o['t0'] for o in rows)[:10], max(o['t0'] for o in rows)[:10]), '',
+       'BY ENTRY TYPE (0 = original, 4 = flat-slope entry, 5 = S2, 6 = S4)', 'type   n   win%   avg_net   total_net']
+for ty in sorted({o.get('type', '?') for o in rows}):
+    out.append('%-4s %4d  %5.1f  %8.1f  %10.0f' % ((ty,) + st([o for o in rows if o.get('type') == ty])))
+orig = [o for o in rows if o.get('type') == '0' and 'A' in o]
+if orig:
+    out += ['', 'BRANCH CHECK on original entries (out-of-sample vs 2011-2012 search). n<30 = TOO FEW', 'branch        n   win%   avg_net   total_net']
+    for name, fn in [('all', lambda o: True), ('A on', lambda o: o['A']), ('A off', lambda o: not o['A']), ('B on', lambda o: o['B']), ('B off', lambda o: not o['B']),
+                     ('C on', lambda o: o['C']), ('C off', lambda o: not o['C']), ('any on', lambda o: o['A'] or o['B'] or o['C']), ('all off', lambda o: not (o['A'] or o['B'] or o['C']))]:
+        s = st([o for o in orig if fn(o)]); out.append('%-10s %5d  %5.1f  %8.1f  %10.0f%s' % ((name,) + s + ('' if s[0] >= 30 else '  TOO FEW',)))
+    # per-month for original
+    out += ['', 'ORIGINAL ENTRIES BY MONTH', 'month    n  win%  avg_net']
+    for mth in sorted({o['t0'][:7] for o in orig}):
+        s = st([o for o in orig if o['t0'][:7] == mth]); out.append('%s %4d  %5.1f  %7.1f' % ((mth,) + s[:3]))
+flat = [o for o in rows if o.get('type') == '4']
+if flat:
+    out += ['', 'FLAT ENTRIES BY MONTH', 'month    n  win%  avg_net']
+    for mth in sorted({o['t0'][:7] for o in flat}):
+        s = st([o for o in flat if o['t0'][:7] == mth]); out.append('%s %4d  %5.1f  %7.1f' % ((mth,) + s[:3]))
+    # bucket flat entries by their logged features
+    keys = sorted({k for o in flat for k in o if k.startswith('f_')})
+    out += ['', 'FLAT ENTRIES: terciles of each logged feature (n, win%, avg net)']
+    for k in keys:
+        xs = sorted([o for o in flat if k in o], key=lambda o: o[k]); t = len(xs) // 3
+        parts = []
+        for ch in (xs[:t], xs[t:2 * t], xs[2 * t:]):
+            s = st(ch); parts.append('%.2f..%.2f n=%d %.0f%% %.1f' % (ch[0][k], ch[-1][k], s[0], s[1], s[2]))
+        out.append('%-12s | %s' % (k[2:], ' | '.join(parts)))
+print('\n'.join(out))

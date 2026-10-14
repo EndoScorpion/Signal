@@ -1,0 +1,96 @@
+12:09:23 OK b28_base_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_base_2017.htm
+12:10:22 OK b28_wpr50_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_wpr50_2017.htm
+12:11:21 OK b28_wpr80_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_wpr80_2017.htm
+12:12:24 OK b28_wprob20_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_wprob20_2017.htm
+12:13:24 OK b28_alli_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_alli_2017.htm
+12:14:25 OK b28_ao_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_ao_2017.htm
+12:15:28 OK b28_ac_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_ac_2017.htm
+12:16:26 OK b28_chop618_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_chop618_2017.htm
+12:17:24 OK b28_chop50_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_chop50_2017.htm
+12:17:24 BATCH DONE
+12:18:23 OK b28_z1_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b28_z1_2017.htm
+12:18:23 SKIP b28_z1_s5_2019 (report exists)
+12:18:23 SKIP b28_z1_s5_2021 (report exists)
+12:19:52 OK b28_z1_s5_2022 in 1.5 min -> C:\Users\endos\Desktop\hst_out\b28_z1_s5_2022.htm
+12:21:15 OK b28_z1_s5_2526 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b28_z1_s5_2526.htm
+12:21:15 BATCH DONE
+12:22:15 OK b29_base_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b29_base_2017.htm
+12:23:11 OK b29_fa20_p14_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b29_fa20_p14_2017.htm
+12:24:06 OK b29_fa30_p14_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b29_fa30_p14_2017.htm
+12:25:04 OK b29_fa50_p14_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b29_fa50_p14_2017.htm
+12:26:03 OK b29_fa20_p7_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b29_fa20_p7_2017.htm
+12:27:07 OK b29_fa30_p7_2017 in 1.1 min -> C:\Users\endos\Desktop\hst_out\b29_fa30_p7_2017.htm
+12:28:11 OK b29_fa50_p7_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b29_fa50_p7_2017.htm
+12:29:09 OK b29_fc4_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b29_fc4_2017.htm
+12:30:10 OK b29_fc8_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b29_fc8_2017.htm
+12:31:06 OK b29_fc16_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b29_fc16_2017.htm
+12:31:59 OK b29_dd1_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b29_dd1_2017.htm
+12:32:52 OK b29_dd2_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b29_dd2_2017.htm
+12:33:43 OK b29_dd3_2017 in 0.8 min -> C:\Users\endos\Desktop\hst_out\b29_dd3_2017.htm
+12:33:43 BATCH DONE
+12:34:35 OK b30_base_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b30_base_2017.htm
+12:35:26 OK b30_ent95_2017 in 0.8 min -> C:\Users\endos\Desktop\hst_out\b30_ent95_2017.htm
+12:36:16 OK b30_ent90_2017 in 0.8 min -> C:\Users\endos\Desktop\hst_out\b30_ent90_2017.htm
+12:37:09 OK b30_ent98_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b30_ent98_2017.htm
+12:38:01 OK b30_ent95_64_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b30_ent95_64_2017.htm
+12:38:01 BATCH DONE
+12:38:01 SKIP b31_base_2017 (report exists)
+12:38:58 OK b31_fb_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b31_fb_2017.htm
+12:40:07 OK b31_fb_noreg_2017 in 1.1 min -> C:\Users\endos\Desktop\hst_out\b31_fb_noreg_2017.htm
+12:41:03 OK b31_fb_sl150_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b31_fb_sl150_2017.htm
+12:41:57 OK b31_fb_w50_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b31_fb_w50_2017.htm
+12:42:49 OK b31_wpr50_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b31_wpr50_2017.htm
+12:43:42 OK b31_wpr50_adapt_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b31_wpr50_adapt_2017.htm
+12:43:42 BATCH DONE
+12:44:36 OK b28_rng100_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2017.htm
+12:50:24 OK b28_rng100_2011 in 5.8 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2011.htm
+12:54:11 OK b28_rng100_2012 in 3.8 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2012.htm
+12:55:21 OK b28_rng100_2019 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2019.htm
+12:56:17 OK b28_rng100_2020 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2020.htm
+12:57:42 OK b28_rng100_2021 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2021.htm
+12:58:58 OK b28_rng100_2022 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2022.htm
+13:00:11 OK b28_rng100_2526 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b28_rng100_2526.htm
+13:01:03 OK b28_atrb30_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2017.htm
+13:06:59 OK b28_atrb30_2011 in 5.9 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2011.htm
+13:10:50 OK b28_atrb30_2012 in 3.8 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2012.htm
+13:11:59 OK b28_atrb30_2019 in 1.1 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2019.htm
+13:12:54 OK b28_atrb30_2020 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2020.htm
+13:14:14 OK b28_atrb30_2021 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2021.htm
+13:15:31 OK b28_atrb30_2022 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2022.htm
+13:16:41 OK b28_atrb30_2526 in 1.1 min -> C:\Users\endos\Desktop\hst_out\b28_atrb30_2526.htm
+13:17:33 OK b28_addiv_2017 in 0.8 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2017.htm
+13:23:09 OK b28_addiv_2011 in 5.6 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2011.htm
+13:26:45 OK b28_addiv_2012 in 3.6 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2012.htm
+13:27:54 OK b28_addiv_2019 in 1.1 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2019.htm
+13:28:47 OK b28_addiv_2020 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2020.htm
+13:30:05 OK b28_addiv_2021 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2021.htm
+13:31:19 OK b28_addiv_2022 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2022.htm
+13:32:29 OK b28_addiv_2526 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b28_addiv_2526.htm
+13:32:29 BATCH DONE
+13:33:24 OK b31_cci150_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b31_cci150_2017.htm
+13:34:39 OK b31_cci150_2019 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b31_cci150_2019.htm
+13:34:39 SKIP b31_cci150_2020 (report exists)
+13:36:08 OK b31_cci150_2021 in 1.5 min -> C:\Users\endos\Desktop\hst_out\b31_cci150_2021.htm
+13:37:33 OK b31_cci150_2022 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b31_cci150_2022.htm
+13:38:48 OK b31_cci150_2526 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b31_cci150_2526.htm
+13:44:48 OK b31_be200_2011 in 6 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2011.htm
+13:48:56 OK b31_be200_2012 in 4.1 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2012.htm
+13:50:15 OK b31_be200_2019 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2019.htm
+13:51:17 OK b31_be200_2020 in 1 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2020.htm
+13:52:48 OK b31_be200_2021 in 1.5 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2021.htm
+13:54:20 OK b31_be200_2022 in 1.5 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2022.htm
+13:55:51 OK b31_be200_2526 in 1.5 min -> C:\Users\endos\Desktop\hst_out\b31_be200_2526.htm
+14:02:51 OK b31_be250L150_2011 in 6.9 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2011.htm
+14:07:06 OK b31_be250L150_2012 in 4.2 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2012.htm
+14:08:30 OK b31_be250L150_2019 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2019.htm
+14:09:33 OK b31_be250L150_2020 in 1 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2020.htm
+14:11:11 OK b31_be250L150_2021 in 1.6 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2021.htm
+14:12:35 OK b31_be250L150_2022 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2022.htm
+14:13:54 OK b31_be250L150_2526 in 1.3 min -> C:\Users\endos\Desktop\hst_out\b31_be250L150_2526.htm
+14:13:54 BATCH DONE
+14:13:54 JOB t FAILED: Exception calling "ContainsKey" with "1" argument(s): "Key cannot be null.
+Parameter name: key"
+14:13:54 BATCH DONE
+14:13:54 SKIP b31_cci150_2019 (report exists)
+14:13:54 BATCH DONE
+MASTER DONE

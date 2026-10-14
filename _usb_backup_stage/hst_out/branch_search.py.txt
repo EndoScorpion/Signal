@@ -1,0 +1,50 @@
+# Branch search: find single and paired threshold filters on top of the EA's entry that keep net pts positive
+# on BOTH halves (fit on 1st half, confirm on 2nd). usage: python3 branch_search.py <log> <M15.hst> <H1.hst>
+import sys, importlib.util, math
+spec = importlib.util.spec_from_file_location('mc', __file__.replace('branch_search.py', 'multi_corr.py'))
+sys.argv = sys.argv[:4]
+import io, contextlib
+mc = importlib.util.module_from_spec(spec)
+with contextlib.redirect_stdout(io.StringIO()): spec.loader.exec_module(mc)
+data, keys, A, B = mc.data, [k for k in mc.keys if not k.startswith('rand')], mc.A, mc.B
+def stats(ds):
+    n = len(ds); return n, (100 * sum(d['win'] for d in ds) / n if n else 0), (sum(d['net'] for d in ds) / n if n else 0)
+base = [stats(data), stats(A), stats(B)]
+out = ['BASELINE (EA as is): all n=%d win%%=%.0f net=%.1f | 1st half n=%d win%%=%.0f net=%.1f | 2nd half n=%d win%%=%.0f net=%.1f' % (base[0] + base[1] + base[2])]
+out.append('Rules below are filters ADDED to the existing entry. A rule passes only if avg net > 0 and n >= 30 in BOTH halves.')
+import statistics
+rules = []
+for k in keys:
+    vals = sorted(d['f'][k] for d in data)
+    qs = sorted({vals[int(len(vals) * q)] for q in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)})
+    for q in qs:
+        for sgn, name in ((1, '%s >= %.3g' % (k, q)), (-1, '%s < %.3g' % (k, q))):
+            fn = (lambda d, k=k, q=q: d['f'][k] >= q) if sgn == 1 else (lambda d, k=k, q=q: d['f'][k] < q)
+            rules.append((name, fn))
+tested = len(rules)
+res = []
+for name, fn in rules:
+    a = stats([d for d in A if fn(d)]); b = stats([d for d in B if fn(d)]); t = stats([d for d in data if fn(d)])
+    res.append((min(a[2], b[2]), name, t, a, b, fn))
+res.sort(key=lambda z: -z[0])
+out += ['', 'SINGLE RULES tested: %d. Top 25 by the WORSE half (worst-half avg net):' % tested, 'rule                                   all n/win%/net        1st half             2nd half']
+for m, name, t, a, b, fn in res[:25]:
+    ok = 'PASS' if a[2] > 0 and b[2] > 0 and a[0] >= 30 and b[0] >= 30 else ''
+    out.append('%-38s %4d %3.0f%% %7.1f | %4d %3.0f%% %7.1f | %4d %3.0f%% %7.1f %s' % ((name,) + t + a + b + (ok,)))
+# pairs from top 40 singles
+top = res[:40]; pr = []
+for i in range(len(top)):
+    for j in range(i + 1, len(top)):
+        n1, f1 = top[i][1], top[i][5]; n2, f2 = top[j][1], top[j][5]
+        if n1.split()[0] == n2.split()[0]: continue
+        fn = lambda d, f1=f1, f2=f2: f1(d) and f2(d)
+        a = stats([d for d in A if fn(d)]); b = stats([d for d in B if fn(d)]); t = stats([d for d in data if fn(d)])
+        if a[0] >= 30 and b[0] >= 30: pr.append((min(a[2], b[2]), n1 + ' AND ' + n2, t, a, b))
+pr.sort(key=lambda z: -z[0])
+out += ['', 'PAIRED RULES tested: %d (n>=30 both halves). Top 15:' % len(pr)]
+for m, name, t, a, b in pr[:15]:
+    ok = 'PASS' if a[2] > 0 and b[2] > 0 else ''
+    out.append('%-60s all %4d %3.0f%% %7.1f | 1st %4d %3.0f%% %7.1f | 2nd %4d %3.0f%% %7.1f %s' % ((name,) + t + a + b + (ok,)))
+npass = sum(1 for z in res if z[3][2] > 0 and z[4][2] > 0 and z[3][0] >= 30 and z[4][0] >= 30) + sum(1 for z in pr if z[3][2] > 0 and z[4][2] > 0)
+out += ['', 'Rules passing both halves: %d of %d tested. With this many tries, expect a few passes by luck; a real one must also hold on 2019/2021.' % (npass, tested + len(pr))]
+print('\n'.join(out))

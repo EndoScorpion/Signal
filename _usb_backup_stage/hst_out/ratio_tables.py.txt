@@ -1,0 +1,167 @@
+# RATIO HASH TABLES: Nasif's ratios (SP, AP, SR, AR, SSR, ASR, ACH, SH, RA, MMR, SARA/PRV, ratio over range+volume,
+# distance above the SMA, distance from low, bars since a stoch dip, fib position, S/R touches, head-and-shoulders)
+# on M5 / M15 / H1 with SMA periods 2/5/10/15/30/60, for the last 5 CLOSED candles before each EA entry, plus 5-candle trends.
+# Every feature is scored per year (2011, 2012, 2019) by Spearman rank correlation with the trade's net points.
+# Only features with the SAME sign in all three years are candidates; the shuffle control shows what noise produces.
+# usage: python3 ratio_tables.py EURUSD5.hst EURUSD15.hst EURUSD60.hst <journal> [<journal>...]
+import sys, datetime as D, collections
+import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view as sw
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO
+def read_hst(p):
+    b = open(p, 'rb').read()
+    return np.frombuffer(b[148:148 + ((len(b) - 148) // 60) * 60], dtype=np.dtype([('t', '<i8'), ('o', '<f8'), ('h', '<f8'), ('l', '<f8'), ('c', '<f8'), ('v', '<i8'), ('s', '<i4'), ('rv', '<i8')]))
+def sma(x, p):
+    c = np.cumsum(np.insert(x.astype(float), 0, 0.0)); out = np.full(len(x), np.nan); out[p - 1:] = (c[p:] - c[:-p]) / p; return out
+def rmax(x, w): out = np.full(len(x), np.nan); out[w - 1:] = sw(x, w).max(axis=1); return out
+def rmin(x, w): out = np.full(len(x), np.nan); out[w - 1:] = sw(x, w).min(axis=1); return out
+def lag(x, k): out = np.full(len(x), np.nan); out[k:] = x[:-k] if k else x; return out
+def sdiv(a, b):
+    with np.errstate(divide='ignore', invalid='ignore'): r = np.where(np.abs(b) > 1e-12, a / np.where(np.abs(b) > 1e-12, b, 1), np.nan)
+    return r
+PDS = (2, 5, 10, 15, 30, 60)
+def features(a):
+    C, H, L, V = a['c'], a['h'], a['l'], a['v'].astype(float); n = len(C); F = {}
+    tr = np.maximum(H - L, np.maximum(np.abs(H - lag(C, 1)), np.abs(L - lag(C, 1)))) * 1e5
+    vrel = sdiv(V, sma(V, 20)); F['vrel'] = vrel; F['ht'] = (H - C) * 1e5
+    F['dfl20'] = (C - rmin(L, 20)) * 1e5; F['dfl50'] = (C - rmin(L, 50)) * 1e5
+    hh50, ll50 = rmax(H, 50), rmin(L, 50); F['fibpos50'] = sdiv(C - ll50, hh50 - ll50)
+    fp = F['fibpos50']; F['fibdist'] = np.nanmin(np.abs(fp[:, None] - np.array([0.382, 0.5, 0.618])[None, :]), axis=1)
+    slopes = {}
+    for pd in PDS:
+        m = sma(C, pd); slp = (m - lag(m, 1)) * 1e5; ac = slp - lag(slp, 1); ra = ac - lag(ac, 1); slopes[pd] = slp
+        ll = rmin(L, pd); hh = rmax(H, pd); rawk = sdiv(C - ll, hh - ll) * 100; sto = sma(np.nan_to_num(rawk, nan=50), 3)
+        rng = sma(np.nan_to_num(tr, nan=0), pd); dm = (C - m) * 1e5
+        rv = rng + vrel * 10; prv = rv + sto / 10
+        mx = rmax(np.nan_to_num(slp, nan=0), 18); mn = rmin(np.nan_to_num(slp, nan=0), 18)
+        mmr = np.where(mn < 0, sdiv(mx, np.abs(mn)), 99)
+        # bars since sto <= 20
+        dip = sto <= 20; idx = np.where(dip, np.arange(n), -1); last = np.maximum.accumulate(idx); bsd = np.where(last >= 0, np.arange(n) - last, 999)
+        k = 'p%d_' % pd
+        F[k + 'slp'] = slp; F[k + 'ac'] = ac; F[k + 'RA'] = ra; F[k + 'sto'] = sto; F[k + 'rng'] = rng; F[k + 'dm'] = dm
+        F[k + 'SP'] = sdiv(slp, sto); F[k + 'SR'] = sdiv(slp, rng); F[k + 'AP'] = sdiv(ac, sto); F[k + 'AR'] = sdiv(ac, rng)
+        F[k + 'ASR'] = sdiv(ac, slp); F[k + 'ACH'] = sdiv(ac, F['ht']); F[k + 'SH'] = sdiv(slp, F['ht']); F[k + 'MMR'] = mmr
+        F[k + 'SARA'] = slp + ac + ra; F[k + 'RV'] = rv; F[k + 'PRV'] = prv; F[k + 'SARA_PRV'] = sdiv(slp + ac + ra, prv)
+        F[k + 'slp_RV'] = sdiv(slp, rv); F[k + 'ac_RV'] = sdiv(ac, rv); F[k + 'SP_RV'] = sdiv(F[k + 'SP'], rv); F[k + 'AP_RV'] = sdiv(F[k + 'AP'], rv)
+        F[k + 'dm_rng'] = sdiv(dm, rng); F[k + 'bsd'] = bsd.astype(float)
+    for i, pd in enumerate(PDS[:-1]): F['p%d_SSR_p%d' % (pd, PDS[i + 1])] = sdiv(slopes[pd], slopes[PDS[i + 1]])
+    return F
+def swings(H, L, i, w=3, look=80):
+    """local maxima/minima of the 'look' bars ending at i (inclusive); returns lists of (index, price)."""
+    lo = max(w, i - look); hi = i - w; mx = []; mn = []
+    for j in range(lo, hi + 1):
+        if H[j] == H[j - w:j + w + 1].max(): mx.append((j, H[j]))
+        if L[j] == L[j - w:j + w + 1].min(): mn.append((j, L[j]))
+    return mx, mn
+def patterns(a, i, atr):
+    H, L, C = a['h'], a['l'], a['c']; mx, mn = swings(H, L, i)
+    out = {'hs_top': 0.0, 'hs_inv': 0.0, 'sup_touch': 0.0, 'res_touch': 0.0}
+    tol = 0.5 * atr * 1e-5
+    if len(mx) >= 3:
+        for q in range(len(mx) - 2):
+            (i1, h1), (i2, h2), (i3, h3) = mx[q:q + 3]
+            if h2 > h1 and h2 > h3 and abs(h1 - h3) <= 0.5 * (h2 - max(h1, h3)) and (h2 - max(h1, h3)) >= 0.5 * atr * 1e-5: out['hs_top'] = 1.0
+    if len(mn) >= 3:
+        for q in range(len(mn) - 2):
+            (i1, l1), (i2, l2), (i3, l3) = mn[q:q + 3]
+            if l2 < l1 and l2 < l3 and abs(l1 - l3) <= 0.5 * (min(l1, l3) - l2) and (min(l1, l3) - l2) >= 0.5 * atr * 1e-5: out['hs_inv'] = 1.0
+    if mn:
+        lvl = min(p for _, p in mn); out['sup_touch'] = float(sum(abs(p - lvl) <= tol for _, p in mn)); out['dfs'] = (C[i] - lvl) * 1e5
+    if mx:
+        lvl = max(p for _, p in mx); out['res_touch'] = float(sum(abs(p - lvl) <= tol for _, p in mx)); out['dfr'] = (lvl - C[i]) * 1e5
+    return out
+def spearman(x, y):
+    ok = np.isfinite(x) & np.isfinite(y); x = x[ok]; y = y[ok]
+    if len(x) < 20 or np.std(x) == 0: return np.nan, len(x)
+    def rk(v):
+        o = np.argsort(v, kind='mergesort'); r = np.empty(len(v)); r[o] = np.arange(len(v))
+        u, inv, cnt = np.unique(v, return_inverse=True, return_counts=True)
+        s = np.zeros(len(u)); np.add.at(s, inv, r); return (s / cnt)[inv]
+    return float(np.corrcoef(rk(x), rk(y))[0, 1]), len(x)
+# ---------------- main
+def main():
+    files = sys.argv[1:4]; logs = sys.argv[4:]
+    trades = []
+    for lg in logs:
+        for n, o in EO.parse(lg).items():
+            if o['kind'] == 'buy' and 'net' in o and o['typ'] == 'buy original': trades.append((o['t_open'].replace(tzinfo=D.timezone.utc).timestamp(), o['net']))
+    trades.sort(); T0 = np.array([t for t, _ in trades]); NET = np.array([v for _, v in trades]); YR = np.array([D.datetime.fromtimestamp(t, D.timezone.utc).year for t in T0])
+    years = sorted(set(YR.tolist()))
+    out = ['RATIO HASH TABLES on %d original EA buy entries (%s). Features from CLOSED candles only. Net pts = move - 9 commission.' % (len(trades), ', '.join(logs)),
+           'Years: ' + ', '.join('%d (n=%d, avg net %.1f, win%% %.1f)' % (y, (YR == y).sum(), NET[YR == y].mean(), 100 * (NET[YR == y] > 0).mean()) for y in years), '']
+    rows = []; COLS = {}
+    for tfname, tfsec, path in zip(('M5', 'M15', 'H1'), (300, 900, 3600), files):
+        a = read_hst(path); T = a['t']; F = features(a)
+        idx = np.searchsorted(T, T0 - tfsec, side='right') - 1     # last bar whose open + tfsec <= entry time
+        idx = np.clip(idx, 70, len(T) - 1)
+        atr14 = sma(np.nan_to_num(np.maximum(a['h'] - a['l'], 0) * 1e5), 14)
+        pats = [patterns(a, int(i), float(atr14[i]) if np.isfinite(atr14[i]) else 10) for i in idx]
+        for key in ('hs_top', 'hs_inv', 'sup_touch', 'res_touch', 'dfs', 'dfr'):
+            COLS['%s_%s' % (tfname, key)] = np.array([p.get(key, np.nan) for p in pats])
+        for name, arr in F.items():
+            vals = np.stack([arr[np.clip(idx - s, 0, None)] for s in range(5)], axis=1)   # sh1..sh5
+            COLS['%s_%s_sh1' % (tfname, name)] = vals[:, 0]
+            COLS['%s_%s_mean5' % (tfname, name)] = np.nanmean(vals, axis=1)
+            COLS['%s_%s_trend5' % (tfname, name)] = vals[:, 0] - vals[:, 4]
+            COLS['%s_%s_npos5' % (tfname, name)] = (vals > 0).sum(axis=1).astype(float)
+            for s in (1, 2, 3, 4): COLS['%s_%s_sh%d' % (tfname, name, s + 1)] = vals[:, s]
+    names = sorted(COLS)
+    res = []
+    for nm in names:
+        x = COLS[nm]; rh = []; ns = []
+        for y in years:
+            r, n = spearman(x[YR == y], NET[YR == y]); rh.append(r); ns.append(n)
+        rh = np.array(rh)
+        if np.all(np.isfinite(rh)) and (np.all(rh > 0) or np.all(rh < 0)): cons = float(np.min(np.abs(rh)))
+        else: cons = 0.0
+        res.append((cons, nm, rh, ns))
+    res.sort(key=lambda z: -z[0])
+    # shuffle control
+    rng = np.random.default_rng(7); ctrl = []
+    for rep in range(5):
+        NS = NET.copy()
+        for y in years: NS[YR == y] = rng.permutation(NS[YR == y])
+        best = 0.0
+        for nm in names[::3]:
+            x = COLS[nm]; rh = [spearman(x[YR == y], NS[YR == y])[0] for y in years]; rh = np.array(rh)
+            if np.all(np.isfinite(rh)) and (np.all(rh > 0) or np.all(rh < 0)): best = max(best, float(np.min(np.abs(rh))))
+        ctrl.append(best)
+    nc = sum(1 for r in res if r[0] > 0); nc1 = sum(1 for r in res if r[0] > 0.10); nc15 = sum(1 for r in res if r[0] > 0.15)
+    out.append('%d features scored. Same-sign in all years: %d; with min |rho| > 0.10: %d; > 0.15: %d.' % (len(res), nc, nc1, nc15))
+    out.append('SHUFFLE CONTROL (outcomes shuffled within each year, 5 repeats, 1/3 of features): best min|rho| = %s. Anything below that level is noise.' % ', '.join('%.2f' % c for c in ctrl))
+    out.append(''); out.append('TOP 60 by the WEAKEST year (|rho| same sign in all years). rho per year, then quintile tables (low->high feature value): n / win% / avg net')
+    def qtable(x, y):
+        ok = np.isfinite(x); xv = x[ok]; yv = y[ok]
+        if len(xv) < 25: return '   (n<25)'
+        q = np.quantile(xv, [0.2, 0.4, 0.6, 0.8]); b = np.digitize(xv, q); cells = []
+        for k in range(5):
+            m = b == k; cells.append('%3d/%3.0f%%/%6.1f' % (m.sum(), 100 * (yv[m] > 0).mean() if m.any() else 0, yv[m].mean() if m.any() else 0))
+        return ' | '.join(cells) + '   cuts: ' + ' '.join('%.3g' % v for v in q)
+    for cons, nm, rh, ns in res[:60]:
+        out.append('%-34s rho ' % nm + ' '.join('%d:%+.2f' % (y, r) for y, r in zip(years, rh)))
+        for y in years: out.append('      %d  %s' % (y, qtable(COLS[nm][YR == y], NET[YR == y])))
+    out.append(''); out.append('RATIO FAMILY SUMMARY: best consistent min|rho| per family (sh1 of any tf/period) and the feature that gave it')
+    fam = collections.defaultdict(lambda: (0.0, ''))
+    for cons, nm, rh, ns in res:
+        parts = nm.split('_'); key = parts[2] if parts[1].startswith('p') and len(parts) > 2 and not parts[2].startswith('p') else parts[1]
+        if parts[2:3] == ['SSR']: key = 'SSR'
+        if cons > fam[key][0]: fam[key] = (cons, nm)
+    for key, (c, nm) in sorted(fam.items(), key=lambda z: -z[1][0]): out.append('  %-10s %.3f  %s' % (key, c, nm))
+    out.append(''); out.append('RANGE+VOLUME CONTEXT (2-D hash table): ratio tercile x RV tercile (RV = ATR(pd) + 10*relative volume), M15 period 5, sh1. cells n/avg net, all years pooled')
+    for rname in ('SP', 'AP', 'SR', 'AR', 'SARA', 'slp', 'ac', 'dm'):
+        x = COLS['M15_p5_%s_sh1' % rname]; r = COLS['M15_p5_RV_sh1']; ok = np.isfinite(x) & np.isfinite(r)
+        qx = np.quantile(x[ok], [1 / 3, 2 / 3]); qr = np.quantile(r[ok], [1 / 3, 2 / 3]); bx = np.digitize(x, qx); br = np.digitize(r, qr)
+        line = '  %-5s' % rname
+        for kx in range(3):
+            line += ' | ' + rname + ('lo', 'mid', 'hi')[kx] + ': ' + ' '.join('RV%s %3d/%6.1f' % (('lo', 'mid', 'hi')[kr], (ok & (bx == kx) & (br == kr)).sum(), NET[ok & (bx == kx) & (br == kr)].mean() if (ok & (bx == kx) & (br == kr)).any() else 0) for kr in range(3))
+        out.append(line)
+    out.append(''); out.append('PATTERN FLAGS (pooled, per tf): head-and-shoulders top / inverse in the last 80 bars, support and resistance touches')
+    for tfname in ('M5', 'M15', 'H1'):
+        for key in ('hs_top', 'hs_inv'):
+            x = COLS['%s_%s' % (tfname, key)]
+            out.append('  %-3s %-7s present: n=%3d avg %6.1f win%% %4.0f | absent: n=%3d avg %6.1f win%% %4.0f' % (tfname, key, (x == 1).sum(), NET[x == 1].mean() if (x == 1).any() else 0, 100 * (NET[x == 1] > 0).mean() if (x == 1).any() else 0, (x == 0).sum(), NET[x == 0].mean(), 100 * (NET[x == 0] > 0).mean()))
+        for key in ('sup_touch', 'res_touch', 'dfs', 'dfr', 'fibpos50_sh1', 'fibdist_sh1', 'dfl20_sh1', 'dfl50_sh1'):
+            x = COLS['%s_%s' % (tfname, key)]; out.append('  %-3s %-13s pooled %s' % (tfname, key, qtable(x, NET)) + '   rho/yr ' + ' '.join('%+.2f' % spearman(x[YR == y], NET[YR == y])[0] for y in years))
+    print('\n'.join(out))
+
+if __name__ == '__main__': main()

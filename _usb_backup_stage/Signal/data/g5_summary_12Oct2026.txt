@@ -1,0 +1,30 @@
+=== g5a ===
+Compile OK
+RAM gate FAIL: 451892 KB free (< 1,000,000). Close apps and retry.
+=== g5b ===
+Compile OK
+RAM gate FAIL: 526724 KB free (< 1,000,000). Close apps and retry.
+=== g5c ===
+Compile OK
+RAM gate FAIL: 511048 KB free (< 1,000,000). Close apps and retry.
+=== g5d ===
+Compile OK
+RAM gate FAIL: 518372 KB free (< 1,000,000). Close apps and retry.
+=== g5e ===
+Compile OK
+RAM gate FAIL: 538088 KB free (< 1,000,000). Close apps and retry.
+=== g5a ===
+Compile OK
+RAM gate FAIL: 402016 KB free (< 1,000,000). Close apps and retry.
+=== g5b ===
+Compile OK
+RAM gate FAIL: 385712 KB free (< 1,000,000). Close apps and retry.
+=== g5c ===
+Compile OK
+RAM gate FAIL: 388388 KB free (< 1,000,000). Close apps and retry.
+=== g5d ===
+Compile OK
+RAM gate FAIL: 394484 KB free (< 1,000,000). Close apps and retry.
+=== g5e ===
+Compile OK
+RAM gate FAIL: 398304 KB free (< 1,000,000). Close apps and retry.

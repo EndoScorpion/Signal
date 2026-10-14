@@ -1,0 +1,21 @@
+{
+ "time": "2026-10-14T18:45:10",
+ "leader": "sim_tier3p0_at_250000",
+ "options": [
+  {
+   "n": 1,
+   "label": "Research new methods online (Claude searches, builds new gates in a new EA version, queues them)",
+   "action": "research"
+  },
+  {
+   "n": 2,
+   "label": "Pause until RAM recovers",
+   "action": "pause_all"
+  },
+  {
+   "n": 3,
+   "label": "Keep running as is",
+   "action": "keep"
+  }
+ ]
+}

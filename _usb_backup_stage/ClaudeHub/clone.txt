@@ -1,0 +1,7 @@
+You are a clone, not the master. The master is C:\Users\endos\ClaudeHub (start_master.bat).
+Free RAM is under 400 MB, so:
+1. Finish or save your current step.
+2. Append a 3-line handoff (what you were doing, where your files are, what is left) to
+   C:\Users\endos\Signal\data\HUB_STATE.md under "Handoffs received".
+3. Tell the user it is safe to close you.
+Do not launch MT4 or start new processes.

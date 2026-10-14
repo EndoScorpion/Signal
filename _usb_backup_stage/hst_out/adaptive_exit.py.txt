@@ -1,0 +1,64 @@
+# Replay the EA's own entries (from a tester journal) with different exits, on M5 history:
+# fixed TP/SL, stepping TP (+1 after a win, step back after a loss), trailing stops.
+# usage: python3 adaptive_exit.py <journal> <EURUSD5.hst>
+import sys, re, struct, datetime as D
+import numpy as np
+log, hst = sys.argv[1:3]
+b = open(hst, 'rb').read()
+a = np.frombuffer(b[148:148 + ((len(b) - 148) // 60) * 60], dtype=np.dtype([('t', '<i8'), ('o', '<f8'), ('h', '<f8'), ('l', '<f8'), ('c', '<f8'), ('v', '<i8'), ('s', '<i4'), ('rv', '<i8')]))
+T, H, L, C = a['t'], a['h'], a['l'], a['c']
+COMM = 9; SPR = 2
+ents = []
+for ln in open(log, errors='ignore'):
+    m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+.*?open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', ln)
+    if m: ents.append((int(D.datetime.strptime(m.group(1), '%Y.%m.%d %H:%M:%S').replace(tzinfo=D.timezone.utc).timestamp()), float(m.group(3))))
+ents.sort()
+def path(t0):
+    i = np.searchsorted(T, t0, side='right') - 1   # M5 bar containing the entry
+    return max(i, 0)
+def run_fixed(tp, sl, maxbars=5000):
+    nets = []
+    for t0, entry in ents:
+        i = path(t0); hh = H[i:i + maxbars]; ll = L[i:i + maxbars]  # bid prices; entry is ask
+        tpl = entry + tp * 1e-5; sll = entry - sl * 1e-5
+        a_tp = np.argmax(hh >= tpl) if (hh >= tpl).any() else 10 ** 9; a_sl = np.argmax(ll <= sll) if (ll <= sll).any() else 10 ** 9
+        if a_sl <= a_tp and a_sl < 10 ** 9: nets.append(-sl - COMM)
+        elif a_tp < 10 ** 9: nets.append(tp - COMM)
+        else: nets.append((C[min(len(C) - 1, i + maxbars)] - entry) * 1e5 - COMM)
+    return np.array(nets)
+def run_step(tp0, sl, up, down, reset, lo=10, hi=400, maxbars=5000):
+    tp = tp0; nets = []; tps = []
+    for t0, entry in ents:
+        i = path(t0); hh = H[i:i + maxbars]; ll = L[i:i + maxbars]
+        tpl = entry + tp * 1e-5; sll = entry - sl * 1e-5
+        a_tp = np.argmax(hh >= tpl) if (hh >= tpl).any() else 10 ** 9; a_sl = np.argmax(ll <= sll) if (ll <= sll).any() else 10 ** 9
+        tps.append(tp)
+        if a_sl <= a_tp and a_sl < 10 ** 9: nets.append(-sl - COMM); tp = tp0 if reset else max(lo, tp - down)
+        elif a_tp < 10 ** 9: nets.append(tp - COMM); tp = min(hi, tp + up)
+        else: nets.append((C[min(len(C) - 1, i + maxbars)] - entry) * 1e5 - COMM)
+    return np.array(nets), np.array(tps)
+def run_trail(start, trail, sl, tp=None, maxbars=5000):
+    """SL 'sl' pts until price is 'start' pts up, then stop trails 'trail' pts below the highest bid seen (bar by bar)."""
+    nets = []
+    for t0, entry in ents:
+        i = path(t0); stop = entry - sl * 1e-5; best = entry; done = False
+        for j in range(i, min(len(C), i + maxbars)):
+            if L[j] <= stop: nets.append((stop - entry) * 1e5 - COMM); done = True; break
+            if tp and H[j] >= entry + tp * 1e-5: nets.append(tp - COMM); done = True; break
+            if H[j] > best: best = H[j]
+            if best - entry >= start * 1e-5: stop = max(stop, best - trail * 1e-5)
+        if not done: nets.append((C[min(len(C) - 1, i + maxbars)] - entry) * 1e5 - COMM)
+    return np.array(nets)
+def summ(nets):
+    return '%5d trades  win%% %5.1f  avg %7.1f  total %8.0f' % (len(nets), 100 * (nets > 0).mean(), nets.mean(), nets.sum())
+out = ['EXIT REPLAY on %d EA entries from %s (M5 path, 9 commission, 2 spread already in the ask entry)' % (len(ents), log), '', 'FIXED EXITS']
+for tp, sl in [(10, 290), (15, 290), (20, 290), (30, 290), (50, 290), (100, 290), (30, 100), (50, 50), (100, 100), (200, 200), (300, 300)]:
+    out.append('  TP %3d SL %3d : %s' % (tp, sl, summ(run_fixed(tp, sl))))
+out += ['', 'STEPPING TAKE PROFIT (SL 290): start 10, +up after a win, -down after a loss (or reset to start)']
+for tp0, up, down, reset in [(10, 1, 1, False), (10, 1, 5, False), (10, 1, 0, True), (10, 5, 5, False), (10, 5, 0, True), (10, 10, 10, False), (10, 2, 1, False)]:
+    nets, tps = run_step(tp0, 290, up, down, reset)
+    out.append('  +%d/-%s%s : %s   TP reached max %3d, mean %5.1f' % (up, 'reset' if reset else str(down), '', summ(nets), tps.max(), tps.mean()))
+out += ['', 'TRAILING STOPS (initial SL 290)']
+for start, trail, tp in [(10, 5, None), (20, 10, None), (30, 15, None), (50, 25, None), (100, 50, None), (20, 10, 100), (30, 20, 200), (50, 30, 300), (10, 10, 50)]:
+    out.append('  trail %3d after +%3d%s : %s' % (trail, start, (' TP %d' % tp) if tp else '      ', summ(run_trail(start, trail, 290, tp))))
+print('\n'.join(out))

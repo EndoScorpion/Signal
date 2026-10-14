@@ -1,0 +1,96 @@
+B32 TRADE ANALYSIS (2026-10-11)
+Data: b22_thu sells, Aug-2025..Sep-2026, spread 2 + spread 5 (485 closed sells, base +$148.1, win rate 56.5%).
+Indicators on M15 (GateTF) closed bar before entry. Twelve Data has no 2017-21 intraday; PC has M1 only for 2025-26,
+so 2017/2019/2020/2021 must be judged by MT4 backtests.
+
+KEY FINDING: losing sells were "chasing" - entered when already oversold / below a falling long MA.
+Rule (keep sells if...)   kept  H1 $   H2 $   total $  (base H1 76 / H2 72 / 148)
+macdh/ATR >= -0.18         374  162.7  105.7  268.4
+slope150 >= -0.23          388  197.3   87.9  285.2
+accel10 >= -0.72           387  114.8  209.5  324.3   <- best, stable both halves
+dist150 >= -2.2 ATR        379  188.6  112.5  301.1
+chaos ER150 <= 0.12        388  216.1   63.2  279.4
+pos125 >= 0.30             388  184.7   70.6  255.4
+wpr14 >= -60               291  141.0  101.3  242.3   (b28 WprLow covers this)
+cci14 >= -30               280  102.4  102.0  204.3
+stoch14 >= 45              232  119.7   64.7  184.4
+obcount50 <= 12            403  129.7   61.1  190.8
+Stoch quintiles (sells): <30 -$17.6, 30-48 -$16, 48-58 +$81, >58 +$101.  Stoch>=80 almost never at sells.
+Periods 10,20,50,100,125,150,200,250,300 all tested; 125-200 strongest for slope/dist/pos/ER.
+
+B32 inputs (all OFF): UseStochSellGate, UseStochBuyWarn(+StochBuyBlock, count printed at end), OBCountMax,
+UseCciSellGate, UseMacdSellGate, UseSlopeSellGate, UseAccelSellGate, UseJerkSellGate, UseDistSellGate,
+UsePosSellGate, UseAccHeightGate, UseChaosErGate.  Thresholds above are in-sample - verify OOS.
+
+TEST ORDER (vs b22 2017 sp2 12,426 pts): 1 UseAccelSellGate  2 UseDistSellGate  3 UseMacdSellGate
+4 UseSlopeSellGate  5 UseChaosErGate. Winners -> 2019/2020/2021 + spread 5.
+
+ADDED (Williams %R, Alligator, fractals, chaos) - sell P&L by quintile, low->high:
+Alligator lips-jaw/ATR: +138 +67 -2 -113 +58  -> best selling into an open DOWN mouth; worst when mouth just turning up. Not clean enough for a gate yet.
+Distance below last up fractal (ATR): +166 +153 -71 -5 -95 -> sells near resistance win, far below it lose.
+   upfrac<=1.0 ATR $280 (H1 117/H2 163); <=1.5 $285. -> UseUpFracNearGate (FracNearATR=1.5)
+%R(150): -135 +70 +163 +16 +34 -> bottom of long range loses. wpr150>=-80 $188 -> UseWprFloorGate
+Hurst(100) chaos: +63 +172 +16 -101 -2 -> persistent trend (high H) loses. <=0.55 $175 -> UseHurstGate
+Lyapunov proxy(200): top quintile -72 (fast divergence = bad).
+Best combo: accel10>=-0.72 AND hurst100<=0.6 = $343 (H1 133 / H2 210), vs base $148.
+Plan for new trades: favour sells near the last up fractal, after acceleration flattens, in choppy (low Hurst/ER) regimes.
+Extra test order: 6 UseUpFracNearGate  7 UseHurstGate  8 UseAccelSellGate+UseHurstGate together.
+
+WHY REJECTED IDEAS FAILED (same 485 sells) + revised branches:
+- Momentum gate / calculus vel-accel: they demanded price already FALLING = chasing. Inverse wins:
+  mom10 quintiles -84 -57 +37 +121 +130. Fade version mom10>=-0.5 ATR: $271 (H1 144/H2 127). -> UseFadeMomGate
+- H4 BB 1.8/2.0: wrong timeframe. On M15, BB z top quintile +187; z>=0.5: $185 (H2 weaker). -> UseBbzSellGate
+- EMA9/21: no monotonic edge (quintiles +30 +76 +124 -113 +31) = noise. Keep dropped.
+- Session windows: 09-12h -59, 18-24h -76, 15-18h +133. Fixed windows too blunt; not retried.
+- Friday sells -$125 (others all positive). no-Friday $274 (H1 105/H2 168). -> UseNoFriday
+- Loss lockout: losses cluster. Sell after a losing sell avg -$2.15, after a win +$2.19.
+  Old lockout was time-based (missed the rebound wins). New: short cooldown of N M15 bars (test 1,2,4,8) after a losing CLOSED sell. -> UseSkipAfterLoss
+  (Upper bound $601 - offline count used open order, real gain will be smaller.)
+- Close-near-low, volume-rising: no stable pattern; keep dropped.
+Test order add: 9 UseSkipAfterLoss  10 UseNoFriday  11 UseFadeMomGate  12 UseBbzSellGate
+
+LOSS PREVENTION (211 losing sells of 485, avg -$3.08):
+Best single loss predictor = chaos efficiency ratio ER(100) on M15 (AUC 0.79). High ER = clean trend = sell gets stopped out.
+  block if ER100 > 0.10: blocks 125 losses vs 48 wins, kept $394 (H1 195 / H2 199) vs base $148.
+  block if ER100 > 0.08: blocks 149 L / 68 W, kept $409.
+  NOTE: b28 UseChaosGate used ChaosMinER (required trend) = the OPPOSITE; that is why it looked bad.
+Next: distance below last up fractal (AUC 0.69), then accel/jerk (0.33-0.35 = negative accel -> loss).
+-> UseChaosErGate defaults now ErPer=100, ErMax=0.10.  TEST FIRST. Then sweep ErMax 0.08/0.10/0.12 and ErPer 100/125/150/200.
+
+TURN LOSSES INTO WINS: sells blocked by ER100>0.10 (173), reversed into buys at same 300/300 levels, est. +$211 (H1 100 / H2 111) after spread.
+Mirror estimate only (assumes sell SL hit = buy TP hit). -> UseFlipOnTrend (needs UseChaosErGate=1), comment "Q", one at a time.
+Test: 13 UseChaosErGate=1 + UseFlipOnTrend=1. Note sells blocked in down-trends also reversed positive (+$126) = these sells were late entries.
+
+CHANGE OVER TIME: every indicator above + its 1-bar and 3-bar change (d1,d3) and rate of change (r1,r3) = 420 features.
+Kept only features whose loss signal points the same way in both halves. Top:
+ er100 (level) .80/.81 | acc_x_pos50_r3 .76/.70 | er150/125 | jerk300 | slope300_d1 .33/.33 | dist_upfrac | accel10_d1
+Best change feature: rate of change of accel x height (50 bars), rising fast = loss.
+ block if r3 > 0.013: kept $359 (H1 215 / H2 145). With ER100 gate: kept $443 (H1 244 / H2 199), 263 sells.
+-> UseAHRateGate (AHRPer=50, AHRateMax=0.013). Test 14: UseChaosErGate + UseAHRateGate.
+
+CALCULUS QUADRANTS (10-bar MA velocity x acceleration at sell entry):
+ falling & speeding down 208 sells -$71 (H1 +29 / H2 -101)  <- worst, the "chasing" case
+ falling & slowing        65 +$58 | rising & slowing 124 +$92 | rising & speeding down 88 +$70
+ Not stable alone (H1 positive); covered by UseAccelSellGate / UseAHRateGate. No new gate added.
+
+TIME / PERIOD / DERIVATIVE BRANCHES:
+- Long-trend velocity: 1-bar change of SMA300 slope >= -0.005: kept $274 (H1 196 / H2 79). -> UseSlopeVelGate (test 15; also SVPer 200/250)
+- Trade duration: <1h -$25, 1-4h +$128, 4-12h -$9, 12-72h +$41, >72h -$17. No clean time-exit rule; not built.
+- Hours: 15-18h +$133 best, 09-12h and 18-24h negative. Friday negative (UseNoFriday).
+FULL TEST ORDER (vs b22 2017 sp2 12,426): 1 ChaosEr(100,.10) 2 ChaosEr+AHRate 3 ChaosEr+FlipOnTrend 4 Accel 5 UpFracNear
+ 6 SkipAfterLoss 7 NoFriday 8 Dist 9 FadeMom 10 Macd 11 SlopeVel 12 Slope 13 Hurst 14 WprFloor 15 Bbz. Winners -> 2019/2020/2021 + spread 5.
+
+GEN-2 MUTATIONS of the winner (ChaosEr), ranked by worst half (offline, 2025-26):
+ M1 ErPer=100 ErMax=0.09                         285 sells $441 (H1 201 / H2 240)  <- most balanced
+ M2 ErPer=100 ErMax=0.09 + AHRate 0.025          199 sells $478 (H1 300 / H2 179)  <- highest $
+ M3 ErPer=100 ErMax=0.09 + UpFracNear 2.0        231 sells $416 (H1 215 / H2 201)
+ M4 ErPer=150 ErMax=0.08 + AHRate 0.013          206 sells $421
+ M5 ErPer=125 ErMax=0.08 + AHRate 0.025          212 sells $426
+Also combine each with proven b25 multivariate z-score gate and daily-range filter 1.0x.
+RUN THESE FIRST (2017 sp2), report any beating b22 12,426 immediately, then 2019/2020/2021 + spread 5.
+
+ALTERNATIVE CHAOS MATH (loss AUC H1/H2; 0.5 = coin flip, further from 0.5 = stronger):
+ er100 .80/.81 | fractal dim fd100 .25/.13 (=.75/.87 inverted) | choppiness chop100 .24/.15 | chop150/fd150 ~.2
+ variance ratio .70/.41 (unstable) | DFA .6/.35 (unstable, flips) | permutation entropy .36/.28 (weak) | Hurst weak.
+ fd100 >= 1.308: 295 sells $458 (H1 149 / H2 308).  chop100 >= 46.9: $419.  fd100 + er100<=0.10: $445.
+ -> b33 (make_b33.py): UseFdGate (FdPer 100, FdMin 1.30), UseChopGate (ChopPer 100, ChopMin 46.9). Test after b32 gen-2.

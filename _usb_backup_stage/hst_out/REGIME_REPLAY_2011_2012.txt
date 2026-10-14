@@ -1,0 +1,21 @@
+DOWN-REGIME check on replayed 2011-2012 sells (journal_2011_2012.log)
+  2011 sell stop  all                        n  245  win%  58.0  avg    38.8
+  2011 sell stop  R1 below 50-day SMA        n  125  win%  61.6  avg    60.6
+  2011 sell stop  R1 above                   n  120  win%  54.2  avg    16.0
+  2011 sell stop  R3 below AND slope down    n   93  win%  61.3  avg    58.7
+  2011 sell stop  R3 opposite                n   94  win%  53.2  avg    10.1
+  2011 hedge      all                        n  120  win%  61.7  avg    61.0
+  2011 hedge      R1 below 50-day SMA        n   66  win%  63.6  avg    72.8
+  2011 hedge      R1 above                   n   54  win%  59.3  avg    46.6
+  2011 hedge      R3 below AND slope down    n   46  win%  60.9  avg    56.2
+  2011 hedge      R3 opposite                n   40  win%  55.0  avg    21.0
+  2012 sell stop  all                        n  216  win%  59.7  avg    49.3
+  2012 sell stop  R1 below 50-day SMA        n  119  win%  58.0  avg    38.9
+  2012 sell stop  R1 above                   n   97  win%  61.9  avg    62.1
+  2012 sell stop  R3 below AND slope down    n   86  win%  57.0  avg    32.9
+  2012 sell stop  R3 opposite                n   79  win%  60.8  avg    55.6
+  2012 hedge      all                        n  114  win%  67.5  avg    96.3
+  2012 hedge      R1 below 50-day SMA        n   62  win%  62.9  avg    68.4
+  2012 hedge      R1 above                   n   52  win%  73.1  avg   129.5
+  2012 hedge      R3 below AND slope down    n   46  win%  63.0  avg    69.3
+  2012 hedge      R3 opposite                n   40  win%  75.0  avg   141.0

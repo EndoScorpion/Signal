@@ -1,0 +1,98 @@
+# Entry sweep: momentum and flat entries, buy and sell, on M5/M15/H1 with several periods and exits.
+# Judged net of 9 pts commission + 2 pts spread, per year (2011, 2012, 2019, 2021). A rule "holds" only if avg net > 0
+# with n >= 30 in EVERY year. usage: python3 entry_sweep.py EURUSD5.hst EURUSD15.hst EURUSD60.hst > ENTRY_SWEEP.txt
+import sys, struct, datetime as D, itertools
+import numpy as np
+def read_hst(p):
+    b = open(p, 'rb').read(); a = np.frombuffer(b[148:148 + ((len(b) - 148) // 60) * 60], dtype=np.dtype([('t', '<i8'), ('o', '<f8'), ('h', '<f8'), ('l', '<f8'), ('c', '<f8'), ('v', '<i8'), ('s', '<i4'), ('rv', '<i8')]))
+    return a
+def ema(x, p):
+    k = 2 / (p + 1); e = np.empty_like(x); e[0] = x[0]
+    for i in range(1, len(x)): e[i] = e[i - 1] + k * (x[i] - e[i - 1])
+    return e
+def roll_max(x, w):
+    out = np.full(len(x), np.nan);
+    from numpy.lib.stride_tricks import sliding_window_view as sw
+    out[w - 1:] = sw(x, w).max(axis=1); return out
+def roll_min(x, w):
+    out = np.full(len(x), np.nan)
+    from numpy.lib.stride_tricks import sliding_window_view as sw
+    out[w - 1:] = sw(x, w).min(axis=1); return out
+def roll_mean(x, w):
+    c = np.cumsum(np.insert(x.astype(float), 0, 0)); out = np.full(len(x), np.nan); out[w - 1:] = (c[w:] - c[:-w]) / w; return out
+COMM, SPR = 9, 2
+def outcomes(a, idx, side, tp, sl, maxbars=3000):
+    """Entry at close of bar idx (buy at ask = close+spread; sell at bid = close). Returns net pts per trade. SL first if both in one bar."""
+    H, L, C = a['h'], a['l'], a['c']; n = len(a); res = np.empty(len(idx))
+    for q, i in enumerate(idx):
+        if side == 'buy':
+            entry = C[i] + SPR * 1e-5; tpl = entry + tp * 1e-5; sll = entry - sl * 1e-5
+            hh = H[i + 1:i + maxbars]; ll = L[i + 1:i + maxbars]
+            t_tp = np.argmax(hh >= tpl) if (hh >= tpl).any() else 10 ** 9
+            t_sl = np.argmax(ll <= sll) if (ll <= sll).any() else 10 ** 9
+        else:
+            entry = C[i]; tpl = entry - tp * 1e-5; sll = entry + sl * 1e-5   # sell exits at ask = price + spread
+            hh = H[i + 1:i + maxbars] + SPR * 1e-5; ll = L[i + 1:i + maxbars] + SPR * 1e-5
+            t_tp = np.argmax(ll <= tpl) if (ll <= tpl).any() else 10 ** 9
+            t_sl = np.argmax(hh >= sll) if (hh >= sll).any() else 10 ** 9
+        if t_sl <= t_tp and t_sl < 10 ** 9: res[q] = -sl - COMM
+        elif t_tp < 10 ** 9: res[q] = tp - COMM
+        else:
+            last = C[min(n - 1, i + maxbars)]; res[q] = ((last - entry) if side == 'buy' else (entry - last - SPR * 1e-5)) * 1e5 - COMM
+    return res
+YEARS = (2011, 2012, 2019, 2021)
+EXITS = [(10, 290), (30, 100), (50, 50), (100, 100), (100, 300), (200, 200), (300, 300)]
+files = dict(zip(('M5', 'M15', 'H1'), sys.argv[1:4]))
+out = []; results = []
+for tf, path in files.items():
+    a = read_hst(path); C, H, L, V = a['c'], a['h'], a['l'], a['v'].astype(float)
+    yr = np.array([D.datetime.fromtimestamp(int(t), D.timezone.utc).year for t in a['t']])
+    feats = {}
+    for p in (5, 10, 20, 50):
+        e = ema(C, p); feats['slope%d' % p] = np.concatenate([[0], np.diff(e)]) * 1e5
+    for p in (5, 14):
+        hh = roll_max(H, p); ll = roll_min(L, p); feats['stoch%d' % p] = np.where(hh > ll, 100 * (C - ll) / (hh - ll), 50)
+    rng = (H - L) * 1e5; feats['rng'] = rng; feats['rng_rel'] = rng / np.maximum(roll_mean(rng, 20), 1e-9)
+    feats['vrel'] = V / np.maximum(roll_mean(V, 20), 1)
+    feats['run'] = np.zeros(len(C))
+    sgn = np.sign(C - a['o']); r = 0
+    for i in range(len(C)):
+        r = r + 1 if sgn[i] > 0 and r >= 0 else (r - 1 if sgn[i] < 0 and r <= 0 else sgn[i]); feats['run'][i] = r
+    rules = {}
+    for p in (5, 10, 20, 50):
+        for st in (5, 14):
+            for lvl in (80, 90):
+                rules['mom buy: EMA%d slope>0 for 3 bars & stoch%d>%d' % (p, st, lvl)] = ('buy', (feats['slope%d' % p] > 0) & (np.roll(feats['slope%d' % p], 1) > 0) & (np.roll(feats['slope%d' % p], 2) > 0) & (feats['stoch%d' % st] > lvl))
+                rules['mom sell: EMA%d slope<0 for 3 bars & stoch%d<%d' % (p, st, 100 - lvl)] = ('sell', (feats['slope%d' % p] < 0) & (np.roll(feats['slope%d' % p], 1) < 0) & (np.roll(feats['slope%d' % p], 2) < 0) & (feats['stoch%d' % st] < 100 - lvl))
+        for mx in (1, 3):
+            flat = (np.abs(roll_mean(feats['slope%d' % p], 6)) < mx) & (feats['vrel'] < 1) & (feats['rng_rel'] < 1)
+            rules['flat buy: |EMA%d slopeavg6|<%d, low vol & range, green close' % (p, mx)] = ('buy', flat & (sgn > 0) & (feats['stoch14'] > 20) & (feats['stoch14'] < 70))
+            rules['flat sell: |EMA%d slopeavg6|<%d, low vol & range, red close' % (p, mx)] = ('sell', flat & (sgn < 0) & (feats['stoch14'] > 30) & (feats['stoch14'] < 80))
+    rules['run buy: 3 green candles'] = ('buy', feats['run'] == 3); rules['run sell: 3 red candles'] = ('sell', feats['run'] == -3)
+    rules['control buy: every 40th bar'] = ('buy', np.arange(len(C)) % 40 == 0); rules['control sell: every 40th bar'] = ('sell', np.arange(len(C)) % 40 == 0)
+    for name, (side, mask) in rules.items():
+        idx_all = np.where(mask & np.isin(yr, YEARS))[0]
+        # no overlapping entries: skip entries within 4 bars of the previous
+        keep = []; last = -10
+        for i in idx_all:
+            if i - last >= 4 and i > 300 and i < len(C) - 3100: keep.append(i); last = i
+        idx = np.array(keep)
+        if len(idx) == 0: continue
+        for tp, sl in EXITS:
+            net = outcomes(a, idx, side, tp, sl); per = {}
+            for y in YEARS:
+                m = yr[idx] == y; per[y] = (int(m.sum()), float(net[m].mean()) if m.any() else 0.0, float((net[m] > 0).mean() * 100) if m.any() else 0.0)
+            holds = all(per[y][0] >= 30 and per[y][1] > 0 for y in YEARS)
+            worst = min(per[y][1] for y in YEARS)
+            results.append((worst, holds, tf, name, tp, sl, per))
+results.sort(key=lambda z: -z[0])
+out.append('ENTRY SWEEP: %d rule x exit combinations on M5/M15/H1. Costs 9 commission + 2 spread. Years 2011, 2012, 2019, 2021.' % len(results))
+out.append('HOLDS = avg net > 0 and n >= 30 in all four years. Sorted by the WORST year.')
+out.append('%-4s %-62s %7s %-6s | %s' % ('tf', 'rule', 'TP/SL', 'holds', ' | '.join('%d n/avg/win%%' % y for y in YEARS)))
+for worst, holds, tf, name, tp, sl, per in results[:60]:
+    out.append('%-4s %-62s %3d/%-3d %-6s | %s' % (tf, name[:62], tp, sl, 'HOLDS' if holds else '', ' | '.join('%4d %6.1f %3.0f' % per[y] for y in YEARS)))
+out.append(''); out.append('Rules that hold in all four years: %d of %d' % (sum(r[1] for r in results), len(results)))
+out.append(''); out.append('CONTROLS (random-bar entries) by exit, for comparison:')
+for worst, holds, tf, name, tp, sl, per in results:
+    if name.startswith('control'): out.append('%-4s %-30s %3d/%-3d | %s' % (tf, name, tp, sl, ' | '.join('%4d %6.1f %3.0f' % per[y] for y in YEARS)))
+print('\n'.join(out))

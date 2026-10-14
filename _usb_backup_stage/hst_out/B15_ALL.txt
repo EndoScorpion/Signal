@@ -1,0 +1,19 @@
+B15 tests, spread 2. AC = after commission (0.09 per 0.01 lot traded). Base whole-EA AC: 17 +53, 19 -102, 20 +27, 21 -153; ladder sells AC: +173/+56/+110/-8
+test   year sellN buyN  win%s  net      sellsAC  EAnetAC   extra
+T0     2019  1271  806   53.7     84.56     56.17   -102.37  guard=0 rlog3=1465 news=0
+T1     2017   158  559   75.9     164.1    219.65     99.57  guard=0 rlog3=623 news=0
+T1     2019   980  806   62.8    580.25    577.81    419.51  guard=0 rlog3=1316 news=0
+T1     2020   137  443   64.2      54.2     85.36         2  guard=0 rlog3=522 news=0
+T1     2021   826  618   51.1     -94.7     -79.8   -224.66  guard=0 rlog3=1024 news=0
+T2     2017   207  560   66.7    123.32    173.53     54.29  guard=0 rlog3=643 news=5
+T2     2019  1274  814   53.6     82.68     55.66   -105.24  guard=0 rlog3=1476 news=11
+T2     2020   151  448   65.6     78.14    109.48     24.23  guard=0 rlog3=536 news=6
+T2     2021  1091  623   52.7      3.06     -5.85    -151.2  guard=0 rlog3=1154 news=11
+T3     2017   207  560   67.1    124.81    175.02     55.78  guard=0 rlog3=638 news=5
+T3     2019  1274  814   53.7     88.68     57.16    -99.24  guard=0 rlog3=1465 news=11
+T3     2020   153  446     66     81.14    111.14     27.23  guard=0 rlog3=530 news=6
+T3     2021  1093  621   52.4      0.06     -10.2    -154.2  guard=0 rlog3=1143 news=11
+T4     2017   114  548   63.2      49.6    212.57   -129.14  guard=140 rlog3=593 news=0 maxlot=0.03 DD=1.98%
+T4     2019   648  705   48.9   -519.53   -465.64   -884.84  guard=651 rlog3=1057 news=0 maxlot=0.03 DD=7.84%
+T4     2020    95  436   64.2     74.95    182.24    -68.42  guard=54 rlog3=488 news=0 maxlot=0.03 DD=2.16%
+T4     2021   601  545   53.7     50.34    113.65   -259.08  guard=653 rlog3=852 news=0 maxlot=0.03 DD=4.95%

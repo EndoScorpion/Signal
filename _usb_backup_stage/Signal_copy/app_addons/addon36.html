@@ -1,0 +1,56 @@
+<style>
+#slcRob{position:fixed;left:150px;top:190px;width:860px;max-width:96vw;max-height:72vh;overflow:auto;z-index:2147483105;background:#000;color:#39ff14;border:2px solid #39ff14;border-radius:9px;font:12px/1.35 "Times New Roman",serif;box-shadow:0 6px 26px #000;padding:5px 8px;display:none;cursor:move}
+#slcRob h4{margin:0;color:#ffb000;font-size:14px;display:flex;justify-content:space-between}
+#slcRob button{font:12px "Times New Roman",serif;background:#000;color:#39ff14;border:1px solid #39ff14;border-radius:4px;cursor:pointer;padding:1px 7px;margin:2px 3px 2px 0}#slcRob button.go{background:#39ff14;color:#000;font-weight:bold}
+#slcRob table{border-collapse:collapse;width:100%;font-size:11.5px;cursor:default}#slcRob td,#slcRob th{border-bottom:1px solid #123d12;padding:1px 5px;text-align:left;white-space:nowrap}#slcRob th{background:#031a03}
+#slcRob .ok{color:#39ff14;font-weight:bold}#slcRob .bad{color:#ff6b6b}#slcRob .wn{color:#ffd24a}#slcRob pre{background:#010;color:#9dffa0;border:1px solid #1f6b1f;padding:4px;margin:3px 0;white-space:pre-wrap;font:11px monospace;cursor:text}
+</style>
+<script>
+(function(){
+function g(i){return document.getElementById(i)}
+var RULES=[
+ {id:"R1",name:"Dip rebound",if:"3h drop > 1.5% AND 12h drop > 3%",t:function(f){return f.ret3<-1.5&&f.ret12<-3}},
+ {id:"R2",name:"Oversold stoch",if:"Stoch(14) < 10 AND 12h drop > 3%",t:function(f){return f.stoch<10&&f.ret12<-3}},
+ {id:"R3",name:"Below-band extreme",if:"Bollinger %B < 5 AND 12h drop > 3%",t:function(f){return f.bbp<5&&f.ret12<-3}},
+ {id:"R4",name:"Z-score dip",if:"price more than 2 std below SMA20 AND 12h drop > 3%",t:function(f){return f.ext<-2&&f.ret12<-3}}];
+var EXCL=["ETH","ZEC","TAO","ADA"];
+var VAL="Backtest (H1, one trade at a time, 4-bar exit, 0.04% cost): last 20% of the 6 tuning coins n=156 win 64% avg +0.30%/trade; 8 coins never used for tuning n=859 win 58% avg +0.33%/trade (+0.25% at 0.12% cost); all 14 coins n=1802 win 59% avg +0.31%. With a hard 1.5% stop: avg +0.41%/trade (win 57%). Take-profit exits made it worse. SELL rules failed out-of-sample and were dropped.";
+function csvLine(s){var o=[],c="",q=false;for(var i=0;i<s.length;i++){var ch=s[i];if(q){if(ch==='"'){if(s[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===","){o.push(c);c=""}else c+=ch}o.push(c);return o}
+function msg(t,c){var m=g("rbMsg");m.className=c||"";m.textContent=t}
+/* ---- 1) forward-test episode dedup ---- */
+function dedup(text){var L=text.split(/\r?\n/),i=L.findIndex(function(x){return /^mode,symbol,/.test(x)});if(i<0)throw new Error("No forward-test CSV header (mode,symbol,...) found in that file.");var H=csvLine(L[i]),rows=[];for(var j=i+1;j<L.length;j++){if(!L[j]||/^===/.test(L[j]))break;var c=csvLine(L[j]),r={};H.forEach(function(h,k){r[h]=c[k]});if(r.exit_reason&&r.entry_time_utc)rows.push(r)}
+ rows.forEach(function(r){r.t=Date.parse(r.entry_time_utc);r.n=parseFloat(r.net_pct)});rows.sort(function(a,b){return a.symbol<b.symbol?-1:a.symbol>b.symbol?1:a.side<b.side?-1:a.side>b.side?1:a.t-b.t});
+ var ep=[],p=null;rows.forEach(function(r){if(p&&r.symbol===p.symbol&&r.side===p.side&&r.t-p.t<=4*36e5)ep[ep.length-1].push(r);else ep.push([r]);p=r});
+ var m=ep.map(function(e){return {s:e[0].symbol,side:e[0].side,k:e.length,n:e.reduce(function(a,x){return a+x.n},0)/e.length,at:e[0].entry_time_utc}});
+ var mt=m.slice().sort(function(a,b){return a.at<b.at?-1:1});
+ function DDs(a){if(!window.slcCost)return"n/a";var d=slcCost.ddOf(a);return "avg "+d.avg.toFixed(2)+" / total "+d.total.toFixed(1)+" / <b>max "+d.max.toFixed(1)+"</b> pts ("+d.n+" dd)"}
+ function S(a){return {n:a.length,w:a.length?100*a.filter(function(x){return x.n>0}).length/a.length:0,avg:a.length?a.reduce(function(s,x){return s+x.n},0)/a.length:0}}
+ var by={};m.forEach(function(x){(by[x.s]=by[x.s]||[]).push(x)});
+ var X=window.slcCost?Math.max(0,slcCost.cost("crypto",0.17)-0.04):0,m2=m.map(function(x){var v=x.n-X;return {n:v>0?v*(1-slcCost.cfg.taxST/100):v}}),rn=S(m.map(function(x){return {n:x.n-X}})),ra=S(m2),rt=S(rows.map(function(r){return {n:r.n}})),re=S(m),h="<b>Forward test, counted honestly</b><br>Raw: "+rows.length+" trades, win "+rt.w.toFixed(1)+"%, avg "+rt.avg.toFixed(2)+"%/trade (sum "+(rt.avg*rows.length).toFixed(1)+"%).<br><span class=ok>Independent signals: "+m.length+", win "+re.w.toFixed(1)+"%, avg "+re.avg.toFixed(2)+"%/signal (sum "+(re.avg*m.length).toFixed(1)+"%).</span> <br><b>After ALL costs</b> (extra "+X.toFixed(2)+"% beyond the 0.04% already deducted: spread, slippage, fees, swap): win "+rn.w.toFixed(1)+"%, avg "+rn.avg.toFixed(2)+"%/signal; after "+(window.slcCost?slcCost.cfg.taxST:0)+"% tax on gains avg "+ra.avg.toFixed(2)+"%.</span> <br><b>Costs per trade:</b> "+(window.slcCost?slcCost.pstr("crypto",0.17,re.avg>0?(rn.avg-ra.avg):0):"n/a")+" (0.04% of that already inside the raw numbers).<br><b>Drawdown</b> (signals in time order, additive %): raw "+DDs(mt.map(function(x){return x.n}))+" &middot; after all costs "+DDs(mt.map(function(x){return x.n-X}))+" &middot; after costs+tax "+DDs(mt.map(function(x){var v=x.n-X;return v>0?v*(1-slcCost.cfg.taxST/100):v}))+".</span> A signal = same coin + side, entries within 4 h of each other count once.<table><tr><th>Coin</th><th>Signals</th><th>Raw trades</th><th>Win%</th><th>Avg net</th><th>Verdict</th></tr>";
+ Object.keys(by).sort(function(a,b){return S(by[b]).avg*by[b].length-S(by[a]).avg*by[a].length}).forEach(function(s){var q=S(by[s]),k=by[s].reduce(function(a,x){return a+x.k},0);h+="<tr><td><b>"+s+"</b></td><td>"+q.n+"</td><td>"+k+"</td><td>"+q.w.toFixed(0)+"%</td><td class="+(q.avg>=0?"ok":"bad")+">"+q.avg.toFixed(2)+"%</td><td class=wn>"+(q.n<8?"too few to judge (need 30+)":q.avg<0?"losing - pause":"ok so far")+"</td></tr>"});
+ g("rbOut").innerHTML=h+"</table>"}
+/* ---- 2) latest-bar scan from a price-history CSV ---- */
+function sma(a,n,i){var s=0;for(var k=i-n+1;k<=i;k++)s+=a[k];return s/n}
+function feat(c,h,l){var n=c.length,i=n-1,f={};if(n<40)return null;
+ f.ret3=100*(c[i]/c[i-3]-1);f.ret12=100*(c[i]/c[i-12]-1);var lo=1e99,hi=-1e99;for(var k=i-13;k<=i;k++){lo=Math.min(lo,l[k]);hi=Math.max(hi,h[k])}f.stoch=100*(c[i]-lo)/Math.max(hi-lo,1e-12);
+ var m=sma(c,20,i),v=0;for(k=i-19;k<=i;k++)v+=c[k]*c[k];var sd=Math.sqrt(Math.max(v/20-m*m,0));f.bbp=100*(c[i]-(m-2*sd))/Math.max(4*sd,1e-12);f.ext=(c[i]-m)/Math.max(sd,1e-12);return f}
+function scan(text){var by={},L=text.split(/\r?\n/),H=csvLine(L[0]),ix={};H.forEach(function(h,k){ix[h]=k});if(ix.symbol==null||ix.close==null)throw new Error("Not a price-history CSV (needs symbol,time_utc,high,low,close).");
+ for(var j=1;j<L.length;j++){if(!L[j])continue;var c=L[j].split(",");var s=c[ix.symbol];(by[s]=by[s]||[]).push([c[ix.time_utc],+c[ix.high],+c[ix.low],+c[ix.close]])}
+ var rows=[];Object.keys(by).forEach(function(s){var a=by[s].sort(function(x,y){return x[0]<y[0]?-1:1});if(a.length<500||/^(EURUSD|MATIC)$/.test(s))return;var f=feat(a.map(function(x){return x[3]}),a.map(function(x){return x[1]}),a.map(function(x){return x[2]}));if(!f)return;var hit=RULES.filter(function(r){return r.t(f)}).map(function(r){return r.id});rows.push({s:s,t:a[a.length-1][0],f:f,hit:hit,px:a[a.length-1][3]})});
+ var h="<b>Latest bar of each coin vs the robust rules</b> (data as of the last bar in the file; stale data = stale signal)<table><tr><th>Coin</th><th>Last bar (UTC)</th><th>Price</th><th>3h</th><th>12h</th><th>Stoch</th><th>%B</th><th>Rules firing</th></tr>";
+ rows.sort(function(a,b){return b.hit.length-a.hit.length||a.f.ret12-b.f.ret12}).forEach(function(r){h+="<tr><td><b>"+r.s+"</b>"+(EXCL.indexOf(r.s)>=0?" <small class=wn>(weak in backtest)</small>":"")+"</td><td>"+r.t+"</td><td>"+r.px+"</td><td>"+r.f.ret3.toFixed(1)+"%</td><td>"+r.f.ret12.toFixed(1)+"%</td><td>"+r.f.stoch.toFixed(0)+"</td><td>"+r.f.bbp.toFixed(0)+"</td><td class="+(r.hit.length?"ok":"")+">"+(r.hit.join(", ")||"-")+"</td></tr>"});
+ g("rbOut").innerHTML=h+"</table><small class=wn>A BUY-after-a-dip signal: hold 4 hourly bars, hard stop 1.5%. Nothing is ordered automatically.</small>"}
+function pick(fn){var i=document.createElement("input");i.type="file";i.accept=".csv,.txt";i.onchange=function(){var f=i.files[0];if(!f)return;msg("Reading "+f.name+" ("+Math.round(f.size/1024)+" KB)...");var r=new FileReader();r.onload=function(){try{fn(String(r.result));msg("Done: "+f.name,"ok")}catch(e){msg(e.message,"bad")}};r.readAsText(f)};i.click()}
+function spec(){return "ROBUST DIP-REBOUND RULES (build 039) - BUY only\n"+RULES.map(function(r){return r.id+" "+r.name+": "+r.if}).join("\n")+"\nExit: after 4 hourly bars OR hard stop at -1.5% (close-based), one trade per coin at a time (no stacking within 4 bars).\nSkip/pause coins that were weak in backtest: "+EXCL.join(", ")+".\nSELL-side rules were tested and removed: they failed out-of-sample.\n"+VAL+"\nPast results; not predictive; not advice."}
+function build(){if(g("slcRob"))return;var d=document.createElement("div");d.id="slcRob";
+ d.innerHTML="<h4><span>&#129504; ROBUST WIN LOGIC &middot; episode-dedup tested <small>(drag me)</small></span><button id='rbX'>x</button></h4><div id='rbMsg'></div>"+
+ "<table><tr><th>Rule</th><th>Name</th><th>BUY when</th></tr>"+RULES.map(function(r){return "<tr><td><b>"+r.id+"</b></td><td>"+r.name+"</td><td>"+r.if+"</td></tr>"}).join("")+"</table><div style='margin:3px 0'>Exit: 4 hourly bars, hard stop -1.5%. "+VAL+"</div>"+
+ "<div><button class='go' id='rbDed'>📂 Check forward-test file (dedup)</button><button class='go' id='rbScan'>📂 Scan price-history CSV for signals now</button><button id='rbCp'>copy rules</button><button id='rbSv'>download rules .txt</button></div><div id='rbOut'></div>";
+ document.body.appendChild(d);g("rbX").onclick=function(){d.style.display="none"};g("rbDed").onclick=function(){pick(dedup)};g("rbScan").onclick=function(){pick(scan)};
+ g("rbCp").onclick=function(){var t=spec();try{navigator.clipboard.writeText(t);msg("Copied.","ok")}catch(e){msg("Copy blocked - use download.","wn")}};
+ g("rbSv").onclick=function(){var s=new Date().toISOString().slice(0,16).replace(/[-:T]/g,"");window.slcSave("slc_robust_win_rules_b039_"+s+".txt",spec(),"text/plain")}}
+function open(){build();g("slcRob").style.display="block"}
+function btn(){if(g("slcRobBtn"))return;var b=document.createElement("button");b.id="slcRobBtn";b.textContent="🧠 Robust rules";b.style.cssText="position:fixed;top:4px;right:468px;z-index:2147483190;background:#39ff14;color:#000;border:2px solid #39ff14;border-radius:5px;font:bold 12px 'Times New Roman',serif;padding:2px 9px;cursor:pointer";b.onclick=open;document.body.appendChild(b)}
+setInterval(function(){try{btn()}catch(e){}},1500);btn();window.slcRobust={open:open,dedup:dedup,scan:scan,RULES:RULES,feat:feat};
+})();
+</script>

@@ -1,0 +1,39 @@
+17:53:43 OK b31_zr_s8_2019 in 2.6 min -> C:\Users\endos\Desktop\hst_out\b31_zr_s8_2019.htm
+17:57:59 OK b31_zr_s8_2021 in 4.2 min -> C:\Users\endos\Desktop\hst_out\b31_zr_s8_2021.htm
+17:59:58 OK b31_zr2_2017 in 1.9 min -> C:\Users\endos\Desktop\hst_out\b31_zr2_2017.htm
+18:01:24 OK b31_zr3_2017 in 1.4 min -> C:\Users\endos\Desktop\hst_out\b31_zr3_2017.htm
+18:01:24 BATCH DONE
+18:02:56 OK b22_thu_s8_2019 in 1.5 min -> C:\Users\endos\Desktop\hst_out\b22_thu_s8_2019.htm
+18:04:53 OK b22_thu_s8_2021 in 1.9 min -> C:\Users\endos\Desktop\hst_out\b22_thu_s8_2021.htm
+18:04:53 BATCH DONE
+18:06:37 OK pc_B36_chop_2526 in 1.7 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_2526.htm
+18:08:22 OK pc_B36_chop_2019 in 1.7 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_2019.htm
+18:09:49 OK pc_B36_chop_adx_2526 in 1.4 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_adx_2526.htm
+18:11:18 OK pc_B36_chop_adx_2019 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_adx_2019.htm
+18:12:49 OK pc_B36_chop_zH1_2526 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_zH1_2526.htm
+18:14:18 OK pc_B36_chop_zH1_2019 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_B36_chop_zH1_2019.htm
+18:15:54 OK pc_MP6_erH1_2526 in 1.6 min -> C:\Users\endos\Desktop\hst_out\pc_MP6_erH1_2526.htm
+18:17:35 OK pc_MP6_erH1_2019 in 1.7 min -> C:\Users\endos\Desktop\hst_out\pc_MP6_erH1_2019.htm
+18:19:06 OK pc_B38_smooth_jitter_adx_2526 in 1.5 min -> C:\Users\endos\Desktop\hst_out\pc_B38_smooth_jitter_adx_2526.htm
+18:20:28 OK pc_B38_smooth_jitter_adx_2019 in 1.4 min -> C:\Users\endos\Desktop\hst_out\pc_B38_smooth_jitter_adx_2019.htm
+18:20:28 BATCH DONE
+18:20:28 SKIP b31_zr_s8_2019 (report exists)
+18:20:28 SKIP b31_zr_s8_2021 (report exists)
+18:20:28 SKIP b31_zr2_2017 (report exists)
+18:20:28 SKIP b31_zr3_2017 (report exists)
+18:20:28 BATCH DONE
+18:20:28 SKIP b22_thu_s8_2019 (report exists)
+18:20:28 SKIP b22_thu_s8_2021 (report exists)
+18:20:28 BATCH DONE
+18:20:29 SKIP pc_B36_chop_2526 (report exists)
+18:20:29 SKIP pc_B36_chop_2019 (report exists)
+18:20:29 SKIP pc_B36_chop_adx_2526 (report exists)
+18:20:29 SKIP pc_B36_chop_adx_2019 (report exists)
+18:20:29 SKIP pc_B36_chop_zH1_2526 (report exists)
+18:20:29 SKIP pc_B36_chop_zH1_2019 (report exists)
+18:20:29 SKIP pc_MP6_erH1_2526 (report exists)
+18:20:29 SKIP pc_MP6_erH1_2019 (report exists)
+18:20:29 SKIP pc_B38_smooth_jitter_adx_2526 (report exists)
+18:20:29 SKIP pc_B38_smooth_jitter_adx_2019 (report exists)
+18:20:29 BATCH DONE
+AUTO1 DONE

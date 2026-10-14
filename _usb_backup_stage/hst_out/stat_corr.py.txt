@@ -1,0 +1,64 @@
+# Join EA stat lines (sp/sr/df/obc) to each order's outcome; bucket tables + rank correlations.
+import re,sys,datetime as D
+L=open(sys.argv[1],errors='ignore').read().splitlines()
+T=lambda s:D.datetime.strptime(s,'%Y.%m.%d %H:%M:%S')
+pend={};orders={}
+for ln in L:
+    m=re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+(.*)',ln)
+    if not m: continue
+    t,b=m.groups()
+    for k in('sp','sr','df','obc'):
+        if re.search(r': %s\[0\]'%k,b):
+            nums=[float(x) for x in re.findall(r'-?\d+\.?\d*',b.split(': ',1)[1].replace('[',' [').replace(']','] ')) if True]
+            body=b.split(': ',1)[1]
+            vals=[float(x) for x in re.findall(r'(?<![\[\w])-?\d+\.\d+|(?<=\] )-?\d+(?= |$)|(?<= )-?\d+(?= |$)',body)]
+            arr=re.sub(r'(Min|Max)\w+ -?[\d.]+','',body); arr=re.sub(r'\w+\[\d+\]','',arr).split()
+            arr=[float(x) for x in arr]
+            for i,v in enumerate(arr): pend['%s%02d'%(k,i)]=v
+            for mm in re.finditer(r'((?:Min|Max)\w+) (-?[\d.]+)',body): pend[mm.group(1)]=float(mm.group(2))
+    m2=re.search(r'open #(\d+) buy [\d.]+ \S+ at ([\d.]+)',b)
+    if m2: orders[int(m2.group(1))]=dict(stats=dict(pend),open=float(m2.group(2)),t0=T(t)); pend={}
+    m3=re.search(r'(?:take profit|stop loss) #(\d+) at ([\d.]+)',b) or re.search(r'close #(\d+) .* at price ([\d.]+)',b)
+    if m3 and int(m3.group(1)) in orders:
+        o=orders[int(m3.group(1))]; o['close']=float(m3.group(2)); o['t1']=T(t); o['kind']='TP' if 'take' in b else 'close'
+rows=[]
+for n,o in sorted(orders.items()):
+    if 'close' not in o: continue
+    g=(o['close']-o['open'])*1e5; o['net']=g-9; o['mins']=(o['t1']-o['t0']).total_seconds()/60; o['n']=n; rows.append(o)
+def rank(x):
+    s=sorted(range(len(x)),key=lambda i:x[i]); r=[0]*len(x)
+    for k,i in enumerate(s): r[i]=k
+    return r
+def sp(a,b):
+    ra,rb=rank(a),rank(b); n=len(a); ma=sum(ra)/n; mb=sum(rb)/n
+    c=sum((x-ma)*(y-mb) for x,y in zip(ra,rb)); d=(sum((x-ma)**2 for x in ra)*sum((y-mb)**2 for y in rb))**.5
+    return c/d if d else 0
+keys=sorted({k for o in rows for k in o['stats']})
+out=['ORDERS: %d  (TP %d, other %d)  cost 9 pts commission; spread already in fill'%(len(rows),sum(o['kind']=='TP' for o in rows),sum(o['kind']!='TP' for o in rows)),
+ 'n  open_time  kind  net_pts  mins_to_exit','']
+for o in rows: out.append('%2d %s %-5s %6.1f %8.1f'%(o['n'],o['t0'],o['kind'],o['net'],o['mins']))
+out+=['','RANK CORRELATION (Spearman) of each stat vs net pts and vs minutes to exit. |r| needed for p<0.05 is about 2/sqrt(n)','stat     r_net  r_mins']
+cor=[]
+for k in keys:
+    xs=[o for o in rows if k in o['stats']]
+    if len(xs)<10: continue
+    a=[o['stats'][k] for o in xs]; cor.append((k,sp(a,[o['net'] for o in xs]),sp(a,[o['mins'] for o in xs])))
+for k,a,b in sorted(cor,key=lambda z:-abs(z[1])): out.append('%-8s %6.2f %6.2f'%(k,a,b))
+out+=['','BUCKET TABLES (terciles). n<30 per bucket = TOO FEW, treat as anecdote']
+for k,_,_ in sorted(cor,key=lambda z:-abs(z[1]))[:12]:
+    xs=sorted([o for o in rows if k in o['stats']],key=lambda o:o['stats'][k]); t=len(xs)//3
+    out.append(k)
+    for i,ch in enumerate([xs[:t],xs[t:2*t],xs[2*t:]]):
+        out.append('  %6.2f..%6.2f n=%2d win%%=%3.0f avg_net=%6.1f avg_mins=%7.1f TOO FEW'%(ch[0]['stats'][k],ch[-1]['stats'][k],len(ch),100*sum(o['net']>0 for o in ch)/len(ch),sum(o['net'] for o in ch)/len(ch),sum(o['mins'] for o in ch)/len(ch)))
+tot=sum(o['net'] for o in rows); out.insert(1,'TOTAL net pts %.0f, avg %.2f/trade, losers %d'%(tot,tot/len(rows),sum(o['net']<0 for o in rows)))
+L=[o for o in rows if o['net']<0]; W=[o for o in rows if o['net']>=0]
+if L:
+    out+=['','LOSERS vs WINNERS: losers mean, winners mean, and where each loser sits as a percentile among winners (0=lowest,100=highest)']
+    res=[]
+    for k in keys:
+        w=sorted(o['stats'][k] for o in W if k in o['stats']); l=[o['stats'][k] for o in L if k in o['stats']]
+        if len(l)<len(L) or not w: continue
+        pc=[round(100*sum(x<v for x in w)/len(w)) for v in l]
+        res.append((abs(sum(pc)/len(pc)-50),k,sum(l)/len(l),sum(w)/len(w),pc))
+    for d,k,lm,wm,pc in sorted(res,reverse=True)[:15]: out.append('%-8s loser %6.2f winner %6.2f  pct %s'%(k,lm,wm,pc))
+print('\n'.join(out))

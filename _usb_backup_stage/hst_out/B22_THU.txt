@@ -1,0 +1,9 @@
+b22_off_2019           sells  572 win  55.2%  pts    7892  DD  16869
+b22_thu_2011           sells  503 win  48.9%  pts  -12707  DD  24689
+b22_thu_2012           sells  491 win  53.4%  pts    1008  DD  20095
+b22_thu_2017           sells  101 win  73.3%  pts   12426  DD   4810
+b22_thu_2019           sells  430 win  58.8%  pts   15152  DD  13740
+b22_thu_2020           sells   76 win  65.8%  pts    5365  DD   6168
+b22_thu_2021           sells  438 win  57.3%  pts   11528  DD  19539
+b22_thu_2022           sells  477 win  55.8%  pts    8535  DD  13282
+b22_thu_2526           sells  249 win  55.8%  pts    4357  DD  11069

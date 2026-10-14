@@ -1,0 +1,30 @@
+S2: RSI14 < 25 (M15)
+  2011  n= 168  win%= 86.9  avg_net=  -38.3  total=   -6432
+  2012  n= 180  win%= 92.2  avg_net=  -22.3  total=   -4020
+  2019  n= 166  win%= 95.2  avg_net=  -13.5  total=   -2234
+  2021  n= 184  win%= 94.6  avg_net=  -15.3  total=   -2816
+S2 + uptrend (close > EMA200)
+  2011  n=   5  win%=100.0  avg_net=    1.0  total=       5  TOO FEW
+  2012  n=   4  win%= 75.0  avg_net=  -74.0  total=    -296  TOO FEW
+  2019  n=   2  win%=100.0  avg_net=    1.0  total=       2  TOO FEW
+  2021  n=   5  win%=100.0  avg_net=    1.0  total=       5  TOO FEW
+S4: close < lower BB(20,2) and Stoch14 < 10, uptrend (EMA50 > EMA200)
+  2011  n= 266  win%= 91.7  avg_net=  -23.8  total=   -6334
+  2012  n= 287  win%= 95.1  avg_net=  -13.6  total=   -3913
+  2019  n= 269  win%= 97.4  avg_net=   -6.8  total=   -1831
+  2021  n= 279  win%= 93.2  avg_net=  -19.4  total=   -5421
+S4 without the trend filter
+  2011  n= 559  win%= 92.3  avg_net=  -22.1  total=  -12341
+  2012  n= 547  win%= 94.7  avg_net=  -14.9  total=   -8153
+  2019  n= 583  win%= 96.7  avg_net=   -8.8  total=   -5117
+  2021  n= 585  win%= 95.4  avg_net=  -12.8  total=   -7515
+CONTROL: every 50th bar (random-ish)
+  2011  n= 463  win%= 92.9  avg_net=  -20.4  total=   -9437
+  2012  n= 482  win%= 94.0  avg_net=  -17.0  total=   -8218
+  2019  n= 487  win%= 94.7  avg_net=  -15.0  total=   -7313
+  2021  n= 456  win%= 95.6  avg_net=  -12.2  total=   -5544
+CONTROL: RSI14 > 75 (the opposite, momentum buy)
+  2011  n= 156  win%= 92.9  avg_net=  -20.2  total=   -3144
+  2012  n= 183  win%= 95.1  avg_net=  -13.8  total=   -2517
+  2019  n= 141  win%= 92.2  avg_net=  -22.4  total=   -3159
+  2021  n= 137  win%= 95.6  avg_net=  -12.1  total=   -1663

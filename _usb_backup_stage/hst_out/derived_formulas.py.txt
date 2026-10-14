@@ -1,0 +1,57 @@
+# New formulas built from Nasif's ratios (SARA/PRV, SSR, MMR, SP, SR, AP, AR, ACH, SH) on the b6 ratio logs.
+# A formula counts only if its sign holds in 2017, 2019 AND 2020 and beats a shuffled-net control.
+# usage: python3 derived_formulas.py journal_2017_b6.log journal_2019_b6_rlog.log journal_2020_b6.log
+import sys, io, runpy, contextlib
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); from rlog_tables import sdiv, spearman, qtable  # noqa (module runs on import with argv[1])
+def load(log):
+    sys.argv = ['rlog_tables.py', log]
+    with contextlib.redirect_stdout(io.StringIO()): g = runpy.run_path('/mnt/project-files/stat_corr/rlog_tables.py')
+    return g['COLS'], g['NET']
+def derived(C):
+    d = {}
+    for pd in (2, 5, 10, 15):
+        for tfa, tfb in ((1, 60), (5, 60), (1, 15), (15, 60)):
+            a = C['tf%d_p%d_SARA_PRV_sh1' % (tfa, pd)]; b = C['tf%d_p%d_SARA_PRV_sh1' % (tfb, pd)]
+            d['SARAPRV_prod_tf%dxtf%d_p%d' % (tfa, tfb, pd)] = a * b; d['SARAPRV_diff_tf%d-tf%d_p%d' % (tfa, tfb, pd)] = a - b
+            d['SARA_prod_tf%dxtf%d_p%d' % (tfa, tfb, pd)] = C['tf%d_p%d_SARA_sh1' % (tfa, pd)] * C['tf%d_p%d_SARA_sh1' % (tfb, pd)]
+        d['SARAPRV_sum4tf_p%d' % pd] = sum(C['tf%d_p%d_SARA_PRV_sh1' % (tf, pd)] for tf in (1, 5, 15, 60))
+        d['SARA_align_count_p%d' % pd] = sum((C['tf%d_p%d_SARA_sh1' % (tf, pd)] > 0).astype(float) for tf in (1, 5, 15, 60))
+        d['slp_align_count_p%d' % pd] = sum((C['tf%d_p%d_slp_sh1' % (tf, pd)] > 0).astype(float) for tf in (1, 5, 15, 60))
+        for tf in (1, 5, 15, 60):
+            p = 'tf%d_p%d_' % (tf, pd)
+            d[p + 'SPxSR'] = C[p + 'SP_sh1'] * C[p + 'SR_sh1']; d[p + 'AP-AR'] = C[p + 'AP_sh1'] - C[p + 'AR_sh1']; d[p + 'ACHxSH'] = C[p + 'ACH_sh1'] * C[p + 'SH_sh1']
+            d[p + 'slpxvol'] = C[p + 'slp_sh1'] * C[p + 'vol_sh1']; d[p + 'dm_rng_x_sto'] = C[p + 'dm_rng_sh1'] * C[p + 'sto_sh1']
+            d[p + 'SARA_over_RV'] = sdiv(C[p + 'SARA_sh1'], C[p + 'RV_sh1']); d[p + 'SARA_x_sto'] = C[p + 'SARA_sh1'] * C[p + 'sto_sh1']
+            d[p + 'SARA_trend_x_PRV'] = C[p + 'SARA_trend5'] * C[p + 'PRV_sh1']
+            if pd in (2, 5, 10):
+                nxt = {2: 5, 5: 10, 10: 15}[pd]
+                d[p + 'SSR_over_MMR'] = sdiv(C['tf%d_SSR_p%dp%d_sh1' % (tf, pd, nxt)], C[p + 'MMR5_sh1'])
+                d[p + 'SSR_x_SARAPRV'] = C['tf%d_SSR_p%dp%d_sh1' % (tf, pd, nxt)] * C[p + 'SARA_PRV_sh1']
+        d['SSRxTF_x_MMR_p%d' % pd] = C['SSR_tf1_tf60_p%d_sh1' % pd] * C['tf60_p%d_MMR5_sh1' % pd] if 'SSR_tf1_tf60_p%d_sh1' % pd in C else sdiv(C['tf1_p%d_slp_sh1' % pd], C['tf60_p%d_slp_sh1' % pd]) * C['tf60_p%d_MMR5_sh1' % pd]
+    return d
+years = {}
+for log in sys.argv[1:]:
+    C, NET = load(log); years[log] = (derived(C), NET)
+names = list(next(iter(years.values()))[0].keys())
+rng = np.random.default_rng(1)
+def score(nets):
+    res = {}
+    for k in names:
+        rhos = [spearman(d[k], n) for d, n in nets]
+        res[k] = rhos
+    return res
+real = score([(d, n) for d, n in years.values()])
+ctrl = [score([(d, rng.permutation(n)) for d, n in years.values()]) for _ in range(3)]
+def minrho(r): return min(abs(x) for x in r) if len(set(np.sign(r))) == 1 else 0.0
+keep = sorted(names, key=lambda k: -minrho(real[k]))
+out = ['DERIVED FORMULAS from SARA/PRV, SSR, MMR, SP, SR, AP, AR, ACH, SH on the b6 ratio logs: %d formulas, years %s' % (len(names), [l.split('_')[1] for l in years])]
+out.append('Rule: same sign of rho in all years, min|rho| reported. Shuffled-net control, best min|rho| over 3 shuffles: %s' % ', '.join('%.3f' % max(minrho(c[k]) for k in names) for c in ctrl))
+out.append('Consistent formulas with min|rho| > 0.08: %d; > 0.10: %d' % (sum(minrho(real[k]) > 0.08 for k in names), sum(minrho(real[k]) > 0.10 for k in names)))
+out.append('')
+out.append('TOP 25 (rho per year, then pooled quintiles n / win% / avg net):')
+D_all = {k: np.concatenate([d[k] for d, _ in years.values()]) for k in names}; N_all = np.concatenate([n for _, n in years.values()])
+for k in keep[:25]:
+    out.append('%-40s min|rho| %.3f  per year %s' % (k, minrho(real[k]), ' '.join('%+.3f' % r for r in real[k])))
+    out.append('      ' + qtable(D_all[k], N_all))
+print('\n'.join(out))

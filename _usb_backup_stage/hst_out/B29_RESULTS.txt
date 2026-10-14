@@ -1,0 +1,14 @@
+B29_RESULTS (Nasif make_b29: Paradigm A FracBreak, Paradigm C FracFail, daily DD freeze; anchors adapted to this PC's b28)
+b29_base_2017          sells  101 win  73.3%  pts   12426  DD   4810
+b29_dd1_2017           sells  101 win  73.3%  pts   12426  DD   4810
+b29_dd2_2017           sells  101 win  73.3%  pts   12426  DD   4810
+b29_dd3_2017           sells  101 win  73.3%  pts   12426  DD   4810
+b29_fa20_p14_2017      sells    0 win   0.0%  pts       0  DD      0
+b29_fa20_p7_2017       sells    0 win   0.0%  pts       0  DD      0
+b29_fa30_p14_2017      sells    0 win   0.0%  pts       0  DD      0
+b29_fa30_p7_2017       sells    0 win   0.0%  pts       0  DD      0
+b29_fa50_p14_2017      sells    1 win   0.0%  pts    -317  DD    377
+b29_fa50_p7_2017       sells    0 win   0.0%  pts       0  DD      0
+b29_fc16_2017          sells   60 win  60.0%  pts    2613  DD   4433
+b29_fc4_2017           sells   12 win   0.0%  pts   -3800  DD   3986
+b29_fc8_2017           sells   29 win  31.0%  pts   -3772  DD   4322

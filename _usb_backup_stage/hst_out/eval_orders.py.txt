@@ -1,0 +1,64 @@
+# General tester-journal evaluator for the claude_b* EA copies: buys (original "", flat "4", S2 "5", S4 "6"),
+# hedge sells ("8", found via the HEDGE print), sell stops ("7": pending, filled or expired). Net pts = price move - 9 commission.
+# usage: python3 eval_orders.py <journal> [<journal> ...]
+import sys, re, datetime as D, collections
+import numpy as np
+COMM = 9
+def parse(path):
+    orders = {}; last_flat = None; last_sig = None; hedge = set()
+    for ln in open(path, errors='ignore'):
+        m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+(.*)', ln)
+        if not m: continue
+        t = D.datetime.strptime(m.group(1), '%Y.%m.%d %H:%M:%S'); b = m.group(2)
+        if ': FLAT m15' in b: last_flat = t; continue
+        if ': SIGNAL S' in b: last_sig = t; continue
+        mh = re.search(r'HEDGE sell #(\d+) for buy #(\d+)', b)
+        if mh: hedge.add(int(mh.group(1))); continue
+        mo = re.search(r'open #(\d+) (buy|sell stop|sell) [\d.]+ \S+ at ([\d.]+)', b)
+        if mo:
+            n = int(mo.group(1)); kind = mo.group(2); pr = float(mo.group(3))
+            typ = kind
+            if kind == 'buy': typ = 'buy flat(4)' if last_flat == t else ('buy signal(5/6)' if last_sig == t else 'buy original')
+            orders[n] = dict(kind=kind, typ=typ, open=pr, t_open=t, filled=(kind != 'sell stop'), close=None, exit=None); continue
+        mf = re.search(r'order #(\d+), sell [\d.]+ \S+ is opened at ([\d.]+)', b)
+        if mf and int(mf.group(1)) in orders: o = orders[int(mf.group(1))]; o['filled'] = True; o['open'] = float(mf.group(2)); o['t_fill'] = t; continue
+        md = re.search(r'#(\d+) deleted due expiration', b)
+        if md and int(md.group(1)) in orders: orders[int(md.group(1))]['exit'] = 'expired'; continue
+        mc = re.search(r'(take profit|stop loss) #(\d+) at ([\d.]+)', b) or re.search(r'close #(\d+) .* at price ([\d.]+)', b)
+        if mc:
+            g = mc.groups()
+            if len(g) == 3: ex, n, pr = g[0], int(g[1]), float(g[2])
+            else: ex, n, pr = 'close', int(g[0]), float(g[1])
+            if n in orders and orders[n]['close'] is None: orders[n]['close'] = pr; orders[n]['exit'] = ex; orders[n]['t_close'] = t
+    for n, o in orders.items():
+        if o['kind'] != 'buy': o['typ'] = 'hedge sell(8)' if n in hedge else 'sell stop(7)'
+        if o['close'] is not None:
+            o['net'] = ((o['close'] - o['open']) if o['kind'] == 'buy' else (o['open'] - o['close'])) * 1e5 - COMM
+    return orders
+def summ(nets):
+    x = np.array(nets); 
+    return '%5d trades  win%% %5.1f  avg %7.1f  total %8.0f' % (len(x), 100 * (x > 0).mean(), x.mean(), x.sum()) if len(x) else '    0 trades'
+def main():
+    for path in sys.argv[1:]:
+      orders = parse(path)
+      print('=== %s: %d orders' % (path, len(orders)))
+      by = collections.defaultdict(list); exp = collections.Counter()
+      for n, o in orders.items():
+          if 'net' in o: by[o['typ']].append(o['net'])
+          elif o['exit'] == 'expired': exp[o['typ']] += 1
+      for typ in sorted(by): print('  %-18s %s' % (typ, summ(by[typ])) + ('   (+%d expired unfilled)' % exp[typ] if exp[typ] else ''))
+      allb = [v for k, l in by.items() if k.startswith('buy') for v in l]; alls = [v for k, l in by.items() if not k.startswith('buy') for v in l]
+      if allb: print('  ALL BUYS           %s' % summ(allb))
+      if alls: print('  ALL SELLS          %s' % summ(alls))
+      print('  EVERYTHING         %s' % summ(allb + alls))
+      # monthly for sells
+      if alls:
+          mon = collections.defaultdict(list)
+          for n, o in orders.items():
+              if 'net' in o and o['kind'] != 'buy': mon[o['t_open'].strftime('%Y-%m')].append(o['net'])
+          print('  sells by month: ' + ', '.join('%s %+.0f (%d)' % (k, np.sum(v), len(v)) for k, v in sorted(mon.items())))
+      # exits
+      ex = collections.Counter((o['typ'], o['exit']) for o in orders.values() if o['exit'])
+      print('  exits: ' + ', '.join('%s/%s %d' % (k[0], k[1], v) for k, v in sorted(ex.items())))
+
+if __name__ == '__main__': main()

@@ -1,0 +1,91 @@
+WIN_LOGIC_SUMMARY.txt  (EURUSD MT4 EA, Strong2010b_claude b32-b36)  2026-10-11
+
+1) WIN LOGIC (plain words)
+- The EA SELLS. Sells win most in CHOPPY, sideways, weak-trend markets.
+- Sells lose most when price trends hard, moves efficiently, or the day's range is already big.
+- So every gate does one job: SKIP a sell when the market is trending,
+  high efficiency ratio (ER), high ADX, stretched (high z-score), or wide daily range.
+- All gates are OFF by default. Turn one on with its Use...=1 input or a .set preset.
+
+2) HOW THE BRANCHES WERE FOUND
+- Analysed 485 real sells (Aug 2025 to Sep 2026): wins vs losses per indicator.
+- Real MT4 backtests 2017-2021 for the proven gates (z-score, daily range).
+- Swept every candidate over periods 2 to 500 bars and timeframes M1 to H4.
+- Stability check: a setting must work in BOTH first half and second half of the data.
+- Rule: a gate is rejected only after the full sweep + stability check.
+- Bred/combined winners (e.g. chop + z-score) and kept combos that added profit.
+
+3) BRANCHES AND STATUS
+PROVEN (real backtests):
+- Z-score gate, ZMax 1.0 ............ preset WIN_GEN0_zgate.set
+- Daily range filter, 1.0x D1 ATR ... preset WIN_GEN0_dailyrange.set (spread-5 check pending)
+CANDIDATES (2025-26 estimates, NOT confirmed by 2017-2021 backtest):
+- Choppiness M5/350 >= 47.2 ......... $541 (most robust)   CAND_B36_chop.set
+- Choppiness + z-score H1/75 ........ $596                 CAND_B36_chop_zH1.set
+- Fractal proximity M15/150 + ER .... $497                 CAND_MP1_fracprox_er.set
+- Chaos ER (efficiency ratio) ....... $394                 CAND_MP6_erH1.set
+- Fractal dimension ................. $458                 CAND_GEN3_B1_fd_ahrate.set
+- Low ADX (M5, <= 7.6) .............. see CAND_B36_adx.set, CAND_B36_chop_adx.set
+- CCI floor (M15/250 >= -56) ........ see CAND_B36_chop_zH1_cci.set
+Dollar figures for low ADX and CCI floor alone: not found in this folder's summary files.
+
+4) CODE EXAMPLES (copied from existing files)
+
+A) Choppiness gate inputs + function  [Strong2010b_claude_b36.mq4]
+extern bool   UseChopGate=0;     // Choppiness Index(ChopPer) must be >= ChopMin (high = choppy range)
+extern int    ChopPer=100;
+extern double ChopMin=46.9;
+double Chop33(int n){ int tf=ChopTF; double s=0; for(int i=1;i<=n;i++){ s+=iATR(Symbol(),tf,1,i); } double hh=iHigh(Symbol(),tf,iHighest(Symbol(),tf,MODE_HIGH,n,1)),ll=iLow(Symbol(),tf,iLowest(Symbol(),tf,MODE_LOW,n,1)); if(hh-ll<=0){ return(100); }
+   return(100.0*MathLog10(s/(hh-ll))/MathLog10(n)); }
+
+B) Z-score gate inputs  [Strong2010b_claude_b36.mq4]
+// multivariate z-score gate: 0.7*z(close)+0.3*z(volume) over ZPeriod closed ZTF bars must be < ZMax
+extern bool   UseZGate=0;
+extern int    ZTF=15;
+extern int    ZPeriod=20;
+extern double ZMax=1.0;
+
+C) Daily range filter  [Strong2010b_claude_b36.mq4]
+bool FilterDailyRangeExpansion(){ if(UseDailyRangeFilter!=1){ return(true); }
+   double dAtr=iATR(Symbol(),PERIOD_D1,RangeAtrPeriod,1); if(dAtr<=0){ return(true); }
+   int n=iBarShift(Symbol(),PERIOD_M15,iTime(Symbol(),PERIOD_D1,0)); if(n<1){ return(true); }
+   int hb=iHighest(Symbol(),PERIOD_M15,MODE_HIGH,n,1), lb=iLowest(Symbol(),PERIOD_M15,MODE_LOW,n,1); if(hb<0 || lb<0){ return(true); }
+   return(iHigh(Symbol(),PERIOD_M15,hb)-iLow(Symbol(),PERIOD_M15,lb) <= dAtr*MaxRangeAtrMultiplier); }
+
+D) Low ADX + CCI floor gates  [WinGates_b36.mqh]
+extern bool   UseAdxLowGate=0;    // sell only in a weak trend: ADX(AdxPer) on AdxTF <= AdxMax   (sweep M5/150 -> 299, <= 7.6)
+extern int    AdxTF=5;
+extern int    AdxPer=299;
+extern double AdxMax=7.6;
+bool Gates36(){
+   if(UseAdxLowGate==1 && iADX(Symbol(),AdxTF,AdxPer,PRICE_CLOSE,MODE_MAIN,1)>AdxMax){ return(false); }
+   if(UseAdxSlopeGate==1 && iADX(Symbol(),AdxSlTF,AdxSlPer,PRICE_CLOSE,MODE_MAIN,1)-iADX(Symbol(),AdxSlTF,AdxSlPer,PRICE_CLOSE,MODE_MAIN,4)<AdxSlMin){ return(false); }
+   if(UseCciFloorGate==1 && iCCI(Symbol(),CciFTF,CciFPer,PRICE_TYPICAL,1)<CciFMin){ return(false); }
+   return(true); }
+
+Preset example (CAND_B36_chop_zH1.set):
+UseChopGate=1
+ChopTF=5
+ChopPer=350
+ChopMin=47.2
+UseMpZGate=1
+MpZTF=60
+MpZPer=75
+MpZMax=1.04
+
+5) CODE BACKUPS (.txt copies, in project ea folder)
+Strong2010b_claude_b23.mq4.txt  130004 bytes
+Strong2010b_claude_b24.mq4.txt  133872 bytes
+Strong2010b_claude_b25.mq4.txt  136526 bytes
+Strong2010b_claude_b27.mq4.txt  140554 bytes
+Strong2010b_claude_b28.mq4.txt  142381 bytes
+Strong2010b_claude_b29.mq4.txt  144574 bytes
+Strong2010b_claude_b30.mq4.txt  145537 bytes
+Strong2010b_claude_b32.mq4.txt  157116 bytes
+Strong2010b_claude_b33.mq4.txt  159929 bytes
+Strong2010b_claude_b34.mq4.txt  162666 bytes
+Strong2010b_claude_b35.mq4.txt  160193 bytes
+Strong2010b_claude_b36.mq4.txt  160262 bytes
+BranchSwitch.mqh.txt  5321 bytes
+WinGates_b34.mqh.txt  2784 bytes
+WinGates_b36.mqh.txt  1265 bytes

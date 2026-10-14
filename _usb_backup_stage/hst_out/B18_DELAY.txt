@@ -1,0 +1,8 @@
+B18 ladder entry delay, spread 2, whole EA after commission (9 USD/lot). Base b15v AC: 17 +229 | 19 -33 | 20 +89 | 21 -124
+b18_d0_2017 net=244.69 | buy 0 | sell 176, 74.4%, avg 1.39, tot 244.61 | EA AC=228.85
+b18_d5_2017 net=250.54 | buy 0 | sell 178, 74.7%, avg 1.41, tot 250.46 | EA AC=234.52
+b18_d15_2017 net=247.46 | buy 0 | sell 179, 74.3%, avg 1.38, tot 247.39 | EA AC=231.35
+b18_d60_2017 net=241.32 | buy 0 | sell 181, 73.5%, avg 1.33, tot 241.24 | EA AC=225.03
+b18_d5_2019 net=62.38 | buy 0 | sell 981, 52.5%, avg 0.06, tot 63.39 | EA AC=-25.91
+b18_d5_2020 net=117.12 | sell 137, 66.4%, tot 117.01 | EA AC=104.79 (rerun)
+b18_d5_2021 net=12.66 | sell 927, 51.5%, tot 13.82 | EA AC=-70.77 (rerun)

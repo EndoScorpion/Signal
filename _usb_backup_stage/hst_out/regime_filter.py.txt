@@ -1,0 +1,25 @@
+# Hypothesis after 2017 failed: the sell branches only work in a DOWN regime. Fixed definitions, chosen once:
+#  R1: H1 close below the 1200-bar H1 SMA (about 50 trading days)      R2: 200-bar H1 SMA slope < 0 over 24 bars (about 8 days)
+#  R3: both.  Scored on the filled sells of each journal (fill-time features from CLOSED H1 bars). Also applied to the buys (opposite sign).
+# usage: python3 regime_filter.py EURUSD60.hst <journal> [<journal>...]
+import sys, datetime as D
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO, ratio_tables as RT
+a = RT.read_hst(sys.argv[1]); T = a['t']; C = a['c']
+s1200 = RT.sma(C, 1200); s200 = RT.sma(C, 200); slope200 = s200 - RT.lag(s200, 24)
+def feats(ts):
+    idx = np.clip(np.searchsorted(T, ts - 3600, side='right') - 1, 1300, len(T) - 1)
+    return C[idx] < s1200[idx], slope200[idx] < 0
+out = []
+for log in sys.argv[2:]:
+    orders = EO.parse(log)
+    for side in ('sell', 'buy'):
+        os_ = [o for o in orders.values() if (o['kind'] != 'buy') == (side == 'sell') and 'net' in o]
+        if not os_: continue
+        ts = np.array([o.get('t_fill', o['t_open']).replace(tzinfo=D.timezone.utc).timestamp() for o in os_]); net = np.array([o['net'] for o in os_])
+        below, down = feats(ts)
+        out.append('=== %s %sS: %d trades avg %.1f' % (log, side.upper(), len(net), net.mean()))
+        for name, m in [('R1 price below 50-day SMA', below), ('R1 opposite (above)', ~below), ('R2 8-day SMA slope down', down), ('R2 opposite (up)', ~down), ('R3 below AND slope down', below & down), ('R3 opposite (above AND up)', ~below & ~down)]:
+            out.append('  %-30s n %4d  win%% %5.1f  avg %7.1f  total %8.0f' % (name, m.sum(), 100 * (net[m] > 0).mean() if m.any() else 0, net[m].mean() if m.any() else 0, net[m].sum()))
+    out.append('')
+print('\n'.join(out))

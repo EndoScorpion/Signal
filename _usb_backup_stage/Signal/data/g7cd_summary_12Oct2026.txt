@@ -1,0 +1,19 @@
+=== g7c ===
+  Total trades      : 113
+  Win rate          : 70.8%  (80W / 33L)
+  Net PnL           : $     79.60
+  PF estimate       : 1.665
+  Max closed-DD     : $   21.84  (0.22% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+=== g7d ===
+  Total trades      : 156
+  Win rate          : 71.8%  (112W / 44L)
+  Net PnL           : $    119.01
+  PF estimate       : 1.747
+  Max closed-DD     : $   34.26  (0.34% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  *** PASS ***
+DONE

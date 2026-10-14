@@ -1,0 +1,96 @@
+# M1/M5/M15/H1 RATIO HASH TABLES from the b6 EA's own RLOG lines (the EA computed everything in the tester, so M1 is included).
+# Per buy: tf 1/5/15/60 x SMA period 2/5/10/15 x last 5 closed candles: slope, accel, rate of accel, stoch, ATR, volume, height, dist above SMA,
+# tail: DFL20, DFL50, bars since stoch<=20. Ratios built here: SP AP SR AR ASR ACH SH RA SARA PRV SARA/PRV slp/RV ac/RV SSR MMR + 5-candle trends.
+# usage: python3 rlog_tables.py <b6 journal>
+import sys, re, datetime as D, collections
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO
+log = sys.argv[1]; orders = EO.parse(log)
+rl = collections.defaultdict(dict)
+for ln in open(log, errors='ignore'):
+    m = re.search(r'RLOG #(\d+) tf(\d+) pd(\d+) (.*)', ln)
+    if not m: continue
+    n, tf, pd = int(m.group(1)), int(m.group(2)), int(m.group(3)); body = m.group(4)
+    main, tail = body.split('||'); shs = [s.strip() for s in main.split('|') if s.strip()]
+    try:
+        vals = np.array([[float(v) for v in s.split()] for s in shs]); tl = [float(v) for v in tail.split()]
+    except ValueError: continue
+    if vals.shape != (5, 8) or len(tl) != 3: continue
+    rl[n][(tf, pd)] = (vals, tl)
+tick = sorted(n for n in rl if n in orders and 'net' in orders[n] and orders[n]['kind'] == 'buy' and len(rl[n]) == 16)
+NET = np.array([orders[n]['net'] for n in tick]); TYP = np.array([orders[n]['typ'] for n in tick]); TT = np.array([orders[n]['t_open'].timestamp() for n in tick])
+half = TT < np.median(TT)
+out = ['M1/M5/M15/H1 RATIO HASH TABLES from the EA log: %d buys with complete ratio lines (%s)' % (len(tick), log)]
+for t in sorted(set(TYP)): m = TYP == t; out.append('  %-18s n=%4d  win%% %5.1f  avg net %6.1f' % (t, m.sum(), 100 * (NET[m] > 0).mean(), NET[m].mean()))
+def sdiv(a, b): return np.where(np.abs(b) > 1e-9, a / np.where(np.abs(b) > 1e-9, b, 1), np.nan)
+COLS = {}
+names8 = ['slp', 'ac', 'RA', 'sto', 'rng', 'vol', 'ht', 'dm']
+for tf in (1, 5, 15, 60):
+    for pd in (2, 5, 10, 15):
+        V = np.array([rl[n][(tf, pd)][0] for n in tick])   # (N, 5 shifts, 8)
+        TL = np.array([rl[n][(tf, pd)][1] for n in tick])
+        f = {k: V[:, :, i] for i, k in enumerate(names8)}
+        f['SP'] = sdiv(f['slp'], f['sto']); f['SR'] = sdiv(f['slp'], f['rng']); f['AP'] = sdiv(f['ac'], f['sto']); f['AR'] = sdiv(f['ac'], f['rng'])
+        f['ASR'] = sdiv(f['ac'], f['slp']); f['ACH'] = sdiv(f['ac'], f['ht']); f['SH'] = sdiv(f['slp'], f['ht'])
+        f['SARA'] = f['slp'] + f['ac'] + f['RA']; f['RV'] = f['rng'] + f['vol'] / 10.0; f['PRV'] = f['RV'] + f['sto'] / 10.0
+        f['SARA_PRV'] = sdiv(f['SARA'], f['PRV']); f['slp_RV'] = sdiv(f['slp'], f['RV']); f['ac_RV'] = sdiv(f['ac'], f['RV']); f['dm_rng'] = sdiv(f['dm'], f['rng'])
+        mx = f['slp'].max(axis=1); mn = f['slp'].min(axis=1); f['MMR5'] = np.where(mn < 0, sdiv(mx, np.abs(mn)), 99)[:, None].repeat(5, axis=1)
+        for k, arr in f.items():
+            key = 'tf%d_p%d_%s' % (tf, pd, k)
+            for s in range(5): COLS[key + '_sh%d' % (s + 1)] = arr[:, s]
+            COLS[key + '_mean5'] = np.nanmean(arr, axis=1); COLS[key + '_trend5'] = arr[:, 0] - arr[:, 4]; COLS[key + '_npos5'] = (arr > 0).sum(axis=1).astype(float)
+        if pd == 2:
+            COLS['tf%d_dfl20' % tf] = TL[:, 0]; COLS['tf%d_dfl50' % tf] = TL[:, 1]
+        COLS['tf%d_p%d_bsd' % (tf, pd)] = TL[:, 2]
+    for pd, pd2 in ((2, 5), (5, 10), (10, 15)):
+        a1 = np.array([rl[n][(tf, pd)][0][:, 0] for n in tick]); a2 = np.array([rl[n][(tf, pd2)][0][:, 0] for n in tick]); ssr = sdiv(a1, a2)
+        for s in range(5): COLS['tf%d_SSR_p%dp%d_sh%d' % (tf, pd, pd2, s + 1)] = ssr[:, s]
+        COLS['tf%d_SSR_p%dp%d_mean5' % (tf, pd, pd2)] = np.nanmean(ssr, axis=1)
+for pd in (2, 5, 10, 15):   # cross-timeframe SSR: M1 vs M5, M5 vs M15, M15 vs H1 (sh1)
+    for tfa, tfb in ((1, 5), (5, 15), (15, 60)):
+        COLS['SSR_tf%d_tf%d_p%d_sh1' % (tfa, tfb, pd)] = sdiv(COLS['tf%d_p%d_slp_sh1' % (tfa, pd)], COLS['tf%d_p%d_slp_sh1' % (tfb, pd)])
+def spearman(x, y):
+    ok = np.isfinite(x) & np.isfinite(y); x = x[ok]; y = y[ok]
+    if len(x) < 20 or np.std(x) == 0: return np.nan
+    def rk(v):
+        o = np.argsort(v, kind='mergesort'); r = np.empty(len(v)); r[o] = np.arange(len(v))
+        u, inv, cnt = np.unique(v, return_inverse=True, return_counts=True); s = np.zeros(len(u)); np.add.at(s, inv, r); return (s / cnt)[inv]
+    return float(np.corrcoef(rk(x), rk(y))[0, 1])
+def qtable(x, y):
+    ok = np.isfinite(x); xv = x[ok]; yv = y[ok]
+    if len(xv) < 25: return '   (n<25)'
+    q = np.quantile(xv, [0.2, 0.4, 0.6, 0.8]); b = np.digitize(xv, q); cells = []
+    for k in range(5):
+        m = b == k; cells.append('%3d/%3.0f%%/%6.1f' % (m.sum(), 100 * (yv[m] > 0).mean() if m.any() else 0, yv[m].mean() if m.any() else 0))
+    return ' | '.join(cells) + '   cuts: ' + ' '.join('%.3g' % v for v in q)
+res = []
+for nm, x in COLS.items():
+    r1 = spearman(x[half], NET[half]); r2 = spearman(x[~half], NET[~half]); rp = spearman(x, NET)
+    cons = min(abs(r1), abs(r2)) if np.isfinite(r1) and np.isfinite(r2) and r1 * r2 > 0 else 0.0
+    res.append((cons, nm, rp, r1, r2))
+res.sort(key=lambda z: -z[0])
+rng = np.random.default_rng(3); ctrl = []
+for rep in range(5):
+    NS = NET.copy(); NS[half] = rng.permutation(NS[half]); NS[~half] = rng.permutation(NS[~half]); best = 0.0
+    for nm in list(COLS)[::4]:
+        x = COLS[nm]; r1 = spearman(x[half], NS[half]); r2 = spearman(x[~half], NS[~half])
+        if np.isfinite(r1) and np.isfinite(r2) and r1 * r2 > 0: best = max(best, min(abs(r1), abs(r2)))
+    ctrl.append(best)
+out.append(''); out.append('%d features. Same sign in both halves of the year with min|rho| > 0.10: %d; > 0.15: %d. Shuffle control best: %s' % (len(res), sum(r[0] > 0.10 for r in res), sum(r[0] > 0.15 for r in res), ', '.join('%.2f' % c for c in ctrl)))
+out.append(''); out.append('TOP 40 (weakest half): rho pooled / first half / second half, then quintiles low->high: n / win% / avg net (pooled)')
+for cons, nm, rp, r1, r2 in res[:40]:
+    out.append('%-32s rho %+.2f  H1 %+.2f  H2 %+.2f' % (nm, rp, r1, r2)); out.append('      ' + qtable(COLS[nm], NET))
+out.append(''); out.append('FAMILY SUMMARY (best consistent min|rho| per ratio family and timeframe)')
+fam = collections.defaultdict(lambda: (0.0, ''))
+for cons, nm, rp, r1, r2 in res:
+    p = nm.split('_'); tfk = p[0] if p[0].startswith('tf') else 'xTF'; key = 'SSR' if 'SSR' in nm else (p[2] if len(p) > 2 and p[1].startswith('p') else p[1])
+    if cons > fam[(key, tfk)][0]: fam[(key, tfk)] = (cons, nm)
+keys = sorted(set(k for k, _ in fam)); tfs = ['tf1', 'tf5', 'tf15', 'tf60', 'xTF']
+out.append('  %-10s' % 'family' + ''.join('%8s' % t for t in tfs))
+for k in keys: out.append('  %-10s' % k + ''.join('%8.3f' % fam[(k, t)][0] if (k, t) in fam else '       -' for t in tfs))
+out.append(''); out.append('M1 LAST-5-CANDLE PATTERNS (period 2): candle-run of slope signs, pooled n / win% / avg net')
+sg = np.sign(np.array([rl[n][(1, 2)][0][:, 0] for n in tick]))
+pat = collections.defaultdict(list)
+for i in range(len(tick)): pat[''.join('+' if v > 0 else ('-' if v < 0 else '0') for v in sg[i])].append(NET[i])
+for k, v in sorted(pat.items(), key=lambda z: -len(z[1]))[:15]: out.append('  %s  n=%3d  win%% %5.1f  avg %6.1f' % (k, len(v), 100 * (np.array(v) > 0).mean(), np.mean(v)))
+print('\n'.join(out))

@@ -1,0 +1,810 @@
+2	15:18:56.563	2019.01.02 10:00:00  Bracket_b12 EURUSD,M15: open #1 buy stop 0.01 EURUSD at 1.14986 sl: 1.14757 tp: 1.15215 ok
+2	15:18:56.563	2019.01.02 10:00:00  Bracket_b12 EURUSD,M15: open #2 sell stop 0.01 EURUSD at 1.14717 sl: 1.14946 tp: 1.14488 ok
+2	15:18:56.563	2019.01.02 10:02:45  Bracket_b12 EURUSD,M15: delete #1 buy stop 0.01 EURUSD at 1.14986 sl: 1.14757 tp: 1.15215 ok
+2	15:18:56.563	2019.01.02 10:30:04  Tester: take profit #2 at 1.14488 (1.14483 / 1.14485)
+2	15:18:56.588	2019.01.03 10:00:00  Bracket_b12 EURUSD,M15: open #3 buy stop 0.01 EURUSD at 1.13785 sl: 1.13567 tp: 1.14003 ok
+2	15:18:56.588	2019.01.03 10:00:00  Bracket_b12 EURUSD,M15: open #4 sell stop 0.01 EURUSD at 1.13527 sl: 1.13745 tp: 1.13309 ok
+2	15:18:56.590	2019.01.03 10:29:30  Bracket_b12 EURUSD,M15: delete #4 sell stop 0.01 EURUSD at 1.13527 sl: 1.13745 tp: 1.13309 ok
+0	15:18:56.597	2019.01.03 13:08:38  Tester: stop loss #3 at 1.13567 (1.13564 / 1.13566)
+2	15:18:56.619	2019.01.11 10:00:00  Bracket_b12 EURUSD,M15: open #5 buy stop 0.01 EURUSD at 1.15340 sl: 1.15193 tp: 1.15487 ok
+2	15:18:56.619	2019.01.11 10:00:00  Bracket_b12 EURUSD,M15: open #6 sell stop 0.01 EURUSD at 1.15153 sl: 1.15300 tp: 1.15006 ok
+2	15:18:56.626	2019.01.11 12:53:02  Bracket_b12 EURUSD,M15: delete #6 sell stop 0.01 EURUSD at 1.15153 sl: 1.15300 tp: 1.15006 ok
+0	15:18:56.627	2019.01.11 13:17:40  Tester: stop loss #5 at 1.15193 (1.15193 / 1.15195)
+2	15:18:56.631	2019.01.14 10:00:00  Bracket_b12 EURUSD,M15: open #7 buy stop 0.01 EURUSD at 1.14827 sl: 1.14570 tp: 1.15084 ok
+2	15:18:56.631	2019.01.14 10:00:00  Bracket_b12 EURUSD,M15: open #8 sell stop 0.01 EURUSD at 1.14530 sl: 1.14787 tp: 1.14273 ok
+2	15:18:56.644	2019.01.14 12:10:38  Bracket_b12 EURUSD,M15: delete #7 buy stop 0.01 EURUSD at 1.14827 sl: 1.14570 tp: 1.15084 ok
+0	15:18:56.666	2019.01.14 17:55:27  Tester: stop loss #8 at 1.14787 (1.14785 / 1.14787)
+2	15:18:56.666	2019.01.15 10:00:00  Bracket_b12 EURUSD,M15: open #9 buy stop 0.01 EURUSD at 1.14850 sl: 1.14713 tp: 1.14987 ok
+2	15:18:56.666	2019.01.15 10:00:00  Bracket_b12 EURUSD,M15: open #10 sell stop 0.01 EURUSD at 1.14673 sl: 1.14810 tp: 1.14536 ok
+2	15:18:56.666	2019.01.15 10:06:05  Bracket_b12 EURUSD,M15: delete #9 buy stop 0.01 EURUSD at 1.14850 sl: 1.14713 tp: 1.14987 ok
+2	15:18:56.677	2019.01.15 10:29:40  Tester: take profit #10 at 1.14536 (1.14532 / 1.14534)
+2	15:18:56.693	2019.01.16 10:00:00  Bracket_b12 EURUSD,M15: open #11 buy stop 0.01 EURUSD at 1.14156 sl: 1.13935 tp: 1.14377 ok
+2	15:18:56.693	2019.01.16 10:00:00  Bracket_b12 EURUSD,M15: open #12 sell stop 0.01 EURUSD at 1.13895 sl: 1.14116 tp: 1.13674 ok
+2	15:18:56.695	2019.01.16 10:29:38  Bracket_b12 EURUSD,M15: delete #12 sell stop 0.01 EURUSD at 1.13895 sl: 1.14116 tp: 1.13674 ok
+0	15:18:56.701	2019.01.16 13:16:38  Tester: stop loss #11 at 1.13935 (1.13935 / 1.13937)
+2	15:18:56.715	2019.01.17 10:00:00  Bracket_b12 EURUSD,M15: open #13 buy stop 0.01 EURUSD at 1.13961 sl: 1.13733 tp: 1.14189 ok
+2	15:18:56.715	2019.01.17 10:00:00  Bracket_b12 EURUSD,M15: open #14 sell stop 0.01 EURUSD at 1.13693 sl: 1.13921 tp: 1.13465 ok
+2	15:18:56.716	2019.01.17 10:46:35  Bracket_b12 EURUSD,M15: delete #14 sell stop 0.01 EURUSD at 1.13693 sl: 1.13921 tp: 1.13465 ok
+0	15:18:56.729	2019.01.17 17:42:37  Tester: stop loss #13 at 1.13733 (1.13732 / 1.13734)
+2	15:18:56.729	2019.01.18 10:00:00  Bracket_b12 EURUSD,M15: open #15 buy stop 0.01 EURUSD at 1.14009 sl: 1.13902 tp: 1.14116 ok
+2	15:18:56.729	2019.01.18 10:00:00  Bracket_b12 EURUSD,M15: open #16 sell stop 0.01 EURUSD at 1.13862 sl: 1.13969 tp: 1.13755 ok
+2	15:18:56.747	2019.01.18 12:01:19  Bracket_b12 EURUSD,M15: delete #16 sell stop 0.01 EURUSD at 1.13862 sl: 1.13969 tp: 1.13755 ok
+0	15:18:56.748	2019.01.18 16:20:38  Tester: stop loss #15 at 1.13902 (1.13902 / 1.13904)
+2	15:18:56.766	2019.01.21 10:00:00  Bracket_b12 EURUSD,M15: open #17 buy stop 0.01 EURUSD at 1.13927 sl: 1.13771 tp: 1.14083 ok
+2	15:18:56.766	2019.01.21 10:00:00  Bracket_b12 EURUSD,M15: open #18 sell stop 0.01 EURUSD at 1.13731 sl: 1.13887 tp: 1.13575 ok
+2	15:18:56.778	2019.01.21 10:56:25  Bracket_b12 EURUSD,M15: delete #17 buy stop 0.01 EURUSD at 1.13927 sl: 1.13771 tp: 1.14083 ok
+2	15:18:56.780	2019.01.21 15:38:28  Tester: take profit #18 at 1.13575 (1.13572 / 1.13574)
+2	15:18:56.780	2019.01.22 10:00:00  Bracket_b12 EURUSD,M15: open #19 buy stop 0.01 EURUSD at 1.13617 sl: 1.13481 tp: 1.13753 ok
+2	15:18:56.780	2019.01.22 10:00:00  Bracket_b12 EURUSD,M15: open #20 sell stop 0.01 EURUSD at 1.13441 sl: 1.13577 tp: 1.13305 ok
+2	15:18:56.794	2019.01.22 10:51:47  Bracket_b12 EURUSD,M15: delete #20 sell stop 0.01 EURUSD at 1.13441 sl: 1.13577 tp: 1.13305 ok
+0	15:18:56.798	2019.01.22 15:26:06  Tester: stop loss #19 at 1.13481 (1.13481 / 1.13483)
+2	15:18:56.812	2019.01.23 10:00:00  Bracket_b12 EURUSD,M15: open #21 buy stop 0.01 EURUSD at 1.13737 sl: 1.13649 tp: 1.13825 ok
+2	15:18:56.812	2019.01.23 10:00:00  Bracket_b12 EURUSD,M15: open #22 sell stop 0.01 EURUSD at 1.13609 sl: 1.13697 tp: 1.13521 ok
+2	15:18:56.813	2019.01.23 10:00:38  Bracket_b12 EURUSD,M15: delete #21 buy stop 0.01 EURUSD at 1.13737 sl: 1.13649 tp: 1.13825 ok
+2	15:18:56.814	2019.01.23 12:13:16  Tester: take profit #22 at 1.13521 (1.13519 / 1.13521)
+2	15:18:56.831	2019.01.24 10:00:00  Bracket_b12 EURUSD,M15: open #23 buy stop 0.01 EURUSD at 1.13898 sl: 1.13673 tp: 1.14123 ok
+2	15:18:56.831	2019.01.24 10:00:00  Bracket_b12 EURUSD,M15: open #24 sell stop 0.01 EURUSD at 1.13633 sl: 1.13858 tp: 1.13408 ok
+2	15:18:56.831	2019.01.24 10:15:02  Bracket_b12 EURUSD,M15: delete #23 buy stop 0.01 EURUSD at 1.13898 sl: 1.13673 tp: 1.14123 ok
+2	15:18:56.831	2019.01.24 10:15:30  Tester: take profit #24 at 1.13408 (1.13402 / 1.13404)
+2	15:18:56.847	2019.01.25 10:00:00  Bracket_b12 EURUSD,M15: open #25 buy stop 0.01 EURUSD at 1.13297 sl: 1.13166 tp: 1.13428 ok
+2	15:18:56.847	2019.01.25 10:00:00  Bracket_b12 EURUSD,M15: open #26 sell stop 0.01 EURUSD at 1.13126 sl: 1.13257 tp: 1.12995 ok
+2	15:18:56.847	2019.01.25 11:02:20  Bracket_b12 EURUSD,M15: delete #26 sell stop 0.01 EURUSD at 1.13126 sl: 1.13257 tp: 1.12995 ok
+2	15:18:56.847	2019.01.25 13:24:26  Tester: take profit #25 at 1.13428 (1.13428 / 1.13430)
+2	15:18:56.872	2019.01.28 10:00:00  Bracket_b12 EURUSD,M15: open #27 buy stop 0.01 EURUSD at 1.14173 sl: 1.14054 tp: 1.14292 ok
+2	15:18:56.872	2019.01.28 10:00:00  Bracket_b12 EURUSD,M15: open #28 sell stop 0.01 EURUSD at 1.14014 sl: 1.14133 tp: 1.13895 ok
+2	15:18:56.872	2019.01.28 10:02:29  Bracket_b12 EURUSD,M15: delete #27 buy stop 0.01 EURUSD at 1.14173 sl: 1.14054 tp: 1.14292 ok
+0	15:18:56.880	2019.01.28 12:19:28  Tester: stop loss #28 at 1.14133 (1.14132 / 1.14134)
+2	15:18:56.880	2019.01.29 10:00:00  Bracket_b12 EURUSD,M15: open #29 buy stop 0.01 EURUSD at 1.14455 sl: 1.14329 tp: 1.14581 ok
+2	15:18:56.880	2019.01.29 10:00:00  Bracket_b12 EURUSD,M15: open #30 sell stop 0.01 EURUSD at 1.14289 sl: 1.14415 tp: 1.14163 ok
+2	15:18:56.894	2019.01.29 10:29:28  Bracket_b12 EURUSD,M15: delete #30 sell stop 0.01 EURUSD at 1.14289 sl: 1.14415 tp: 1.14163 ok
+0	15:18:56.902	2019.01.29 13:19:30  Tester: stop loss #29 at 1.14329 (1.14328 / 1.14330)
+2	15:18:56.914	2019.01.30 10:00:00  Bracket_b12 EURUSD,M15: open #31 buy stop 0.01 EURUSD at 1.14517 sl: 1.14294 tp: 1.14740 ok
+2	15:18:56.914	2019.01.30 10:00:00  Bracket_b12 EURUSD,M15: open #32 sell stop 0.01 EURUSD at 1.14254 sl: 1.14477 tp: 1.14031 ok
+2	15:18:56.914	2019.01.30 10:03:29  Bracket_b12 EURUSD,M15: delete #31 buy stop 0.01 EURUSD at 1.14517 sl: 1.14294 tp: 1.14740 ok
+2	15:18:56.931	2019.01.30 21:00:00  Bracket_b12 EURUSD,M15: close #32 sell 0.01 EURUSD at 1.14254 sl: 1.14477 tp: 1.14031 at price 1.14178
+2	15:18:56.949	2019.01.31 10:00:00  Bracket_b12 EURUSD,M15: open #33 buy stop 0.01 EURUSD at 1.15159 sl: 1.14973 tp: 1.15345 ok
+2	15:18:56.949	2019.01.31 10:00:00  Bracket_b12 EURUSD,M15: open #34 sell stop 0.01 EURUSD at 1.14933 sl: 1.15119 tp: 1.14747 ok
+2	15:18:56.949	2019.01.31 10:00:40  Bracket_b12 EURUSD,M15: delete #33 buy stop 0.01 EURUSD at 1.15159 sl: 1.14973 tp: 1.15345 ok
+2	15:18:56.955	2019.01.31 12:34:14  Tester: take profit #34 at 1.14747 (1.14745 / 1.14747)
+2	15:18:56.971	2019.02.01 10:00:00  Bracket_b12 EURUSD,M15: open #35 buy stop 0.01 EURUSD at 1.14504 sl: 1.14367 tp: 1.14641 ok
+2	15:18:56.971	2019.02.01 10:00:00  Bracket_b12 EURUSD,M15: open #36 sell stop 0.01 EURUSD at 1.14327 sl: 1.14464 tp: 1.14190 ok
+2	15:18:56.971	2019.02.01 10:13:00  Bracket_b12 EURUSD,M15: delete #36 sell stop 0.01 EURUSD at 1.14327 sl: 1.14464 tp: 1.14190 ok
+2	15:18:56.979	2019.02.01 11:45:37  Tester: take profit #35 at 1.14641 (1.14641 / 1.14643)
+2	15:18:57.004	2019.02.05 10:00:00  Bracket_b12 EURUSD,M15: open #37 buy stop 0.01 EURUSD at 1.14359 sl: 1.14232 tp: 1.14486 ok
+2	15:18:57.004	2019.02.05 10:00:00  Bracket_b12 EURUSD,M15: open #38 sell stop 0.01 EURUSD at 1.14192 sl: 1.14319 tp: 1.14065 ok
+2	15:18:57.004	2019.02.05 10:06:25  Bracket_b12 EURUSD,M15: delete #37 buy stop 0.01 EURUSD at 1.14359 sl: 1.14232 tp: 1.14486 ok
+0	15:18:57.018	2019.02.05 15:44:44  Tester: stop loss #38 at 1.14319 (1.14317 / 1.14319)
+2	15:18:57.030	2019.02.06 10:00:00  Bracket_b12 EURUSD,M15: open #39 buy stop 0.01 EURUSD at 1.13999 sl: 1.13821 tp: 1.14177 ok
+2	15:18:57.030	2019.02.06 10:00:00  Bracket_b12 EURUSD,M15: open #40 sell stop 0.01 EURUSD at 1.13781 sl: 1.13959 tp: 1.13603 ok
+2	15:18:57.031	2019.02.06 15:00:00  Bracket_b12 EURUSD,M15: delete #39 buy stop 0.01 EURUSD at 1.13999 sl: 1.13821 tp: 1.14177 ok
+2	15:18:57.031	2019.02.06 15:00:00  Bracket_b12 EURUSD,M15: delete #40 sell stop 0.01 EURUSD at 1.13781 sl: 1.13959 tp: 1.13603 ok
+2	15:18:57.047	2019.02.07 10:00:00  Bracket_b12 EURUSD,M15: open #41 buy stop 0.01 EURUSD at 1.13684 sl: 1.13553 tp: 1.13815 ok
+2	15:18:57.047	2019.02.07 10:00:00  Bracket_b12 EURUSD,M15: open #42 sell stop 0.01 EURUSD at 1.13513 sl: 1.13644 tp: 1.13382 ok
+2	15:18:57.047	2019.02.07 10:01:38  Bracket_b12 EURUSD,M15: delete #41 buy stop 0.01 EURUSD at 1.13684 sl: 1.13553 tp: 1.13815 ok
+2	15:18:57.047	2019.02.07 12:14:30  Tester: take profit #42 at 1.13382 (1.13380 / 1.13382)
+2	15:18:57.065	2019.02.08 10:00:00  Bracket_b12 EURUSD,M15: open #43 buy stop 0.01 EURUSD at 1.13447 sl: 1.13358 tp: 1.13536 ok
+2	15:18:57.065	2019.02.08 10:00:00  Bracket_b12 EURUSD,M15: open #44 sell stop 0.01 EURUSD at 1.13318 sl: 1.13407 tp: 1.13229 ok
+2	15:18:57.065	2019.02.08 10:27:33  Bracket_b12 EURUSD,M15: delete #43 buy stop 0.01 EURUSD at 1.13447 sl: 1.13358 tp: 1.13536 ok
+2	15:18:57.065	2019.02.08 11:17:15  Tester: take profit #44 at 1.13229 (1.13227 / 1.13229)
+2	15:18:57.065	2019.02.11 10:00:00  Bracket_b12 EURUSD,M15: open #45 buy stop 0.01 EURUSD at 1.13319 sl: 1.13185 tp: 1.13453 ok
+2	15:18:57.065	2019.02.11 10:00:00  Bracket_b12 EURUSD,M15: open #46 sell stop 0.01 EURUSD at 1.13145 sl: 1.13279 tp: 1.13011 ok
+2	15:18:57.065	2019.02.11 10:15:38  Bracket_b12 EURUSD,M15: delete #45 buy stop 0.01 EURUSD at 1.13319 sl: 1.13185 tp: 1.13453 ok
+2	15:18:57.080	2019.02.11 12:04:44  Tester: take profit #46 at 1.13011 (1.13009 / 1.13011)
+2	15:18:57.080	2019.02.12 10:00:00  Bracket_b12 EURUSD,M15: open #47 buy stop 0.01 EURUSD at 1.12897 sl: 1.12803 tp: 1.12991 ok
+2	15:18:57.080	2019.02.12 10:00:00  Bracket_b12 EURUSD,M15: open #48 sell stop 0.01 EURUSD at 1.12763 sl: 1.12857 tp: 1.12669 ok
+2	15:18:57.080	2019.02.12 10:02:27  Bracket_b12 EURUSD,M15: delete #48 sell stop 0.01 EURUSD at 1.12763 sl: 1.12857 tp: 1.12669 ok
+0	15:18:57.080	2019.02.12 10:19:48  Tester: stop loss #47 at 1.12803 (1.12802 / 1.12804)
+2	15:18:57.104	2019.02.13 10:00:00  Bracket_b12 EURUSD,M15: open #49 buy stop 0.01 EURUSD at 1.13405 sl: 1.13209 tp: 1.13601 ok
+2	15:18:57.104	2019.02.13 10:00:00  Bracket_b12 EURUSD,M15: open #50 sell stop 0.01 EURUSD at 1.13169 sl: 1.13365 tp: 1.12973 ok
+2	15:18:57.104	2019.02.13 10:01:26  Bracket_b12 EURUSD,M15: delete #49 buy stop 0.01 EURUSD at 1.13405 sl: 1.13209 tp: 1.13601 ok
+2	15:18:57.114	2019.02.13 15:30:36  Tester: take profit #50 at 1.12973 (1.12969 / 1.12971)
+2	15:18:57.114	2019.02.14 10:00:00  Bracket_b12 EURUSD,M15: open #51 buy stop 0.01 EURUSD at 1.12965 sl: 1.12736 tp: 1.13194 ok
+2	15:18:57.114	2019.02.14 10:00:00  Bracket_b12 EURUSD,M15: open #52 sell stop 0.01 EURUSD at 1.12696 sl: 1.12925 tp: 1.12467 ok
+2	15:18:57.114	2019.02.14 10:08:16  Bracket_b12 EURUSD,M15: delete #51 buy stop 0.01 EURUSD at 1.12965 sl: 1.12736 tp: 1.13194 ok
+0	15:18:57.130	2019.02.14 15:32:04  Tester: stop loss #52 at 1.12925 (1.12924 / 1.12926)
+2	15:18:57.130	2019.02.15 10:00:00  Bracket_b12 EURUSD,M15: open #53 buy stop 0.01 EURUSD at 1.12932 sl: 1.12733 tp: 1.13131 ok
+2	15:18:57.130	2019.02.15 10:00:00  Bracket_b12 EURUSD,M15: open #54 sell stop 0.01 EURUSD at 1.12693 sl: 1.12892 tp: 1.12494 ok
+2	15:18:57.130	2019.02.15 10:23:37  Bracket_b12 EURUSD,M15: delete #53 buy stop 0.01 EURUSD at 1.12932 sl: 1.12733 tp: 1.13131 ok
+2	15:18:57.147	2019.02.15 15:26:15  Tester: take profit #54 at 1.12494 (1.12492 / 1.12494)
+2	15:18:57.160	2019.02.18 10:00:00  Bracket_b12 EURUSD,M15: open #55 buy stop 0.01 EURUSD at 1.13174 sl: 1.13035 tp: 1.13313 ok
+2	15:18:57.160	2019.02.18 10:00:00  Bracket_b12 EURUSD,M15: open #56 sell stop 0.01 EURUSD at 1.12995 sl: 1.13134 tp: 1.12856 ok
+2	15:18:57.160	2019.02.18 10:08:05  Bracket_b12 EURUSD,M15: delete #55 buy stop 0.01 EURUSD at 1.13174 sl: 1.13035 tp: 1.13313 ok
+0	15:18:57.163	2019.02.18 11:37:00  Tester: stop loss #56 at 1.13134 (1.13132 / 1.13134)
+2	15:18:57.163	2019.02.19 10:00:00  Bracket_b12 EURUSD,M15: open #57 buy stop 0.01 EURUSD at 1.13072 sl: 1.12954 tp: 1.13190 ok
+2	15:18:57.163	2019.02.19 10:00:00  Bracket_b12 EURUSD,M15: open #58 sell stop 0.01 EURUSD at 1.12914 sl: 1.13032 tp: 1.12796 ok
+2	15:18:57.163	2019.02.19 10:20:05  Bracket_b12 EURUSD,M15: delete #58 sell stop 0.01 EURUSD at 1.12914 sl: 1.13032 tp: 1.12796 ok
+2	15:18:57.163	2019.02.19 10:29:16  Tester: take profit #57 at 1.13190 (1.13191 / 1.13193)
+2	15:18:57.182	2019.02.20 10:00:00  Bracket_b12 EURUSD,M15: open #59 buy stop 0.01 EURUSD at 1.13475 sl: 1.13335 tp: 1.13615 ok
+2	15:18:57.182	2019.02.20 10:00:00  Bracket_b12 EURUSD,M15: open #60 sell stop 0.01 EURUSD at 1.13295 sl: 1.13435 tp: 1.13155 ok
+2	15:18:57.182	2019.02.20 10:05:16  Bracket_b12 EURUSD,M15: delete #60 sell stop 0.01 EURUSD at 1.13295 sl: 1.13435 tp: 1.13155 ok
+0	15:18:57.182	2019.02.20 13:24:03  Tester: stop loss #59 at 1.13335 (1.13335 / 1.13337)
+2	15:18:57.197	2019.02.21 10:00:00  Bracket_b12 EURUSD,M15: open #61 buy stop 0.01 EURUSD at 1.13415 sl: 1.13217 tp: 1.13613 ok
+2	15:18:57.197	2019.02.21 10:00:00  Bracket_b12 EURUSD,M15: open #62 sell stop 0.01 EURUSD at 1.13177 sl: 1.13375 tp: 1.12979 ok
+2	15:18:57.197	2019.02.21 10:08:38  Bracket_b12 EURUSD,M15: delete #62 sell stop 0.01 EURUSD at 1.13177 sl: 1.13375 tp: 1.12979 ok
+2	15:18:57.197	2019.02.21 10:24:27  Tester: take profit #61 at 1.13613 (1.13613 / 1.13615)
+2	15:18:57.213	2019.02.22 10:00:00  Bracket_b12 EURUSD,M15: open #63 buy stop 0.01 EURUSD at 1.13510 sl: 1.13380 tp: 1.13640 ok
+2	15:18:57.213	2019.02.22 10:00:00  Bracket_b12 EURUSD,M15: open #64 sell stop 0.01 EURUSD at 1.13340 sl: 1.13470 tp: 1.13210 ok
+2	15:18:57.213	2019.02.22 10:23:05  Bracket_b12 EURUSD,M15: delete #64 sell stop 0.01 EURUSD at 1.13340 sl: 1.13470 tp: 1.13210 ok
+0	15:18:57.213	2019.02.22 11:27:29  Tester: stop loss #63 at 1.13380 (1.13380 / 1.13382)
+2	15:18:57.228	2019.02.25 10:00:00  Bracket_b12 EURUSD,M15: open #65 buy stop 0.01 EURUSD at 1.13603 sl: 1.13442 tp: 1.13764 ok
+2	15:18:57.228	2019.02.25 10:00:00  Bracket_b12 EURUSD,M15: open #66 sell stop 0.01 EURUSD at 1.13402 sl: 1.13563 tp: 1.13241 ok
+2	15:18:57.230	2019.02.25 12:40:17  Bracket_b12 EURUSD,M15: delete #66 sell stop 0.01 EURUSD at 1.13402 sl: 1.13563 tp: 1.13241 ok
+0	15:18:57.230	2019.02.25 17:51:28  Tester: stop loss #65 at 1.13442 (1.13442 / 1.13444)
+2	15:18:57.247	2019.02.26 10:00:00  Bracket_b12 EURUSD,M15: open #67 buy stop 0.01 EURUSD at 1.13612 sl: 1.13497 tp: 1.13727 ok
+2	15:18:57.247	2019.02.26 10:00:00  Bracket_b12 EURUSD,M15: open #68 sell stop 0.01 EURUSD at 1.13457 sl: 1.13572 tp: 1.13342 ok
+2	15:18:57.247	2019.02.26 10:02:04  Bracket_b12 EURUSD,M15: delete #67 buy stop 0.01 EURUSD at 1.13612 sl: 1.13497 tp: 1.13727 ok
+0	15:18:57.247	2019.02.26 10:31:20  Tester: stop loss #68 at 1.13572 (1.13570 / 1.13572)
+2	15:18:57.262	2019.02.27 10:00:00  Bracket_b12 EURUSD,M15: open #69 buy stop 0.01 EURUSD at 1.13856 sl: 1.13745 tp: 1.13967 ok
+2	15:18:57.262	2019.02.27 10:00:00  Bracket_b12 EURUSD,M15: open #70 sell stop 0.01 EURUSD at 1.13705 sl: 1.13816 tp: 1.13594 ok
+2	15:18:57.263	2019.02.27 10:05:13  Bracket_b12 EURUSD,M15: delete #70 sell stop 0.01 EURUSD at 1.13705 sl: 1.13816 tp: 1.13594 ok
+2	15:18:57.267	2019.02.27 11:05:27  Tester: take profit #69 at 1.13967 (1.13967 / 1.13969)
+2	15:18:57.280	2019.02.28 10:00:00  Bracket_b12 EURUSD,M15: open #71 buy stop 0.01 EURUSD at 1.13857 sl: 1.13690 tp: 1.14024 ok
+2	15:18:57.280	2019.02.28 10:00:00  Bracket_b12 EURUSD,M15: open #72 sell stop 0.01 EURUSD at 1.13650 sl: 1.13817 tp: 1.13483 ok
+2	15:18:57.280	2019.02.28 10:01:04  Bracket_b12 EURUSD,M15: delete #72 sell stop 0.01 EURUSD at 1.13650 sl: 1.13817 tp: 1.13483 ok
+2	15:18:57.281	2019.02.28 12:43:05  Tester: take profit #71 at 1.14024 (1.14025 / 1.14027)
+2	15:18:57.296	2019.03.01 10:00:00  Bracket_b12 EURUSD,M15: open #73 buy stop 0.01 EURUSD at 1.13760 sl: 1.13636 tp: 1.13884 ok
+2	15:18:57.296	2019.03.01 10:00:00  Bracket_b12 EURUSD,M15: open #74 sell stop 0.01 EURUSD at 1.13596 sl: 1.13720 tp: 1.13472 ok
+2	15:18:57.296	2019.03.01 10:15:28  Bracket_b12 EURUSD,M15: delete #73 buy stop 0.01 EURUSD at 1.13760 sl: 1.13636 tp: 1.13884 ok
+0	15:18:57.297	2019.03.01 12:35:00  Tester: stop loss #74 at 1.13720 (1.13723 / 1.13725)
+2	15:18:57.314	2019.03.04 10:00:00  Bracket_b12 EURUSD,M15: open #75 buy stop 0.01 EURUSD at 1.13710 sl: 1.13575 tp: 1.13845 ok
+2	15:18:57.314	2019.03.04 10:00:00  Bracket_b12 EURUSD,M15: open #76 sell stop 0.01 EURUSD at 1.13535 sl: 1.13670 tp: 1.13400 ok
+2	15:18:57.314	2019.03.04 10:03:28  Bracket_b12 EURUSD,M15: delete #75 buy stop 0.01 EURUSD at 1.13710 sl: 1.13575 tp: 1.13845 ok
+2	15:18:57.316	2019.03.04 10:34:19  Tester: take profit #76 at 1.13400 (1.13397 / 1.13399)
+2	15:18:57.316	2019.03.05 10:00:00  Bracket_b12 EURUSD,M15: open #77 buy stop 0.01 EURUSD at 1.13332 sl: 1.13200 tp: 1.13464 ok
+2	15:18:57.316	2019.03.05 10:00:00  Bracket_b12 EURUSD,M15: open #78 sell stop 0.01 EURUSD at 1.13160 sl: 1.13292 tp: 1.13028 ok
+2	15:18:57.328	2019.03.05 10:51:27  Bracket_b12 EURUSD,M15: delete #78 sell stop 0.01 EURUSD at 1.13160 sl: 1.13292 tp: 1.13028 ok
+0	15:18:57.331	2019.03.05 16:25:40  Tester: stop loss #77 at 1.13200 (1.13198 / 1.13200)
+2	15:18:57.345	2019.03.06 10:00:00  Bracket_b12 EURUSD,M15: open #79 buy stop 0.01 EURUSD at 1.13056 sl: 1.12964 tp: 1.13148 ok
+2	15:18:57.345	2019.03.06 10:00:00  Bracket_b12 EURUSD,M15: open #80 sell stop 0.01 EURUSD at 1.12924 sl: 1.13016 tp: 1.12832 ok
+2	15:18:57.345	2019.03.06 10:12:05  Bracket_b12 EURUSD,M15: delete #80 sell stop 0.01 EURUSD at 1.12924 sl: 1.13016 tp: 1.12832 ok
+2	15:18:57.347	2019.03.06 15:17:30  Tester: take profit #79 at 1.13148 (1.13149 / 1.13151)
+2	15:18:57.362	2019.03.07 10:00:00  Bracket_b12 EURUSD,M15: open #81 buy stop 0.01 EURUSD at 1.13117 sl: 1.13032 tp: 1.13202 ok
+2	15:18:57.362	2019.03.07 10:00:00  Bracket_b12 EURUSD,M15: open #82 sell stop 0.01 EURUSD at 1.12992 sl: 1.13077 tp: 1.12907 ok
+2	15:18:57.364	2019.03.07 10:26:33  Bracket_b12 EURUSD,M15: delete #82 sell stop 0.01 EURUSD at 1.12992 sl: 1.13077 tp: 1.12907 ok
+0	15:18:57.364	2019.03.07 14:45:09  Tester: stop loss #81 at 1.13032 (1.13032 / 1.13034)
+2	15:18:57.381	2019.03.08 10:00:00  Bracket_b12 EURUSD,M15: open #83 buy stop 0.01 EURUSD at 1.12134 sl: 1.11992 tp: 1.12276 ok
+2	15:18:57.381	2019.03.08 10:00:00  Bracket_b12 EURUSD,M15: open #84 sell stop 0.01 EURUSD at 1.11952 sl: 1.12094 tp: 1.11810 ok
+2	15:18:57.381	2019.03.08 11:20:40  Bracket_b12 EURUSD,M15: delete #84 sell stop 0.01 EURUSD at 1.11952 sl: 1.12094 tp: 1.11810 ok
+2	15:18:57.394	2019.03.08 15:30:19  Tester: take profit #83 at 1.12276 (1.12277 / 1.12279)
+2	15:18:57.411	2019.03.11 10:00:00  Bracket_b12 EURUSD,M15: open #85 buy stop 0.01 EURUSD at 1.12428 sl: 1.12341 tp: 1.12515 ok
+2	15:18:57.411	2019.03.11 10:00:00  Bracket_b12 EURUSD,M15: open #86 sell stop 0.01 EURUSD at 1.12301 sl: 1.12388 tp: 1.12214 ok
+2	15:18:57.412	2019.03.11 10:28:38  Bracket_b12 EURUSD,M15: delete #86 sell stop 0.01 EURUSD at 1.12301 sl: 1.12388 tp: 1.12214 ok
+2	15:18:57.413	2019.03.11 12:42:06  Tester: take profit #85 at 1.12515 (1.12516 / 1.12518)
+2	15:18:57.413	2019.03.12 10:00:00  Bracket_b12 EURUSD,M15: open #87 buy stop 0.01 EURUSD at 1.12619 sl: 1.12534 tp: 1.12704 ok
+2	15:18:57.413	2019.03.12 10:00:00  Bracket_b12 EURUSD,M15: open #88 sell stop 0.01 EURUSD at 1.12494 sl: 1.12579 tp: 1.12409 ok
+2	15:18:57.413	2019.03.12 10:39:29  Bracket_b12 EURUSD,M15: delete #88 sell stop 0.01 EURUSD at 1.12494 sl: 1.12579 tp: 1.12409 ok
+2	15:18:57.429	2019.03.12 11:27:17  Tester: take profit #87 at 1.12704 (1.12704 / 1.12706)
+2	15:18:57.453	2019.03.14 10:00:00  Bracket_b12 EURUSD,M15: open #89 buy stop 0.01 EURUSD at 1.13244 sl: 1.13155 tp: 1.13333 ok
+2	15:18:57.453	2019.03.14 10:00:00  Bracket_b12 EURUSD,M15: open #90 sell stop 0.01 EURUSD at 1.13115 sl: 1.13204 tp: 1.13026 ok
+2	15:18:57.455	2019.03.14 10:27:27  Bracket_b12 EURUSD,M15: delete #90 sell stop 0.01 EURUSD at 1.13115 sl: 1.13204 tp: 1.13026 ok
+2	15:18:57.457	2019.03.14 11:11:29  Tester: take profit #89 at 1.13333 (1.13334 / 1.13336)
+2	15:18:57.480	2019.03.18 10:00:00  Bracket_b12 EURUSD,M15: open #91 buy stop 0.01 EURUSD at 1.13464 sl: 1.13340 tp: 1.13588 ok
+2	15:18:57.480	2019.03.18 10:00:00  Bracket_b12 EURUSD,M15: open #92 sell stop 0.01 EURUSD at 1.13300 sl: 1.13424 tp: 1.13176 ok
+2	15:18:57.482	2019.03.18 10:42:28  Bracket_b12 EURUSD,M15: delete #92 sell stop 0.01 EURUSD at 1.13300 sl: 1.13424 tp: 1.13176 ok
+2	15:18:57.482	2019.03.18 15:03:31  Tester: take profit #91 at 1.13588 (1.13588 / 1.13590)
+2	15:18:57.497	2019.03.19 10:00:00  Bracket_b12 EURUSD,M15: open #93 buy stop 0.01 EURUSD at 1.13522 sl: 1.13440 tp: 1.13604 ok
+2	15:18:57.497	2019.03.19 10:00:00  Bracket_b12 EURUSD,M15: open #94 sell stop 0.01 EURUSD at 1.13400 sl: 1.13482 tp: 1.13318 ok
+2	15:18:57.497	2019.03.19 11:02:30  Bracket_b12 EURUSD,M15: delete #94 sell stop 0.01 EURUSD at 1.13400 sl: 1.13482 tp: 1.13318 ok
+2	15:18:57.504	2019.03.19 14:08:28  Tester: take profit #93 at 1.13604 (1.13604 / 1.13606)
+2	15:18:57.530	2019.03.21 10:00:00  Bracket_b12 EURUSD,M15: open #95 buy stop 0.01 EURUSD at 1.14287 sl: 1.14200 tp: 1.14374 ok
+2	15:18:57.530	2019.03.21 10:00:00  Bracket_b12 EURUSD,M15: open #96 sell stop 0.01 EURUSD at 1.14160 sl: 1.14247 tp: 1.14073 ok
+2	15:18:57.530	2019.03.21 10:27:16  Bracket_b12 EURUSD,M15: delete #96 sell stop 0.01 EURUSD at 1.14160 sl: 1.14247 tp: 1.14073 ok
+0	15:18:57.530	2019.03.21 10:48:49  Tester: stop loss #95 at 1.14200 (1.14199 / 1.14201)
+2	15:18:57.580	2019.03.27 10:00:00  Bracket_b12 EURUSD,M15: open #97 buy stop 0.01 EURUSD at 1.12686 sl: 1.12555 tp: 1.12817 ok
+2	15:18:57.580	2019.03.27 10:00:00  Bracket_b12 EURUSD,M15: open #98 sell stop 0.01 EURUSD at 1.12515 sl: 1.12646 tp: 1.12384 ok
+2	15:18:57.580	2019.03.27 10:40:45  Bracket_b12 EURUSD,M15: delete #97 buy stop 0.01 EURUSD at 1.12686 sl: 1.12555 tp: 1.12817 ok
+0	15:18:57.594	2019.03.27 11:05:29  Tester: stop loss #98 at 1.12646 (1.12644 / 1.12646)
+2	15:18:57.632	2019.04.01 10:00:00  Bracket_b12 EURUSD,M15: open #99 buy stop 0.01 EURUSD at 1.12431 sl: 1.12341 tp: 1.12521 ok
+2	15:18:57.632	2019.04.01 10:00:00  Bracket_b12 EURUSD,M15: open #100 sell stop 0.01 EURUSD at 1.12301 sl: 1.12391 tp: 1.12211 ok
+2	15:18:57.632	2019.04.01 10:12:13  Bracket_b12 EURUSD,M15: delete #99 buy stop 0.01 EURUSD at 1.12431 sl: 1.12341 tp: 1.12521 ok
+0	15:18:57.644	2019.04.01 10:39:45  Tester: stop loss #100 at 1.12391 (1.12389 / 1.12391)
+2	15:18:57.658	2019.04.02 10:00:00  Bracket_b12 EURUSD,M15: open #101 buy stop 0.01 EURUSD at 1.12130 sl: 1.12011 tp: 1.12249 ok
+2	15:18:57.658	2019.04.02 10:00:00  Bracket_b12 EURUSD,M15: open #102 sell stop 0.01 EURUSD at 1.11971 sl: 1.12090 tp: 1.11852 ok
+2	15:18:57.658	2019.04.02 10:01:30  Bracket_b12 EURUSD,M15: delete #101 buy stop 0.01 EURUSD at 1.12130 sl: 1.12011 tp: 1.12249 ok
+0	15:18:57.664	2019.04.02 15:30:30  Tester: stop loss #102 at 1.12090 (1.12088 / 1.12090)
+2	15:18:57.677	2019.04.03 10:00:00  Bracket_b12 EURUSD,M15: open #103 buy stop 0.01 EURUSD at 1.12305 sl: 1.12193 tp: 1.12417 ok
+2	15:18:57.677	2019.04.03 10:00:00  Bracket_b12 EURUSD,M15: open #104 sell stop 0.01 EURUSD at 1.12153 sl: 1.12265 tp: 1.12041 ok
+2	15:18:57.678	2019.04.03 10:09:39  Bracket_b12 EURUSD,M15: delete #103 buy stop 0.01 EURUSD at 1.12305 sl: 1.12193 tp: 1.12417 ok
+0	15:18:57.678	2019.04.03 10:36:27  Tester: stop loss #104 at 1.12265 (1.12263 / 1.12265)
+2	15:18:57.683	2019.04.04 10:00:00  Bracket_b12 EURUSD,M15: open #105 buy stop 0.01 EURUSD at 1.12495 sl: 1.12363 tp: 1.12627 ok
+2	15:18:57.683	2019.04.04 10:00:00  Bracket_b12 EURUSD,M15: open #106 sell stop 0.01 EURUSD at 1.12323 sl: 1.12455 tp: 1.12191 ok
+2	15:18:57.683	2019.04.04 11:51:39  Bracket_b12 EURUSD,M15: delete #105 buy stop 0.01 EURUSD at 1.12495 sl: 1.12363 tp: 1.12627 ok
+2	15:18:57.697	2019.04.04 15:11:02  Tester: take profit #106 at 1.12191 (1.12189 / 1.12191)
+2	15:18:57.715	2019.04.05 10:00:00  Bracket_b12 EURUSD,M15: open #107 buy stop 0.01 EURUSD at 1.12382 sl: 1.12275 tp: 1.12489 ok
+2	15:18:57.715	2019.04.05 10:00:00  Bracket_b12 EURUSD,M15: open #108 sell stop 0.01 EURUSD at 1.12235 sl: 1.12342 tp: 1.12128 ok
+2	15:18:57.719	2019.04.05 15:00:00  Bracket_b12 EURUSD,M15: delete #107 buy stop 0.01 EURUSD at 1.12382 sl: 1.12275 tp: 1.12489 ok
+2	15:18:57.719	2019.04.05 15:00:00  Bracket_b12 EURUSD,M15: delete #108 sell stop 0.01 EURUSD at 1.12235 sl: 1.12342 tp: 1.12128 ok
+2	15:18:57.751	2019.04.09 10:00:00  Bracket_b12 EURUSD,M15: open #109 buy stop 0.01 EURUSD at 1.12698 sl: 1.12613 tp: 1.12783 ok
+2	15:18:57.751	2019.04.09 10:00:00  Bracket_b12 EURUSD,M15: open #110 sell stop 0.01 EURUSD at 1.12573 sl: 1.12658 tp: 1.12488 ok
+2	15:18:57.751	2019.04.09 10:03:00  Bracket_b12 EURUSD,M15: delete #109 buy stop 0.01 EURUSD at 1.12698 sl: 1.12613 tp: 1.12783 ok
+0	15:18:57.751	2019.04.09 10:10:40  Tester: stop loss #110 at 1.12658 (1.12656 / 1.12658)
+2	15:18:57.766	2019.04.10 10:00:00  Bracket_b12 EURUSD,M15: open #111 buy stop 0.01 EURUSD at 1.12756 sl: 1.12612 tp: 1.12900 ok
+2	15:18:57.766	2019.04.10 10:00:00  Bracket_b12 EURUSD,M15: open #112 sell stop 0.01 EURUSD at 1.12572 sl: 1.12716 tp: 1.12428 ok
+2	15:18:57.776	2019.04.10 12:32:30  Bracket_b12 EURUSD,M15: delete #112 sell stop 0.01 EURUSD at 1.12572 sl: 1.12716 tp: 1.12428 ok
+0	15:18:57.781	2019.04.10 15:37:05  Tester: stop loss #111 at 1.12612 (1.12612 / 1.12614)
+2	15:18:57.788	2019.04.11 10:00:00  Bracket_b12 EURUSD,M15: open #113 buy stop 0.01 EURUSD at 1.12850 sl: 1.12770 tp: 1.12930 ok
+2	15:18:57.788	2019.04.11 10:00:00  Bracket_b12 EURUSD,M15: open #114 sell stop 0.01 EURUSD at 1.12730 sl: 1.12810 tp: 1.12650 ok
+2	15:18:57.788	2019.04.11 10:06:18  Bracket_b12 EURUSD,M15: delete #114 sell stop 0.01 EURUSD at 1.12730 sl: 1.12810 tp: 1.12650 ok
+0	15:18:57.795	2019.04.11 11:18:26  Tester: stop loss #113 at 1.12770 (1.12770 / 1.12772)
+2	15:18:57.804	2019.04.12 10:00:00  Bracket_b12 EURUSD,M15: open #115 buy stop 0.01 EURUSD at 1.12932 sl: 1.12842 tp: 1.13022 ok
+2	15:18:57.804	2019.04.12 10:00:00  Bracket_b12 EURUSD,M15: open #116 sell stop 0.01 EURUSD at 1.12802 sl: 1.12892 tp: 1.12712 ok
+2	15:18:57.804	2019.04.12 11:03:29  Bracket_b12 EURUSD,M15: delete #116 sell stop 0.01 EURUSD at 1.12802 sl: 1.12892 tp: 1.12712 ok
+2	15:18:57.804	2019.04.12 11:34:26  Tester: take profit #115 at 1.13022 (1.13023 / 1.13025)
+2	15:18:57.816	2019.04.15 10:00:00  Bracket_b12 EURUSD,M15: open #117 buy stop 0.01 EURUSD at 1.13158 sl: 1.13045 tp: 1.13271 ok
+2	15:18:57.816	2019.04.15 10:00:00  Bracket_b12 EURUSD,M15: open #118 sell stop 0.01 EURUSD at 1.13005 sl: 1.13118 tp: 1.12892 ok
+2	15:18:57.816	2019.04.15 10:09:28  Bracket_b12 EURUSD,M15: delete #118 sell stop 0.01 EURUSD at 1.13005 sl: 1.13118 tp: 1.12892 ok
+0	15:18:57.830	2019.04.15 16:35:39  Tester: stop loss #117 at 1.13045 (1.13045 / 1.13047)
+2	15:18:57.830	2019.04.16 10:00:00  Bracket_b12 EURUSD,M15: open #119 buy stop 0.01 EURUSD at 1.13115 sl: 1.13034 tp: 1.13196 ok
+2	15:18:57.830	2019.04.16 10:00:00  Bracket_b12 EURUSD,M15: open #120 sell stop 0.01 EURUSD at 1.12994 sl: 1.13075 tp: 1.12913 ok
+2	15:18:57.830	2019.04.16 10:04:38  Bracket_b12 EURUSD,M15: delete #120 sell stop 0.01 EURUSD at 1.12994 sl: 1.13075 tp: 1.12913 ok
+0	15:18:57.830	2019.04.16 10:18:36  Tester: stop loss #119 at 1.13034 (1.13034 / 1.13036)
+2	15:18:57.852	2019.04.17 10:00:00  Bracket_b12 EURUSD,M15: open #121 buy stop 0.01 EURUSD at 1.13156 sl: 1.13048 tp: 1.13264 ok
+2	15:18:57.852	2019.04.17 10:00:00  Bracket_b12 EURUSD,M15: open #122 sell stop 0.01 EURUSD at 1.13008 sl: 1.13116 tp: 1.12900 ok
+2	15:18:57.852	2019.04.17 10:20:26  Bracket_b12 EURUSD,M15: delete #122 sell stop 0.01 EURUSD at 1.13008 sl: 1.13116 tp: 1.12900 ok
+0	15:18:57.866	2019.04.17 14:50:14  Tester: stop loss #121 at 1.13048 (1.13048 / 1.13050)
+2	15:18:57.873	2019.04.18 10:00:00  Bracket_b12 EURUSD,M15: open #123 buy stop 0.01 EURUSD at 1.13058 sl: 1.12967 tp: 1.13149 ok
+2	15:18:57.873	2019.04.18 10:00:00  Bracket_b12 EURUSD,M15: open #124 sell stop 0.01 EURUSD at 1.12927 sl: 1.13018 tp: 1.12836 ok
+2	15:18:57.875	2019.04.18 10:24:39  Bracket_b12 EURUSD,M15: delete #123 buy stop 0.01 EURUSD at 1.13058 sl: 1.12967 tp: 1.13149 ok
+2	15:18:57.875	2019.04.18 10:30:28  Tester: take profit #124 at 1.12836 (1.12831 / 1.12833)
+2	15:18:57.896	2019.04.23 10:00:00  Bracket_b12 EURUSD,M15: open #125 buy stop 0.01 EURUSD at 1.12536 sl: 1.12447 tp: 1.12625 ok
+2	15:18:57.896	2019.04.23 10:00:00  Bracket_b12 EURUSD,M15: open #126 sell stop 0.01 EURUSD at 1.12407 sl: 1.12496 tp: 1.12318 ok
+2	15:18:57.898	2019.04.23 11:16:16  Bracket_b12 EURUSD,M15: delete #126 sell stop 0.01 EURUSD at 1.12407 sl: 1.12496 tp: 1.12318 ok
+0	15:18:57.898	2019.04.23 14:06:04  Tester: stop loss #125 at 1.12447 (1.12447 / 1.12449)
+2	15:18:57.912	2019.04.24 10:00:00  Bracket_b12 EURUSD,M15: open #127 buy stop 0.01 EURUSD at 1.12199 sl: 1.12058 tp: 1.12340 ok
+2	15:18:57.912	2019.04.24 10:00:00  Bracket_b12 EURUSD,M15: open #128 sell stop 0.01 EURUSD at 1.12018 sl: 1.12159 tp: 1.11877 ok
+2	15:18:57.913	2019.04.24 10:04:02  Bracket_b12 EURUSD,M15: delete #127 buy stop 0.01 EURUSD at 1.12199 sl: 1.12058 tp: 1.12340 ok
+0	15:18:57.914	2019.04.24 10:58:47  Tester: stop loss #128 at 1.12159 (1.12157 / 1.12159)
+2	15:18:57.914	2019.04.25 10:00:00  Bracket_b12 EURUSD,M15: open #129 buy stop 0.01 EURUSD at 1.11644 sl: 1.11533 tp: 1.11755 ok
+2	15:18:57.914	2019.04.25 10:00:00  Bracket_b12 EURUSD,M15: open #130 sell stop 0.01 EURUSD at 1.11493 sl: 1.11604 tp: 1.11382 ok
+2	15:18:57.914	2019.04.25 10:04:27  Bracket_b12 EURUSD,M15: delete #129 buy stop 0.01 EURUSD at 1.11644 sl: 1.11533 tp: 1.11755 ok
+2	15:18:57.930	2019.04.25 11:21:37  Tester: take profit #130 at 1.11382 (1.11377 / 1.11379)
+2	15:18:57.930	2019.04.26 10:00:00  Bracket_b12 EURUSD,M15: open #131 buy stop 0.01 EURUSD at 1.11491 sl: 1.11349 tp: 1.11633 ok
+2	15:18:57.930	2019.04.26 10:00:00  Bracket_b12 EURUSD,M15: open #132 sell stop 0.01 EURUSD at 1.11309 sl: 1.11451 tp: 1.11167 ok
+2	15:18:57.944	2019.04.26 11:15:27  Bracket_b12 EURUSD,M15: delete #131 buy stop 0.01 EURUSD at 1.11491 sl: 1.11349 tp: 1.11633 ok
+2	15:18:57.947	2019.04.26 15:30:37  Tester: take profit #132 at 1.11167 (1.11162 / 1.11164)
+2	15:18:57.947	2019.04.29 10:00:00  Bracket_b12 EURUSD,M15: open #133 buy stop 0.01 EURUSD at 1.11680 sl: 1.11581 tp: 1.11779 ok
+2	15:18:57.947	2019.04.29 10:00:00  Bracket_b12 EURUSD,M15: open #134 sell stop 0.01 EURUSD at 1.11541 sl: 1.11640 tp: 1.11442 ok
+2	15:18:57.947	2019.04.29 13:45:40  Bracket_b12 EURUSD,M15: delete #133 buy stop 0.01 EURUSD at 1.11680 sl: 1.11581 tp: 1.11779 ok
+0	15:18:57.967	2019.04.29 17:57:23  Tester: stop loss #134 at 1.11640 (1.11640 / 1.11642)
+2	15:18:57.967	2019.04.30 10:00:00  Bracket_b12 EURUSD,M15: open #135 buy stop 0.01 EURUSD at 1.11921 sl: 1.11776 tp: 1.12066 ok
+2	15:18:57.967	2019.04.30 10:00:00  Bracket_b12 EURUSD,M15: open #136 sell stop 0.01 EURUSD at 1.11736 sl: 1.11881 tp: 1.11591 ok
+2	15:18:57.967	2019.04.30 10:02:00  Bracket_b12 EURUSD,M15: delete #136 sell stop 0.01 EURUSD at 1.11736 sl: 1.11881 tp: 1.11591 ok
+2	15:18:57.967	2019.04.30 11:31:28  Tester: take profit #135 at 1.12066 (1.12066 / 1.12068)
+2	15:18:57.999	2019.05.02 10:00:00  Bracket_b12 EURUSD,M15: open #137 buy stop 0.01 EURUSD at 1.12104 sl: 1.11943 tp: 1.12265 ok
+2	15:18:57.999	2019.05.02 10:00:00  Bracket_b12 EURUSD,M15: open #138 sell stop 0.01 EURUSD at 1.11903 sl: 1.12064 tp: 1.11742 ok
+2	15:18:58.001	2019.05.02 10:45:05  Bracket_b12 EURUSD,M15: delete #138 sell stop 0.01 EURUSD at 1.11903 sl: 1.12064 tp: 1.11742 ok
+0	15:18:58.013	2019.05.02 16:05:06  Tester: stop loss #137 at 1.11943 (1.11943 / 1.11945)
+2	15:18:58.018	2019.05.03 10:00:00  Bracket_b12 EURUSD,M15: open #139 buy stop 0.01 EURUSD at 1.11749 sl: 1.11621 tp: 1.11877 ok
+2	15:18:58.018	2019.05.03 10:00:00  Bracket_b12 EURUSD,M15: open #140 sell stop 0.01 EURUSD at 1.11581 sl: 1.11709 tp: 1.11453 ok
+2	15:18:58.018	2019.05.03 10:27:29  Bracket_b12 EURUSD,M15: delete #139 buy stop 0.01 EURUSD at 1.11749 sl: 1.11621 tp: 1.11877 ok
+2	15:18:58.031	2019.05.03 14:16:01  Tester: take profit #140 at 1.11453 (1.11451 / 1.11453)
+2	15:18:58.049	2019.05.06 10:00:00  Bracket_b12 EURUSD,M15: open #141 buy stop 0.01 EURUSD at 1.11967 sl: 1.11878 tp: 1.12056 ok
+2	15:18:58.049	2019.05.06 10:00:00  Bracket_b12 EURUSD,M15: open #142 sell stop 0.01 EURUSD at 1.11838 sl: 1.11927 tp: 1.11749 ok
+2	15:18:58.049	2019.05.06 10:18:30  Bracket_b12 EURUSD,M15: delete #141 buy stop 0.01 EURUSD at 1.11967 sl: 1.11878 tp: 1.12056 ok
+0	15:18:58.051	2019.05.06 10:31:28  Tester: stop loss #142 at 1.11927 (1.11927 / 1.11929)
+2	15:18:58.054	2019.05.07 10:00:00  Bracket_b12 EURUSD,M15: open #143 buy stop 0.01 EURUSD at 1.12197 sl: 1.12080 tp: 1.12314 ok
+2	15:18:58.054	2019.05.07 10:00:00  Bracket_b12 EURUSD,M15: open #144 sell stop 0.01 EURUSD at 1.12040 sl: 1.12157 tp: 1.11923 ok
+2	15:18:58.062	2019.05.07 10:45:44  Bracket_b12 EURUSD,M15: delete #143 buy stop 0.01 EURUSD at 1.12197 sl: 1.12080 tp: 1.12314 ok
+2	15:18:58.066	2019.05.07 14:51:14  Tester: take profit #144 at 1.11923 (1.11921 / 1.11923)
+2	15:18:58.079	2019.05.08 10:00:00  Bracket_b12 EURUSD,M15: open #145 buy stop 0.01 EURUSD at 1.12144 sl: 1.12035 tp: 1.12253 ok
+2	15:18:58.079	2019.05.08 10:00:00  Bracket_b12 EURUSD,M15: open #146 sell stop 0.01 EURUSD at 1.11995 sl: 1.12104 tp: 1.11886 ok
+2	15:18:58.080	2019.05.08 10:14:43  Bracket_b12 EURUSD,M15: delete #145 buy stop 0.01 EURUSD at 1.12144 sl: 1.12035 tp: 1.12253 ok
+0	15:18:58.081	2019.05.08 11:15:30  Tester: stop loss #146 at 1.12104 (1.12102 / 1.12104)
+2	15:18:58.095	2019.05.09 10:00:00  Bracket_b12 EURUSD,M15: open #147 buy stop 0.01 EURUSD at 1.12047 sl: 1.11944 tp: 1.12150 ok
+2	15:18:58.095	2019.05.09 10:00:00  Bracket_b12 EURUSD,M15: open #148 sell stop 0.01 EURUSD at 1.11904 sl: 1.12007 tp: 1.11801 ok
+2	15:18:58.098	2019.05.09 10:53:18  Bracket_b12 EURUSD,M15: delete #147 buy stop 0.01 EURUSD at 1.12047 sl: 1.11944 tp: 1.12150 ok
+2	15:18:58.100	2019.05.09 11:13:39  Tester: take profit #148 at 1.11801 (1.11799 / 1.11801)
+2	15:18:58.111	2019.05.10 10:00:00  Bracket_b12 EURUSD,M15: open #149 buy stop 0.01 EURUSD at 1.12311 sl: 1.12200 tp: 1.12422 ok
+2	15:18:58.111	2019.05.10 10:00:00  Bracket_b12 EURUSD,M15: open #150 sell stop 0.01 EURUSD at 1.12160 sl: 1.12271 tp: 1.12049 ok
+2	15:18:58.112	2019.05.10 10:12:04  Bracket_b12 EURUSD,M15: delete #150 sell stop 0.01 EURUSD at 1.12160 sl: 1.12271 tp: 1.12049 ok
+0	15:18:58.113	2019.05.10 11:32:05  Tester: stop loss #149 at 1.12200 (1.12200 / 1.12202)
+2	15:18:58.127	2019.05.13 10:00:00  Bracket_b12 EURUSD,M15: open #151 buy stop 0.01 EURUSD at 1.12385 sl: 1.12291 tp: 1.12479 ok
+2	15:18:58.127	2019.05.13 10:00:00  Bracket_b12 EURUSD,M15: open #152 sell stop 0.01 EURUSD at 1.12251 sl: 1.12345 tp: 1.12157 ok
+2	15:18:58.130	2019.05.13 10:40:30  Bracket_b12 EURUSD,M15: delete #151 buy stop 0.01 EURUSD at 1.12385 sl: 1.12291 tp: 1.12479 ok
+0	15:18:58.132	2019.05.13 11:37:18  Tester: stop loss #152 at 1.12345 (1.12343 / 1.12345)
+2	15:18:58.137	2019.05.14 10:00:00  Bracket_b12 EURUSD,M15: open #153 buy stop 0.01 EURUSD at 1.12434 sl: 1.12342 tp: 1.12526 ok
+2	15:18:58.137	2019.05.14 10:00:00  Bracket_b12 EURUSD,M15: open #154 sell stop 0.01 EURUSD at 1.12302 sl: 1.12394 tp: 1.12210 ok
+2	15:18:58.137	2019.05.14 10:01:44  Bracket_b12 EURUSD,M15: delete #153 buy stop 0.01 EURUSD at 1.12434 sl: 1.12342 tp: 1.12526 ok
+0	15:18:58.137	2019.05.14 10:15:32  Tester: stop loss #154 at 1.12394 (1.12392 / 1.12394)
+2	15:18:58.151	2019.05.15 10:00:00  Bracket_b12 EURUSD,M15: open #155 buy stop 0.01 EURUSD at 1.12153 sl: 1.12062 tp: 1.12244 ok
+2	15:18:58.151	2019.05.15 10:00:00  Bracket_b12 EURUSD,M15: open #156 sell stop 0.01 EURUSD at 1.12022 sl: 1.12113 tp: 1.11931 ok
+2	15:18:58.151	2019.05.15 10:02:38  Bracket_b12 EURUSD,M15: delete #155 buy stop 0.01 EURUSD at 1.12153 sl: 1.12062 tp: 1.12244 ok
+0	15:18:58.151	2019.05.15 10:50:05  Tester: stop loss #156 at 1.12113 (1.12112 / 1.12114)
+2	15:18:58.180	2019.05.17 10:00:00  Bracket_b12 EURUSD,M15: open #157 buy stop 0.01 EURUSD at 1.11847 sl: 1.11725 tp: 1.11969 ok
+2	15:18:58.180	2019.05.17 10:00:00  Bracket_b12 EURUSD,M15: open #158 sell stop 0.01 EURUSD at 1.11685 sl: 1.11807 tp: 1.11563 ok
+2	15:18:58.180	2019.05.17 12:16:17  Bracket_b12 EURUSD,M15: delete #157 buy stop 0.01 EURUSD at 1.11847 sl: 1.11725 tp: 1.11969 ok
+2	15:18:58.196	2019.05.17 17:50:00  Tester: take profit #158 at 1.11563 (1.11561 / 1.11563)
+2	15:18:58.204	2019.05.21 10:00:00  Bracket_b12 EURUSD,M15: open #159 buy stop 0.01 EURUSD at 1.11618 sl: 1.11460 tp: 1.11776 ok
+2	15:18:58.204	2019.05.21 10:00:00  Bracket_b12 EURUSD,M15: open #160 sell stop 0.01 EURUSD at 1.11420 sl: 1.11578 tp: 1.11262 ok
+2	15:18:58.211	2019.05.21 11:27:47  Bracket_b12 EURUSD,M15: delete #159 buy stop 0.01 EURUSD at 1.11618 sl: 1.11460 tp: 1.11776 ok
+0	15:18:58.219	2019.05.21 15:14:24  Tester: stop loss #160 at 1.11578 (1.11576 / 1.11578)
+2	15:18:58.231	2019.05.23 10:00:00  Bracket_b12 EURUSD,M15: open #161 buy stop 0.01 EURUSD at 1.11541 sl: 1.11414 tp: 1.11668 ok
+2	15:18:58.231	2019.05.23 10:00:00  Bracket_b12 EURUSD,M15: open #162 sell stop 0.01 EURUSD at 1.11374 sl: 1.11501 tp: 1.11247 ok
+2	15:18:58.231	2019.05.23 10:04:26  Bracket_b12 EURUSD,M15: delete #161 buy stop 0.01 EURUSD at 1.11541 sl: 1.11414 tp: 1.11668 ok
+2	15:18:58.249	2019.05.23 16:04:28  Tester: take profit #162 at 1.11247 (1.11245 / 1.11247)
+2	15:18:58.258	2019.05.24 10:00:00  Bracket_b12 EURUSD,M15: open #163 buy stop 0.01 EURUSD at 1.12075 sl: 1.11826 tp: 1.12324 ok
+2	15:18:58.258	2019.05.24 10:00:00  Bracket_b12 EURUSD,M15: open #164 sell stop 0.01 EURUSD at 1.11786 sl: 1.12035 tp: 1.11537 ok
+2	15:18:58.264	2019.05.24 12:19:37  Bracket_b12 EURUSD,M15: delete #163 buy stop 0.01 EURUSD at 1.12075 sl: 1.11826 tp: 1.12324 ok
+0	15:18:58.281	2019.05.24 17:29:26  Tester: stop loss #164 at 1.12035 (1.12033 / 1.12035)
+2	15:18:58.284	2019.05.27 10:00:00  Bracket_b12 EURUSD,M15: open #165 buy stop 0.01 EURUSD at 1.12132 sl: 1.12034 tp: 1.12230 ok
+2	15:18:58.284	2019.05.27 10:00:00  Bracket_b12 EURUSD,M15: open #166 sell stop 0.01 EURUSD at 1.11994 sl: 1.12092 tp: 1.11896 ok
+2	15:18:58.284	2019.05.27 10:02:28  Bracket_b12 EURUSD,M15: delete #165 buy stop 0.01 EURUSD at 1.12132 sl: 1.12034 tp: 1.12230 ok
+2	15:18:58.284	2019.05.27 16:27:30  Tester: take profit #166 at 1.11896 (1.11894 / 1.11896)
+2	15:18:58.296	2019.05.28 10:00:00  Bracket_b12 EURUSD,M15: open #167 buy stop 0.01 EURUSD at 1.11890 sl: 1.11790 tp: 1.11990 ok
+2	15:18:58.296	2019.05.28 10:00:00  Bracket_b12 EURUSD,M15: open #168 sell stop 0.01 EURUSD at 1.11750 sl: 1.11850 tp: 1.11650 ok
+2	15:18:58.299	2019.05.28 11:05:17  Bracket_b12 EURUSD,M15: delete #168 sell stop 0.01 EURUSD at 1.11750 sl: 1.11850 tp: 1.11650 ok
+0	15:18:58.311	2019.05.28 17:51:27  Tester: stop loss #167 at 1.11790 (1.11790 / 1.11792)
+2	15:18:58.315	2019.05.29 10:00:00  Bracket_b12 EURUSD,M15: open #169 buy stop 0.01 EURUSD at 1.11710 sl: 1.11570 tp: 1.11850 ok
+2	15:18:58.315	2019.05.29 10:00:00  Bracket_b12 EURUSD,M15: open #170 sell stop 0.01 EURUSD at 1.11530 sl: 1.11670 tp: 1.11390 ok
+2	15:18:58.315	2019.05.29 10:05:27  Bracket_b12 EURUSD,M15: delete #169 buy stop 0.01 EURUSD at 1.11710 sl: 1.11570 tp: 1.11850 ok
+2	15:18:58.330	2019.05.29 17:02:26  Tester: take profit #170 at 1.11390 (1.11387 / 1.11389)
+2	15:18:58.332	2019.05.30 10:00:00  Bracket_b12 EURUSD,M15: open #171 buy stop 0.01 EURUSD at 1.11419 sl: 1.11323 tp: 1.11515 ok
+2	15:18:58.332	2019.05.30 10:00:00  Bracket_b12 EURUSD,M15: open #172 sell stop 0.01 EURUSD at 1.11283 sl: 1.11379 tp: 1.11187 ok
+2	15:18:58.332	2019.05.30 10:12:36  Bracket_b12 EURUSD,M15: delete #171 buy stop 0.01 EURUSD at 1.11419 sl: 1.11323 tp: 1.11515 ok
+0	15:18:58.332	2019.05.30 11:41:05  Tester: stop loss #172 at 1.11379 (1.11377 / 1.11379)
+2	15:18:58.348	2019.05.31 10:00:00  Bracket_b12 EURUSD,M15: open #173 buy stop 0.01 EURUSD at 1.11381 sl: 1.11285 tp: 1.11477 ok
+2	15:18:58.348	2019.05.31 10:00:00  Bracket_b12 EURUSD,M15: open #174 sell stop 0.01 EURUSD at 1.11245 sl: 1.11341 tp: 1.11149 ok
+2	15:18:58.348	2019.05.31 10:06:29  Bracket_b12 EURUSD,M15: delete #174 sell stop 0.01 EURUSD at 1.11245 sl: 1.11341 tp: 1.11149 ok
+2	15:18:58.348	2019.05.31 10:53:39  Tester: take profit #173 at 1.11477 (1.11477 / 1.11479)
+2	15:18:58.364	2019.06.03 10:00:00  Bracket_b12 EURUSD,M15: open #175 buy stop 0.01 EURUSD at 1.11811 sl: 1.11620 tp: 1.12002 ok
+2	15:18:58.364	2019.06.03 10:00:00  Bracket_b12 EURUSD,M15: open #176 sell stop 0.01 EURUSD at 1.11580 sl: 1.11771 tp: 1.11389 ok
+2	15:18:58.364	2019.06.03 12:03:45  Bracket_b12 EURUSD,M15: delete #176 sell stop 0.01 EURUSD at 1.11580 sl: 1.11771 tp: 1.11389 ok
+2	15:18:58.379	2019.06.03 16:42:37  Tester: take profit #175 at 1.12002 (1.12002 / 1.12004)
+2	15:18:58.382	2019.06.04 10:00:00  Bracket_b12 EURUSD,M15: open #177 buy stop 0.01 EURUSD at 1.12726 sl: 1.12475 tp: 1.12977 ok
+2	15:18:58.382	2019.06.04 10:00:00  Bracket_b12 EURUSD,M15: open #178 sell stop 0.01 EURUSD at 1.12435 sl: 1.12686 tp: 1.12184 ok
+2	15:18:58.382	2019.06.04 10:06:01  Bracket_b12 EURUSD,M15: delete #178 sell stop 0.01 EURUSD at 1.12435 sl: 1.12686 tp: 1.12184 ok
+0	15:18:58.395	2019.06.04 11:43:19  Tester: stop loss #177 at 1.12475 (1.12475 / 1.12477)
+2	15:18:58.404	2019.06.05 10:00:00  Bracket_b12 EURUSD,M15: open #179 buy stop 0.01 EURUSD at 1.12746 sl: 1.12595 tp: 1.12897 ok
+2	15:18:58.404	2019.06.05 10:00:00  Bracket_b12 EURUSD,M15: open #180 sell stop 0.01 EURUSD at 1.12555 sl: 1.12706 tp: 1.12404 ok
+2	15:18:58.404	2019.06.05 11:23:30  Bracket_b12 EURUSD,M15: delete #180 sell stop 0.01 EURUSD at 1.12555 sl: 1.12706 tp: 1.12404 ok
+0	15:18:58.414	2019.06.05 13:55:18  Tester: stop loss #179 at 1.12595 (1.12593 / 1.12595)
+2	15:18:58.424	2019.06.06 10:00:00  Bracket_b12 EURUSD,M15: open #181 buy stop 0.01 EURUSD at 1.12376 sl: 1.12250 tp: 1.12502 ok
+2	15:18:58.424	2019.06.06 10:00:00  Bracket_b12 EURUSD,M15: open #182 sell stop 0.01 EURUSD at 1.12210 sl: 1.12336 tp: 1.12084 ok
+2	15:18:58.425	2019.06.06 11:04:17  Bracket_b12 EURUSD,M15: delete #182 sell stop 0.01 EURUSD at 1.12210 sl: 1.12336 tp: 1.12084 ok
+0	15:18:58.432	2019.06.06 14:44:14  Tester: stop loss #181 at 1.12250 (1.12250 / 1.12252)
+2	15:18:58.444	2019.06.07 10:00:00  Bracket_b12 EURUSD,M15: open #183 buy stop 0.01 EURUSD at 1.12693 sl: 1.12585 tp: 1.12801 ok
+2	15:18:58.444	2019.06.07 10:00:00  Bracket_b12 EURUSD,M15: open #184 sell stop 0.01 EURUSD at 1.12545 sl: 1.12653 tp: 1.12437 ok
+2	15:18:58.444	2019.06.07 10:16:28  Bracket_b12 EURUSD,M15: delete #184 sell stop 0.01 EURUSD at 1.12545 sl: 1.12653 tp: 1.12437 ok
+0	15:18:58.446	2019.06.07 11:02:20  Tester: stop loss #183 at 1.12585 (1.12585 / 1.12587)
+2	15:18:58.446	2019.06.10 10:00:00  Bracket_b12 EURUSD,M15: open #185 buy stop 0.01 EURUSD at 1.13147 sl: 1.13043 tp: 1.13251 ok
+2	15:18:58.446	2019.06.10 10:00:00  Bracket_b12 EURUSD,M15: open #186 sell stop 0.01 EURUSD at 1.13003 sl: 1.13107 tp: 1.12899 ok
+2	15:18:58.446	2019.06.10 10:20:47  Bracket_b12 EURUSD,M15: delete #185 buy stop 0.01 EURUSD at 1.13147 sl: 1.13043 tp: 1.13251 ok
+0	15:18:58.465	2019.06.10 14:16:40  Tester: stop loss #186 at 1.13107 (1.13105 / 1.13107)
+2	15:18:58.477	2019.06.11 10:00:00  Bracket_b12 EURUSD,M15: open #187 buy stop 0.01 EURUSD at 1.13246 sl: 1.13153 tp: 1.13339 ok
+2	15:18:58.477	2019.06.11 10:00:00  Bracket_b12 EURUSD,M15: open #188 sell stop 0.01 EURUSD at 1.13113 sl: 1.13206 tp: 1.13020 ok
+2	15:18:58.478	2019.06.11 10:18:20  Bracket_b12 EURUSD,M15: delete #188 sell stop 0.01 EURUSD at 1.13113 sl: 1.13206 tp: 1.13020 ok
+0	15:18:58.484	2019.06.11 11:37:48  Tester: stop loss #187 at 1.13153 (1.13152 / 1.13154)
+2	15:18:58.492	2019.06.12 10:00:00  Bracket_b12 EURUSD,M15: open #189 buy stop 0.01 EURUSD at 1.13424 sl: 1.13327 tp: 1.13521 ok
+2	15:18:58.492	2019.06.12 10:00:00  Bracket_b12 EURUSD,M15: open #190 sell stop 0.01 EURUSD at 1.13287 sl: 1.13384 tp: 1.13190 ok
+2	15:18:58.497	2019.06.12 11:10:20  Bracket_b12 EURUSD,M15: delete #190 sell stop 0.01 EURUSD at 1.13287 sl: 1.13384 tp: 1.13190 ok
+0	15:18:58.497	2019.06.12 11:25:28  Tester: stop loss #189 at 1.13327 (1.13327 / 1.13329)
+2	15:18:58.513	2019.06.13 10:00:00  Bracket_b12 EURUSD,M15: open #191 buy stop 0.01 EURUSD at 1.13056 sl: 1.12904 tp: 1.13208 ok
+2	15:18:58.513	2019.06.13 10:00:00  Bracket_b12 EURUSD,M15: open #192 sell stop 0.01 EURUSD at 1.12864 sl: 1.13016 tp: 1.12712 ok
+2	15:18:58.522	2019.06.13 13:45:36  Bracket_b12 EURUSD,M15: delete #191 buy stop 0.01 EURUSD at 1.13056 sl: 1.12904 tp: 1.13208 ok
+2	15:18:58.542	2019.06.13 17:20:28  Tester: take profit #192 at 1.12712 (1.12707 / 1.12709)
+2	15:18:58.550	2019.06.14 10:00:00  Bracket_b12 EURUSD,M15: open #193 buy stop 0.01 EURUSD at 1.12841 sl: 1.12716 tp: 1.12966 ok
+2	15:18:58.550	2019.06.14 10:00:00  Bracket_b12 EURUSD,M15: open #194 sell stop 0.01 EURUSD at 1.12676 sl: 1.12801 tp: 1.12551 ok
+2	15:18:58.550	2019.06.14 10:02:03  Bracket_b12 EURUSD,M15: delete #194 sell stop 0.01 EURUSD at 1.12676 sl: 1.12801 tp: 1.12551 ok
+0	15:18:58.557	2019.06.14 12:12:30  Tester: stop loss #193 at 1.12716 (1.12716 / 1.12718)
+2	15:18:58.565	2019.06.17 10:00:00  Bracket_b12 EURUSD,M15: open #195 buy stop 0.01 EURUSD at 1.12193 sl: 1.12067 tp: 1.12319 ok
+2	15:18:58.565	2019.06.17 10:00:00  Bracket_b12 EURUSD,M15: open #196 sell stop 0.01 EURUSD at 1.12027 sl: 1.12153 tp: 1.11901 ok
+2	15:18:58.565	2019.06.17 13:58:38  Bracket_b12 EURUSD,M15: delete #196 sell stop 0.01 EURUSD at 1.12027 sl: 1.12153 tp: 1.11901 ok
+2	15:18:58.565	2019.06.17 15:00:17  Tester: take profit #195 at 1.12319 (1.12320 / 1.12322)
+2	15:18:58.581	2019.06.18 10:00:00  Bracket_b12 EURUSD,M15: open #197 buy stop 0.01 EURUSD at 1.12412 sl: 1.12324 tp: 1.12500 ok
+2	15:18:58.581	2019.06.18 10:00:00  Bracket_b12 EURUSD,M15: open #198 sell stop 0.01 EURUSD at 1.12284 sl: 1.12372 tp: 1.12196 ok
+2	15:18:58.582	2019.06.18 10:24:04  Bracket_b12 EURUSD,M15: delete #198 sell stop 0.01 EURUSD at 1.12284 sl: 1.12372 tp: 1.12196 ok
+0	15:18:58.583	2019.06.18 11:01:18  Tester: stop loss #197 at 1.12324 (1.12323 / 1.12325)
+2	15:18:58.593	2019.06.19 10:00:00  Bracket_b12 EURUSD,M15: open #199 buy stop 0.01 EURUSD at 1.11980 sl: 1.11892 tp: 1.12068 ok
+2	15:18:58.593	2019.06.19 10:00:00  Bracket_b12 EURUSD,M15: open #200 sell stop 0.01 EURUSD at 1.11852 sl: 1.11940 tp: 1.11764 ok
+2	15:18:58.597	2019.06.19 10:06:30  Bracket_b12 EURUSD,M15: delete #200 sell stop 0.01 EURUSD at 1.11852 sl: 1.11940 tp: 1.11764 ok
+0	15:18:58.598	2019.06.19 10:34:28  Tester: stop loss #199 at 1.11892 (1.11891 / 1.11893)
+2	15:18:58.611	2019.06.20 10:00:00  Bracket_b12 EURUSD,M15: open #201 buy stop 0.01 EURUSD at 1.12859 sl: 1.12620 tp: 1.13098 ok
+2	15:18:58.611	2019.06.20 10:00:00  Bracket_b12 EURUSD,M15: open #202 sell stop 0.01 EURUSD at 1.12580 sl: 1.12819 tp: 1.12341 ok
+2	15:18:58.612	2019.06.20 10:21:26  Bracket_b12 EURUSD,M15: delete #202 sell stop 0.01 EURUSD at 1.12580 sl: 1.12819 tp: 1.12341 ok
+2	15:18:58.613	2019.06.20 14:23:47  Tester: take profit #201 at 1.13098 (1.13098 / 1.13100)
+2	15:18:58.630	2019.06.21 10:00:00  Bracket_b12 EURUSD,M15: open #203 buy stop 0.01 EURUSD at 1.13013 sl: 1.12850 tp: 1.13176 ok
+2	15:18:58.630	2019.06.21 10:00:00  Bracket_b12 EURUSD,M15: open #204 sell stop 0.01 EURUSD at 1.12810 sl: 1.12973 tp: 1.12647 ok
+2	15:18:58.630	2019.06.21 10:15:00  Bracket_b12 EURUSD,M15: delete #204 sell stop 0.01 EURUSD at 1.12810 sl: 1.12973 tp: 1.12647 ok
+2	15:18:58.630	2019.06.21 15:02:14  Tester: take profit #203 at 1.13176 (1.13176 / 1.13178)
+2	15:18:58.648	2019.06.24 10:00:00  Bracket_b12 EURUSD,M15: open #205 buy stop 0.01 EURUSD at 1.13911 sl: 1.13767 tp: 1.14055 ok
+2	15:18:58.648	2019.06.24 10:00:00  Bracket_b12 EURUSD,M15: open #206 sell stop 0.01 EURUSD at 1.13727 sl: 1.13871 tp: 1.13583 ok
+2	15:18:58.648	2019.06.24 10:41:04  Bracket_b12 EURUSD,M15: delete #205 buy stop 0.01 EURUSD at 1.13911 sl: 1.13767 tp: 1.14055 ok
+0	15:18:58.648	2019.06.24 11:22:46  Tester: stop loss #206 at 1.13871 (1.13869 / 1.13871)
+2	15:18:58.664	2019.06.25 10:00:00  Bracket_b12 EURUSD,M15: open #207 buy stop 0.01 EURUSD at 1.14120 sl: 1.13943 tp: 1.14297 ok
+2	15:18:58.664	2019.06.25 10:00:00  Bracket_b12 EURUSD,M15: open #208 sell stop 0.01 EURUSD at 1.13903 sl: 1.14080 tp: 1.13726 ok
+2	15:18:58.664	2019.06.25 10:22:18  Bracket_b12 EURUSD,M15: delete #207 buy stop 0.01 EURUSD at 1.14120 sl: 1.13943 tp: 1.14297 ok
+2	15:18:58.688	2019.06.25 19:36:48  Tester: take profit #208 at 1.13726 (1.13723 / 1.13725)
+2	15:18:58.706	2019.06.26 10:00:00  Bracket_b12 EURUSD,M15: open #209 buy stop 0.01 EURUSD at 1.13667 sl: 1.13564 tp: 1.13770 ok
+2	15:18:58.706	2019.06.26 10:00:00  Bracket_b12 EURUSD,M15: open #210 sell stop 0.01 EURUSD at 1.13524 sl: 1.13627 tp: 1.13421 ok
+2	15:18:58.707	2019.06.26 10:18:40  Bracket_b12 EURUSD,M15: delete #210 sell stop 0.01 EURUSD at 1.13524 sl: 1.13627 tp: 1.13421 ok
+0	15:18:58.715	2019.06.26 11:41:30  Tester: stop loss #209 at 1.13564 (1.13563 / 1.13565)
+2	15:18:58.735	2019.06.27 10:00:00  Bracket_b12 EURUSD,M15: open #211 sell stop 0.01 EURUSD at 1.13459 sl: 1.13578 tp: 1.13340 ok
+2	15:18:58.744	2019.06.27 15:00:00  Bracket_b12 EURUSD,M15: delete #211 sell stop 0.01 EURUSD at 1.13459 sl: 1.13578 tp: 1.13340 ok
+2	15:18:58.754	2019.06.28 10:00:00  Bracket_b12 EURUSD,M15: open #212 buy stop 0.01 EURUSD at 1.13813 sl: 1.13626 tp: 1.14000 ok
+2	15:18:58.754	2019.06.28 10:00:00  Bracket_b12 EURUSD,M15: open #213 sell stop 0.01 EURUSD at 1.13586 sl: 1.13773 tp: 1.13399 ok
+2	15:18:58.754	2019.06.28 10:02:19  Bracket_b12 EURUSD,M15: delete #213 sell stop 0.01 EURUSD at 1.13586 sl: 1.13773 tp: 1.13399 ok
+0	15:18:58.800	2019.06.28 19:47:18  Tester: stop loss #212 at 1.13626 (1.13626 / 1.13628)
+2	15:18:58.814	2019.07.01 10:00:00  Bracket_b12 EURUSD,M15: open #214 buy stop 0.01 EURUSD at 1.13508 sl: 1.13234 tp: 1.13782 ok
+2	15:18:58.814	2019.07.01 10:00:00  Bracket_b12 EURUSD,M15: open #215 sell stop 0.01 EURUSD at 1.13194 sl: 1.13468 tp: 1.12920 ok
+2	15:18:58.814	2019.07.01 10:04:17  Bracket_b12 EURUSD,M15: delete #214 buy stop 0.01 EURUSD at 1.13508 sl: 1.13234 tp: 1.13782 ok
+0	15:18:58.815	2019.07.01 14:13:05  Tester: stop loss #215 at 1.13468 (1.13466 / 1.13468)
+2	15:18:58.831	2019.07.02 10:00:00  Bracket_b12 EURUSD,M15: open #216 buy stop 0.01 EURUSD at 1.12972 sl: 1.12889 tp: 1.13055 ok
+2	15:18:58.831	2019.07.02 10:00:00  Bracket_b12 EURUSD,M15: open #217 sell stop 0.01 EURUSD at 1.12849 sl: 1.12932 tp: 1.12766 ok
+2	15:18:58.831	2019.07.02 10:12:00  Bracket_b12 EURUSD,M15: delete #217 sell stop 0.01 EURUSD at 1.12849 sl: 1.12932 tp: 1.12766 ok
+0	15:18:58.831	2019.07.02 10:53:27  Tester: stop loss #216 at 1.12889 (1.12888 / 1.12890)
+2	15:18:58.851	2019.07.03 10:00:00  Bracket_b12 EURUSD,M15: open #218 buy stop 0.01 EURUSD at 1.12923 sl: 1.12804 tp: 1.13042 ok
+2	15:18:58.851	2019.07.03 10:00:00  Bracket_b12 EURUSD,M15: open #219 sell stop 0.01 EURUSD at 1.12764 sl: 1.12883 tp: 1.12645 ok
+2	15:18:58.851	2019.07.03 10:11:30  Bracket_b12 EURUSD,M15: delete #218 buy stop 0.01 EURUSD at 1.12923 sl: 1.12804 tp: 1.13042 ok
+0	15:18:58.855	2019.07.03 11:57:30  Tester: stop loss #219 at 1.12883 (1.12881 / 1.12883)
+2	15:18:58.871	2019.07.05 10:00:00  Bracket_b12 EURUSD,M15: open #220 buy stop 0.01 EURUSD at 1.12835 sl: 1.12742 tp: 1.12928 ok
+2	15:18:58.871	2019.07.05 10:00:00  Bracket_b12 EURUSD,M15: open #221 sell stop 0.01 EURUSD at 1.12702 sl: 1.12795 tp: 1.12609 ok
+2	15:18:58.872	2019.07.05 10:08:38  Bracket_b12 EURUSD,M15: delete #220 buy stop 0.01 EURUSD at 1.12835 sl: 1.12742 tp: 1.12928 ok
+2	15:18:58.875	2019.07.05 12:15:05  Tester: take profit #221 at 1.12609 (1.12607 / 1.12609)
+2	15:18:58.881	2019.07.08 10:00:00  Bracket_b12 EURUSD,M15: open #222 buy stop 0.01 EURUSD at 1.12345 sl: 1.12216 tp: 1.12474 ok
+2	15:18:58.881	2019.07.08 10:00:00  Bracket_b12 EURUSD,M15: open #223 sell stop 0.01 EURUSD at 1.12176 sl: 1.12305 tp: 1.12047 ok
+2	15:18:58.887	2019.07.08 13:59:04  Bracket_b12 EURUSD,M15: delete #222 buy stop 0.01 EURUSD at 1.12345 sl: 1.12216 tp: 1.12474 ok
+2	15:18:58.895	2019.07.08 21:00:00  Bracket_b12 EURUSD,M15: close #223 sell 0.01 EURUSD at 1.12176 sl: 1.12305 tp: 1.12047 at price 1.12153
+2	15:18:58.895	2019.07.09 10:00:00  Bracket_b12 EURUSD,M15: open #224 buy stop 0.01 EURUSD at 1.12195 sl: 1.12085 tp: 1.12305 ok
+2	15:18:58.895	2019.07.09 10:00:00  Bracket_b12 EURUSD,M15: open #225 sell stop 0.01 EURUSD at 1.12045 sl: 1.12155 tp: 1.11935 ok
+2	15:18:58.895	2019.07.09 11:09:30  Bracket_b12 EURUSD,M15: delete #224 buy stop 0.01 EURUSD at 1.12195 sl: 1.12085 tp: 1.12305 ok
+2	15:18:58.914	2019.07.09 21:00:00  Bracket_b12 EURUSD,M15: close #225 sell 0.01 EURUSD at 1.12045 sl: 1.12155 tp: 1.11935 at price 1.12107
+2	15:18:58.914	2019.07.10 10:00:00  Bracket_b12 EURUSD,M15: open #226 buy stop 0.01 EURUSD at 1.12197 sl: 1.12054 tp: 1.12340 ok
+2	15:18:58.914	2019.07.10 10:00:00  Bracket_b12 EURUSD,M15: open #227 sell stop 0.01 EURUSD at 1.12014 sl: 1.12157 tp: 1.11871 ok
+2	15:18:58.914	2019.07.10 11:07:29  Bracket_b12 EURUSD,M15: delete #227 sell stop 0.01 EURUSD at 1.12014 sl: 1.12157 tp: 1.11871 ok
+2	15:18:58.933	2019.07.10 15:30:28  Tester: take profit #226 at 1.12340 (1.12342 / 1.12344)
+2	15:18:58.941	2019.07.11 10:00:00  Bracket_b12 EURUSD,M15: open #228 buy stop 0.01 EURUSD at 1.12808 sl: 1.12686 tp: 1.12930 ok
+2	15:18:58.941	2019.07.11 10:00:00  Bracket_b12 EURUSD,M15: open #229 sell stop 0.01 EURUSD at 1.12646 sl: 1.12768 tp: 1.12524 ok
+2	15:18:58.945	2019.07.11 13:06:36  Bracket_b12 EURUSD,M15: delete #228 buy stop 0.01 EURUSD at 1.12808 sl: 1.12686 tp: 1.12930 ok
+0	15:18:58.948	2019.07.11 14:57:14  Tester: stop loss #229 at 1.12768 (1.12766 / 1.12768)
+2	15:18:58.951	2019.07.12 10:00:00  Bracket_b12 EURUSD,M15: open #230 buy stop 0.01 EURUSD at 1.12768 sl: 1.12686 tp: 1.12850 ok
+2	15:18:58.951	2019.07.12 10:00:00  Bracket_b12 EURUSD,M15: open #231 sell stop 0.01 EURUSD at 1.12646 sl: 1.12728 tp: 1.12564 ok
+2	15:18:58.951	2019.07.12 10:43:37  Bracket_b12 EURUSD,M15: delete #230 buy stop 0.01 EURUSD at 1.12768 sl: 1.12686 tp: 1.12850 ok
+2	15:18:58.951	2019.07.12 12:30:05  Tester: take profit #231 at 1.12564 (1.12562 / 1.12564)
+2	15:18:58.965	2019.07.15 10:00:00  Bracket_b12 EURUSD,M15: open #232 buy stop 0.01 EURUSD at 1.12800 sl: 1.12718 tp: 1.12882 ok
+2	15:18:58.965	2019.07.15 10:00:00  Bracket_b12 EURUSD,M15: open #233 sell stop 0.01 EURUSD at 1.12678 sl: 1.12760 tp: 1.12596 ok
+2	15:18:58.965	2019.07.15 10:21:06  Bracket_b12 EURUSD,M15: delete #233 sell stop 0.01 EURUSD at 1.12678 sl: 1.12760 tp: 1.12596 ok
+0	15:18:58.965	2019.07.15 11:23:46  Tester: stop loss #232 at 1.12718 (1.12718 / 1.12720)
+2	15:18:58.978	2019.07.16 10:00:00  Bracket_b12 EURUSD,M15: open #234 buy stop 0.01 EURUSD at 1.12637 sl: 1.12554 tp: 1.12720 ok
+2	15:18:58.978	2019.07.16 10:00:00  Bracket_b12 EURUSD,M15: open #235 sell stop 0.01 EURUSD at 1.12514 sl: 1.12597 tp: 1.12431 ok
+2	15:18:58.980	2019.07.16 10:32:46  Bracket_b12 EURUSD,M15: delete #234 buy stop 0.01 EURUSD at 1.12637 sl: 1.12554 tp: 1.12720 ok
+2	15:18:58.980	2019.07.16 11:13:37  Tester: take profit #235 at 1.12431 (1.12429 / 1.12431)
+2	15:18:58.989	2019.07.17 10:00:00  Bracket_b12 EURUSD,M15: open #236 buy stop 0.01 EURUSD at 1.12192 sl: 1.12018 tp: 1.12366 ok
+2	15:18:58.989	2019.07.17 10:00:00  Bracket_b12 EURUSD,M15: open #237 sell stop 0.01 EURUSD at 1.11978 sl: 1.12152 tp: 1.11804 ok
+2	15:18:58.994	2019.07.17 12:48:49  Bracket_b12 EURUSD,M15: delete #237 sell stop 0.01 EURUSD at 1.11978 sl: 1.12152 tp: 1.11804 ok
+2	15:18:59.005	2019.07.17 21:00:00  Bracket_b12 EURUSD,M15: close #236 buy 0.01 EURUSD at 1.12192 sl: 1.12018 tp: 1.12366 at price 1.12267
+2	15:18:59.015	2019.07.18 10:00:00  Bracket_b12 EURUSD,M15: open #238 buy stop 0.01 EURUSD at 1.12456 sl: 1.12356 tp: 1.12556 ok
+2	15:18:59.015	2019.07.18 10:00:00  Bracket_b12 EURUSD,M15: open #239 sell stop 0.01 EURUSD at 1.12316 sl: 1.12416 tp: 1.12216 ok
+2	15:18:59.017	2019.07.18 12:26:40  Bracket_b12 EURUSD,M15: delete #238 buy stop 0.01 EURUSD at 1.12456 sl: 1.12356 tp: 1.12556 ok
+2	15:18:59.017	2019.07.18 13:30:29  Tester: take profit #239 at 1.12216 (1.12213 / 1.12215)
+2	15:18:59.036	2019.07.19 10:00:00  Bracket_b12 EURUSD,M15: open #240 buy stop 0.01 EURUSD at 1.12664 sl: 1.12566 tp: 1.12762 ok
+2	15:18:59.036	2019.07.19 10:00:00  Bracket_b12 EURUSD,M15: open #241 sell stop 0.01 EURUSD at 1.12526 sl: 1.12624 tp: 1.12428 ok
+2	15:18:59.039	2019.07.19 11:44:04  Bracket_b12 EURUSD,M15: delete #240 buy stop 0.01 EURUSD at 1.12664 sl: 1.12566 tp: 1.12762 ok
+2	15:18:59.040	2019.07.19 12:26:40  Tester: take profit #241 at 1.12428 (1.12425 / 1.12427)
+2	15:18:59.047	2019.07.22 10:00:00  Bracket_b12 EURUSD,M15: open #242 buy stop 0.01 EURUSD at 1.12257 sl: 1.12141 tp: 1.12373 ok
+2	15:18:59.047	2019.07.22 10:00:00  Bracket_b12 EURUSD,M15: open #243 sell stop 0.01 EURUSD at 1.12101 sl: 1.12217 tp: 1.11985 ok
+2	15:18:59.047	2019.07.22 14:44:36  Bracket_b12 EURUSD,M15: delete #242 buy stop 0.01 EURUSD at 1.12257 sl: 1.12141 tp: 1.12373 ok
+0	15:18:59.057	2019.07.22 16:29:05  Tester: stop loss #243 at 1.12217 (1.12215 / 1.12217)
+2	15:18:59.062	2019.07.23 10:00:00  Bracket_b12 EURUSD,M15: open #244 buy stop 0.01 EURUSD at 1.11962 sl: 1.11873 tp: 1.12051 ok
+2	15:18:59.062	2019.07.23 10:00:00  Bracket_b12 EURUSD,M15: open #245 sell stop 0.01 EURUSD at 1.11833 sl: 1.11922 tp: 1.11744 ok
+2	15:18:59.064	2019.07.23 11:32:40  Bracket_b12 EURUSD,M15: delete #244 buy stop 0.01 EURUSD at 1.11962 sl: 1.11873 tp: 1.12051 ok
+2	15:18:59.069	2019.07.23 14:57:37  Tester: take profit #245 at 1.11744 (1.11741 / 1.11743)
+2	15:18:59.076	2019.07.24 10:00:00  Bracket_b12 EURUSD,M15: open #246 buy stop 0.01 EURUSD at 1.11552 sl: 1.11428 tp: 1.11676 ok
+2	15:18:59.076	2019.07.24 10:00:00  Bracket_b12 EURUSD,M15: open #247 sell stop 0.01 EURUSD at 1.11388 sl: 1.11512 tp: 1.11264 ok
+2	15:18:59.077	2019.07.24 10:14:36  Bracket_b12 EURUSD,M15: delete #247 sell stop 0.01 EURUSD at 1.11388 sl: 1.11512 tp: 1.11264 ok
+0	15:18:59.077	2019.07.24 10:15:45  Tester: stop loss #246 at 1.11428 (1.11427 / 1.11429)
+2	15:18:59.097	2019.07.26 10:00:00  Bracket_b12 EURUSD,M15: open #248 buy stop 0.01 EURUSD at 1.11503 sl: 1.11412 tp: 1.11594 ok
+2	15:18:59.097	2019.07.26 10:00:00  Bracket_b12 EURUSD,M15: open #249 sell stop 0.01 EURUSD at 1.11372 sl: 1.11463 tp: 1.11281 ok
+2	15:18:59.098	2019.07.26 10:12:25  Bracket_b12 EURUSD,M15: delete #248 buy stop 0.01 EURUSD at 1.11503 sl: 1.11412 tp: 1.11594 ok
+0	15:18:59.098	2019.07.26 12:44:15  Tester: stop loss #249 at 1.11463 (1.11461 / 1.11463)
+2	15:18:59.118	2019.07.30 10:00:00  Bracket_b12 EURUSD,M15: open #250 buy stop 0.01 EURUSD at 1.11438 sl: 1.11348 tp: 1.11528 ok
+2	15:18:59.118	2019.07.30 10:00:00  Bracket_b12 EURUSD,M15: open #251 sell stop 0.01 EURUSD at 1.11308 sl: 1.11398 tp: 1.11218 ok
+2	15:18:59.120	2019.07.30 10:51:26  Bracket_b12 EURUSD,M15: delete #251 sell stop 0.01 EURUSD at 1.11308 sl: 1.11398 tp: 1.11218 ok
+2	15:18:59.125	2019.07.30 14:54:39  Tester: take profit #250 at 1.11528 (1.11528 / 1.11530)
+2	15:18:59.146	2019.08.01 10:00:00  Bracket_b12 EURUSD,M15: open #252 buy stop 0.01 EURUSD at 1.10554 sl: 1.10365 tp: 1.10743 ok
+2	15:18:59.146	2019.08.01 10:00:00  Bracket_b12 EURUSD,M15: open #253 sell stop 0.01 EURUSD at 1.10325 sl: 1.10514 tp: 1.10136 ok
+2	15:18:59.147	2019.08.01 10:57:03  Bracket_b12 EURUSD,M15: delete #252 buy stop 0.01 EURUSD at 1.10554 sl: 1.10365 tp: 1.10743 ok
+0	15:18:59.156	2019.08.01 17:00:28  Tester: stop loss #253 at 1.10514 (1.10512 / 1.10514)
+2	15:18:59.166	2019.08.02 10:00:00  Bracket_b12 EURUSD,M15: open #254 buy stop 0.01 EURUSD at 1.10917 sl: 1.10791 tp: 1.11043 ok
+2	15:18:59.166	2019.08.02 10:00:00  Bracket_b12 EURUSD,M15: open #255 sell stop 0.01 EURUSD at 1.10751 sl: 1.10877 tp: 1.10625 ok
+2	15:18:59.166	2019.08.02 10:24:38  Bracket_b12 EURUSD,M15: delete #255 sell stop 0.01 EURUSD at 1.10751 sl: 1.10877 tp: 1.10625 ok
+2	15:18:59.166	2019.08.02 10:55:26  Tester: take profit #254 at 1.11043 (1.11043 / 1.11045)
+2	15:18:59.192	2019.08.05 10:00:00  Bracket_b12 EURUSD,M15: open #256 buy stop 0.01 EURUSD at 1.11328 sl: 1.11188 tp: 1.11468 ok
+2	15:18:59.192	2019.08.05 10:00:00  Bracket_b12 EURUSD,M15: open #257 sell stop 0.01 EURUSD at 1.11148 sl: 1.11288 tp: 1.11008 ok
+2	15:18:59.193	2019.08.05 10:00:40  Bracket_b12 EURUSD,M15: delete #256 buy stop 0.01 EURUSD at 1.11328 sl: 1.11188 tp: 1.11468 ok
+0	15:18:59.196	2019.08.05 10:46:28  Tester: stop loss #257 at 1.11288 (1.11286 / 1.11288)
+2	15:18:59.213	2019.08.06 10:00:00  Bracket_b12 EURUSD,M15: open #258 buy stop 0.01 EURUSD at 1.12140 sl: 1.11985 tp: 1.12295 ok
+2	15:18:59.213	2019.08.06 10:00:00  Bracket_b12 EURUSD,M15: open #259 sell stop 0.01 EURUSD at 1.11945 sl: 1.12100 tp: 1.11790 ok
+2	15:18:59.213	2019.08.06 10:47:20  Bracket_b12 EURUSD,M15: delete #259 sell stop 0.01 EURUSD at 1.11945 sl: 1.12100 tp: 1.11790 ok
+0	15:18:59.216	2019.08.06 11:48:15  Tester: stop loss #258 at 1.11985 (1.11985 / 1.11987)
+2	15:18:59.230	2019.08.07 10:00:00  Bracket_b12 EURUSD,M15: open #260 buy stop 0.01 EURUSD at 1.12139 sl: 1.11972 tp: 1.12306 ok
+2	15:18:59.230	2019.08.07 10:00:00  Bracket_b12 EURUSD,M15: open #261 sell stop 0.01 EURUSD at 1.11932 sl: 1.12099 tp: 1.11765 ok
+2	15:18:59.230	2019.08.07 10:54:00  Bracket_b12 EURUSD,M15: delete #260 buy stop 0.01 EURUSD at 1.12139 sl: 1.11972 tp: 1.12306 ok
+0	15:18:59.246	2019.08.07 16:04:02  Tester: stop loss #261 at 1.12099 (1.12097 / 1.12099)
+2	15:18:59.260	2019.08.08 10:00:00  Bracket_b12 EURUSD,M15: open #262 buy stop 0.01 EURUSD at 1.12174 sl: 1.12022 tp: 1.12326 ok
+2	15:18:59.260	2019.08.08 10:00:00  Bracket_b12 EURUSD,M15: open #263 sell stop 0.01 EURUSD at 1.11982 sl: 1.12134 tp: 1.11830 ok
+2	15:18:59.262	2019.08.08 10:21:27  Bracket_b12 EURUSD,M15: delete #263 sell stop 0.01 EURUSD at 1.11982 sl: 1.12134 tp: 1.11830 ok
+0	15:18:59.266	2019.08.08 13:54:02  Tester: stop loss #262 at 1.12022 (1.12021 / 1.12023)
+2	15:18:59.279	2019.08.09 10:00:00  Bracket_b12 EURUSD,M15: open #264 buy stop 0.01 EURUSD at 1.11996 sl: 1.11867 tp: 1.12125 ok
+2	15:18:59.279	2019.08.09 10:00:00  Bracket_b12 EURUSD,M15: open #265 sell stop 0.01 EURUSD at 1.11827 sl: 1.11956 tp: 1.11698 ok
+2	15:18:59.283	2019.08.09 12:09:49  Bracket_b12 EURUSD,M15: delete #265 sell stop 0.01 EURUSD at 1.11827 sl: 1.11956 tp: 1.11698 ok
+2	15:18:59.296	2019.08.09 18:28:08  Tester: take profit #264 at 1.12125 (1.12125 / 1.12127)
+2	15:18:59.300	2019.08.12 10:00:00  Bracket_b12 EURUSD,M15: open #266 buy stop 0.01 EURUSD at 1.12130 sl: 1.12030 tp: 1.12230 ok
+2	15:18:59.300	2019.08.12 10:00:00  Bracket_b12 EURUSD,M15: open #267 sell stop 0.01 EURUSD at 1.11990 sl: 1.12090 tp: 1.11890 ok
+2	15:18:59.300	2019.08.12 10:01:14  Bracket_b12 EURUSD,M15: delete #266 buy stop 0.01 EURUSD at 1.12130 sl: 1.12030 tp: 1.12230 ok
+2	15:18:59.300	2019.08.12 10:11:28  Tester: take profit #267 at 1.11890 (1.11888 / 1.11890)
+2	15:18:59.317	2019.08.13 10:00:00  Bracket_b12 EURUSD,M15: open #268 buy stop 0.01 EURUSD at 1.12004 sl: 1.11895 tp: 1.12113 ok
+2	15:18:59.317	2019.08.13 10:00:00  Bracket_b12 EURUSD,M15: open #269 sell stop 0.01 EURUSD at 1.11855 sl: 1.11964 tp: 1.11746 ok
+2	15:18:59.317	2019.08.13 10:09:40  Bracket_b12 EURUSD,M15: delete #268 buy stop 0.01 EURUSD at 1.12004 sl: 1.11895 tp: 1.12113 ok
+0	15:18:59.317	2019.08.13 10:19:40  Tester: stop loss #269 at 1.11964 (1.11962 / 1.11964)
+2	15:18:59.329	2019.08.14 10:00:00  Bracket_b12 EURUSD,M15: open #270 buy stop 0.01 EURUSD at 1.11805 sl: 1.11670 tp: 1.11940 ok
+2	15:18:59.329	2019.08.14 10:00:00  Bracket_b12 EURUSD,M15: open #271 sell stop 0.01 EURUSD at 1.11630 sl: 1.11765 tp: 1.11495 ok
+2	15:18:59.329	2019.08.14 10:05:02  Bracket_b12 EURUSD,M15: delete #271 sell stop 0.01 EURUSD at 1.11630 sl: 1.11765 tp: 1.11495 ok
+0	15:18:59.336	2019.08.14 14:24:27  Tester: stop loss #270 at 1.11670 (1.11670 / 1.11672)
+2	15:18:59.351	2019.08.15 10:00:00  Bracket_b12 EURUSD,M15: open #272 buy stop 0.01 EURUSD at 1.11548 sl: 1.11423 tp: 1.11673 ok
+2	15:18:59.351	2019.08.15 10:00:00  Bracket_b12 EURUSD,M15: open #273 sell stop 0.01 EURUSD at 1.11383 sl: 1.11508 tp: 1.11258 ok
+2	15:18:59.364	2019.08.15 13:11:37  Bracket_b12 EURUSD,M15: delete #273 sell stop 0.01 EURUSD at 1.11383 sl: 1.11508 tp: 1.11258 ok
+0	15:18:59.367	2019.08.15 15:30:15  Tester: stop loss #272 at 1.11423 (1.11423 / 1.11425)
+2	15:18:59.406	2019.08.20 10:00:00  Bracket_b12 EURUSD,M15: open #274 buy stop 0.01 EURUSD at 1.10893 sl: 1.10780 tp: 1.11006 ok
+2	15:18:59.406	2019.08.20 10:00:00  Bracket_b12 EURUSD,M15: open #275 sell stop 0.01 EURUSD at 1.10740 sl: 1.10853 tp: 1.10627 ok
+2	15:18:59.406	2019.08.20 10:10:37  Bracket_b12 EURUSD,M15: delete #274 buy stop 0.01 EURUSD at 1.10893 sl: 1.10780 tp: 1.11006 ok
+0	15:18:59.423	2019.08.20 16:57:36  Tester: stop loss #275 at 1.10853 (1.10851 / 1.10853)
+2	15:18:59.432	2019.08.21 10:00:00  Bracket_b12 EURUSD,M15: open #276 buy stop 0.01 EURUSD at 1.11000 sl: 1.10915 tp: 1.11085 ok
+2	15:18:59.432	2019.08.21 10:00:00  Bracket_b12 EURUSD,M15: open #277 sell stop 0.01 EURUSD at 1.10875 sl: 1.10960 tp: 1.10790 ok
+2	15:18:59.434	2019.08.21 11:20:04  Bracket_b12 EURUSD,M15: delete #277 sell stop 0.01 EURUSD at 1.10875 sl: 1.10960 tp: 1.10790 ok
+2	15:18:59.454	2019.08.21 21:00:00  Bracket_b12 EURUSD,M15: close #276 buy 0.01 EURUSD at 1.11000 sl: 1.10915 tp: 1.11085 at price 1.10935
+2	15:18:59.457	2019.08.22 10:00:00  Bracket_b12 EURUSD,M15: open #278 buy stop 0.01 EURUSD at 1.10855 sl: 1.10774 tp: 1.10936 ok
+2	15:18:59.457	2019.08.22 10:00:00  Bracket_b12 EURUSD,M15: open #279 sell stop 0.01 EURUSD at 1.10734 sl: 1.10815 tp: 1.10653 ok
+2	15:18:59.457	2019.08.22 10:15:02  Bracket_b12 EURUSD,M15: delete #279 sell stop 0.01 EURUSD at 1.10734 sl: 1.10815 tp: 1.10653 ok
+2	15:18:59.457	2019.08.22 10:15:27  Tester: take profit #278 at 1.10936 (1.10936 / 1.10938)
+2	15:18:59.493	2019.08.26 10:00:00  Bracket_b12 EURUSD,M15: open #280 buy stop 0.01 EURUSD at 1.11547 sl: 1.11308 tp: 1.11786 ok
+2	15:18:59.493	2019.08.26 10:00:00  Bracket_b12 EURUSD,M15: open #281 sell stop 0.01 EURUSD at 1.11268 sl: 1.11507 tp: 1.11029 ok
+2	15:18:59.494	2019.08.26 10:10:26  Bracket_b12 EURUSD,M15: delete #280 buy stop 0.01 EURUSD at 1.11547 sl: 1.11308 tp: 1.11786 ok
+2	15:18:59.526	2019.08.26 20:09:01  Tester: take profit #281 at 1.11029 (1.11027 / 1.11029)
+2	15:18:59.566	2019.08.30 10:00:00  Bracket_b12 EURUSD,M15: open #282 buy stop 0.01 EURUSD at 1.10535 sl: 1.10371 tp: 1.10699 ok
+2	15:18:59.566	2019.08.30 10:00:00  Bracket_b12 EURUSD,M15: open #283 sell stop 0.01 EURUSD at 1.10331 sl: 1.10495 tp: 1.10167 ok
+2	15:18:59.579	2019.08.30 15:00:00  Bracket_b12 EURUSD,M15: delete #282 buy stop 0.01 EURUSD at 1.10535 sl: 1.10371 tp: 1.10699 ok
+2	15:18:59.579	2019.08.30 15:00:00  Bracket_b12 EURUSD,M15: delete #283 sell stop 0.01 EURUSD at 1.10331 sl: 1.10495 tp: 1.10167 ok
+2	15:18:59.587	2019.09.02 10:00:00  Bracket_b12 EURUSD,M15: open #284 buy stop 0.01 EURUSD at 1.09943 sl: 1.09825 tp: 1.10061 ok
+2	15:18:59.587	2019.09.02 10:00:00  Bracket_b12 EURUSD,M15: open #285 sell stop 0.01 EURUSD at 1.09785 sl: 1.09903 tp: 1.09667 ok
+2	15:18:59.587	2019.09.02 10:13:36  Bracket_b12 EURUSD,M15: delete #284 buy stop 0.01 EURUSD at 1.09943 sl: 1.09825 tp: 1.10061 ok
+2	15:18:59.595	2019.09.02 12:02:40  Tester: take profit #285 at 1.09667 (1.09664 / 1.09666)
+2	15:18:59.596	2019.09.03 10:00:00  Bracket_b12 EURUSD,M15: open #286 buy stop 0.01 EURUSD at 1.09509 sl: 1.09363 tp: 1.09655 ok
+2	15:18:59.596	2019.09.03 10:00:00  Bracket_b12 EURUSD,M15: open #287 sell stop 0.01 EURUSD at 1.09323 sl: 1.09469 tp: 1.09177 ok
+2	15:18:59.606	2019.09.03 11:52:36  Bracket_b12 EURUSD,M15: delete #287 sell stop 0.01 EURUSD at 1.09323 sl: 1.09469 tp: 1.09177 ok
+0	15:18:59.606	2019.09.03 13:27:45  Tester: stop loss #286 at 1.09363 (1.09362 / 1.09364)
+2	15:18:59.617	2019.09.04 10:00:00  Bracket_b12 EURUSD,M15: open #288 buy stop 0.01 EURUSD at 1.09872 sl: 1.09748 tp: 1.09996 ok
+2	15:18:59.617	2019.09.04 10:00:00  Bracket_b12 EURUSD,M15: open #289 sell stop 0.01 EURUSD at 1.09708 sl: 1.09832 tp: 1.09584 ok
+2	15:18:59.617	2019.09.04 10:09:39  Bracket_b12 EURUSD,M15: delete #289 sell stop 0.01 EURUSD at 1.09708 sl: 1.09832 tp: 1.09584 ok
+2	15:18:59.627	2019.09.04 11:49:33  Tester: take profit #288 at 1.09996 (1.09997 / 1.09999)
+2	15:18:59.638	2019.09.05 10:00:00  Bracket_b12 EURUSD,M15: open #290 buy stop 0.01 EURUSD at 1.10322 sl: 1.10190 tp: 1.10454 ok
+2	15:18:59.638	2019.09.05 10:00:00  Bracket_b12 EURUSD,M15: open #291 sell stop 0.01 EURUSD at 1.10150 sl: 1.10282 tp: 1.10018 ok
+2	15:18:59.639	2019.09.05 10:21:39  Bracket_b12 EURUSD,M15: delete #291 sell stop 0.01 EURUSD at 1.10150 sl: 1.10282 tp: 1.10018 ok
+2	15:18:59.645	2019.09.05 12:32:39  Tester: take profit #290 at 1.10454 (1.10456 / 1.10458)
+2	15:18:59.657	2019.09.06 10:00:00  Bracket_b12 EURUSD,M15: open #292 buy stop 0.01 EURUSD at 1.10482 sl: 1.10386 tp: 1.10578 ok
+2	15:18:59.657	2019.09.06 10:00:00  Bracket_b12 EURUSD,M15: open #293 sell stop 0.01 EURUSD at 1.10346 sl: 1.10442 tp: 1.10250 ok
+2	15:18:59.660	2019.09.06 10:41:39  Bracket_b12 EURUSD,M15: delete #293 sell stop 0.01 EURUSD at 1.10346 sl: 1.10442 tp: 1.10250 ok
+0	15:18:59.664	2019.09.06 11:54:48  Tester: stop loss #292 at 1.10386 (1.10386 / 1.10388)
+2	15:18:59.675	2019.09.09 10:00:00  Bracket_b12 EURUSD,M15: open #294 buy stop 0.01 EURUSD at 1.10340 sl: 1.10243 tp: 1.10437 ok
+2	15:18:59.675	2019.09.09 10:00:00  Bracket_b12 EURUSD,M15: open #295 sell stop 0.01 EURUSD at 1.10203 sl: 1.10300 tp: 1.10106 ok
+2	15:18:59.677	2019.09.09 10:38:45  Bracket_b12 EURUSD,M15: delete #295 sell stop 0.01 EURUSD at 1.10203 sl: 1.10300 tp: 1.10106 ok
+0	15:18:59.681	2019.09.09 13:45:39  Tester: stop loss #294 at 1.10243 (1.10241 / 1.10243)
+2	15:18:59.693	2019.09.10 10:00:00  Bracket_b12 EURUSD,M15: open #296 buy stop 0.01 EURUSD at 1.10549 sl: 1.10434 tp: 1.10664 ok
+2	15:18:59.693	2019.09.10 10:00:00  Bracket_b12 EURUSD,M15: open #297 sell stop 0.01 EURUSD at 1.10394 sl: 1.10509 tp: 1.10279 ok
+2	15:18:59.693	2019.09.10 10:06:16  Bracket_b12 EURUSD,M15: delete #297 sell stop 0.01 EURUSD at 1.10394 sl: 1.10509 tp: 1.10279 ok
+0	15:18:59.695	2019.09.10 10:40:40  Tester: stop loss #296 at 1.10434 (1.10433 / 1.10435)
+2	15:18:59.722	2019.09.11 10:00:00  Bracket_b12 EURUSD,M15: open #298 buy stop 0.01 EURUSD at 1.10554 sl: 1.10434 tp: 1.10674 ok
+2	15:18:59.722	2019.09.11 10:00:00  Bracket_b12 EURUSD,M15: open #299 sell stop 0.01 EURUSD at 1.10394 sl: 1.10514 tp: 1.10274 ok
+2	15:18:59.724	2019.09.11 10:29:30  Bracket_b12 EURUSD,M15: delete #298 buy stop 0.01 EURUSD at 1.10554 sl: 1.10434 tp: 1.10674 ok
+2	15:18:59.726	2019.09.11 11:19:27  Tester: take profit #299 at 1.10274 (1.10272 / 1.10274)
+2	15:18:59.736	2019.09.12 10:00:00  Bracket_b12 EURUSD,M15: open #300 buy stop 0.01 EURUSD at 1.10167 sl: 1.10076 tp: 1.10258 ok
+2	15:18:59.736	2019.09.12 10:00:00  Bracket_b12 EURUSD,M15: open #301 sell stop 0.01 EURUSD at 1.10036 sl: 1.10127 tp: 1.09945 ok
+2	15:18:59.736	2019.09.12 10:02:17  Bracket_b12 EURUSD,M15: delete #301 sell stop 0.01 EURUSD at 1.10036 sl: 1.10127 tp: 1.09945 ok
+2	15:18:59.744	2019.09.12 11:17:38  Tester: take profit #300 at 1.10258 (1.10258 / 1.10260)
+2	15:18:59.770	2019.09.13 10:00:00  Bracket_b12 EURUSD,M15: open #302 buy stop 0.01 EURUSD at 1.10984 sl: 1.10697 tp: 1.11271 ok
+2	15:18:59.770	2019.09.13 10:00:00  Bracket_b12 EURUSD,M15: open #303 sell stop 0.01 EURUSD at 1.10657 sl: 1.10944 tp: 1.10370 ok
+2	15:18:59.770	2019.09.13 10:03:27  Bracket_b12 EURUSD,M15: delete #303 sell stop 0.01 EURUSD at 1.10657 sl: 1.10944 tp: 1.10370 ok
+0	15:18:59.799	2019.09.13 16:40:39  Tester: stop loss #302 at 1.10697 (1.10694 / 1.10696)
+2	15:18:59.807	2019.09.16 10:00:00  Bracket_b12 EURUSD,M15: open #304 buy stop 0.01 EURUSD at 1.10787 sl: 1.10690 tp: 1.10884 ok
+2	15:18:59.807	2019.09.16 10:00:00  Bracket_b12 EURUSD,M15: open #305 sell stop 0.01 EURUSD at 1.10650 sl: 1.10747 tp: 1.10553 ok
+2	15:18:59.807	2019.09.16 10:34:00  Bracket_b12 EURUSD,M15: delete #305 sell stop 0.01 EURUSD at 1.10650 sl: 1.10747 tp: 1.10553 ok
+0	15:18:59.807	2019.09.16 11:09:22  Tester: stop loss #304 at 1.10690 (1.10690 / 1.10692)
+2	15:18:59.817	2019.09.17 10:00:00  Bracket_b12 EURUSD,M15: open #306 buy stop 0.01 EURUSD at 1.10157 sl: 1.09922 tp: 1.10392 ok
+2	15:18:59.817	2019.09.17 10:00:00  Bracket_b12 EURUSD,M15: open #307 sell stop 0.01 EURUSD at 1.09882 sl: 1.10117 tp: 1.09647 ok
+2	15:18:59.817	2019.09.17 10:30:36  Bracket_b12 EURUSD,M15: delete #307 sell stop 0.01 EURUSD at 1.09882 sl: 1.10117 tp: 1.09647 ok
+2	15:18:59.837	2019.09.17 17:02:30  Tester: take profit #306 at 1.10392 (1.10392 / 1.10394)
+2	15:18:59.846	2019.09.18 10:00:00  Bracket_b12 EURUSD,M15: open #308 buy stop 0.01 EURUSD at 1.10705 sl: 1.10588 tp: 1.10822 ok
+2	15:18:59.846	2019.09.18 10:00:00  Bracket_b12 EURUSD,M15: open #309 sell stop 0.01 EURUSD at 1.10548 sl: 1.10665 tp: 1.10431 ok
+2	15:18:59.846	2019.09.18 10:00:45  Bracket_b12 EURUSD,M15: delete #308 buy stop 0.01 EURUSD at 1.10705 sl: 1.10588 tp: 1.10822 ok
+0	15:18:59.846	2019.09.18 10:11:29  Tester: stop loss #309 at 1.10665 (1.10663 / 1.10665)
+2	15:18:59.856	2019.09.19 10:00:00  Bracket_b12 EURUSD,M15: open #310 buy stop 0.01 EURUSD at 1.10508 sl: 1.10384 tp: 1.10632 ok
+2	15:18:59.856	2019.09.19 10:00:00  Bracket_b12 EURUSD,M15: open #311 sell stop 0.01 EURUSD at 1.10344 sl: 1.10468 tp: 1.10220 ok
+2	15:18:59.862	2019.09.19 10:59:20  Bracket_b12 EURUSD,M15: delete #311 sell stop 0.01 EURUSD at 1.10344 sl: 1.10468 tp: 1.10220 ok
+2	15:18:59.863	2019.09.19 11:05:40  Tester: take profit #310 at 1.10632 (1.10632 / 1.10634)
+2	15:18:59.866	2019.09.20 10:00:00  Bracket_b12 EURUSD,M15: open #312 buy stop 0.01 EURUSD at 1.10662 sl: 1.10559 tp: 1.10765 ok
+2	15:18:59.866	2019.09.20 10:00:00  Bracket_b12 EURUSD,M15: open #313 sell stop 0.01 EURUSD at 1.10519 sl: 1.10622 tp: 1.10416 ok
+2	15:18:59.866	2019.09.20 10:13:18  Bracket_b12 EURUSD,M15: delete #313 sell stop 0.01 EURUSD at 1.10519 sl: 1.10622 tp: 1.10416 ok
+0	15:18:59.866	2019.09.20 10:37:26  Tester: stop loss #312 at 1.10559 (1.10559 / 1.10561)
+2	15:18:59.892	2019.09.23 10:00:00  Bracket_b12 EURUSD,M15: open #314 buy stop 0.01 EURUSD at 1.10272 sl: 1.10155 tp: 1.10389 ok
+2	15:18:59.892	2019.09.23 10:00:00  Bracket_b12 EURUSD,M15: open #315 sell stop 0.01 EURUSD at 1.10115 sl: 1.10232 tp: 1.09998 ok
+2	15:18:59.892	2019.09.23 10:05:37  Bracket_b12 EURUSD,M15: delete #314 buy stop 0.01 EURUSD at 1.10272 sl: 1.10155 tp: 1.10389 ok
+2	15:18:59.892	2019.09.23 10:30:01  Tester: take profit #315 at 1.09998 (1.09995 / 1.09997)
+2	15:18:59.898	2019.09.24 10:00:00  Bracket_b12 EURUSD,M15: open #316 buy stop 0.01 EURUSD at 1.09952 sl: 1.09858 tp: 1.10046 ok
+2	15:18:59.898	2019.09.24 10:00:00  Bracket_b12 EURUSD,M15: open #317 sell stop 0.01 EURUSD at 1.09818 sl: 1.09912 tp: 1.09724 ok
+2	15:18:59.898	2019.09.24 10:10:30  Bracket_b12 EURUSD,M15: delete #317 sell stop 0.01 EURUSD at 1.09818 sl: 1.09912 tp: 1.09724 ok
+0	15:18:59.907	2019.09.24 10:50:30  Tester: stop loss #316 at 1.09858 (1.09858 / 1.09860)
+2	15:18:59.917	2019.09.25 10:00:00  Bracket_b12 EURUSD,M15: open #318 buy stop 0.01 EURUSD at 1.10044 sl: 1.09960 tp: 1.10128 ok
+2	15:18:59.917	2019.09.25 10:00:00  Bracket_b12 EURUSD,M15: open #319 sell stop 0.01 EURUSD at 1.09920 sl: 1.10004 tp: 1.09836 ok
+2	15:18:59.917	2019.09.25 12:17:49  Bracket_b12 EURUSD,M15: delete #319 sell stop 0.01 EURUSD at 1.09920 sl: 1.10004 tp: 1.09836 ok
+0	15:18:59.927	2019.09.25 13:13:48  Tester: stop loss #318 at 1.09960 (1.09960 / 1.09962)
+2	15:18:59.938	2019.09.26 10:00:00  Bracket_b12 EURUSD,M15: open #320 buy stop 0.01 EURUSD at 1.09640 sl: 1.09519 tp: 1.09761 ok
+2	15:18:59.938	2019.09.26 10:00:00  Bracket_b12 EURUSD,M15: open #321 sell stop 0.01 EURUSD at 1.09479 sl: 1.09600 tp: 1.09358 ok
+2	15:18:59.938	2019.09.26 10:18:00  Bracket_b12 EURUSD,M15: delete #320 buy stop 0.01 EURUSD at 1.09640 sl: 1.09519 tp: 1.09761 ok
+2	15:18:59.940	2019.09.26 11:35:35  Tester: take profit #321 at 1.09358 (1.09356 / 1.09358)
+2	15:18:59.949	2019.09.27 10:00:00  Bracket_b12 EURUSD,M15: open #322 buy stop 0.01 EURUSD at 1.09255 sl: 1.09086 tp: 1.09424 ok
+2	15:18:59.949	2019.09.27 10:00:00  Bracket_b12 EURUSD,M15: open #323 sell stop 0.01 EURUSD at 1.09046 sl: 1.09215 tp: 1.08877 ok
+2	15:18:59.957	2019.09.27 11:25:45  Bracket_b12 EURUSD,M15: delete #323 sell stop 0.01 EURUSD at 1.09046 sl: 1.09215 tp: 1.08877 ok
+2	15:18:59.964	2019.09.27 15:41:06  Tester: take profit #322 at 1.09424 (1.09424 / 1.09426)
+2	15:18:59.967	2019.09.30 10:00:00  Bracket_b12 EURUSD,M15: open #324 buy stop 0.01 EURUSD at 1.09463 sl: 1.09328 tp: 1.09598 ok
+2	15:18:59.967	2019.09.30 10:00:00  Bracket_b12 EURUSD,M15: open #325 sell stop 0.01 EURUSD at 1.09288 sl: 1.09423 tp: 1.09153 ok
+2	15:18:59.967	2019.09.30 10:02:03  Bracket_b12 EURUSD,M15: delete #325 sell stop 0.01 EURUSD at 1.09288 sl: 1.09423 tp: 1.09153 ok
+0	15:18:59.967	2019.09.30 11:02:28  Tester: stop loss #324 at 1.09328 (1.09328 / 1.09330)
+2	15:18:59.983	2019.10.01 10:00:00  Bracket_b12 EURUSD,M15: open #326 buy stop 0.01 EURUSD at 1.08952 sl: 1.08810 tp: 1.09094 ok
+2	15:18:59.983	2019.10.01 10:00:00  Bracket_b12 EURUSD,M15: open #327 sell stop 0.01 EURUSD at 1.08770 sl: 1.08912 tp: 1.08628 ok
+2	15:18:59.987	2019.10.01 11:57:30  Bracket_b12 EURUSD,M15: delete #327 sell stop 0.01 EURUSD at 1.08770 sl: 1.08912 tp: 1.08628 ok
+2	15:18:59.996	2019.10.01 17:00:49  Tester: take profit #326 at 1.09094 (1.09095 / 1.09097)
+2	15:19:00.007	2019.10.02 10:00:00  Bracket_b12 EURUSD,M15: open #328 buy stop 0.01 EURUSD at 1.09388 sl: 1.09254 tp: 1.09522 ok
+2	15:19:00.007	2019.10.02 10:00:00  Bracket_b12 EURUSD,M15: open #329 sell stop 0.01 EURUSD at 1.09214 sl: 1.09348 tp: 1.09080 ok
+2	15:19:00.015	2019.10.02 10:09:46  Bracket_b12 EURUSD,M15: delete #328 buy stop 0.01 EURUSD at 1.09388 sl: 1.09254 tp: 1.09522 ok
+2	15:19:00.037	2019.10.02 11:49:38  Tester: take profit #329 at 1.09080 (1.09078 / 1.09080)
+2	15:19:00.069	2019.10.03 10:00:00  Bracket_b12 EURUSD,M15: open #330 buy stop 0.01 EURUSD at 1.09603 sl: 1.09434 tp: 1.09772 ok
+2	15:19:00.069	2019.10.03 10:00:00  Bracket_b12 EURUSD,M15: open #331 sell stop 0.01 EURUSD at 1.09394 sl: 1.09563 tp: 1.09225 ok
+2	15:19:00.069	2019.10.03 11:38:04  Bracket_b12 EURUSD,M15: delete #331 sell stop 0.01 EURUSD at 1.09394 sl: 1.09563 tp: 1.09225 ok
+2	15:19:00.087	2019.10.03 17:00:16  Tester: take profit #330 at 1.09772 (1.09772 / 1.09774)
+2	15:19:00.095	2019.10.04 10:00:00  Bracket_b12 EURUSD,M15: open #332 buy stop 0.01 EURUSD at 1.09800 sl: 1.09673 tp: 1.09927 ok
+2	15:19:00.095	2019.10.04 10:00:00  Bracket_b12 EURUSD,M15: open #333 sell stop 0.01 EURUSD at 1.09633 sl: 1.09760 tp: 1.09506 ok
+2	15:19:00.097	2019.10.04 12:18:36  Bracket_b12 EURUSD,M15: delete #333 sell stop 0.01 EURUSD at 1.09633 sl: 1.09760 tp: 1.09506 ok
+2	15:19:00.097	2019.10.04 15:30:04  Tester: take profit #332 at 1.09927 (1.09932 / 1.09934)
+2	15:19:00.127	2019.10.08 10:00:00  Bracket_b12 EURUSD,M15: open #334 buy stop 0.01 EURUSD at 1.09870 sl: 1.09756 tp: 1.09984 ok
+2	15:19:00.127	2019.10.08 10:00:00  Bracket_b12 EURUSD,M15: open #335 sell stop 0.01 EURUSD at 1.09716 sl: 1.09830 tp: 1.09602 ok
+2	15:19:00.129	2019.10.08 11:09:36  Bracket_b12 EURUSD,M15: delete #335 sell stop 0.01 EURUSD at 1.09716 sl: 1.09830 tp: 1.09602 ok
+0	15:19:00.137	2019.10.08 16:15:29  Tester: stop loss #334 at 1.09756 (1.09755 / 1.09757)
+2	15:19:00.162	2019.10.10 10:00:00  Bracket_b12 EURUSD,M15: open #336 buy stop 0.01 EURUSD at 1.10114 sl: 1.09849 tp: 1.10379 ok
+2	15:19:00.162	2019.10.10 10:00:00  Bracket_b12 EURUSD,M15: open #337 sell stop 0.01 EURUSD at 1.09809 sl: 1.10074 tp: 1.09544 ok
+2	15:19:00.162	2019.10.10 10:06:23  Bracket_b12 EURUSD,M15: delete #337 sell stop 0.01 EURUSD at 1.09809 sl: 1.10074 tp: 1.09544 ok
+2	15:19:00.195	2019.10.10 21:00:00  Bracket_b12 EURUSD,M15: close #336 buy 0.01 EURUSD at 1.10114 sl: 1.09849 tp: 1.10379 at price 1.10150
+2	15:19:00.199	2019.10.11 10:00:00  Bracket_b12 EURUSD,M15: open #338 buy stop 0.01 EURUSD at 1.10244 sl: 1.10140 tp: 1.10348 ok
+2	15:19:00.199	2019.10.11 10:00:00  Bracket_b12 EURUSD,M15: open #339 sell stop 0.01 EURUSD at 1.10100 sl: 1.10204 tp: 1.09996 ok
+2	15:19:00.200	2019.10.11 10:25:00  Bracket_b12 EURUSD,M15: delete #338 buy stop 0.01 EURUSD at 1.10244 sl: 1.10140 tp: 1.10348 ok
+0	15:19:00.200	2019.10.11 12:05:40  Tester: stop loss #339 at 1.10204 (1.10203 / 1.10205)
+2	15:19:00.217	2019.10.14 10:00:00  Bracket_b12 EURUSD,M15: open #340 buy stop 0.01 EURUSD at 1.10354 sl: 1.10149 tp: 1.10559 ok
+2	15:19:00.217	2019.10.14 10:00:00  Bracket_b12 EURUSD,M15: open #341 sell stop 0.01 EURUSD at 1.10109 sl: 1.10314 tp: 1.09904 ok
+2	15:19:00.222	2019.10.14 12:02:29  Bracket_b12 EURUSD,M15: delete #341 sell stop 0.01 EURUSD at 1.10109 sl: 1.10314 tp: 1.09904 ok
+2	15:19:00.237	2019.10.14 21:00:00  Bracket_b12 EURUSD,M15: close #340 buy 0.01 EURUSD at 1.10354 sl: 1.10149 tp: 1.10559 at price 1.10257
+2	15:19:00.237	2019.10.15 10:00:00  Bracket_b12 EURUSD,M15: open #342 buy stop 0.01 EURUSD at 1.10479 sl: 1.10275 tp: 1.10683 ok
+2	15:19:00.237	2019.10.15 10:00:00  Bracket_b12 EURUSD,M15: open #343 sell stop 0.01 EURUSD at 1.10235 sl: 1.10439 tp: 1.10031 ok
+2	15:19:00.245	2019.10.15 10:12:18  Bracket_b12 EURUSD,M15: delete #342 buy stop 0.01 EURUSD at 1.10479 sl: 1.10275 tp: 1.10683 ok
+2	15:19:00.255	2019.10.15 14:59:04  Tester: take profit #343 at 1.10031 (1.10029 / 1.10031)
+2	15:19:00.266	2019.10.16 10:00:00  Bracket_b12 EURUSD,M15: open #344 buy stop 0.01 EURUSD at 1.10616 sl: 1.10313 tp: 1.10919 ok
+2	15:19:00.266	2019.10.16 10:00:00  Bracket_b12 EURUSD,M15: open #345 sell stop 0.01 EURUSD at 1.10273 sl: 1.10576 tp: 1.09970 ok
+2	15:19:00.268	2019.10.16 12:03:12  Bracket_b12 EURUSD,M15: delete #344 buy stop 0.01 EURUSD at 1.10616 sl: 1.10313 tp: 1.10919 ok
+0	15:19:00.296	2019.10.16 18:19:38  Tester: stop loss #345 at 1.10576 (1.10575 / 1.10577)
+2	15:19:00.296	2019.10.17 10:00:00  Bracket_b12 EURUSD,M15: open #346 buy stop 0.01 EURUSD at 1.10787 sl: 1.10688 tp: 1.10886 ok
+2	15:19:00.296	2019.10.17 10:00:00  Bracket_b12 EURUSD,M15: open #347 sell stop 0.01 EURUSD at 1.10648 sl: 1.10747 tp: 1.10549 ok
+2	15:19:00.296	2019.10.17 10:19:36  Bracket_b12 EURUSD,M15: delete #347 sell stop 0.01 EURUSD at 1.10648 sl: 1.10747 tp: 1.10549 ok
+2	15:19:00.296	2019.10.17 11:38:26  Tester: take profit #346 at 1.10886 (1.10886 / 1.10888)
+2	15:19:00.316	2019.10.18 10:00:00  Bracket_b12 EURUSD,M15: open #348 buy stop 0.01 EURUSD at 1.11277 sl: 1.11168 tp: 1.11386 ok
+2	15:19:00.316	2019.10.18 10:00:00  Bracket_b12 EURUSD,M15: open #349 sell stop 0.01 EURUSD at 1.11128 sl: 1.11237 tp: 1.11019 ok
+2	15:19:00.316	2019.10.18 10:54:21  Bracket_b12 EURUSD,M15: delete #349 sell stop 0.01 EURUSD at 1.11128 sl: 1.11237 tp: 1.11019 ok
+2	15:19:00.316	2019.10.18 14:17:32  Tester: take profit #348 at 1.11386 (1.11386 / 1.11388)
+2	15:19:00.333	2019.10.21 10:00:00  Bracket_b12 EURUSD,M15: open #350 buy stop 0.01 EURUSD at 1.11628 sl: 1.11545 tp: 1.11711 ok
+2	15:19:00.333	2019.10.21 10:00:00  Bracket_b12 EURUSD,M15: open #351 sell stop 0.01 EURUSD at 1.11505 sl: 1.11588 tp: 1.11422 ok
+2	15:19:00.333	2019.10.21 10:18:38  Bracket_b12 EURUSD,M15: delete #350 buy stop 0.01 EURUSD at 1.11628 sl: 1.11545 tp: 1.11711 ok
+0	15:19:00.333	2019.10.21 10:30:06  Tester: stop loss #351 at 1.11588 (1.11587 / 1.11589)
+2	15:19:00.345	2019.10.22 10:00:00  Bracket_b12 EURUSD,M15: open #352 buy stop 0.01 EURUSD at 1.11585 sl: 1.11504 tp: 1.11666 ok
+2	15:19:00.345	2019.10.22 10:00:00  Bracket_b12 EURUSD,M15: open #353 sell stop 0.01 EURUSD at 1.11464 sl: 1.11545 tp: 1.11383 ok
+2	15:19:00.345	2019.10.22 10:03:16  Bracket_b12 EURUSD,M15: delete #352 buy stop 0.01 EURUSD at 1.11585 sl: 1.11504 tp: 1.11666 ok
+2	15:19:00.347	2019.10.22 11:24:18  Tester: take profit #353 at 1.11383 (1.11381 / 1.11383)
+2	15:19:00.357	2019.10.23 10:00:00  Bracket_b12 EURUSD,M15: open #354 buy stop 0.01 EURUSD at 1.11306 sl: 1.11198 tp: 1.11414 ok
+2	15:19:00.357	2019.10.23 10:00:00  Bracket_b12 EURUSD,M15: open #355 sell stop 0.01 EURUSD at 1.11158 sl: 1.11266 tp: 1.11050 ok
+2	15:19:00.362	2019.10.23 12:33:46  Bracket_b12 EURUSD,M15: delete #354 buy stop 0.01 EURUSD at 1.11306 sl: 1.11198 tp: 1.11414 ok
+2	15:19:00.367	2019.10.23 21:00:00  Bracket_b12 EURUSD,M15: close #355 sell 0.01 EURUSD at 1.11158 sl: 1.11266 tp: 1.11050 at price 1.11235
+2	15:19:00.390	2019.10.25 10:00:00  Bracket_b12 EURUSD,M15: open #356 buy stop 0.01 EURUSD at 1.11117 sl: 1.11030 tp: 1.11204 ok
+2	15:19:00.390	2019.10.25 10:00:00  Bracket_b12 EURUSD,M15: open #357 sell stop 0.01 EURUSD at 1.10990 sl: 1.11077 tp: 1.10903 ok
+2	15:19:00.390	2019.10.25 10:00:39  Bracket_b12 EURUSD,M15: delete #357 sell stop 0.01 EURUSD at 1.10990 sl: 1.11077 tp: 1.10903 ok
+2	15:19:00.392	2019.10.25 11:14:03  Tester: take profit #356 at 1.11204 (1.11205 / 1.11207)
+2	15:19:00.397	2019.10.28 10:00:00  Bracket_b12 EURUSD,M15: open #358 buy stop 0.01 EURUSD at 1.10933 sl: 1.10835 tp: 1.11031 ok
+2	15:19:00.397	2019.10.28 10:00:00  Bracket_b12 EURUSD,M15: open #359 sell stop 0.01 EURUSD at 1.10795 sl: 1.10893 tp: 1.10697 ok
+2	15:19:00.397	2019.10.28 11:04:28  Bracket_b12 EURUSD,M15: delete #359 sell stop 0.01 EURUSD at 1.10795 sl: 1.10893 tp: 1.10697 ok
+2	15:19:00.397	2019.10.28 14:06:26  Tester: take profit #358 at 1.11031 (1.11031 / 1.11033)
+2	15:19:00.417	2019.10.30 10:00:00  Bracket_b12 EURUSD,M15: open #360 buy stop 0.01 EURUSD at 1.11182 sl: 1.11098 tp: 1.11266 ok
+2	15:19:00.417	2019.10.30 10:00:00  Bracket_b12 EURUSD,M15: open #361 sell stop 0.01 EURUSD at 1.11058 sl: 1.11142 tp: 1.10974 ok
+2	15:19:00.417	2019.10.30 10:21:30  Bracket_b12 EURUSD,M15: delete #361 sell stop 0.01 EURUSD at 1.11058 sl: 1.11142 tp: 1.10974 ok
+2	15:19:00.427	2019.10.30 13:41:12  Tester: take profit #360 at 1.11266 (1.11266 / 1.11268)
+2	15:19:00.437	2019.10.31 10:00:00  Bracket_b12 EURUSD,M15: open #362 buy stop 0.01 EURUSD at 1.11676 sl: 1.11593 tp: 1.11759 ok
+2	15:19:00.437	2019.10.31 10:00:00  Bracket_b12 EURUSD,M15: open #363 sell stop 0.01 EURUSD at 1.11553 sl: 1.11636 tp: 1.11470 ok
+2	15:19:00.445	2019.10.31 11:52:27  Bracket_b12 EURUSD,M15: delete #363 sell stop 0.01 EURUSD at 1.11553 sl: 1.11636 tp: 1.11470 ok
+0	15:19:00.450	2019.10.31 13:57:29  Tester: stop loss #362 at 1.11593 (1.11592 / 1.11594)
+2	15:19:00.467	2019.11.04 10:00:00  Bracket_b12 EURUSD,M15: open #364 buy stop 0.01 EURUSD at 1.11771 sl: 1.11675 tp: 1.11867 ok
+2	15:19:00.467	2019.11.04 10:00:00  Bracket_b12 EURUSD,M15: open #365 sell stop 0.01 EURUSD at 1.11635 sl: 1.11731 tp: 1.11539 ok
+2	15:19:00.467	2019.11.04 10:03:26  Bracket_b12 EURUSD,M15: delete #364 buy stop 0.01 EURUSD at 1.11771 sl: 1.11675 tp: 1.11867 ok
+2	15:19:00.467	2019.11.04 10:10:37  Tester: take profit #365 at 1.11539 (1.11536 / 1.11538)
+2	15:19:00.487	2019.11.05 10:00:00  Bracket_b12 EURUSD,M15: open #366 buy stop 0.01 EURUSD at 1.11404 sl: 1.11271 tp: 1.11537 ok
+2	15:19:00.487	2019.11.05 10:00:00  Bracket_b12 EURUSD,M15: open #367 sell stop 0.01 EURUSD at 1.11231 sl: 1.11364 tp: 1.11098 ok
+2	15:19:00.497	2019.11.05 12:51:17  Bracket_b12 EURUSD,M15: delete #366 buy stop 0.01 EURUSD at 1.11404 sl: 1.11271 tp: 1.11537 ok
+2	15:19:00.499	2019.11.05 14:10:30  Tester: take profit #367 at 1.11098 (1.11095 / 1.11097)
+2	15:19:00.506	2019.11.06 10:00:00  Bracket_b12 EURUSD,M15: open #368 buy stop 0.01 EURUSD at 1.10824 sl: 1.10740 tp: 1.10908 ok
+2	15:19:00.506	2019.11.06 10:00:00  Bracket_b12 EURUSD,M15: open #369 sell stop 0.01 EURUSD at 1.10700 sl: 1.10784 tp: 1.10616 ok
+2	15:19:00.511	2019.11.06 10:32:44  Bracket_b12 EURUSD,M15: delete #369 sell stop 0.01 EURUSD at 1.10700 sl: 1.10784 tp: 1.10616 ok
+2	15:19:00.512	2019.11.06 11:03:02  Tester: take profit #368 at 1.10908 (1.10910 / 1.10912)
+2	15:19:00.517	2019.11.07 10:00:00  Bracket_b12 EURUSD,M15: open #370 buy stop 0.01 EURUSD at 1.10827 sl: 1.10599 tp: 1.11055 ok
+2	15:19:00.517	2019.11.07 10:00:00  Bracket_b12 EURUSD,M15: open #371 sell stop 0.01 EURUSD at 1.10559 sl: 1.10787 tp: 1.10331 ok
+2	15:19:00.527	2019.11.07 10:58:29  Bracket_b12 EURUSD,M15: delete #371 sell stop 0.01 EURUSD at 1.10559 sl: 1.10787 tp: 1.10331 ok
+0	15:19:00.547	2019.11.07 17:02:15  Tester: stop loss #370 at 1.10599 (1.10599 / 1.10601)
+2	15:19:00.560	2019.11.08 10:00:00  Bracket_b12 EURUSD,M15: open #372 buy stop 0.01 EURUSD at 1.10553 sl: 1.10471 tp: 1.10635 ok
+2	15:19:00.561	2019.11.08 10:00:00  Bracket_b12 EURUSD,M15: open #373 sell stop 0.01 EURUSD at 1.10431 sl: 1.10513 tp: 1.10349 ok
+2	15:19:00.561	2019.11.08 10:02:48  Bracket_b12 EURUSD,M15: delete #373 sell stop 0.01 EURUSD at 1.10431 sl: 1.10513 tp: 1.10349 ok
+0	15:19:00.562	2019.11.08 10:23:28  Tester: stop loss #372 at 1.10471 (1.10470 / 1.10472)
+2	15:19:00.572	2019.11.11 10:00:00  Bracket_b12 EURUSD,M15: open #374 buy stop 0.01 EURUSD at 1.10317 sl: 1.10234 tp: 1.10400 ok
+2	15:19:00.572	2019.11.11 10:00:00  Bracket_b12 EURUSD,M15: open #375 sell stop 0.01 EURUSD at 1.10194 sl: 1.10277 tp: 1.10111 ok
+2	15:19:00.572	2019.11.11 11:20:40  Bracket_b12 EURUSD,M15: delete #375 sell stop 0.01 EURUSD at 1.10194 sl: 1.10277 tp: 1.10111 ok
+2	15:19:00.578	2019.11.11 15:02:37  Tester: take profit #374 at 1.10400 (1.10401 / 1.10403)
+2	15:19:00.584	2019.11.12 10:00:00  Bracket_b12 EURUSD,M15: open #376 buy stop 0.01 EURUSD at 1.10405 sl: 1.10291 tp: 1.10519 ok
+2	15:19:00.584	2019.11.12 10:00:00  Bracket_b12 EURUSD,M15: open #377 sell stop 0.01 EURUSD at 1.10251 sl: 1.10365 tp: 1.10137 ok
+2	15:19:00.584	2019.11.12 10:08:28  Bracket_b12 EURUSD,M15: delete #376 buy stop 0.01 EURUSD at 1.10405 sl: 1.10291 tp: 1.10519 ok
+0	15:19:00.588	2019.11.12 12:00:39  Tester: stop loss #377 at 1.10365 (1.10363 / 1.10365)
+2	15:19:00.599	2019.11.13 10:00:00  Bracket_b12 EURUSD,M15: open #378 buy stop 0.01 EURUSD at 1.10186 sl: 1.10085 tp: 1.10287 ok
+2	15:19:00.599	2019.11.13 10:00:00  Bracket_b12 EURUSD,M15: open #379 sell stop 0.01 EURUSD at 1.10045 sl: 1.10146 tp: 1.09944 ok
+2	15:19:00.601	2019.11.13 10:02:37  Bracket_b12 EURUSD,M15: delete #378 buy stop 0.01 EURUSD at 1.10186 sl: 1.10085 tp: 1.10287 ok
+0	15:19:00.601	2019.11.13 11:12:06  Tester: stop loss #379 at 1.10146 (1.10144 / 1.10146)
+2	15:19:00.617	2019.11.14 10:00:00  Bracket_b12 EURUSD,M15: open #380 buy stop 0.01 EURUSD at 1.10127 sl: 1.09961 tp: 1.10293 ok
+2	15:19:00.617	2019.11.14 10:00:00  Bracket_b12 EURUSD,M15: open #381 sell stop 0.01 EURUSD at 1.09921 sl: 1.10087 tp: 1.09755 ok
+2	15:19:00.617	2019.11.14 10:15:27  Bracket_b12 EURUSD,M15: delete #381 sell stop 0.01 EURUSD at 1.09921 sl: 1.10087 tp: 1.09755 ok
+0	15:19:00.617	2019.11.14 12:57:30  Tester: stop loss #380 at 1.09961 (1.09961 / 1.09963)
+2	15:19:00.637	2019.11.18 10:00:00  Bracket_b12 EURUSD,M15: open #382 buy stop 0.01 EURUSD at 1.10697 sl: 1.10582 tp: 1.10812 ok
+2	15:19:00.637	2019.11.18 10:00:00  Bracket_b12 EURUSD,M15: open #383 sell stop 0.01 EURUSD at 1.10542 sl: 1.10657 tp: 1.10427 ok
+2	15:19:00.640	2019.11.18 15:00:00  Bracket_b12 EURUSD,M15: delete #382 buy stop 0.01 EURUSD at 1.10697 sl: 1.10582 tp: 1.10812 ok
+2	15:19:00.640	2019.11.18 15:00:00  Bracket_b12 EURUSD,M15: delete #383 sell stop 0.01 EURUSD at 1.10542 sl: 1.10657 tp: 1.10427 ok
+2	15:19:00.650	2019.11.19 10:00:00  Bracket_b12 EURUSD,M15: open #384 buy stop 0.01 EURUSD at 1.10834 sl: 1.10700 tp: 1.10968 ok
+2	15:19:00.650	2019.11.19 10:00:00  Bracket_b12 EURUSD,M15: open #385 sell stop 0.01 EURUSD at 1.10660 sl: 1.10794 tp: 1.10526 ok
+2	15:19:00.650	2019.11.19 10:09:05  Bracket_b12 EURUSD,M15: delete #384 buy stop 0.01 EURUSD at 1.10834 sl: 1.10700 tp: 1.10968 ok
+0	15:19:00.657	2019.11.19 14:05:16  Tester: stop loss #385 at 1.10794 (1.10793 / 1.10795)
+2	15:19:00.667	2019.11.20 10:00:00  Bracket_b12 EURUSD,M15: open #386 buy stop 0.01 EURUSD at 1.10761 sl: 1.10680 tp: 1.10842 ok
+2	15:19:00.667	2019.11.20 10:00:00  Bracket_b12 EURUSD,M15: open #387 sell stop 0.01 EURUSD at 1.10640 sl: 1.10721 tp: 1.10559 ok
+2	15:19:00.667	2019.11.20 10:11:28  Bracket_b12 EURUSD,M15: delete #386 buy stop 0.01 EURUSD at 1.10761 sl: 1.10680 tp: 1.10842 ok
+2	15:19:00.667	2019.11.20 10:51:18  Tester: take profit #387 at 1.10559 (1.10557 / 1.10559)
+2	15:19:00.697	2019.11.22 10:00:00  Bracket_b12 EURUSD,M15: open #388 buy stop 0.01 EURUSD at 1.10742 sl: 1.10646 tp: 1.10838 ok
+2	15:19:00.697	2019.11.22 10:00:00  Bracket_b12 EURUSD,M15: open #389 sell stop 0.01 EURUSD at 1.10606 sl: 1.10702 tp: 1.10510 ok
+2	15:19:00.698	2019.11.22 10:06:27  Bracket_b12 EURUSD,M15: delete #388 buy stop 0.01 EURUSD at 1.10742 sl: 1.10646 tp: 1.10838 ok
+0	15:19:00.698	2019.11.22 10:16:09  Tester: stop loss #389 at 1.10702 (1.10700 / 1.10702)
+2	15:19:00.713	2019.11.25 10:00:00  Bracket_b12 EURUSD,M15: open #390 buy stop 0.01 EURUSD at 1.10333 sl: 1.10245 tp: 1.10421 ok
+2	15:19:00.713	2019.11.25 10:00:00  Bracket_b12 EURUSD,M15: open #391 sell stop 0.01 EURUSD at 1.10205 sl: 1.10293 tp: 1.10117 ok
+2	15:19:00.717	2019.11.25 11:01:29  Bracket_b12 EURUSD,M15: delete #390 buy stop 0.01 EURUSD at 1.10333 sl: 1.10245 tp: 1.10421 ok
+2	15:19:00.717	2019.11.25 11:38:40  Tester: take profit #391 at 1.10117 (1.10115 / 1.10117)
+2	15:19:00.777	2019.12.03 10:00:00  Bracket_b12 EURUSD,M15: open #392 buy stop 0.01 EURUSD at 1.10845 sl: 1.10739 tp: 1.10951 ok
+2	15:19:00.777	2019.12.03 10:00:00  Bracket_b12 EURUSD,M15: open #393 sell stop 0.01 EURUSD at 1.10699 sl: 1.10805 tp: 1.10593 ok
+2	15:19:00.779	2019.12.03 10:22:29  Bracket_b12 EURUSD,M15: delete #393 sell stop 0.01 EURUSD at 1.10699 sl: 1.10805 tp: 1.10593 ok
+0	15:19:00.783	2019.12.03 12:21:28  Tester: stop loss #392 at 1.10739 (1.10739 / 1.10741)
+2	15:19:00.870	2019.12.13 10:00:00  Bracket_b12 EURUSD,M15: open #394 buy stop 0.01 EURUSD at 1.11766 sl: 1.11647 tp: 1.11885 ok
+2	15:19:00.870	2019.12.13 10:00:00  Bracket_b12 EURUSD,M15: open #395 sell stop 0.01 EURUSD at 1.11607 sl: 1.11726 tp: 1.11488 ok
+2	15:19:00.870	2019.12.13 10:13:28  Bracket_b12 EURUSD,M15: delete #395 sell stop 0.01 EURUSD at 1.11607 sl: 1.11726 tp: 1.11488 ok
+0	15:19:00.886	2019.12.13 16:09:36  Tester: stop loss #394 at 1.11647 (1.11646 / 1.11648)
+2	15:19:00.899	2019.12.16 10:00:00  Bracket_b12 EURUSD,M15: open #396 buy stop 0.01 EURUSD at 1.11522 sl: 1.11358 tp: 1.11686 ok
+2	15:19:00.899	2019.12.16 10:00:00  Bracket_b12 EURUSD,M15: open #397 sell stop 0.01 EURUSD at 1.11318 sl: 1.11482 tp: 1.11154 ok
+2	15:19:00.899	2019.12.16 10:34:18  Bracket_b12 EURUSD,M15: delete #396 buy stop 0.01 EURUSD at 1.11522 sl: 1.11358 tp: 1.11686 ok
+0	15:19:00.907	2019.12.16 15:36:40  Tester: stop loss #397 at 1.11482 (1.11480 / 1.11482)
+2	15:19:00.926	2019.12.18 10:00:00  Bracket_b12 EURUSD,M15: open #398 buy stop 0.01 EURUSD at 1.11416 sl: 1.11315 tp: 1.11517 ok
+2	15:19:00.926	2019.12.18 10:00:00  Bracket_b12 EURUSD,M15: open #399 sell stop 0.01 EURUSD at 1.11275 sl: 1.11376 tp: 1.11174 ok
+2	15:19:00.933	2019.12.18 10:59:16  Bracket_b12 EURUSD,M15: delete #398 buy stop 0.01 EURUSD at 1.11416 sl: 1.11315 tp: 1.11517 ok
+0	15:19:00.935	2019.12.18 11:14:28  Tester: stop loss #399 at 1.11376 (1.11374 / 1.11376)
+2	15:19:00.977	2019.12.24 10:00:00  Bracket_b12 EURUSD,M15: open #400 buy stop 0.01 EURUSD at 1.10915 sl: 1.10824 tp: 1.11006 ok
+2	15:19:00.977	2019.12.24 10:00:00  Bracket_b12 EURUSD,M15: open #401 sell stop 0.01 EURUSD at 1.10784 sl: 1.10875 tp: 1.10693 ok
+2	15:19:00.977	2019.12.24 11:39:18  Bracket_b12 EURUSD,M15: delete #400 buy stop 0.01 EURUSD at 1.10915 sl: 1.10824 tp: 1.11006 ok
+2	15:19:00.977	2019.12.24 13:01:40  Tester: take profit #401 at 1.10693 (1.10690 / 1.10692)
+2	15:19:00.990	2019.12.27 10:00:00  Bracket_b12 EURUSD,M15: open #402 buy stop 0.01 EURUSD at 1.11316 sl: 1.11193 tp: 1.11439 ok
+2	15:19:00.990	2019.12.27 10:00:00  Bracket_b12 EURUSD,M15: open #403 sell stop 0.01 EURUSD at 1.11153 sl: 1.11276 tp: 1.11030 ok
+2	15:19:00.990	2019.12.27 10:00:27  Bracket_b12 EURUSD,M15: delete #403 sell stop 0.01 EURUSD at 1.11153 sl: 1.11276 tp: 1.11030 ok
+2	15:19:00.997	2019.12.27 12:56:14  Tester: take profit #402 at 1.11439 (1.11439 / 1.11441)
+2	15:19:01.007	2019.12.30 10:00:00  Bracket_b12 EURUSD,M15: open #404 buy stop 0.01 EURUSD at 1.12075 sl: 1.11940 tp: 1.12210 ok
+2	15:19:01.007	2019.12.30 10:00:00  Bracket_b12 EURUSD,M15: open #405 sell stop 0.01 EURUSD at 1.11900 sl: 1.12035 tp: 1.11765 ok
+2	15:19:01.007	2019.12.30 11:31:28  Bracket_b12 EURUSD,M15: delete #404 buy stop 0.01 EURUSD at 1.12075 sl: 1.11940 tp: 1.12210 ok
+0	15:19:01.025	2019.12.30 16:42:27  Tester: stop loss #405 at 1.12035 (1.12033 / 1.12035)

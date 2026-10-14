@@ -1,0 +1,14 @@
+LEGS: b20 block-on, spread 2, pts after commission (0.09 USD per 0.01 lot = 9 pts). type: L20/L50/L100 ladder legs, SS sell stop, H hedge, VH virtual hedge
+legs_2011  total  -29816 | L20 n=183 win=46% tot=-7317 | L50 n=157 win=46% tot=-6832 | L100 n=117 win=44% tot=-6688 | SS n=183 win=46% tot=-7317 | VH n=73 win=49% tot=-1662
+legs_2012  total  -15085 | L20 n=205 win=50% tot=-3435 | L50 n=162 win=51% tot=-2353 | L100 n=124 win=48% tot=-4050 | SS n=205 win=50% tot=-3435 | VH n=83 win=49% tot=-1812
+legs_2019  total   +5923 | L20 n=189 win=53% tot=+591 | L50 n=125 win=55% tot=+1694 | L100 n=56 win=46% tot=-2181 | SS n=189 win=53% tot=+591 | VH n=112 win=61% tot=+5228
+legs_2021  total   +7070 | L20 n=181 win=56% tot=+3967 | L50 n=131 win=56% tot=+2424 | L100 n=68 win=49% tot=-1642 | SS n=181 win=56% tot=+3967 | VH n=89 win=49% tot=-1646
+legs_2022  total   -3622 | L20 n=200 win=50% tot=-2736 | L50 n=166 win=49% tot=-3362 | L100 n=122 win=57% tot=+3385 | SS n=200 win=50% tot=-2736 | VH n=89 win=56% tot=+1827
+legs_2526  total  +12274 | L20 n=104 win=59% tot=+3885 | L50 n=80 win=52% tot=+369 | L100 n=48 win=60% tot=+2416 | SS n=104 win=59% tot=+3885 | VH n=57 win=58% tot=+1719
+
+DROP-ONE-LEG estimate (total minus that leg, per period):
+drop L20  2011 +7317 | 2012 +3435 | 2019 -591 | 2021 -3967 | 2022 +2736 | 2526 -3885   (change vs b20)
+drop L50  2011 +6832 | 2012 +2353 | 2019 -1694 | 2021 -2424 | 2022 +3362 | 2526 -369   (change vs b20)
+drop L100 2011 +6688 | 2012 +4050 | 2019 +2181 | 2021 +1642 | 2022 -3385 | 2526 -2416   (change vs b20)
+drop SS   2011 +7317 | 2012 +3435 | 2019 -591 | 2021 -3967 | 2022 +2736 | 2526 -3885   (change vs b20)
+drop VH   2011 +1662 | 2012 +1812 | 2019 -5228 | 2021 +1646 | 2022 -1827 | 2526 -1719   (change vs b20)

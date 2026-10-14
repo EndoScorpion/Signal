@@ -1,0 +1,12 @@
+b20_blk_2019     sells  671 win  54.4%  ACpts    5845  DDpts  21153
+b20_blk_2021     sells  650 win  54.5%  ACpts    6995  DDpts  21366
+legs_2022        sells  777 win    52%  ACpts   -3596  DDpts  24427
+legs_2526        sells  393 win  57.5%  ACpts   12252  DDpts  12050
+b20_ss35_2019    sells  633 win  55.3%  ACpts    8911  DDpts  18928
+b20_ss35_2021    sells  624 win  54.6%  ACpts    7436  DDpts  20781
+b20_ss35_2022    sells  761 win  51.9%  ACpts   -3931  DDpts  23799
+b20_ss35_2526    sells  386 win  57.5%  ACpts   11769  DDpts  11994
+b20_noL20_2019   sells  482 win  54.8%  ACpts    5280  DDpts  14512
+b20_noL20_2021   sells  469 win  53.7%  ACpts    3050  DDpts  16059
+b20_noL20_2022   sells  577 win  52.5%  ACpts    -865  DDpts  16149
+b20_noL20_2526   sells  289 win  57.1%  ACpts    8374  DDpts   8701

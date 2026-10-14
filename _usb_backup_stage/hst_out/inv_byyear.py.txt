@@ -1,0 +1,80 @@
+# Year-by-year check of the inverted-branch survivors vs random sells with the same exit.
+# usage: python3 inv_byyear.py <EURUSD5.hst> <journal> [<journal> ...]
+import sys, re, datetime as D, numpy as np
+hst = sys.argv[1]; logs = sys.argv[2:]
+b = open(hst, 'rb').read()
+a = np.frombuffer(b[148:148 + ((len(b) - 148) // 60) * 60], dtype=np.dtype([('t', '<i8'), ('o', '<f8'), ('h', '<f8'), ('l', '<f8'), ('c', '<f8'), ('v', '<i8'), ('s', '<i4'), ('rv', '<i8')]))
+T, H, L, C = a['t'], a['h'], a['l'], a['c']
+COMM = 9; SPR = 2e-5
+bar = lambda t0: max(0, np.searchsorted(T, t0, side='right') - 1)
+def path(i, maxbars=5000):
+    j = min(len(C), i + 1 + maxbars); return np.concatenate([[C[i]], H[i + 1:j]]), np.concatenate([[C[i]], L[i + 1:j]])
+def sell_from(i, bid, tp, sl, trail=0):
+    hh, ll = path(i); hh = hh + SPR; ll = ll + SPR
+    if trail:  # trail 'trail' pts above the lowest ask seen once 'tp' pts in profit; sl initial
+        stop = bid + sl * 1e-5; best = bid
+        for j in range(len(hh)):
+            if hh[j] >= stop: return (bid - stop) * 1e5 - COMM
+            if ll[j] < best: best = ll[j]
+            if bid - best >= tp * 1e-5: stop = min(stop, best + trail * 1e-5)
+        return (bid - (C[min(len(C) - 1, i + 5000)] + SPR)) * 1e5 - COMM
+    tpl = bid - tp * 1e-5; sll = bid + sl * 1e-5
+    a_tp = np.argmax(ll <= tpl) if (ll <= tpl).any() else 10 ** 9; a_sl = np.argmax(hh >= sll) if (hh >= sll).any() else 10 ** 9
+    if a_sl <= a_tp and a_sl < 10 ** 9: return -sl - COMM
+    if a_tp < 10 ** 9: return tp - COMM
+    return (bid - (C[min(len(C) - 1, i + 5000)] + SPR)) * 1e5 - COMM
+def summ(x):
+    x = np.array(x); return '%4d  win%% %5.1f  avg %7.1f' % (len(x), 100 * (x > 0).mean(), x.mean()) if len(x) else '   0            -      '
+ents = []
+for log in logs:
+    for ln in open(log, errors='ignore'):
+        m = re.search(r'(\d{4}\.\d\d\.\d\d \d\d:\d\d:\d\d)\s+.*?open #(\d+) buy [\d.]+ \S+ at ([\d.]+)', ln)
+        if m: ents.append((int(D.datetime.strptime(m.group(1), '%Y.%m.%d %H:%M:%S').replace(tzinfo=D.timezone.utc).timestamp()), float(m.group(3))))
+ents = sorted(set(ents))
+yr = lambda t0: D.datetime.fromtimestamp(t0, D.timezone.utc).year
+years = sorted(set(yr(t) for t, e in ents))
+out = ['INVERTED SURVIVORS BY YEAR (%d entries from %s). Each cell: n, win%%, avg net pts. Random = sells at every 40th M5 bar of that year, same exit.' % (len(ents), ', '.join(logs))]
+out.append('%-52s | ' % 'branch' + ' | '.join('%-24d' % y for y in years))
+def stop_sell(dist, tp, sl, expiry=24, trail=0):
+    res = {y: [] for y in years}
+    for t0, e in ents:
+        i = bar(t0); lvl = e - SPR - dist * 1e-5; hit = None
+        if C[i] <= lvl: hit = i + 1
+        for j in range(i + 1, min(len(C), i + 1 + expiry)):
+            if hit is not None: break
+            if L[j] <= lvl: hit = j; break
+        if hit is not None and hit < len(C): res[yr(t0)].append(sell_from(hit, lvl, tp, sl, trail))
+    return res
+def hedge_sell(x, tp, sl, trail=0):
+    res = {y: [] for y in years}
+    for t0, e in ents:
+        i = bar(t0); lvl = e - x * 1e-5; hit = None
+        if C[i] >= e + 10e-5: continue
+        if C[i] <= lvl: hit = i + 1
+        for j in range(i + 1, min(len(C), i + 5001)):
+            if hit is not None: break
+            if H[j] >= e + 10e-5: break
+            if L[j] <= lvl: hit = j; break
+        if hit is not None and hit < len(C): res[yr(t0)].append(sell_from(hit, lvl, tp, sl, trail))
+    return res
+def random_sell(tp, sl, trail=0):
+    res = {y: [] for y in years}
+    for i in range(1, len(C) - 1, 40):
+        y = yr(int(T[i]))
+        if y in res: res[y].append(sell_from(i, C[i - 1], tp, sl, trail))
+    return res
+rows = []
+for tp, sl in [(300, 300), (200, 200), (100, 100), (150, 300)]:
+    rows.append(('RANDOM sell TP %d SL %d' % (tp, sl), random_sell(tp, sl)))
+    for dist in (20, 30, 50):
+        rows.append(('sell STOP %d below buy, 2h expiry, TP %d SL %d' % (dist, tp, sl), stop_sell(dist, tp, sl)))
+for tp, sl in [(240, 100), (100, 100), (300, 300)]:
+    for x in (30, 50):
+        rows.append(('HEDGE sell at %d underwater, TP %d SL %d' % (x, tp, sl), hedge_sell(x, tp, sl)))
+rows.append(('RANDOM sell, trail 50 after +50, SL 300', random_sell(50, 300, 50)))
+rows.append(('sell STOP 20 below, trail 50 after +50, SL 300', stop_sell(20, 50, 300, trail=50)))
+rows.append(('sell STOP 20 below, trail 100 after +100, SL 300', stop_sell(20, 100, 300, trail=100)))
+rows.append(('HEDGE sell at 30 underwater, trail 50 after +50, SL 100', hedge_sell(30, 50, 100, 50)))
+for name, res in rows:
+    out.append('%-52s | ' % name + ' | '.join(summ(res[y]) for y in years))
+print('\n'.join(out))

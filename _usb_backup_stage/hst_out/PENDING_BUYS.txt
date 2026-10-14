@@ -1,0 +1,85 @@
+PENDING AND FOLLOW-UP BUY BRANCHES, 2026-10-10 14:03 UTC. Nothing positive in both 2011-12 and 2019.
+
+PENDING / FOLLOW-UP BUY BRANCHES on 498 EA entries from journal_2011_2012.log (M5, honest replay, 9 commission + 2 spread)
+reference buys TP10/SL290 (replay):  498 trades  win%  85.3  avg   -43.0  total   -21402
+
+A) BUY LIMIT below / BUY STOP above the signal, 2-hour expiry
+  buy limit  20 pts below, TP  30 SL 100 :  461 trades  win%  59.2  avg   -32.0  total   -14759   (filled 461 of 498)
+  buy limit  20 pts below, TP 100 SL 100 :  461 trades  win%  42.7  avg   -23.5  total   -10849   (filled 461 of 498)
+  buy limit  20 pts below, TP 300 SL 300 :  461 trades  win%  41.0  avg   -63.0  total   -29049   (filled 461 of 498)
+  buy limit  20 pts below, TP  50 SL 300 :  461 trades  win%  75.5  avg   -44.8  total   -20649   (filled 461 of 498)
+  buy limit  50 pts below, TP  30 SL 100 :  431 trades  win%  63.8  avg   -26.1  total   -11229   (filled 431 of 498)
+  buy limit  50 pts below, TP 100 SL 100 :  431 trades  win%  43.2  avg   -22.7  total    -9779   (filled 431 of 498)
+  buy limit  50 pts below, TP 300 SL 300 :  431 trades  win%  42.0  avg   -57.0  total   -24579   (filled 431 of 498)
+  buy limit  50 pts below, TP  50 SL 300 :  431 trades  win%  80.3  avg   -28.0  total   -12079   (filled 431 of 498)
+  buy limit 100 pts below, TP  30 SL 100 :  358 trades  win%  69.8  avg   -18.2  total    -6522   (filled 358 of 498)
+  buy limit 100 pts below, TP 100 SL 100 :  358 trades  win%  46.9  avg   -15.1  total    -5422   (filled 358 of 498)
+  buy limit 100 pts below, TP 300 SL 300 :  358 trades  win%  42.2  avg   -55.9  total   -20022   (filled 358 of 498)
+  buy limit 100 pts below, TP  50 SL 300 :  358 trades  win%  82.1  avg   -21.6  total    -7722   (filled 358 of 498)
+  buy stop   20 pts above, TP  30 SL 100 :  420 trades  win%  67.9  avg   -20.8  total    -8730   (filled 420 of 498)
+  buy stop   20 pts above, TP 100 SL 100 :  420 trades  win%  50.0  avg    -9.0  total    -3780   (filled 420 of 498)
+  buy stop   20 pts above, TP 300 SL 300 :  420 trades  win%  48.6  avg   -17.6  total    -7380   (filled 420 of 498)
+  buy stop   20 pts above, TP  50 SL 300 :  420 trades  win%  81.7  avg   -23.2  total    -9730   (filled 420 of 498)
+  buy stop   50 pts above, TP  30 SL 100 :  369 trades  win%  66.7  avg   -22.3  total    -8241   (filled 369 of 498)
+  buy stop   50 pts above, TP 100 SL 100 :  369 trades  win%  47.4  avg   -14.1  total    -5221   (filled 369 of 498)
+  buy stop   50 pts above, TP 300 SL 300 :  369 trades  win%  49.6  avg   -11.4  total    -4221   (filled 369 of 498)
+  buy stop   50 pts above, TP  50 SL 300 :  369 trades  win%  83.5  avg   -16.9  total    -6221   (filled 369 of 498)
+  buy stop  100 pts above, TP  30 SL 100 :  310 trades  win%  65.2  avg   -24.3  total    -7530   (filled 310 of 498)
+  buy stop  100 pts above, TP 100 SL 100 :  310 trades  win%  40.6  avg   -27.7  total    -8590   (filled 310 of 498)
+  buy stop  100 pts above, TP 300 SL 300 :  310 trades  win%  47.7  avg   -22.5  total    -6990   (filled 310 of 498)
+  buy stop  100 pts above, TP  50 SL 300 :  310 trades  win%  78.4  avg   -34.6  total   -10740   (filled 310 of 498)
+
+B) RE-BREAK BUY: sell stop 20 below (TP300/SL300) gets stopped out => buy at that moment
+  re-break buy TP 100 SL 100 :  190 trades  win%  50.0  avg    -9.0  total    -1710
+  re-break buy TP 300 SL 300 :  190 trades  win%  50.0  avg    -9.0  total    -1710
+  re-break buy TP  50 SL 300 :  190 trades  win%  80.5  avg   -27.2  total    -5160
+  re-break buy TP  50 SL 300 trail 50 :  190 trades  win%  72.1  avg     9.5  total     1812
+
+C) HEDGE-TARGET BUY: hedge sell (30 under water, TP300/SL300) hits its target => buy there
+  hedge-target buy TP 100 SL 100 :  151 trades  win%  47.0  avg   -15.0  total    -2259
+  hedge-target buy TP 300 SL 300 :  151 trades  win%  47.0  avg   -26.9  total    -4059
+  hedge-target buy TP  50 SL 300 :  151 trades  win%  82.8  avg   -19.3  total    -2909
+  hedge-target buy TP  50 SL 300 trail 50 :  151 trades  win%  72.8  avg    -2.4  total     -369
+  hedge-target buy TP 100 SL 300 trail 100 :  151 trades  win%  68.2  avg   -26.9  total    -4063
+
+PENDING / FOLLOW-UP BUY BRANCHES on 174 EA entries from journal_2019_orig.log (M5, honest replay, 9 commission + 2 spread)
+reference buys TP10/SL290 (replay):  174 trades  win%  80.5  avg   -57.6  total   -10026
+
+A) BUY LIMIT below / BUY STOP above the signal, 2-hour expiry
+  buy limit  20 pts below, TP  30 SL 100 :  136 trades  win%  55.1  avg   -37.3  total    -5074   (filled 136 of 174)
+  buy limit  20 pts below, TP 100 SL 100 :  136 trades  win%  42.6  avg   -23.7  total    -3224   (filled 136 of 174)
+  buy limit  20 pts below, TP 300 SL 300 :  136 trades  win%  39.7  avg   -70.8  total    -9624   (filled 136 of 174)
+  buy limit  20 pts below, TP  50 SL 300 :  136 trades  win%  69.9  avg   -64.5  total    -8774   (filled 136 of 174)
+  buy limit  50 pts below, TP  30 SL 100 :  119 trades  win%  57.1  avg   -34.7  total    -4131   (filled 119 of 174)
+  buy limit  50 pts below, TP 100 SL 100 :  119 trades  win%  42.0  avg   -25.0  total    -2971   (filled 119 of 174)
+  buy limit  50 pts below, TP 300 SL 300 :  119 trades  win%  42.0  avg   -56.9  total    -6771   (filled 119 of 174)
+  buy limit  50 pts below, TP  50 SL 300 :  119 trades  win%  73.9  avg   -50.2  total    -5971   (filled 119 of 174)
+  buy limit 100 pts below, TP  30 SL 100 :   87 trades  win%  51.7  avg   -41.8  total    -3633   (filled 87 of 174)
+  buy limit 100 pts below, TP 100 SL 100 :   87 trades  win%  39.1  avg   -30.8  total    -2683   (filled 87 of 174)
+  buy limit 100 pts below, TP 300 SL 300 :   87 trades  win%  36.8  avg   -88.3  total    -7683   (filled 87 of 174)
+  buy limit 100 pts below, TP  50 SL 300 :   87 trades  win%  66.7  avg   -75.7  total    -6583   (filled 87 of 174)
+  buy stop   20 pts above, TP  30 SL 100 :  138 trades  win%  79.7  avg    -5.4  total     -742   (filled 138 of 174)
+  buy stop   20 pts above, TP 100 SL 100 :  138 trades  win%  66.7  avg    24.3  total     3358   (filled 138 of 174)
+  buy stop   20 pts above, TP 300 SL 300 :  138 trades  win%  55.8  avg    25.8  total     3558   (filled 138 of 174)
+  buy stop   20 pts above, TP  50 SL 300 :  138 trades  win%  87.7  avg    -2.1  total     -292   (filled 138 of 174)
+  buy stop   50 pts above, TP  30 SL 100 :  125 trades  win%  73.6  avg   -13.3  total    -1665   (filled 125 of 174)
+  buy stop   50 pts above, TP 100 SL 100 :  125 trades  win%  59.2  avg     9.4  total     1175   (filled 125 of 174)
+  buy stop   50 pts above, TP 300 SL 300 :  125 trades  win%  53.6  avg    12.6  total     1575   (filled 125 of 174)
+  buy stop   50 pts above, TP  50 SL 300 :  125 trades  win%  88.8  avg     1.8  total      225   (filled 125 of 174)
+  buy stop  100 pts above, TP  30 SL 100 :   94 trades  win%  84.0  avg     0.3  total       24   (filled 94 of 174)
+  buy stop  100 pts above, TP 100 SL 100 :   94 trades  win%  61.7  avg    14.4  total     1354   (filled 94 of 174)
+  buy stop  100 pts above, TP 300 SL 300 :   94 trades  win%  51.1  avg    -2.6  total     -246   (filled 94 of 174)
+  buy stop  100 pts above, TP  50 SL 300 :   94 trades  win%  91.5  avg    11.2  total     1054   (filled 94 of 174)
+
+B) RE-BREAK BUY: sell stop 20 below (TP300/SL300) gets stopped out => buy at that moment
+  re-break buy TP 100 SL 100 :   55 trades  win%  52.7  avg    -3.5  total     -195
+  re-break buy TP 300 SL 300 :   55 trades  win%  43.6  avg   -47.2  total    -2595
+  re-break buy TP  50 SL 300 :   55 trades  win%  83.6  avg   -16.3  total     -895
+  re-break buy TP  50 SL 300 trail 50 :   55 trades  win%  67.3  avg   -17.0  total     -933
+
+C) HEDGE-TARGET BUY: hedge sell (30 under water, TP300/SL300) hits its target => buy there
+  hedge-target buy TP 100 SL 100 :   49 trades  win%  51.0  avg    -7.0  total     -341
+  hedge-target buy TP 300 SL 300 :   49 trades  win%  44.9  avg   -39.6  total    -1941
+  hedge-target buy TP  50 SL 300 :   49 trades  win%  81.6  avg   -23.3  total    -1141
+  hedge-target buy TP  50 SL 300 trail 50 :   49 trades  win%  71.4  avg   -24.7  total    -1211
+  hedge-target buy TP 100 SL 300 trail 100 :   49 trades  win%  69.4  avg     4.1  total      201

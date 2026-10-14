@@ -1,0 +1,55 @@
+# make_b27.py - builds Strong2010b_claude_b27.mq4 from b25. Ideas 1-5 for new sells, OFF by default.
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('extern double AtrRR=1.0;\n','''extern double AtrRR=1.0;
+extern bool   UseDailyRangeFilter=0;
+extern int    RangeAtrPeriod=5;
+extern double MaxRangeAtrMultiplier=1.25;
+extern bool   UseH4TrendAnchor=0;
+extern int    H4MaPeriod=20;
+extern double H4Deviation=2.0;
+extern bool   UseMomentumSharpnessFilter=0;
+extern double MinCloseToLowRatio=0.75;
+extern bool   UseVolumeDivergenceGuard=0;
+extern bool   UseAdverseExtensionLock=0;
+extern int    LockoutMinutes=1440;
+extern double AdverseThresholdPoints=150;
+extern double LockLossPts=280;
+''')
+rep('bool SellGates25(){ int tf=GateTF;','bool SellGates25(){ int tf=GateTF; if(!FilterDailyRangeExpansion() || !FilterH4TrendAnchor() || !FilterMomentumSharpness() || !FilterVolumeDivergence() || !FilterAdverseExtension()){ return(false); } /*b27*/')
+src=src.rstrip()+'''
+
+//---- b27 Ideas 1-5 (closed bars only)
+bool FilterDailyRangeExpansion(){ if(UseDailyRangeFilter!=1){ return(true); }
+   double dAtr=iATR(Symbol(),PERIOD_D1,RangeAtrPeriod,1); if(dAtr<=0){ return(true); }
+   int n=iBarShift(Symbol(),PERIOD_M15,iTime(Symbol(),PERIOD_D1,0)); if(n<1){ return(true); }
+   int hb=iHighest(Symbol(),PERIOD_M15,MODE_HIGH,n,1), lb=iLowest(Symbol(),PERIOD_M15,MODE_LOW,n,1); if(hb<0 || lb<0){ return(true); }
+   return(iHigh(Symbol(),PERIOD_M15,hb)-iLow(Symbol(),PERIOD_M15,lb) <= dAtr*MaxRangeAtrMultiplier); }
+bool FilterH4TrendAnchor(){ if(UseH4TrendAnchor!=1){ return(true); }
+   double up=iBands(Symbol(),PERIOD_H4,H4MaPeriod,H4Deviation,0,PRICE_CLOSE,MODE_UPPER,1); if(up<=0){ return(true); }
+   return(iClose(Symbol(),PERIOD_H4,1)<=up); }
+bool FilterMomentumSharpness(){ if(UseMomentumSharpnessFilter!=1){ return(true); }
+   double h=iHigh(Symbol(),PERIOD_M15,1), l=iLow(Symbol(),PERIOD_M15,1); if(h-l<=0){ return(true); }
+   return((h-iClose(Symbol(),PERIOD_M15,1))/(h-l) >= MinCloseToLowRatio); }
+bool FilterVolumeDivergence(){ if(UseVolumeDivergenceGuard!=1){ return(true); }
+   return(!(iClose(Symbol(),PERIOD_M15,1)<iClose(Symbol(),PERIOD_M15,2) && iAD(Symbol(),PERIOD_M15,1)>iAD(Symbol(),PERIOD_M15,2))); }
+int g27Hist=-1; datetime g27LossTime=0;
+bool FilterAdverseExtension(){ if(UseAdverseExtensionLock!=1){ return(true); }
+   int ht=OrdersHistoryTotal();
+   if(ht!=g27Hist){ g27Hist=ht; datetime last=0; double lp=0;
+      for(int i=ht-1;i>=0;i--){ if(!OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)){ continue; } if(OrderSymbol()!=Symbol() || OrderMagicNumber()!=magic || OrderType()!=OP_SELL){ continue; }
+         if(OrderCloseTime()>last){ last=OrderCloseTime(); lp=(OrderClosePrice()-OrderOpenPrice())/Point; } }
+      if(last>0 && lp>=LockLossPts){ g27LossTime=last; } }
+   if(g27LossTime>0 && TimeCurrent()-g27LossTime<LockoutMinutes*60){ return(false); }
+   RefreshRates();
+   for(int j=OrdersTotal()-1;j>=0;j--){ if(!OrderSelect(j,SELECT_BY_POS,MODE_TRADES)){ continue; } if(OrderSymbol()!=Symbol() || OrderMagicNumber()!=magic || OrderType()!=OP_SELL){ continue; }
+      if((Ask-OrderOpenPrice())/Point>AdverseThresholdPoints){ return(false); } }
+   return(true); }
+'''
+src=src.replace('#property version   "1.00-claude_b25"','#property version   "1.00-claude_b27"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

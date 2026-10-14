@@ -1,0 +1,31 @@
+B32 GEN-2 RESULTS (EURUSD M15 2017 sp2, vs b22 12,426 pts)
+b32 compiled: 0 errors, 28 warnings (shadowed globals), no source changes.
+Stage 1 queued (gen2.log) behind running b31 master/master2 queues.
+
+
+[Claude PC 2026-10-11 ~16:58] GEN2 stage 1 (g2_*) is INVALID: g2 sets were built from EA defaults, not b22_thu.set -> UseSellStop/UseHedgeSell/UseVirtualBuy/UseParkBuys/UseSellBlock/SessBlock/DayBlock all OFF (g2_base 2017 = -8,280 / 44 sells instead of +12,426 / 101). Rerun as g2b_* with b22_thu base (stat_corr\mksets_g2b.py), log gen2b.log. F (frac buy) skipped: already rejected out of sample (worse in 6/7 periods).
+
+GEN2 (corrected, g2b_*, b22_thu base, 2017 sp2) - base reproduces 12,426:
+g2b_A0_2017            sells   92 win  80.4%  pts   15276  DD   3596
+g2b_A1_2017            sells   92 win  80.4%  pts   15276  DD   3596
+g2b_A2_2017            sells   95 win  77.9%  pts   14328  DD   3596
+g2b_A3_2017            sells   95 win  77.9%  pts   14328  DD   3596
+g2b_A4_2017            sells   95 win  77.9%  pts   14328  DD   3596
+g2b_A5_2017            sells   95 win  77.9%  pts   14328  DD   3596
+g2b_A6_2017            sells   86 win  75.6%  pts   11782  DD   3596
+g2b_A7_2017            sells   85 win  75.3%  pts   11496  DD   3596
+g2b_A8_2017            sells   82 win  74.4%  pts   10648  DD   3596
+g2b_C0_2017            sells   92 win  80.4%  pts   15270  DD   4810
+g2b_C1_2017            sells   80 win  81.2%  pts   13675  DD   4810
+g2b_C2_2017            sells   80 win  81.2%  pts   13675  DD   4810
+g2b_C3_2017            sells  101 win  73.3%  pts   12426  DD   4810
+g2b_C4_2017            sells   92 win  80.4%  pts   15270  DD   4810
+g2b_C5_2017            sells  101 win  73.3%  pts   12426  DD   4810
+g2b_X1_2017            sells   83 win  89.2%  pts   18120  DD   3578
+g2b_X5_2017            sells   40 win  90.0%  pts    8936  DD   1708
+g2b_X6_2017            sells   21 win  85.7%  pts    4153  DD   1600
+g2b_base_2017          sells  101 win  73.3%  pts   12426  DD   4810
+VERDICT: no gen-2 mutation beats its parent. Z: ZMax 0.8-1.5 and period 14-30 all 14,328-15,276 (> base, stable); period 50 / M30 / H1 weaker.
+Range: 0.8-1.0 and ATR period 10 all 13,675-15,270 (stable); 1.1 / ATR 20 = no effect. X1 Z+Range = 18,120 = best (= gen-1 winner b31_zr).
+X5 +ChaosER 0.09 and X6 +AHRate cut sells to 40/21 -> 8,936 / 4,153 = worse. Per the plan's stop rule GEN3 is not started.
+Winner sets saved: winners\WIN_GEN1_ZGate_DailyRange_b31.set, winners\WIN_GEN2_ZGate_DailyRange_b32.set (+ .txt).

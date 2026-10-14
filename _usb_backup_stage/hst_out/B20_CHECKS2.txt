@@ -1,0 +1,10 @@
+b20_noL20_2017_s2      sells   97 win  76.3%  pts   13697  DD   3870
+b20_noL20_2020_s2      sells   71 win  71.8%  pts    7770  DD   4429
+b20_blk_a24_2022_s2    sells  607 win  54.4%  pts    5829  DD  22609
+b20_blk_a24_2526_s2    sells  304 win  54.6%  pts    4511  DD  11166
+b20_blk_h3_2022_s2     sells  730 win  52.3%  pts   -1863  DD  24901
+b20_blk_h3_2526_s2     sells  361 win  57.6%  pts   11600  DD  11356
+b20_blk_2022_s5        sells  787 win    52%  pts   -3761  DD  23868
+b20_blk_2526_s5        sells  389 win  56.3%  pts    9316  DD  13623
+b20_blk_2022_s8        sells  795 win  51.8%  pts   -4493  DD  23307
+b20_blk_2526_s8        sells  392 win  56.6%  pts   10167  DD  13055

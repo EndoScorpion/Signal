@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Artifact — Auto-Backup Template</title>
+<style>
+  :root { --bg:#0b0c10; --panel:#131722; --grid:#2a2e39; --text:#d1d4dc; --green:#3ecf5e; --amber:#f2c400; --red:#ef5350; }
+  body { background:var(--bg); color:var(--text); font-family:monospace; margin:0; padding:12px; font-size:12px; }
+
+  /* ── Greeting banner ── */
+  #greeting-banner {
+    display:none; align-items:center; justify-content:space-between;
+    background:#0d1a10; border:1px solid #2a2; border-radius:4px;
+    padding:7px 12px; margin-bottom:10px; font-size:11px; color:#8f8;
+    animation: fadein .4s ease;
+  }
+  #greeting-banner.show { display:flex; }
+  @keyframes fadein { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+  #greeting-banner button {
+    background:none; border:none; color:#5b6270; cursor:pointer; font-size:13px; padding:0 4px;
+  }
+
+  /* ── Backup status badge ── */
+  #backup-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:3px 9px; border-radius:3px; font-size:10px;
+    background:#0d1a10; color:var(--green); border:1px solid #2a2;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  #badge-dot { width:6px; height:6px; border-radius:50%; background:var(--green); transition:background .2s; }
+
+  /* ── App shell ── */
+  .app { background:var(--panel); border:1px solid var(--grid); border-radius:5px; padding:12px; }
+  .app label { color:#787b86; font-size:10px; display:block; margin-bottom:3px; }
+  .app input, .app select {
+    background:#0d0f14; color:var(--text); border:1px solid var(--grid);
+    border-radius:3px; padding:4px 8px; font-family:monospace; font-size:11px;
+    width:100%; margin-bottom:8px;
+  }
+  .footer { margin-top:10px; display:flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+
+<!-- ── Greeting banner (shown once on first load) ── -->
+<div id="greeting-banner">
+  <span id="greeting-text">Welcome — your settings are saved automatically.</span>
+  <button onclick="dismissGreeting()" aria-label="Dismiss">✕</button>
+</div>
+
+<!-- ── Your app content here ── -->
+<div class="app">
+  <label>Symbol</label>
+  <input id="symbol" type="text" value="BTCUSDT" oninput="scheduleSave()">
+
+  <label>Timeframe</label>
+  <select id="timeframe" onchange="scheduleSave()">
+    <option>1m</option><option selected>5m</option><option>15m</option><option>1h</option>
+  </select>
+
+  <label>Notes</label>
+  <input id="notes" type="text" placeholder="Any notes..." oninput="scheduleSave()">
+
+  <div class="footer">
+    <div id="backup-badge">
+      <span id="badge-dot"></span>
+      <span id="badge-text">Saved ✓</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var STORAGE_KEY  = 'artifact_template_state';
+  var GREETING_KEY = 'artifact_template_greeted';
+  var saveTimer    = null;
+
+  // ── Status badge ────────────────────────────────────────────────────────
+  var BADGE_STATES = {
+    saved:   { bg:'#0d1a10', color:'#3ecf5e', border:'#2a2',  dot:'#3ecf5e', label:'Saved \u2713' },
+    saving:  { bg:'#1a140d', color:'#f2c400', border:'#a86',  dot:'#f2c400', label:'Saving...'    },
+    error:   { bg:'#1a0d0d', color:'#ef5350', border:'#522',  dot:'#ef5350', label:'Save failed'  },
+    restored:{ bg:'#0d1020', color:'#9db4ff', border:'#557',  dot:'#9db4ff', label:'Restored \u2713' }
+  };
+
+  function showStatus(type) {
+    var s = BADGE_STATES[type] || BADGE_STATES.saved;
+    var badge = document.getElementById('backup-badge');
+    var dot   = document.getElementById('badge-dot');
+    var text  = document.getElementById('badge-text');
+    if (!badge) return;
+    badge.style.background   = s.bg;
+    badge.style.color        = s.color;
+    badge.style.borderColor  = s.border;
+    dot.style.background     = s.dot;
+    text.textContent         = s.label;
+  }
+
+  // ── State serialization ─────────────────────────────────────────────────
+  function getState() {
+    return {
+      symbol:    document.getElementById('symbol')    ? document.getElementById('symbol').value    : '',
+      timeframe: document.getElementById('timeframe') ? document.getElementById('timeframe').value : '',
+      notes:     document.getElementById('notes')     ? document.getElementById('notes').value     : '',
+      ts: Date.now()
+    };
+  }
+
+  function applyState(state) {
+    if (!state) return;
+    if (state.symbol    && document.getElementById('symbol'))    document.getElementById('symbol').value    = state.symbol;
+    if (state.timeframe && document.getElementById('timeframe')) document.getElementById('timeframe').value = state.timeframe;
+    if (state.notes     && document.getElementById('notes'))     document.getElementById('notes').value     = state.notes;
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getState()));
+      showStatus('saved');
+    } catch(e) {
+      showStatus('error');
+    }
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+
+  // ── Debounced auto-save ─────────────────────────────────────────────────
+  window.scheduleSave = function() {
+    showStatus('saving');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveState, 800);
+  };
+
+  // ── Greeting ────────────────────────────────────────────────────────────
+  function showGreeting(isRestore) {
+    if (localStorage.getItem(GREETING_KEY)) return;
+    localStorage.setItem(GREETING_KEY, '1');
+    var banner = document.getElementById('greeting-banner');
+    var text   = document.getElementById('greeting-text');
+    if (!banner) return;
+    text.textContent = isRestore
+      ? 'Welcome back \u2014 your settings have been restored.'
+      : 'Ready \u2014 your work is saved automatically.';
+    banner.classList.add('show');
+    setTimeout(function() { dismissGreeting(); }, 3500);
+  }
+
+  window.dismissGreeting = function() {
+    var b = document.getElementById('greeting-banner');
+    if (b) { b.style.opacity='0'; b.style.transition='opacity .3s'; setTimeout(function(){b.style.display='none';},300); }
+  };
+
+  // ── Boot ────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    var saved = loadState();
+    if (saved) {
+      applyState(saved);
+      showStatus('restored');
+      showGreeting(true);
+      setTimeout(function(){ showStatus('saved'); }, 2000);
+    } else {
+      showStatus('saved');
+      showGreeting(false);
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

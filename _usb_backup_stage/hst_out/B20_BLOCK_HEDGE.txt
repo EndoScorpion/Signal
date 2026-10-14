@@ -1,0 +1,28 @@
+B20 sell block + counter-hedge. spread 2, points after commission (USD*100). Base b19_off: 17 +22885 | 19 -3267 | 20 +8900 | 21 -12400
+b20_off_2019 net=55.98 | buy 0 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-3267 DDpts=29978
+b20_blk_2017 net=197.15 | buy 0 | sell 131, 76.3%, avg 1.5, tot 197.05 | ACpts=18536 DDpts=5248
+b20_blk_2019 net=118.84 | buy 0 | sell 671, 54.4%, avg 0.18, tot 119.62 | ACpts=5845 DDpts=21153
+b20_blk_2020 net=118.54 | buy 0 | sell 100, 72%, avg 1.18, tot 118.43 | ACpts=10954 DDpts=6063
+b20_blk_2021 net=128.45 | buy 0 | sell 650, 54.5%, avg 0.2, tot 129.2 | ACpts=6995 DDpts=21366
+b20_blk_a24_2021 net=164.76 | buy 0 | sell 469, 56.9%, avg 0.35, tot 165.32 | ACpts=12255 DDpts=11198
+b20_blk_a32_2021 net=86.87 | buy 0 | sell 716, 53.2%, avg 0.12, tot 87.74 | ACpts=2243 DDpts=24209
+b20_blk_h1_2021 net=66.30 | buy 0 | sell 713, 52.7%, avg 0.09, tot 67.13 | ACpts=213 DDpts=24873
+b20_blk_h3_2021 net=190.70 | buy 0 | sell 587, 56.6%, avg 0.33, tot 191.44 | ACpts=13787 DDpts=19581
+b20_ch250_2017 net=194.55 | buy 49, 18.4%, avg -1.02, tot -50.14 | sell 176, 74.4%, avg 1.39, tot 244.61 | ACpts=17430 DDpts=7852
+b20_ch250_2019 net=5.36 | buy 527, 49.9%, avg -0.1, tot -50.42 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-13072 DDpts=36008
+b20_ch200_2019 net=-58.23 | buy 617, 47%, avg -0.18, tot -113.92 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-20241 DDpts=35753
+b20_ch250s_2019 net=78.40 | buy 432, 54.9%, avg 0.05, tot 22.58 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-4913 DDpts=34604
+b20_blk_s5_2017  sells  129 win    76%  ACpts   17967  DDpts   5362
+b20_blk_s5_2019  sells  653 win  53.4%  ACpts    1942  DDpts  21736
+b20_blk_s5_2020  sells  104 win  69.2%  ACpts    9409  DDpts   8008
+b20_blk_s5_2021  sells  614 win  55.9%  ACpts   11805  DDpts  16391
+b20_off_2011     sells 1043 win  48.2%  ACpts  -30571  DDpts  46086
+b20_blk_2011     sells  713 win  46.1%  ACpts  -29795  DDpts  38411
+b20_off_2012     sells 1087 win  48.5%  ACpts  -29567  DDpts  39949
+b20_blk_2012     sells  779 win  49.8%  ACpts  -15014  DDpts  27680
+b20_blk_s8_2019  sells  648 win  51.5%  ACpts   -5447  DDpts  25940
+b20_blk_s8_2021  sells  609 win  55.2%  ACpts    9193  DDpts  14089
+b20_off_2021h1   sells  210 win  48.6%  ACpts   -5757  DDpts  13821
+b20_blk_2021h1   sells  159 win  55.3%  ACpts    2287  DDpts   9306
+b20_off_2021h2   sells  638 win  49.7%  ACpts  -11330  DDpts  34223
+b20_blk_2021h2   sells  448 win  53.3%  ACpts    2153  DDpts  21366

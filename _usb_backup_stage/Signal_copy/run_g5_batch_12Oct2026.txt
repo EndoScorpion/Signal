@@ -1,0 +1,5 @@
+powershell -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\compile_and_gate_v1_12Oct2026.ps1 -Expert Strong2010b_claude_g5a -Period M1 -Commission 6
+powershell -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\compile_and_gate_v1_12Oct2026.ps1 -Expert Strong2010b_claude_g5b -Period M1 -Commission 6
+powershell -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\compile_and_gate_v1_12Oct2026.ps1 -Expert Strong2010b_claude_g5c -Period M1 -Commission 6
+powershell -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\compile_and_gate_v1_12Oct2026.ps1 -Expert Strong2010b_claude_g5d -Period M1 -Commission 6
+powershell -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\compile_and_gate_v1_12Oct2026.ps1 -Expert Strong2010b_claude_g5e -Period M1 -Commission 6

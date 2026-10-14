@@ -1,0 +1,21 @@
+SPY yahoo FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+SPY stooq FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+SPY alphavantage FAIL no ALPHAVANTAGE_KEY
+QQQ yahoo FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+QQQ stooq FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+QQQ alphavantage FAIL no ALPHAVANTAGE_KEY
+ULTY yahoo FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+ULTY stooq FAIL <urlopen error Tunnel connection failed: 403 Forbidden>
+ULTY alphavantage FAIL no ALPHAVANTAGE_KEY
+SPY webull 1000
+ULTY webull 655
+QQQ webull 1000
+GLD webull 1000
+SLV webull 1000
+KO webull 1000
+XOM webull 1000
+JPM webull 1000
+AAPL webull 1000
+MSFT webull 1000
+2026-10-10: stocks seeded AAPL,MSFT,JPM (55 D bars); others seed Monday. Crypto M60 checked BTC/ETH/SOL: no C1 signal; H1 is M60 on Webull.
+2026-10-11 Sun: stocks skipped; crypto D screen, M60 written for ADA AVAX DOT (12h drop >2%); others no signal

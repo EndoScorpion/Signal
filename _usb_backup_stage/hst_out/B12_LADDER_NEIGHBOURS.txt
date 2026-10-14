@@ -1,0 +1,17 @@
+B12 ladder neighbours - sells only, 0.01 lot, comm 9 pts = 0.09/trade
+s5    2017  n=  196  win= 66.3%  sells=  177.02  afterComm9=  159.38
+s5    2019  n= 1208  win= 53.1%  sells=  118.91  afterComm9=   10.19
+s5    2020  n=  129  win= 67.4%  sells=  119.17  afterComm9=  107.56
+s5    2021  n=  989  win= 53.6%  sells=  139.39  afterComm9=   50.38
+s8    2017  n=  190  win= 65.8%  sells=  166.29  afterComm9=  149.19
+s8    2019  n= 1159  win= 51.9%  sells=   29.94  afterComm9=  -74.37
+s8    2020  n=  135  win= 65.9%  sells=  111.94  afterComm9=   99.79
+s8    2021  n= 1012  win= 51.4%  sells=    8.98  afterComm9=   -82.1
+x0.8  2017  n=  216  win= 67.6%  sells=  211.46  afterComm9=  192.02
+x0.8  2019  n= 1369  win= 53.9%  sells=  204.19  afterComm9=   80.98
+x0.8  2020  n=  163  win= 66.9%  sells=  142.21  afterComm9=  127.54
+x0.8  2021  n= 1185  win= 53.6%  sells=  165.72  afterComm9=   59.07
+x1.2  2017  n=  195  win= 66.2%  sells=  174.06  afterComm9=  156.51
+x1.2  2019  n= 1184  win=   54%  sells=  180.86  afterComm9=    74.3
+x1.2  2020  n=  136  win= 67.6%  sells=  126.23  afterComm9=  113.99
+x1.2  2021  n= 1026  win= 53.2%  sells=  121.25  afterComm9=   28.91

@@ -1,0 +1,23 @@
+NFP NEWS STRADDLE - EURUSD M5, FXOpen costs 11 pts + optional 10 pts news slippage (updated 2026-10-10)
+Dates: forexfactory.com is not reachable from here, so release days = first Friday of each month (the usual NFP rule;
+a few months release on the 2nd Friday, which this misses). Server time: the biggest first-Friday M5 spike is at 15:30
+server time all year (average 351 pts vs 188 for the next bar), so the server shifts with US daylight time. 110 NFP days in data.
+Setup: at the close of the 15:25 bar, buy stop at price + d and sell stop at price - d, OCO, expiry 10/30/60 min.
+If both levels are hit inside the spike bar, the worst case (full stop loss) is assumed. Control = the same straddle at a
+quiet hour on the same Fridays. Variants: 252 (7 distances incl. 1-3x ATR, 3 expiries, 6 exits, 2 slippage levels).
+Years: 2011, 2012, 2017 (partial), 2019, 2020 (partial), 2021. Only 5-12 NFP trades per year, so every number is noisy.
+
+RESULT: no variant is positive in all six years (0 of 252). No win to report.
+
+Closest (positive in 3 of 6 years, best average):
+  distance 40 pts, expiry 10 min, no TP, SL 100, trail 100:
+    0 slippage:  2011 -36.2 (11) | 2012 -5.4 (12) | 2017 +208.6 (5) | 2019 +30.1 (11) | 2020 -70.2 (5) | 2021 +140.2 (10)  avg +36/trade
+    10 slippage: 2011 -46.2 | 2012 -15.4 | 2017 +198.6 | 2019 +20.1 | 2020 -80.2 | 2021 +130.2  avg +26/trade
+  The average is carried by a few big NFP moves (2017, 2021). It loses in 2011, 2012 and 2020, so it is a lead, not a rule.
+  Distance 80 with TP400/SL150 was positive in 4 of 6 years but lost 111/trade in 2011 and 124 in 2020.
+
+Not redone (already covered, nothing positive): buy stops, buy limits, flat straddles - see SELL_AND_PENDING_FINDINGS.txt (695 variants).
+Not done: other ForexFactory events (no access to the calendar here); scoring on the stats thread's trades.
+Next if wanted: the real ForexFactory dates (Nasif can export the calendar, or use a Bright Data fetch) plus ECB/CPI/FOMC days,
+which would roughly triple the trades per year and make the 40-pt trailing straddle testable properly.
+Raw table: news_straddle_raw.txt; script: news_straddle.py(.txt).

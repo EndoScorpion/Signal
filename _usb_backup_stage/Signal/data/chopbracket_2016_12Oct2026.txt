@@ -1,0 +1,61 @@
+=== ChopBracket_h1a 2016 M15 ===
+  Total trades      : 431
+  Win rate          : 54.3%  (234W / 197L)
+  Net PnL           : $    -43.95
+  PF estimate       : 0.846
+  Max closed-DD     : $   44.25  (0.44% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.846  [FAIL]
+  *** FAIL ***
+=== ChopBracket_h1b 2016 M15 ===
+  Total trades      : 455
+  Win rate          : 61.1%  (278W / 177L)
+  Net PnL           : $    -74.00
+  PF estimate       : 0.652
+  Max closed-DD     : $   74.63  (0.75% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.652  [FAIL]
+  *** FAIL ***
+=== ChopBracket_h1c 2016 M15 ===
+  Total trades      : 211
+  Win rate          : 66.8%  (141W / 70L)
+  Net PnL           : $    -23.16
+  PF estimate       : 0.700
+  Max closed-DD     : $   24.76  (0.25% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.700  [FAIL]
+  *** FAIL ***
+=== ChopBracket_h1a_brk 2016 M15 ===
+  Total trades      : 1192
+  Win rate          : 47.2%  (563W / 629L)
+  Net PnL           : $   -199.33
+  PF estimate       : 0.775
+  Max closed-DD     : $  206.91  (2.07% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.775  [FAIL]
+  *** FAIL ***
+=== ChopBracket_h1b_brk 2016 M15 ===
+  Total trades      : 968
+  Win rate          : 51.9%  (502W / 466L)
+  Net PnL           : $   -113.23
+  PF estimate       : 0.817
+  Max closed-DD     : $  135.98  (1.36% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.817  [FAIL]
+  *** FAIL ***
+=== ChopBracket_h1c_brk 2016 M15 ===
+  Total trades      : 960
+  Win rate          : 53.1%  (510W / 450L)
+  Net PnL           : $    -85.58
+  PF estimate       : 0.870
+  Max closed-DD     : $  128.89  (1.29% of $10000 deposit)
+  Hour  Trades   Wins  Losses     WR%    Net PnL
+  Day          Trades   Wins  Losses     WR%    Net PnL
+  PF >= 1.10   : 0.870  [FAIL]
+  *** FAIL ***
+DONE

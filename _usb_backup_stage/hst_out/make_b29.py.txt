@@ -1,0 +1,38 @@
+# make_b29.py - Nasif's script (2026-10-11 15:38). ONLY the two anchors were adapted to this PC's b28
+# (the b28 here has no 'ChaosNeedDown' / 'FilterWpr'; its gates are Gates28()). Inserted code is verbatim.
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('extern double ChopMax=61.8;\n','''extern double ChopMax=61.8;
+extern bool   UseFracBreakGate=0;
+extern int    FracLook=30;
+extern int    FracWprPeriod=14;
+extern double FracWprSell=-20;
+extern int    FracWprBars=3;
+extern bool   UseFracFailGate=0;
+extern int    FracRecent=8;
+extern double FailWprHigh=-20;
+extern bool   UseDailyDDFreeze=0;
+extern double DailyDDPct=2.0;
+''')
+rep('/*b27*/ if(!Gates28()){ return(false); } /*b28*/','/*b27*/ if(!Gates28()){ return(false); } /*b28*/ if(!FilterFracBreak() || !FilterFracFail() || !FilterDailyDD()){ return(false); } /*b29*/')
+src=src.rstrip()+'''
+
+bool FilterFracBreak(){ if(UseFracBreakGate!=1){ return(true); } int tf=GateTF; double lo=0;
+   for(int k=3;k<=FracLook;k++){ double f=iFractals(Symbol(),tf,MODE_LOWER,k); if(f>0){ lo=f; break; } } if(lo<=0){ return(false); }
+   if(!(iClose(Symbol(),tf,1)<lo)){ return(false); }
+   if(!((iClose(Symbol(),tf,1)-2.0*iClose(Symbol(),tf,2)+iClose(Symbol(),tf,3))<0)){ return(false); }
+   if(!(iWPR(Symbol(),tf,FracWprPeriod,1)<=FracWprSell)){ return(false); }
+   for(int j=2;j<=FracWprBars+1;j++){ if(iWPR(Symbol(),tf,FracWprPeriod,j)>FracWprSell){ return(true); } } return(false); }
+bool FilterFracFail(){ if(UseFracFailGate!=1){ return(true); } int tf=GateTF;
+   for(int k=3;k<=FracRecent+2;k++){ if(iFractals(Symbol(),tf,MODE_UPPER,k)>0 && iWPR(Symbol(),tf,FracWprPeriod,k)>=FailWprHigh){ return(true); } } return(false); }
+int g29Day=-1; double g29Eq=0;
+bool FilterDailyDD(){ if(UseDailyDDFreeze!=1){ return(true); } int d=DayOfYear(); if(d!=g29Day){ g29Day=d; g29Eq=AccountEquity(); }
+   return(AccountEquity() > g29Eq*(1.0-DailyDDPct/100.0)); }
+'''
+src=src.replace('#property version   "1.00-claude_b28"','#property version   "1.00-claude_b29"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

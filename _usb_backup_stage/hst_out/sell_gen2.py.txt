@@ -1,0 +1,49 @@
+# Generation 2 for the sell branches: what separates winning from losing sells in the real 2019 run (b5)?
+# Hash tables by hour, weekday, month, parent buy type, and M15/H1 context at the sell's fill (closed bars).
+# usage: python3 sell_gen2.py <b5 journal> EURUSD5.hst EURUSD15.hst EURUSD60.hst
+import sys, re, datetime as D, collections
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO, ratio_tables as RT
+log, m5, m15, h1 = sys.argv[1:5]
+orders = EO.parse(log)
+# parent buy type for sell stops: the buy opened in the same second
+buys_at = {o['t_open']: o['typ'] for o in orders.values() if o['kind'] == 'buy'}
+sells = []
+for n, o in orders.items():
+    if o['kind'] == 'buy' or 'net' not in o: continue
+    t = o.get('t_fill', o['t_open']); sells.append(dict(n=n, typ=o['typ'], parent=buys_at.get(o['t_open'], '?'), t=t, net=o['net'], open=o['open'], exit=o['exit']))
+sells.sort(key=lambda s: s['t'])
+NET = np.array([s['net'] for s in sells]); T0 = np.array([s['t'].replace(tzinfo=D.timezone.utc).timestamp() for s in sells])
+def qtable(x, y):
+    ok = np.isfinite(x); xv = x[ok]; yv = y[ok]
+    if len(xv) < 25: return '   (n<25)'
+    q = np.quantile(xv, [0.2, 0.4, 0.6, 0.8]); b = np.digitize(xv, q); cells = []
+    for k in range(5):
+        m = b == k; cells.append('%3d/%3.0f%%/%6.1f' % (m.sum(), 100 * (yv[m] > 0).mean() if m.any() else 0, yv[m].mean() if m.any() else 0))
+    return ' | '.join(cells) + '   cuts: ' + ' '.join('%.3g' % v for v in q)
+def summ(m):
+    return '%4d  win%% %5.1f  avg %7.1f  total %8.0f' % (m.sum(), 100 * (NET[m] > 0).mean(), NET[m].mean(), NET[m].sum()) if m.any() else '   0'
+out = ['SELL GENERATION 2 on %d filled sells from %s' % (len(sells), log), '']
+for lab, key in [('by sell type', lambda s: s['typ']), ('by parent buy type (sell stops)', lambda s: s['parent'] if s['typ'].startswith('sell stop') else 'n/a'),
+                 ('by hour of fill', lambda s: '%02d' % s['t'].hour), ('by weekday (0=Mon)', lambda s: str(s['t'].weekday())), ('by month', lambda s: s['t'].strftime('%m'))]:
+    out.append(lab); groups = sorted(set(key(s) for s in sells))
+    for g in groups: m = np.array([key(s) == g for s in sells]); out.append('  %-18s %s' % (g, summ(m)))
+    out.append('')
+# context features at fill time
+out.append('CONTEXT at the sell fill (closed bars), quintiles low->high: n/win%/avg net, and Spearman rho with net (positive rho = higher value, better sell)')
+rows = []
+for tfname, tfsec, path in zip(('M5', 'M15', 'H1'), (300, 900, 3600), (m5, m15, h1)):
+    a = RT.read_hst(path); T = a['t']; F = RT.features(a)
+    idx = np.clip(np.searchsorted(T, T0 - tfsec, side='right') - 1, 70, len(T) - 1)
+    for name in F:
+        if name.startswith('p30') or name.startswith('p60'): continue
+        x = F[name][idx]; r, n = RT.spearman(x, NET)
+        if np.isfinite(r): rows.append((abs(r), r, '%s_%s' % (tfname, name), x))
+rows.sort(key=lambda z: -z[0])
+for ar, r, nm, x in rows[:30]: out.append('  %-26s rho %+.2f  %s' % (nm, r, qtable(x, NET)))
+# half-split check for the top 10: first half of 2019 vs second half
+out.append(''); out.append('STABILITY of the top 10: rho in Jan-Jun vs Jul-Dec')
+half = T0 < D.datetime(2019, 7, 1, tzinfo=D.timezone.utc).timestamp()
+for ar, r, nm, x in rows[:10]:
+    r1, _ = RT.spearman(x[half], NET[half]); r2, _ = RT.spearman(x[~half], NET[~half]); out.append('  %-26s H1 %+.2f  H2 %+.2f' % (nm, r1, r2))
+print('\n'.join(out))

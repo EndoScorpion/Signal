@@ -1,0 +1,175 @@
+ORDERS matched to history: 158  losers: 6
+Features tested: 62 (M15 and H1 each)
+
+Split: first half 79 orders (3 losers), second half 79 orders (3 losers)
+
+UNIVARIATE: Spearman r(feature, net pts). Significance needs |r| > 0.16 (all), 0.23 (half)
+feature            r_all  r_1st  r_2nd
+m15_volrel           0.14   0.19   0.13
+h1_red3             -0.14   0.00  -0.20
+m15_range            0.14   0.12   0.15
+m15_prv              0.13   0.13   0.12
+m15_rsi              0.12   0.08   0.15
+m15_accel            0.11   0.15   0.06
+m15_slope_stoch      0.10   0.10   0.11
+m15_mmr              0.10   0.01   0.15
+h1_rsi               0.10   0.20   0.01
+m15_slope9           0.10   0.04   0.14
+h1_c_e50             0.10   0.27  -0.05
+h1_slope50           0.10   0.27  -0.05
+m15_minslope         0.09   0.01   0.16
+m15_sara             0.09   0.11   0.06
+h1_macd              0.09   0.25  -0.03
+h1_sara_prv          0.09   0.21   0.00
+m15_c_e20            0.09   0.07   0.11
+m15_slope20          0.09   0.07   0.11
+h1_macdh            -0.09  -0.10  -0.09
+m15_green3           0.08  -0.03   0.24
+m15_body3            0.08   0.01   0.15
+h1_range             0.08   0.11   0.05
+h1_prv               0.08   0.11   0.05
+m15_atr             -0.08  -0.08  -0.07
+m15_vol              0.08   0.17   0.00
+h1_ssr20_50          0.07   0.17  -0.01
+m15_maxslope         0.07   0.02   0.11
+m15_macdh            0.07  -0.13   0.25
+m15_slopeavg         0.07   0.03   0.10
+h1_minslope          0.07   0.05   0.07
+m15_candle_run       0.07  -0.05   0.18
+m15_roa              0.06   0.12  -0.00
+h1_slope9            0.06   0.12  -0.03
+h1_body3             0.06   0.02   0.10
+h1_atr              -0.06  -0.03  -0.11
+h1_stochKD           0.06   0.06   0.05
+m15_c_e50            0.06   0.10   0.02
+m15_slope50          0.06   0.10   0.02
+h1_slopeavg          0.06   0.19  -0.05
+h1_sara              0.05   0.14  -0.03
+m15_stochD           0.05  -0.11   0.21
+h1_candle_run        0.05   0.01   0.06
+h1_maxslope         -0.05   0.12  -0.19
+h1_slope_stoch       0.05   0.18  -0.06
+h1_ssr9_50           0.05   0.15  -0.02
+h1_c_e20             0.05   0.19  -0.05
+h1_slope20           0.05   0.19  -0.05
+m15_sara_prv         0.05   0.02   0.07
+h1_stochK            0.05   0.11  -0.02
+h1_accel             0.04   0.06   0.04
+m15_stochK           0.04  -0.07   0.11
+h1_vol               0.03   0.08  -0.03
+m15_macd             0.03   0.06  -0.01
+m15_stochKD          0.02   0.20  -0.12
+h1_green3           -0.02   0.02  -0.07
+h1_volrel            0.01   0.05  -0.05
+h1_mmr               0.01   0.12  -0.03
+h1_roa               0.01   0.06  -0.02
+h1_stochD            0.01   0.05  -0.01
+m15_ssr9_50          0.01  -0.05   0.05
+(a real effect keeps the same sign and size in both halves)
+
+LOSERS: percentile of each loser among winners (0 = below all winners, 100 = above all). Pattern = all losers on one side.
+m15_red3           [0, 0, 0, 0, 0, 0]
+m15_green3         [0, 0, 0, 0, 0, 0]
+h1_green3          [0, 0, 0, 0, 0, 0]
+h1_body3           [8, 11, 11, 24, 1, 30]
+h1_candle_run      [11, 11, 11, 52, 1, 11]
+h1_red3            [0, 0, 0, 0, 99, 0]
+m15_macdh          [28, 16, 31, 5, 17, 10]
+m15_stochK         [19, 11, 11, 38, 6, 23]
+m15_sara_prv       [14, 23, 26, 26, 7, 38]
+m15_stochD         [54, 18, 28, 31, 5, 7]
+h1_stochKD         [3, 49, 11, 29, 3, 53]
+m15_slopeavg       [35, 22, 33, 46, 14, 10]
+m15_slope9         [12, 16, 13, 30, 2, 99]
+h1_accel           [15, 32, 7, 20, 6, 99]
+m15_slope20        [13, 18, 13, 37, 3, 96]
+
+PATTERN BUCKETS (win% and avg net per bucket; n<30 is TOO FEW)
+m15 candle run (+ = green in a row, - = red)
+  -2             n=  2 win%=100 avg_net=    1.0  TOO FEW
+  -1             n= 10 win%=100 avg_net=    1.5  TOO FEW
+  1              n= 77 win%= 96 avg_net=  -10.4
+  2              n= 35 win%= 91 avg_net=  -23.9
+  3              n= 17 win%=100 avg_net=    1.6  TOO FEW
+  4              n= 17 win%=100 avg_net=    1.9  TOO FEW
+m15 RSI
+  30-50          n= 12 win%= 92 avg_net=  -23.8  TOO FEW
+  50-70          n=118 win%= 96 avg_net=  -11.2
+  >70            n= 28 win%=100 avg_net=    1.6  TOO FEW
+m15 stoch K
+  20-50          n= 12 win%= 92 avg_net=  -23.8  TOO FEW
+  50-80          n= 38 win%= 89 avg_net=  -30.1
+  >80            n=108 win%= 99 avg_net=   -1.3
+m15 EMA20 slope
+  down           n= 12 win%= 92 avg_net=  -23.8  TOO FEW
+  up             n=146 win%= 97 avg_net=   -8.7
+m15 MMR (min/max slope)
+  -1..0          n=140 win%= 96 avg_net=   -9.2
+  -2..-1         n= 15 win%=100 avg_net=    1.1  TOO FEW
+  <-2            n=  3 win%= 67 avg_net=  -99.0  TOO FEW
+m15 SARA/PRV
+  neg            n= 10 win%=100 avg_net=    1.5  TOO FEW
+  pos            n=148 win%= 96 avg_net=  -10.7
+h1 candle run (+ = green in a row, - = red)
+  -4             n=  1 win%=100 avg_net=    1.0  TOO FEW
+  -3             n=  2 win%= 50 avg_net= -149.0  TOO FEW
+  -2             n=  3 win%=100 avg_net=    1.0  TOO FEW
+  -1             n= 12 win%=100 avg_net=    1.2  TOO FEW
+  1              n= 66 win%= 94 avg_net=  -16.6
+  2              n= 34 win%= 97 avg_net=   -6.8
+  3              n= 30 win%=100 avg_net=    1.2
+  4              n= 10 win%=100 avg_net=    1.1  TOO FEW
+h1 RSI
+  30-50          n= 47 win%= 96 avg_net=  -11.4
+  50-70          n= 90 win%= 96 avg_net=  -11.8
+  >70            n= 21 win%=100 avg_net=    1.8  TOO FEW
+h1 stoch K
+  20-50          n= 24 win%=100 avg_net=    1.6  TOO FEW
+  50-80          n= 43 win%= 93 avg_net=  -19.6
+  <20            n= 10 win%= 90 avg_net=  -28.8  TOO FEW
+  >80            n= 81 win%= 98 avg_net=   -5.8
+h1 EMA20 slope
+  down           n= 37 win%= 95 avg_net=  -14.9
+  up             n=121 win%= 97 avg_net=   -8.4
+h1 MMR (min/max slope)
+  -1..0          n=104 win%= 95 avg_net=  -12.9
+  -2..-1         n= 42 win%= 98 avg_net=   -5.9
+  <-2            n= 12 win%=100 avg_net=    2.0  TOO FEW
+h1 SARA/PRV
+  neg            n= 18 win%= 94 avg_net=  -15.3  TOO FEW
+  pos            n=140 win%= 96 avg_net=   -9.2
+hour of day (server)
+  0              n=  3 win%=100 avg_net=    1.0  TOO FEW
+  1              n=  1 win%=100 avg_net=    6.0  TOO FEW
+  2              n= 10 win%= 80 avg_net=  -58.5  TOO FEW
+  3              n=  8 win%=100 avg_net=    1.6  TOO FEW
+  4              n=  9 win%= 89 avg_net=  -32.3  TOO FEW
+  5              n=  6 win%=100 avg_net=    1.8  TOO FEW
+  6              n=  1 win%=100 avg_net=    1.0  TOO FEW
+  7              n=  2 win%=100 avg_net=    2.0  TOO FEW
+  8              n=  8 win%=100 avg_net=    2.7  TOO FEW
+  9              n= 25 win%= 96 avg_net=  -10.3  TOO FEW
+  10             n= 11 win%=100 avg_net=    1.0  TOO FEW
+  11             n=  5 win%=100 avg_net=    2.0  TOO FEW
+  12             n= 10 win%=100 avg_net=    1.0  TOO FEW
+  13             n=  8 win%=100 avg_net=    1.6  TOO FEW
+  14             n=  9 win%=100 avg_net=    1.6  TOO FEW
+  15             n=  8 win%=100 avg_net=    1.0  TOO FEW
+  16             n=  8 win%=100 avg_net=    1.0  TOO FEW
+  17             n=  6 win%= 83 avg_net=  -49.0  TOO FEW
+  18             n= 13 win%= 92 avg_net=  -21.2  TOO FEW
+  19             n=  3 win%=100 avg_net=    1.0  TOO FEW
+  20             n=  1 win%=100 avg_net=    1.0  TOO FEW
+  21             n=  3 win%=100 avg_net=    1.0  TOO FEW
+
+MULTIVARIATE: ridge logistic regression, win vs loss. AUC 0.5 = coin flip, 1.0 = perfect. Fit on 1st half, test on 2nd half.
+feature set                          n_feat  AUC_fit  AUC_test
+EA-style SARA/PRV/MMR (M15+H1)          30     0.95      0.21
+Classic (RSI/Stoch/MACD/ATR/vol)        22     0.91      0.41
+All features                            62     0.98      0.31
+  largest weights (fit half): m15_volrel -0.20, m15_stochKD +0.20, m15_stochK +0.18, h1_stochKD +0.15, h1_slope_stoch -0.15, m15_green3 +0.13, h1_minslope -0.12, h1_maxslope +0.12
+Reverse (fit 2nd half, test 1st):
+EA-style SARA/PRV/MMR (M15+H1)          30     0.96      0.20
+Classic (RSI/Stoch/MACD/ATR/vol)        22     0.96      0.48
+All features                            62     0.97      0.45
+10 random numbers                       10     0.91      0.46   <- control: pure noise features

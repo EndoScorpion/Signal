@@ -1,0 +1,24 @@
+GEN-3 BREEDING (mix-and-match winning gates), b33, settings only. Offline 2025-26 sells, baseline $148, best single gate ER $441.
+Ranked by worst half (stability):
+ B1 UseFdGate(100,1.30) + UseAHRateGate(50,0.025)          209 sells $507 (H1 288 / H2 219)  <- NEW BEST
+ B2 UseFdGate + UseChopGate + UseAHRateGate                 199 sells $478 (H1 259 / H2 219)
+ B3 UseChaosErGate(100,0.09) + UseUpFracNearGate(2.0)       231 sells $416 (H1 215 / H2 201)
+ B4 B1 + UseNoFriday                                        190 sells $452
+ B5 B1 + UseAccelSellGate                                   188 sells $446
+ B6 ChaosEr 0.09 + UseAccelSellGate                         259 sells $431
+Cross with 2017 proven ancestors: B1+UseZGate, B1+UseDailyRangeFilter(1.0), B3+UseZGate.
+Rules: run after GEN2, 2017 sp2 vs b22 12,426 first; protect winners (WIN_GEN3_*.set + .txt in winners\).
+
+CHAOS/RANDOMNESS OF THE WIN LOGIC ITSELF (b22 2025-26 trade records):
+- Win/loss sequence is NOT random: 35 runs vs 120 expected (z -11), lag-1 autocorr 0.72, streaks up to 20 wins / 16 losses.
+  61% of sells open within 10 min of the previous one = ladder bursts. 485 sells are really ~112 episodes.
+- SELF-CHALLENGE: a plain shuffle says the best chaos gate ($458) is far beyond luck (p<0.01), but a day-block shuffle that
+  keeps the bursts together gives p=0.12. So the chaos gates may be partly luck; trust only what wins on 2017-2021 in MT4.
+- NEW LOGIC from this: P&L by position inside a burst: 1st +$75, 2nd +$72, 3rd +$47, 4th +$6, 5th -$21, 6th+ -$30.
+  -> UseClusterCap (ClusterMax 4, ClusterWinMin 240). Test also 3 and 5. B7 = B1 + UseClusterCap.
+
+CHAOS GATE PATTERN MUTATIONS (how the threshold behaves over time), offline 2025-26:
+ fixed ER<=0.09 $441 (201/240) | vol-scaled ErMax/ATR-ratio $430 (194/235) | session 0.12 at 12-18h else 0.08 $420 (183/237)
+ adaptive 0.8x 5-day median $404 | 1.0x $347 | vol-multiplied $299 (worse)
+ None beat fixed on this data, but vol-scaled should travel better to 2017-2021 (different volatility). -> ErMode 1 / 2 in b33.
+ B8 = ChaosEr(0.09) ErMode=1   B9 = ErMode=2   B10 = B1 + ChaosEr ErMode=1

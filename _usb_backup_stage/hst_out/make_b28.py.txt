@@ -1,0 +1,42 @@
+# make_b28.py - b28 = b27 + Williams %R and Bill Williams "chaos" gates for NEW sells (closed bars, all OFF by default).
+import sys
+src=open(sys.argv[1],encoding='latin-1').read()
+def rep(a,b):
+    global src
+    assert src.count(a)==1, 'anchor not unique/missing: '+a[:60]
+    src=src.replace(a,b)
+rep('extern double LockLossPts=280;\n','''extern double LockLossPts=280;
+// b28 Williams %R gate on WprTF (closed bar 1): 1 = sell only if %R < WprMax (downside momentum), 2 = sell only if %R > WprMin (overbought fade)
+extern int    UseWprGate=0;
+extern int    WprPeriod=14;
+extern int    WprTF=15;
+extern double WprMax=-50;
+extern double WprMin=-20;
+// b28 chaos gates on ChaosTF (Bill Williams): Alligator bearish (lips<teeth<jaw), Awesome Osc < 0, Accelerator Osc < 0
+extern bool   UseAlligatorGate=0;
+extern bool   UseAOGate=0;
+extern bool   UseACGate=0;
+extern int    ChaosTF=15;
+// b28 fractal-dimension gate: Choppiness Index(ChopPeriod) on ChaosTF must be < ChopMax (trending, low fractal dimension)
+extern bool   UseChopGate=0;
+extern int    ChopPeriod=14;
+extern double ChopMax=61.8;
+''')
+rep('/*b27*/','/*b27*/ if(!Gates28()){ return(false); } /*b28*/')
+src=src.rstrip()+'''
+
+//---- b28 Williams %R + chaos gates (closed bars only)
+bool Gates28(){
+   if(UseWprGate>0){ double w=iWPR(Symbol(),WprTF,WprPeriod,1); if(UseWprGate==1 && w>=WprMax){ return(false); } if(UseWprGate==2 && w<=WprMin){ return(false); } }
+   if(UseAlligatorGate==1){ double jaw=iAlligator(Symbol(),ChaosTF,13,8,8,5,5,3,MODE_SMMA,PRICE_MEDIAN,MODE_GATORJAW,1), teeth=iAlligator(Symbol(),ChaosTF,13,8,8,5,5,3,MODE_SMMA,PRICE_MEDIAN,MODE_GATORTEETH,1), lips=iAlligator(Symbol(),ChaosTF,13,8,8,5,5,3,MODE_SMMA,PRICE_MEDIAN,MODE_GATORLIPS,1);
+      if(!(lips<teeth && teeth<jaw)){ return(false); } }
+   if(UseAOGate==1 && iAO(Symbol(),ChaosTF,1)>=0){ return(false); }
+   if(UseACGate==1 && iAC(Symbol(),ChaosTF,1)>=0){ return(false); }
+   if(UseChopGate==1){ int n=MathMax(2,ChopPeriod); double s=0; for(int i=1;i<=n;i++){ s+=iATR(Symbol(),ChaosTF,1,i); }
+      double hh=iHigh(Symbol(),ChaosTF,iHighest(Symbol(),ChaosTF,MODE_HIGH,n,1)), ll=iLow(Symbol(),ChaosTF,iLowest(Symbol(),ChaosTF,MODE_LOW,n,1));
+      if(hh-ll>0 && 100.0*MathLog10(s/(hh-ll))/MathLog10(n)>=ChopMax){ return(false); } }
+   return(true); }
+'''
+src=src.replace('#property version   "1.00-claude_b27"','#property version   "1.00-claude_b28"')
+open(sys.argv[2],'w',encoding='latin-1').write(src)
+print('written',sys.argv[2])

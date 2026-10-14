@@ -1,0 +1,19 @@
+GEN-2 CLONE + MUTATE (b32 settings only, no rebuild). Run BEFORE any other test. 2017 sp2 vs b22 12,426 pts.
+Report any winner immediately; winners -> 2019/2020/2021 + spread 5, then mutate again (gen 3).
+
+A. Z-SCORE GATE (UseZGate=1; winner ZMax=1.0, ZPeriod=20)
+ A1 ZMax 0.8   A2 ZMax 1.2   A3 ZMax 1.5
+ A4 ZPeriod 14 A5 ZPeriod 30 A6 ZPeriod 50
+ A7 ZTF 30 (M30)  A8 ZTF 60 (H1)
+C. DAILY RANGE FILTER (UseDailyRangeFilter=1; winner MaxRangeAtrMultiplier=1.0)
+ C1 0.8  C2 0.9  C3 1.1   C4 RangeAtrPeriod 10  C5 RangeAtrPeriod 20
+F. FRACTAL BUY (UseFracBuy=1)
+ F1 FracBuyTP/SL 300/150  F2 400/300  F3 200/200  F4 FracWprBuy -70  F5 -90  F6 FracBuyRegime 0
+X. CROSSES OF WINNERS (best value of each from above)
+ X1 Z + DailyRange   X2 Z + FracBuy   X3 DailyRange + FracBuy   X4 Z + DailyRange + FracBuy
+ X5 X4 + UseChaosErGate (ErPer 100, ErMax 0.09)   X6 X4 + ChaosEr 0.09 + UseAHRateGate (AHRateMax 0.025)
+Then the b32 queue in B32_ANALYSIS.txt.
+
+PROTECTION RULES: never overwrite a winner. Save each winning setfile as WIN_GEN<n>_<name>.set (+ .txt copy) in hst_out\winners\.
+Parent b32 source frozen as winners\GEN1_b32_parent.mq4.txt. Each generation gets its own GEN<n>_MUTATIONS.txt.
+Stop after 3 generations, or when a generation fails to beat its parent in 6 of 8 periods.

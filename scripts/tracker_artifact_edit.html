@@ -1,0 +1,67 @@
+<title>Tester Tracker</title>
+<style>
+/* layout: one status strip on top, queue rows below, results table last */
+:root{--bg:#f3f4f2;--panel:#ffffff;--fg:#1d2420;--mute:#5d6862;--line:#d9ddd8;--accent:#1f6f5b;--warn:#a86a00;--bad:#a8322b;--good:#1f6f5b;--track:#e3e7e2;--mono:ui-monospace,"Cascadia Mono",Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141815;--panel:#1c211e;--fg:#e4e9e5;--mute:#98a39c;--line:#2d352f;--accent:#4fb89a;--warn:#e0a437;--bad:#e5786f;--good:#4fb89a;--track:#2a312c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141815;--panel:#1c211e;--fg:#e4e9e5;--mute:#98a39c;--line:#2d352f;--accent:#4fb89a;--warn:#e0a437;--bad:#e5786f;--good:#4fb89a;--track:#2a312c;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif;padding-inline:16px;padding-block:20px;max-width:760px;margin-inline:auto}
+h1{font-size:20px;font-weight:600;margin:0 0 2px}
+.sub{color:var(--mute);font-size:13px;margin:0 0 16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pill{font-size:12px;padding:2px 10px;border-radius:99px;border:1px solid var(--line);color:var(--mute)}
+.pill.run{color:var(--accent);border-color:var(--accent)}.pill.wait{color:var(--warn);border-color:var(--warn)}.pill.done{color:var(--good);border-color:var(--good)}
+.bar{height:12px;background:var(--track);border-radius:6px;overflow:hidden;margin:10px 0 6px}
+.fill{height:100%;background:var(--accent);width:0;transition:width .6s}
+.meta{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.meta b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+.q{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.q div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
+.q .on{border-color:var(--accent)}.q .ok{border-color:var(--good)}
+.q strong{display:block;font-size:15px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-weight:500}
+.neg{color:var(--bad)}.pos{color:var(--good)}
+.empty{color:var(--mute);font-size:13px;padding:6px 0}
+.ft{color:var(--mute);font-size:12px;font-family:var(--mono)}
+</style>
+<h1>Tester tracker</h1>
+<p class="sub" id="sub">Waiting for the first status update</p>
+<div class="panel">
+  <div class="row"><strong id="batch">Batch</strong><span class="pill wait" id="state">waiting</span></div>
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="pb"><div class="fill" id="fill"></div></div>
+  <div class="meta"><span><b id="done">0</b> of <b id="total">0</b> done</span><span>ETA <b id="eta">n/a</b></span><span>Free RAM <b id="ram">n/a</b></span><span>Updated <b id="upd">n/a</b></span></div>
+</div>
+<div class="panel"><div class="q" id="queue"></div></div>
+<div class="panel"><div class="tw"><table><thead><tr><th>Test</th><th>Trades</th><th>Profit</th><th>PF</th><th>DD %</th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="none">No finished tests yet.</div></div></div>
+<div class="ft" id="ft"></div>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  function render(s){
+    if(!s)return;
+    $('sub').textContent=s.note||'';
+    $('batch').textContent=s.batch||'Batch';
+    var st=s.state||'waiting';var p=$('state');p.textContent=st;p.className='pill '+(st==='running'?'run':st==='done'?'done':'wait');
+    var tests=s.tests||[];var done=tests.filter(function(t){return t.status==='done'}).length;
+    $('done').textContent=done;$('total').textContent=tests.length;
+    var pct=tests.length?Math.round(100*done/tests.length):0;
+    $('fill').style.width=pct+'%';$('pb').setAttribute('aria-valuenow',pct);
+    $('eta').textContent=s.eta||'n/a';$('ram').textContent=s.ram||'n/a';$('upd').textContent=s.updated||'n/a';
+    var q=$('queue');q.textContent='';
+    tests.forEach(function(t){var d=document.createElement('div');d.className=t.status==='done'?'ok':t.status==='running'?'on':'';var a=document.createElement('strong');a.textContent=t.name;var b=document.createElement('span');b.textContent=t.status==='running'?'Running':t.status==='done'?'Done':'Queued';d.appendChild(a);d.appendChild(b);q.appendChild(d)});
+    var rows=$('rows');rows.textContent='';var any=false;
+    tests.forEach(function(t){if(t.status!=='done')return;any=true;var tr=document.createElement('tr');
+      [t.name,t.trades,t.profit,t.pf,t.dd].forEach(function(v,i){var td=document.createElement('td');td.textContent=(v===undefined||v===null)?'':v;if(i===2&&typeof v==='number')td.className=v<0?'neg':'pos';tr.appendChild(td)});rows.appendChild(tr)});
+    $('none').hidden=any;
+    $('ft').textContent=s.footer||'';
+  }
+  claude.use('db').then(function(db){
+    if(!db){$('sub').textContent='Live updates are unavailable in this view.';return}
+    db.doc('tracker/status').onSnapshot(function(snap){try{render(snap.exists?snap.data():null)}catch(e){}},function(){$('sub').textContent='Live updates stopped. Reload the page.'});
+  });
+})();
+</script>

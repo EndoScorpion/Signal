@@ -1,0 +1,33 @@
+# Score the generation-2 SELL filters (derived from 2019) on any b5/b6 journal, with FIXED thresholds (no re-fitting).
+# usage: python3 sell_filters.py EURUSD60.hst <journal> [<journal>...]
+import sys, datetime as D, collections
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO, ratio_tables as RT
+h1 = sys.argv[1]; logs = sys.argv[2:]
+a = RT.read_hst(h1); T = a['t']; F = RT.features(a)
+out = []
+for log in logs:
+    orders = EO.parse(log); sells = [o for o in orders.values() if o['kind'] != 'buy' and 'net' in o]
+    t = np.array([o.get('t_fill', o['t_open']).replace(tzinfo=D.timezone.utc).timestamp() for o in sells]); net = np.array([o['net'] for o in sells])
+    hour = np.array([o.get('t_fill', o['t_open']).hour for o in sells]); wd = np.array([o.get('t_fill', o['t_open']).weekday() for o in sells])
+    idx = np.clip(np.searchsorted(T, t - 3600, side='right') - 1, 70, len(T) - 1)
+    fib = F['fibpos50'][idx]; dfl = F['dfl50'][idx]; bsd = F['p10_bsd'][idx]; mmr = F['p15_MMR'][idx]
+    filt = collections.OrderedDict([
+        ('ALL SELLS', np.ones(len(net), bool)),
+        ('F1 H1 fib position < 0.6 (price in lower 60% of 50-bar range)', fib < 0.6),
+        ('F2 H1 fib position < 0.4', fib < 0.4),
+        ('F3 H1 distance from 50-bar low < 360 pts', dfl < 360),
+        ('F4 bars since H1 stoch(10) <= 20 is < 20', bsd < 20),
+        ('F5 no sells 19:00-01:59 server time', ~((hour >= 19) | (hour <= 1))),
+        ('F6 not Wednesday', wd != 2),
+        ('F1 + F5', (fib < 0.6) & ~((hour >= 19) | (hour <= 1))),
+        ('F1 + F4', (fib < 0.6) & (bsd < 20)),
+        ('F1 + F4 + F5', (fib < 0.6) & (bsd < 20) & ~((hour >= 19) | (hour <= 1))),
+        ('F2 + F5', (fib < 0.4) & ~((hour >= 19) | (hour <= 1))),
+    ])
+    out.append('=== %s: %d filled sells, avg net %.1f' % (log, len(net), net.mean()))
+    for name, m in filt.items():
+        d = ~m
+        out.append('  %-62s keep %4d  win%% %5.1f  avg %7.1f  total %8.0f | dropped %4d avg %7.1f' % (name, m.sum(), 100 * (net[m] > 0).mean() if m.any() else 0, net[m].mean() if m.any() else 0, net[m].sum(), d.sum(), net[d].mean() if d.any() else 0))
+    out.append('')
+print('\n'.join(out))

@@ -1,0 +1,13 @@
+10:09:42 OK b25_base_2017 in 1 min -> C:\Users\endos\Desktop\hst_out\b25_base_2017.htm
+10:10:55 OK b25_mom15_2017 in 1.2 min -> C:\Users\endos\Desktop\hst_out\b25_mom15_2017.htm
+10:28:42 SKIP b25_base_2017 (report exists)
+10:28:42 SKIP b25_mom15_2017 (report exists)
+10:29:34 OK b25_mom60_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b25_mom60_2017.htm
+10:29:36 NO REPORT - check C:\Users\endos\Desktop\mt4_tester\tester\logs
+10:30:17 BUSY: portable tester already running (pid 27072)
+10:31:07 BUSY: portable tester already running (pid 22452)
+10:46:10 BUSY: portable tester already running (pid 14144)
+10:49:32 OK b25_atrb15_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b25_atrb15_2017.htm
+10:50:25 OK b25_atrb20_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b25_atrb20_2017.htm
+10:51:18 OK b25_atrb30_2017 in 0.9 min -> C:\Users\endos\Desktop\hst_out\b25_atrb30_2017.htm
+10:51:18 BATCH DONE

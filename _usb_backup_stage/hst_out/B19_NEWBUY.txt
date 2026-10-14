@@ -1,0 +1,15 @@
+b19_off_2019 net=55.98 | buy 0 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-3267
+b19_lr_2017 net=253.27 | buy 34, 44.1%, avg 0.25, tot 8.59 | sell 176, 74.4%, avg 1.39, tot 244.61 | ACpts=23437
+b19_lr_2019 net=72.68 | buy 129, 41.9%, avg 0.13, tot 16.81 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-2758
+b19_lr_2020 net=99.02 | buy 47, 44.7%, avg -0.05, tot -2.43 | sell 136, 64.7%, avg 0.75, tot 101.4 | ACpts=8255
+b19_lr_2021 net=-9.06 | buy 160, 46.9%, avg 0.2, tot 32.06 | sell 921, 50.5%, avg -0.04, tot -39.86 | ACpts=-10635
+b19_ex_2017 net=257.31 | buy 27, 48.1%, avg 0.47, tot 12.63 | sell 176, 74.4%, avg 1.39, tot 244.61 | ACpts=23904
+b19_ex_2019 net=38.91 | buy 57, 36.8%, avg -0.3, tot -17 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-5487
+b19_ex_2020 net=103.03 | buy 33, 45.5%, avg 0.05, tot 1.55 | sell 136, 64.7%, avg 0.75, tot 101.4 | ACpts=8782
+b19_ex_2021 net=-36.06 | buy 61, 42.6%, avg 0.08, tot 4.98 | sell 921, 50.5%, avg -0.04, tot -39.86 | ACpts=-12444
+b19_lr_tp240_2019 net=56.00 | buy 130, 37.7%, avg 0, tot 0.12 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-4435
+b19_lr_tp360_2019 net=61.81 | buy 129, 41.9%, avg 0.05, tot 5.94 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-3845
+b19_lr_b12_2019 net=51.30 | buy 194, 40.7%, avg -0.02, tot -4.5 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-5481
+b19_lr_b18_2019 net=74.57 | buy 100, 44%, avg 0.19, tot 18.68 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-2308
+b19_lr_c23_2019 net=79.80 | buy 130, 40.8%, avg 0.18, tot 23.82 | sell 985, 52.4%, avg 0.06, tot 57.04 | ACpts=-2055
+b19_lr_c23_2021 net=-7.03 | buy 160, 47.5%, avg 0.21, tot 33.94 | sell 921, 50.5%, avg -0.04, tot -39.86 | ACpts=-10432

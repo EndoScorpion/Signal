@@ -1,0 +1,16 @@
+Master clone-hub Claude Code CLI session (backup of launch command)
+
+Session id : f7efebdd-8d88-4823-86eb-cefeb3cd5d0c
+Folder     : C:\Users\endos
+Transcript : C:\Users\endos\.claude\projects\C--Users-endos\f7efebdd-8d88-4823-86eb-cefeb3cd5d0c.jsonl
+
+Resume (PowerShell or cmd):
+  cd C:\Users\endos
+  claude --resume f7efebdd-8d88-4823-86eb-cefeb3cd5d0c
+
+Protected launcher (relaunches on exit, blue window titled MASTER):
+  C:\Users\endos\MT4_Backtest\master_resume.cmd
+
+Fallback (other recent clone-tracking session, folder C:\Windows\system32):
+  cd C:\Windows\system32
+  claude --resume a286dceb-6fe5-492f-856e-25fdaf1fd9d4

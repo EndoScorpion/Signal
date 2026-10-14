@@ -1,0 +1,49 @@
+// SlopeTable.mqh - b37 keyed "hashtable" of average M1 SMA slopes + win/loss table + optional slope gate. All OFF by default.
+// Columns = SMA periods 2, 5, 10, 15 ... STMaxPer (step 5, max 100 = 21 columns). Slope = SMA(bar1)-SMA(bar2) in points, closed M1 bars.
+// Table 1 rows (STKeyMode): 0 hour (24), 1 weekday (7), 2 ER(100) M15 regime (5 bands of 0.05); last row = ALL.
+// Table 2: running average slope at each closed SELL's entry bar, split WIN_SELLS / LOSS_SELLS rows (+ counts) and a WIN_EDGE row = win avg - loss avg, per SMA and per G group. Both dumped to MQL4\Files\slope_table.csv on deinit.
+extern bool   UseSlopeTable=0;
+extern int    STKeyMode=0;
+extern int    STMaxPer=100;
+extern bool   STDumpCsv=1;
+extern bool   UseM1SlopeGate=0;  // sell only if M1 SMA(M1SlopePer) slope >= M1SlopeMin points (2025-26: wins have higher slope at every period; SMA 70-100 best)
+extern int    M1SlopePer=100;
+extern double M1SlopeMin=-0.20;
+#define ST_MAXC 21
+double adSum[2][4][ST_MAXC];   // [win/loss][0=ADX,1=+DI minus -DI,2=ATR points,3=volume / its SMA(period)][period col], M1, periods 5,5,10..100 (col0 uses 5)
+double stSum[25][ST_MAXC]; int stCnt[25][ST_MAXC]; double wlSum[2][ST_MAXC]; int wlCnt[2]; datetime stLastBar=0; int stHist=0;
+int StCols(){ return((int)MathMin(ST_MAXC,2+MathMax(0,(STMaxPer-5)/5))); }
+int StPer(int c){ if(c==0){ return(2); } return(5*c); }
+double StSlope(int per,int sh){ return((iMA(Symbol(),PERIOD_M1,per,0,MODE_SMA,PRICE_CLOSE,sh)-iMA(Symbol(),PERIOD_M1,per,0,MODE_SMA,PRICE_CLOSE,sh+1))/Point); }
+int StRows(){ if(STKeyMode==1){ return(7); } if(STKeyMode==2){ return(5); } return(24); }
+int StKey(){ datetime t=iTime(Symbol(),PERIOD_M1,1);
+   if(STKeyMode==1){ return(TimeDayOfWeek(t)); }
+   if(STKeyMode==2){ double s=0; for(int i=1;i<=100;i++){ s+=MathAbs(iClose(Symbol(),PERIOD_M15,i)-iClose(Symbol(),PERIOD_M15,i+1)); }
+      double er=(s>0)?MathAbs(iClose(Symbol(),PERIOD_M15,1)-iClose(Symbol(),PERIOD_M15,101))/s:0; return((int)MathMin(4,MathFloor(er/0.05))); }
+   return(TimeHour(t)); }
+void SlopeTableTick(){ datetime b=iTime(Symbol(),PERIOD_M1,0); if(b==stLastBar){ return; } stLastBar=b;
+   int k=StKey(), all=StRows(), nc=StCols();
+   for(int c=0;c<nc;c++){ double sl=StSlope(StPer(c),1); stSum[k][c]+=sl; stCnt[k][c]++; stSum[all][c]+=sl; stCnt[all][c]++; }
+   int ht=OrdersHistoryTotal();
+   for(int j=stHist;j<ht;j++){ if(!OrderSelect(j,SELECT_BY_POS,MODE_HISTORY) || OrderSymbol()!=Symbol() || OrderType()!=OP_SELL){ continue; }
+      int w=(OrderProfit()+OrderSwap()+OrderCommission()>0)?0:1; int sh=iBarShift(Symbol(),PERIOD_M1,OrderOpenTime())+1;
+      for(int c2=0;c2<nc;c2++){ wlSum[w][c2]+=StSlope(StPer(c2),sh); } for(int c5=0;c5<nc;c5++){ int ap=MathMax(5,StPer(c5)); adSum[w][0][c5]+=iADX(Symbol(),PERIOD_M1,ap,PRICE_CLOSE,MODE_MAIN,sh); adSum[w][1][c5]+=iADX(Symbol(),PERIOD_M1,ap,PRICE_CLOSE,MODE_PLUSDI,sh)-iADX(Symbol(),PERIOD_M1,ap,PRICE_CLOSE,MODE_MINUSDI,sh); adSum[w][2][c5]+=iATR(Symbol(),PERIOD_M1,ap,sh)/Point; { double va=0; for(int vi=0;vi<ap;vi++){ va+=(double)iVolume(Symbol(),PERIOD_M1,sh+vi); } va/=ap; adSum[w][3][c5]+=(va>0?(double)iVolume(Symbol(),PERIOD_M1,sh)/va:1); } } wlCnt[w]++; }
+   stHist=ht; }
+double SlopeAvg(int row,int col){ return(stCnt[row][col]>0 ? stSum[row][col]/stCnt[row][col] : 0); }
+double SlopeGroupAvg(int row,int g){ int nc=StCols(); double t=0; int n=0; for(int q=3*g;q<MathMin(nc,3*g+3);q++){ t+=SlopeAvg(row,q); n++; } return(n>0?t/n:0); }   // G(g+1) = (slope a + slope b + slope c)/3, kept per key row
+bool M1SlopeOK(){ return(UseM1SlopeGate==0 || StSlope(M1SlopePer,1)>=M1SlopeMin); }
+void SlopeTableDump(){ int rows=StRows(), nc=StCols(); string hd="key"; for(int c=0;c<nc;c++){ hd+=",SMA"+IntegerToString(StPer(c)); } int ng=(nc+2)/3; for(int g=0;g<ng;g++){ hd+=",G"+IntegerToString(g+1)+"_SMA"+IntegerToString(StPer(3*g))+"-"+IntegerToString(StPer((int)MathMin(nc-1,3*g+2))); } hd+=",n";  // G = average of each 3 consecutive periods
+   int h=-1; if(STDumpCsv){ h=FileOpen("slope_table.csv",FILE_WRITE|FILE_TXT|FILE_ANSI); }
+   if(h!=INVALID_HANDLE){ FileWriteString(h,hd+"\n"); }
+   for(int r=0;r<=rows+3;r++){ string ln; int n; double v[ST_MAXC];
+      if(r<=rows){ ln=(r==rows)?"ALL":IntegerToString(r); for(int c1=0;c1<nc;c1++){ v[c1]=SlopeAvg(r,c1); ln+=","+DoubleToString(v[c1],3); } n=stCnt[r][0]; }
+      else if(r==rows+3){ ln="WIN_EDGE(win-loss)"; for(int c4=0;c4<nc;c4++){ v[c4]=(wlCnt[0]>0?wlSum[0][c4]/wlCnt[0]:0)-(wlCnt[1]>0?wlSum[1][c4]/wlCnt[1]:0); ln+=","+DoubleToString(v[c4],3); } n=wlCnt[0]+wlCnt[1]; }
+      else { int w=r-rows-1; ln=(w==0)?"WIN_SELLS":"LOSS_SELLS"; for(int c3=0;c3<nc;c3++){ v[c3]=(wlCnt[w]>0?wlSum[w][c3]/wlCnt[w]:0); ln+=","+DoubleToString(v[c3],3); } n=wlCnt[w]; }
+      for(int g2=0;g2<ng;g2++){ double gs=0; int gn=0; for(int q=3*g2;q<MathMin(nc,3*g2+3);q++){ gs+=v[q]; gn++; } ln+=","+DoubleToString(gn>0?gs/gn:0,3); }
+      ln+=","+IntegerToString(n); Print("b37 ",ln); if(h!=INVALID_HANDLE){ FileWriteString(h,ln+"\n"); } }
+   string nm[4]; nm[0]="ADX"; nm[1]="DI_SPREAD"; nm[2]="ATR"; nm[3]="VOL_REL";
+   for(int m=0;m<4;m++){ for(int w2=0;w2<3;w2++){ string l2=nm[m]+(w2==0?"_WIN":(w2==1?"_LOSS":"_EDGE")); double vv[ST_MAXC];
+      for(int c6=0;c6<nc;c6++){ double aw=wlCnt[0]>0?adSum[0][m][c6]/wlCnt[0]:0, al=wlCnt[1]>0?adSum[1][m][c6]/wlCnt[1]:0; vv[c6]=(w2==0?aw:(w2==1?al:aw-al)); l2+=","+DoubleToString(vv[c6],3); }
+      for(int g3=0;g3<ng;g3++){ double gs2=0; int gn2=0; for(int q2=3*g3;q2<MathMin(nc,3*g3+3);q2++){ gs2+=vv[q2]; gn2++; } l2+=","+DoubleToString(gn2>0?gs2/gn2:0,3); }
+      Print("b37 ",l2); if(h!=INVALID_HANDLE){ FileWriteString(h,l2+"\n"); } } }
+   if(h!=INVALID_HANDLE){ FileClose(h); } }

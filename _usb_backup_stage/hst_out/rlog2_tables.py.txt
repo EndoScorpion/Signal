@@ -1,0 +1,28 @@
+# Hash tables for the b8 RLOG2 lines: ADX14 (+DI/-DI), CCI14, range/ATR ranging measure on M15 and H1, up/down M1 tick volume, server hour.
+# Scored separately for buys and for sells (sell stops, hedges), with the sell-thread cuts (M15 ADX<30, hours 01/05/13) checked explicitly.
+# usage: python3 rlog2_tables.py <journal>
+import sys, re
+import numpy as np
+sys.path.insert(0, '/mnt/project-files/stat_corr'); import eval_orders as EO
+from rlog_tables import spearman, qtable  # noqa
+log = sys.argv[1]; orders = EO.parse(log); feats = {}
+pat = re.compile(r'RLOG2 #(\d+) tf15 adx (\S+) (\S+) (\S+) cci (\S+) rr (\S+) \| tf60 adx (\S+) (\S+) (\S+) cci (\S+) rr (\S+) \| volup (\S+) voldn (\S+) hour (\d+)(?: ra15e2 (\S+))?')
+for ln in open(log, errors='ignore'):
+    m = pat.search(ln)
+    if m: feats[int(m.group(1))] = [float(v) if v is not None else np.nan for v in m.groups()[1:]]
+names = ["adx15", "dip15", "dim15", "cci15", "rr15", "adx60", "dip60", "dim60", "cci60", "rr60", "volup", "voldn", "hour", "ra15e2"]
+out = ['RLOG2 HASH TABLES from %s: %d orders with RLOG2 lines' % (log, len(feats))]
+for side in ('buy', 'sell'):
+    tk = sorted(t for t in feats if t in orders and 'net' in orders[t] and ((orders[t]['kind'] == 'buy') == (side == 'buy')))
+    if len(tk) < 20: out.append('%s: only %d scored orders, skipped' % (side, len(tk))); continue
+    X = np.array([feats[t] for t in tk]); net = np.array([orders[t]['net'] for t in tk]); C = {k: X[:, i] for i, k in enumerate(names)}
+    C['di_diff15'] = C['dip15'] - C['dim15']; C['di_diff60'] = C['dip60'] - C['dim60']; C['vol_updn'] = (C['volup'] - C['voldn']) / np.maximum(1, C['volup'] + C['voldn'])
+    out.append('\n=== %sS: n %d  win%% %.1f  avg %.1f' % (side.upper(), len(net), 100 * (net > 0).mean(), net.mean()))
+    for k in sorted(C, key=lambda k: -abs(spearman(C[k], net)) if k != 'hour' else 0):
+        if k == 'hour': continue
+        out.append('%-12s rho %+.3f  ' % (k, spearman(C[k], net)) + qtable(C[k], net))
+    for name, m in [('M15 ADX < 30', C['adx15'] < 30), ('M15 ADX >= 30', C['adx15'] >= 30), ('H1 ADX < 20 (ranging)', C['adx60'] < 20), ('H1 ADX >= 20', C['adx60'] >= 20),
+                    ('hours 01/05/13 blocked', ~np.isin(C['hour'], [1, 5, 13])), ('hours 01/05/13 only', np.isin(C['hour'], [1, 5, 13])), ('M15 rr < 0.5 (tight)', C['rr15'] < 0.5), ('M15 rr >= 0.5', C['rr15'] >= 0.5)]:
+        out.append('  %-26s n %4d  win%% %5.1f  avg %7.1f' % (name, m.sum(), 100 * (net[m] > 0).mean() if m.any() else 0, net[m].mean() if m.any() else 0))
+    out.append('  by server hour: ' + ' '.join('%02d:%+.0f(%d)' % (h, net[C['hour'] == h].mean(), (C['hour'] == h).sum()) for h in range(24) if (C['hour'] == h).sum() >= 5))
+print('\n'.join(out))
