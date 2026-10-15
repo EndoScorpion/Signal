@@ -1,14 +1,5 @@
 [
  {
-  "id": 59,
-  "title": "THEORY METHOD E Position sizing and balance tiers (sz_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:40:03",
-  "updated": "2026-10-15T02:40:03",
-  "note": ""
- },
- {
   "id": 60,
   "title": "THEORY METHOD F Session and time filters (ss_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:59:21",
   "updated": "2026-10-15T07:59:21",
+  "note": ""
+ },
+ {
+  "id": 99,
+  "title": "Added retail/consumer + shipping/logistics + transport tags to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:59:37",
+  "updated": "2026-10-15T07:59:37",
   "note": ""
  }
 ]
