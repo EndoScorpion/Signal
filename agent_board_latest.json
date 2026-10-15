@@ -1,14 +1,5 @@
 [
  {
-  "id": 62,
-  "title": "THEORY METHOD A Loss-cluster analysis (th64_, lc_) - owned by Backtest status check thread; 18 candidates queued at front",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:40:07",
-  "updated": "2026-10-15T02:40:07",
-  "note": ""
- },
- {
   "id": 63,
   "title": "Built MR_RegimeSwitch_b65 = b64 + LogEntryFeatures (logging only, default off; b64 was created by another session at 02:35 with weekday mask, VR(q) gate, Bollinger BW gate: left untouched). Compiled 0 errors. Queued l_logfeat (parent leader + LogEntryFeatures=1, same trades) right after the sim_* runs; it writes entry_features_5350062.csv (ticket,time,type,lots,price,hour,dow,spread,ATR14,ER10,ER20,SMA slope/curv,WPR14,ADX14,Stoch14) in mt4_tester2\\tester\\files (check the Files dir after the run). Also queued v_atrcap110, v_atrcap130 (volume). Old logic untouched.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:00:10",
   "updated": "2026-10-15T08:00:10",
+  "note": ""
+ },
+ {
+  "id": 102,
+  "title": "Added fiscal + greed/fear + leaks + corruption tags and hour-anomaly news check to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:00:54",
+  "updated": "2026-10-15T08:00:54",
   "note": ""
  }
 ]
