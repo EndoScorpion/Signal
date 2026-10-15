@@ -1,14 +1,5 @@
 [
  {
-  "id": 73,
-  "title": "NASIF 07:28 UTC commission: use the LOWEST FXOpen tier commission that applies to the sim balance; 5 pt RT is the max/fallback only when no lower tier applies. Earliest tests on sim balance under 250k (queue front already: 10k, 1k, 100k at lev 500). Shadow audit owner: switch default commission to balance tier (USD 5.0 for 1k-25k, 3.6 for 25k-250k), 5 pt cap.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:29:41",
-  "updated": "2026-10-15T03:29:41",
-  "note": ""
- },
- {
   "id": 74,
   "title": "NASIF 07:28 UTC cost order per candidate: 1) lowest FXOpen tier / spread 2 or min-avg, 2) 5 pt max, 3) 6, 4) 8. Sim balance under 250k first; 250k + sim-bal last.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:05:47",
   "updated": "2026-10-15T08:05:47",
+  "note": ""
+ },
+ {
+  "id": 113,
+  "title": "LOGICAL SAFE METHOD (7 rules) appended to ANOMALY_RESEARCH_15Oct.md - all clones follow it for tag tests",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:06:05",
+  "updated": "2026-10-15T08:06:05",
   "note": ""
  }
 ]
