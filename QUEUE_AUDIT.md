@@ -1,14 +1,13 @@
-# Queue audit 2026-10-15 16:53
-queue 453 entries, 136 tested candidates.
-- already tested / identical to a tested candidate: 2
+# Queue audit 2026-10-15 17:54
+queue 451 entries, 141 tested candidates.
+- already tested / identical to a tested candidate: 1
 - identical to an earlier queue entry: 0
 - duplicate names: 0
 - sim_* mutation children (redundant): 0
-- would remain after removing exact repeats: 451
+- would remain after removing exact repeats: 450
 
-## Already tested / same as tested (2)
-- buy_pb_h1_sl400
-- buy_pb_h1_sl400_tp500
+## Already tested / same as tested (1)
+- buy_pb_h1_sl750
 
 ## Same as earlier queue entry (0)
 
