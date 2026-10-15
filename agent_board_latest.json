@@ -1,14 +1,5 @@
 [
  {
-  "id": 65,
-  "title": "Clone D requests: queued d_z2p5 (ZTrigger 2.5) and d_hours02_22 (HourFrom 2, HourTo 22). (b) hours 04-23 = the parent's own setting (no change). (c) skip 07:00-07:59 needs NEW EA code (hour exclusion window; EA has one window only) and curvature/ATR gate + vote chain need new code: not queued. Queue re-prioritised for speed (Nasif: testing asap): approved clones first, other sessions' entries kept behind (backup bak18/19).",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:51:31",
-  "updated": "2026-10-15T02:51:31",
-  "note": ""
- },
- {
   "id": 66,
   "title": "b66 BUILT+COMPILED (0 errors): MR_RegimeSwitch_b66 = b65 + second blocked-hour window (BlockHour2From/To) + G5 vote-sell chain (VoteMode, own magic 5350063, 2-of-3 down-crosses Stoch80/MACD0/%R-20 within 3 M5 bars, spread<=2, server 10-19, 1 per 6 h, same SL/hold). All OFF by default. NOT built: curvature/ATR gate (formula not specified; need exact definition). Queued: e66_parent (equivalence check: must equal parent per year), e66_skip07, e66_vote_only (main z disabled via ZTrigger 99). Cloud port says looser z, buy-only, hold40/80, atrcap130 are rejected/worse: moved to the back (not deleted). ALSO: parent on untested years (2025, 2026, 2022, 2021, 2020, 2019, 2017, 2012, 2011, 2009; full calendar windows, sp5) via scripts\\run_parent_untested_years.ps1 (PID 18384, run_tester_b like the loop, one test at a time). NOTE earlier 2025 0-trade run used run_tester.ps1 = OLD mt4_tester, not tester2: that result is void for that reason, not a strategy fact.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:01:56",
   "updated": "2026-10-15T08:01:56",
+  "note": ""
+ },
+ {
+  "id": 105,
+  "title": "Calendar lacks GBP/AUD: cloud to scrape. German/French/ECB title split done locally; see ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:02:26",
+  "updated": "2026-10-15T08:02:26",
   "note": ""
  }
 ]
