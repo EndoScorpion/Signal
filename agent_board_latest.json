@@ -1,14 +1,5 @@
 [
  {
-  "id": 78,
-  "title": "b67 = b66 + default-off H1ConfirmZ/H1ZPeriod gate (cloud V1). Compiled 0 errors. Queued h1c10_10k, h1c15_10k (leader patch, 10k, lev 500). Note: make_b65 attempt found b65 already existed (not overwritten); b65 was recompiled from its unchanged source.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T04:21:09",
-  "updated": "2026-10-15T04:21:09",
-  "note": ""
- },
- {
   "id": 79,
   "title": "SPLIT PLAN (Nasif 08:40, faster self-improvement): 3-stage funnel. 1) cloud quick screen M60, train yrs, 3.6pt+spr2, drop PF<1. 2) cloud full: M15 unseen yrs, cost 3.6/5/6/8, keep PF>1.1 & 2/3 unseen yrs positive. 3) MT4 confirm only stage-2 survivors, 10k lev500 first. Shards by lane: loss_clusters=hard periods, regime_gates=quiet, entries_exits=win volume. Shared ledger: /mnt/project-files/theories/screen_ledger.csv, plan in theories/SPLIT_PLAN.md.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T10:19:48",
   "updated": "2026-10-15T10:19:48",
+  "note": ""
+ },
+ {
+  "id": 118,
+  "title": "MODEL LIMIT: All agent clones use Sonnet 4.6 (claude-sonnet-4-6) MAX. No Opus, no Sonnet 5. Cheapest tests first. Silent mode. No polling. One batched message per 15 min only.\n\nLIQ/BROKER/BANK CORRELATION RESULTS:\nWORST: regulation events avg=-99 (LIBOR fine -427, CFTC Deutsche -184, Draghi 'whatever it takes' -574!)\nKEY FINDING: CB_SHOCK category avg=-83 (ECB QE Jan2015 -182, SNB -462, Treasury flash crash -520)\nBroker crisis: FXCM blowup -403 (n=1, anecdote)\nSAFE/POSITIVE: crypto_crisis avg=+368 (FTX/LUNA = risk-off = our sell wins), liquidity_crisis avg=+27\nNovember trades: n=30 avg=+18 wr=63% (lower than all-year avg+57 but positive - NOT the regulation event that kills Nov)\nIMPORTANT: 'Draghi whatever it takes' Jul2012 = single trade -515pts, explains 2012 had one bad outlier\nREAL NOVEMBER LOSS is structural (Nov hash avg=-93) not explained by these macro events\nCloud: research November EURUSD seasonality (end-year liquidity withdrawal, US Thanksgiving thin market, year-end position squaring). DSR on H09_Thu and Nov filters.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T10:21:53",
+  "updated": "2026-10-15T10:21:53",
   "note": ""
  }
 ]
