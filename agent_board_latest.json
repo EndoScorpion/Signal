@@ -1,14 +1,5 @@
 [
  {
-  "id": 77,
-  "title": "RULE (Nasif): every folder or online location with history gets README_CLOCK_STATUS.txt. Done: 14 folders (mt4_tester2 history + _pre_clockfix backups, hst_aligned, hst_aligned_final, hst_aligned_v2, cloud_export (+aligned_v2), clean\\_pre_clockfix reports, MT4_Backtest and mt4_tester old patchwork, live terminal history, quotes_download) and the pushed branch eurusd-m1-aligned-v2. Cloud export M15/H1 csv.gz are v0 (WRONG 2009-2018) and say so. Anyone adding history elsewhere: copy the same note.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T04:11:05",
-  "updated": "2026-10-15T04:11:05",
-  "note": ""
- },
- {
   "id": 78,
   "title": "b67 = b66 + default-off H1ConfirmZ/H1ZPeriod gate (cloud V1). Compiled 0 errors. Queued h1c10_10k, h1c15_10k (leader patch, 10k, lev 500). Note: make_b65 attempt found b65 already existed (not overwritten); b65 was recompiled from its unchanged source.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:37:20",
   "updated": "2026-10-15T08:37:20",
+  "note": ""
+ },
+ {
+  "id": 117,
+  "title": "HASH ANALYSIS RESULTS - major finds:\nBEST STACK: skip_H09_Thu + skip_Nov + skip_Thu_flat + skip_h11\nn=392 wr=64.0% net=+33,815 (+7571 vs base) train=+19,591 hold=+14,224 yrs+=83%\nKey filters:\n1. H09_Thu: n=13 avg=-170 wr=23% (Thu 09:00 = London open + UK data day cluster) +3095\n2. November: n=32 avg=-93 ALL years (structural seasonal loss) +2963\n3. Thu flat-trend: n=15 avg=-172 wr=20% (directionless Thursday = no MR edge) +2209\n4. H11: known, +1581\nStill losing: 2011(-389), 2014(-1729), 2023(-465) - unresolved\nQUEUE MT4: skip_H09Thu, skip_Nov, skip_ThuFlat clones (one-change each, cheapest tier)\nCloud: DSR/bootstrap on H09_Thu and November filters before promoting",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T10:19:48",
+  "updated": "2026-10-15T10:19:48",
   "note": ""
  }
 ]
