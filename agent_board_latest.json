@@ -1,32 +1,5 @@
 [
  {
-  "id": 74,
-  "title": "NASIF 07:28 UTC cost order per candidate: 1) lowest FXOpen tier / spread 2 or min-avg, 2) 5 pt max, 3) 6, 4) 8. Sim balance under 250k first; 250k + sim-bal last.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:29:59",
-  "updated": "2026-10-15T03:29:59",
-  "note": ""
- },
- {
-  "id": 75,
-  "title": "CLOCK CHECK 2 (real-world NFP anchor): in the ALIGNED file the biggest first-Friday M1 bar sits at 14:30 server for 2009 to Nov 2014 (both seasons) and 15:30 from Dec 2014/2015 on (2016-2018, 2023 correct). Expected 15:30 (13:30 UTC winter / 12:30 UTC summer, server UTC+2/+3 NY-close clock). So aligned is still 1 h EARLY for ~2009-2014: raw CSV there looks CET/CEST. Week-open evidence (Mon 00:00) disagrees with NFP evidence; NFP is the stronger anchor. Proposed aligned v2: +1h on bars before ~2014-12, new file, then re-test 2009-2014 (NEEDS NASIF OK). Intra-week gaps >30 min are few per year, mostly Dec 24/31 holiday closes and ad hoc outages (details sent to the cloud session).",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:44:18",
-  "updated": "2026-10-15T03:44:18",
-  "note": ""
- },
- {
-  "id": 76,
-  "title": "CLOCK SWAP V2 DONE 04:03 (PC clock): aligned v2 history in the tester (EU-DST rule for bars before 2014-12-01; NFP bar 15:30 in 2009-2015), previous files in mt4_tester2\\history\\_pre_clockfix2_15Oct2026, v0 pre-fix in _pre_clockfix_15Oct2026, 36 first-alignment 2009-2014 reports moved to clean\\_pre_clockfix2_15Oct2026. Tests resumed. Queued rb_ re-tests (parent, ex_101423_1, wr_base_clean, ex_101423_4) at the front: compare 2009-2014 only from these.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T04:03:43",
-  "updated": "2026-10-15T04:03:43",
-  "note": ""
- },
- {
   "id": 77,
   "title": "RULE (Nasif): every folder or online location with history gets README_CLOCK_STATUS.txt. Done: 14 folders (mt4_tester2 history + _pre_clockfix backups, hst_aligned, hst_aligned_final, hst_aligned_v2, cloud_export (+aligned_v2), clean\\_pre_clockfix reports, MT4_Backtest and mt4_tester old patchwork, live terminal history, quotes_download) and the pushed branch eurusd-m1-aligned-v2. Cloud export M15/H1 csv.gz are v0 (WRONG 2009-2018) and say so. Anyone adding history elsewhere: copy the same note.",
   "owner": "",
@@ -357,6 +330,33 @@
   "status": "open",
   "created": "2026-10-15T08:06:05",
   "updated": "2026-10-15T08:06:05",
+  "note": ""
+ },
+ {
+  "id": 114,
+  "title": "ANOM STATUS 15Oct: ONE still-unexplained = hour 11 weakness (n=25, 40% win, -90 avg; loses with AND without news events: -61 / -110). All others explained: h05=thin-liquidity/no-news, h23=rollover artifact, FOMC=-66 known, crisis windows explained. Buy anoms: hour23 long = rollover artifact (rejected), hour0/DOW1 are weak holds-only leads (not queued yet). Sending phone alert. All agents: use cheapest model (Sonnet 4.6 or lower), silent mode, no polling.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:09:23",
+  "updated": "2026-10-15T08:09:23",
+  "note": ""
+ },
+ {
+  "id": 115,
+  "title": "CLOUD TASK (cheapest): Research GBPJPY scalp - which forex pair has fastest/choppiest M15 intraday moves (highest ATR/spread ratio, most mean-reversion opportunities). Check: GBPJPY, GBPUSD, EURJPY, USDJPY. Public sources only. Also: h11 cross-pair H4 result - EURUSD H12 block weakest (-13.1pts) but other pairs show no bear signal at h08-11. EURUSD h11 anomaly likely SELL-specific MR effect, not broad London weakness. Board post for all clones: use Sonnet 4.6 max, silent, cheapest spend, no polling.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:19:45",
+  "updated": "2026-10-15T08:19:45",
+  "note": ""
+ },
+ {
+  "id": 116,
+  "title": "IMPROVEMENT SIM2 RESULTS (all knowledge applied):\nBASE n=456 wr=60.7% net=+26,244 yrs+=61%\nG_best_combo (skip h11+h12, fomc, high_usd_news): n=431 wr=61.9% net=+27,266 +1022 yrs+=67% BEST\nKey: FOMC skip has 0 effect on entries (signals don't coincide). No-high-USD adds +222, skip-h11 adds +800.\nLoss hours: H11(n=10,-158,30%), H04(n=27,-30,48%), H22(n=8,-27,38%), H06(n=10,-53,50%)\nWinners: H07(n=10,+153,90%), H08(n=42,+109,81%), H21(n=18,+134,78%)\nQUEUED MT4: skip_h11_trail400_250, skip_h04_trail400_250\nCLOUD TASKS: (1) simulate no_high_usd filter + skip_h11 combined with DSR. (2) investigate why 2010/2011/2014/2016/2020/2023 lose - find common factor. (3) GBPJPY scalp ATR/spread research. Use cheapest model, silent.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:37:20",
+  "updated": "2026-10-15T08:37:20",
   "note": ""
  }
 ]
