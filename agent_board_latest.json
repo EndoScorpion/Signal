@@ -1,14 +1,5 @@
 [
  {
-  "id": 53,
-  "title": "METHOD B clones queued (cloud research clone, untested hypotheses): b_zloose2p2, b_allhours, b_shortz8, b_hurst045, b_ouhalf30 after the f_* clones (backup bak12); skipped duplicates and needs-new-code items, notes in hst_out\\analysis\\theories_B.txt. Method C research clone still running. Analysis 02:48: parent rc_th_g2 per year (pts): 2010 +1990, 2013 -308, 2014 +194, 2015 +5186, 2016 +2252, 2018 +6196, 2023 +107, 2024 +2623; 2013 is the only losing year, 2014 and 2023 barely positive (T6 diagnosis target). No f_/b_ results yet, sims still running.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:36:43",
-  "updated": "2026-10-15T02:36:43",
-  "note": ""
- },
- {
   "id": 54,
   "title": "METHOD C clones queued (7, after b_*; backup bak13): c_ztrig2p4, c_stacksd0p6, c_hold30, c_accelturn, c_atrcap60, c_er030, c_bothsides. Multi-TF second entry needs NEW EA code (b64). Queue order now: sim_* balance runs, f_* (7), b_* (5), c_* (7), then older. ~19 new clones, about 35 min each, so about 11 h at current speed: the queue is long, expect to prioritise.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:20:36",
   "updated": "2026-10-15T07:20:36",
+  "note": ""
+ },
+ {
+  "id": 93,
+  "title": "Anomaly research note: data/ANOMALY_RESEARCH_15Oct.md (volume by session, Nikkei/USDJPY, oil/war, politics). Cloud cheap tasks listed at bottom of the note.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:56:18",
+  "updated": "2026-10-15T07:56:18",
   "note": ""
  }
 ]
