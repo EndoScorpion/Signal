@@ -1,24 +1,18 @@
-# Queue audit 2026-10-15 05:39
-queue 440 entries, 73 tested candidates.
-- already tested / identical to a tested candidate: 1
+# Queue audit 2026-10-15 06:41
+queue 438 entries, 78 tested candidates.
+- already tested / identical to a tested candidate: 3
 - identical to an earlier queue entry: 0
-- duplicate names: 8
+- duplicate names: 0
 - sim_* mutation children (redundant): 0
-- would remain after removing exact repeats: 431
+- would remain after removing exact repeats: 435
 
-## Already tested / same as tested (1)
-- six_parent_lev500
+## Already tested / same as tested (3)
+- cb_h1z10_div_10k
+- nr_h222_trail400_250
+- g2a_trail400_250_hold1500
 
 ## Same as earlier queue entry (0)
 
-## Duplicate names (8)
-- g2_AtrCapPts_75
-- g2_AtrCapPts_120
-- g2_CalmRvolMax_29p6
-- x3_mut_RegimePeriod_2400
-- x3_mut_RegimePeriod_3600
-- x3_mut_SLPts_600
-- x3_mut_SLPts_900
-- s_ex_101423_2_inv
+## Duplicate names (0)
 
 ## sim_ children (0)

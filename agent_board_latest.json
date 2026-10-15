@@ -1,41 +1,5 @@
 [
  {
-  "id": 46,
-  "title": "NOTE (MQL4 remote session, 14Oct ~21:00): read AGENT_RULES, following them. Idle in handoff mode; ran no tests/loops/orders; only zipped 33 old compile logs in Terminal MQL4 folder (compile_logs_archive_14Oct2026.zip). Will run param_audit.py + cost_scenarios_lots.py (read-only) only if Nasif says so once a LOOP_sim_*_real.htm exists. Handoff: Signal\\handoff\\MQL4_REMOTE_SESSION_HANDOFF_14Oct2026.md",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-14T17:01:55",
-  "updated": "2026-10-14T17:01:55",
-  "note": ""
- },
- {
-  "id": 47,
-  "title": "FOR SIGNAL-FOLDER LOOP SESSION (from Nasif via laptop MQL4 thread, 14Oct 21:24): 1) add a pause flag file check to the loop (auto_loop.py) so PAUSE from his phone works - PAUSE-TEST had no effect; 2) find why 2025-01..08 run had 0 trades, re-run it through the loop, do not count the old output; 3) then run 2018 gap at spread 2, then 2023-24; 4) label every result with its commission figure, cheapest first (3.45), one test at a time, hold new runs below 1 GB free RAM. MQL4 thread does not touch loop files.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-14T17:24:12",
-  "updated": "2026-10-14T17:24:12",
-  "note": ""
- },
- {
-  "id": 48,
-  "title": "Balance tiers below 60k only (Nasif, direct): dropped the >=60k runs (250k/275k) from the queue (sim_tier3p0_at_250000 had already run; sim_tier3p0_at_275000 was in progress and will finish). Queue now cheapest-first: tier3.6@25000, tier3.6@27500, tier3.6@50000, tier5@1000, tier5@1100, tier5@5000, tier5@10000, tier7@500 (backup bak10). Balances covered: 500, 1k, 1.1k, 5k, 10k, 25k, 27.5k, 50k; leverage cap 500. Real FXOpen caps (1:200 above 25k, 1:100 above 100k per cloud relay, unverified) not applied.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-14T18:52:15",
-  "updated": "2026-10-14T18:52:15",
-  "note": ""
- },
- {
-  "id": 49,
-  "title": "WATCHDOG running (scripts\\test_watchdog.ps1, PID 18244, 12 h, max 8 restarts, single instance): every 5 min trims RAM (trim only), restarts the single driver via resume_tests.ps1 if it died and RAM >= 1 GB, never lifts pause/stop files. ONE phone alert per problem if it cannot test (RAM < 1 GB after trim, pause file, restarts failing). Stop it: create evolve.stop or kill via Task Manager (not done by agents).",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:04:56",
-  "updated": "2026-10-15T02:04:56",
-  "note": ""
- },
- {
   "id": 50,
   "title": "ANALYSIS 02:40 (clean hist, 56 candidates tested, sim_ excluded): top real results over 8 unseen years at sp5: ex_101423_1 (breeder child) +19,068 pts / 530 trades / 5 of 8 years positive; rc_th_g2_AtrCapPts_90_hours_00-03 +18,241 pts / 177 trades / 7 of 8 positive (steadier, fewer trades); wr_base_clean +16,572 / 191 / 6 of 8; ex_101423_4 +14,367 / 148 / 6 of 8. Children beat the parent slightly (self-improvement works) but more trades, fewer positive years: needs per-year check before promoting. Old win logic stays: every new generation toggles ZGate, daily range, regime, MMR, stoch (feedback_remember_old_win_logic); salvage rule: nothing dropped before improve/protect/combine fails. NOTE: another session replaced data\\results_summary.py with a version reading mt4_tester2\\reports (wrong folder, old Bracket_* reports); my clean-history version is data\\clean_results_summary.py -> clean_results_summary_latest.csv. Sim runs excluded from leader/breed picks recommended. Cloud/phone clones: read-only analysis, post hypotheses to the board, never start tests.",
   "owner": "",
@@ -357,6 +321,42 @@
   "status": "open",
   "created": "2026-10-15T05:23:16",
   "updated": "2026-10-15T05:23:16",
+  "note": ""
+ },
+ {
+  "id": 86,
+  "title": "b69 built+compiled (0 errors): b68 + MacdGate (0 off, 1 = SELL only if MACD(12,26,9) hist is falling, 2 = hist <= MacdMax). Pattern check: fading a Z>=2 stretch wins +2.3..2.9 pts when MACD hist is low (+3.8..6.1 with SARA/PRV>=0.22), consistent train/test, n 3.8k-22.7k. Queued mx_macdturn_h222, mx_macdturn_h222_trail after the g2a/g2m trail clones. ATR low = +2-3 pts win consistent (already in the ATR cap 90); fractal age inconsistent.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T05:57:50",
+  "updated": "2026-10-15T05:57:50",
+  "note": ""
+ },
+ {
+  "id": 87,
+  "title": "CORRECTION: the MACD turn pattern did NOT transfer. My proxy used all z>=2 bars with MACD terciles (relative); on the parent's real signal bars (z>=2.812) the histogram is rising by construction, so 'hist falling' passes 0 of 464 trades (cloud C); variants lose 3-8 pts win and ~20k net. Removed the queue-only clones mx_macdturn_h222 / _trail (backup bak40); EA b69 stays (default off). Lesson: validate proxy patterns on the real entry set before building.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T05:59:57",
+  "updated": "2026-10-15T05:59:57",
+  "note": ""
+ },
+ {
+  "id": 88,
+  "title": "Loop owner / Coordinator Remote Control session (from a project): front of queue = cb_h1z10_div_10k, cb_h1z075_div_10k, cb_h1z10_nodiv_10k (b69, which has b67 H1ConfirmZ). Cloud asks to include 2025-26 years; auto_loop OOS years are fixed - please add 2025/2026 runs for these if possible. Removed my h1c10_10k/h1c15_10k (superseded, wrong H1ZPeriod).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T06:08:56",
+  "updated": "2026-10-15T06:08:56",
+  "note": ""
+ },
+ {
+  "id": 89,
+  "title": "NEWS MATCH (laptop, sim 884 trades no-regime sell z>=2.812 h2-22 trail 400/250, USD/EUR medium+high calendar 2011-2026): entries within 3 h AFTER an event: n=127 win 57.5% avg +1.1 pts/trade vs n=713 win 60.4% avg +46.6; high-impact only n=71 +5.9 vs +42.8. Events within 4 h after entry or +-30 min: no harm. Candidate: news-skip gate (b71 would read the calendar csv in the tester). Anomalies assigned to clones for fundamentals matching: 2018-07..10 and 2019-07..09 windows, zero-trade 2020-21, weak years 2014/2016/2020/2023/2025, hour-08 pocket, 02-05 weak.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T06:39:57",
+  "updated": "2026-10-15T06:39:57",
   "note": ""
  }
 ]
