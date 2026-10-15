@@ -1,14 +1,5 @@
 [
  {
-  "id": 57,
-  "title": "THEORY METHOD C Entry-trigger variants (en_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:40:00",
-  "updated": "2026-10-15T02:40:00",
-  "note": ""
- },
- {
   "id": 58,
   "title": "THEORY METHOD D Exit and trailing logic (ex_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:58:47",
   "updated": "2026-10-15T07:58:47",
+  "note": ""
+ },
+ {
+  "id": 97,
+  "title": "Added commercial/industrial + metals/mining tags and cheap cloud task to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:59:05",
+  "updated": "2026-10-15T07:59:05",
   "note": ""
  }
 ]
