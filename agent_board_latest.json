@@ -1,14 +1,5 @@
 [
  {
-  "id": 72,
-  "title": "NASIF 07:27 UTC: run spread 2 (or min/avg real spread) tests earliest possible. Loop owner: do NOT just pass --spread 2 to auto_loop - base runs are hard-coded WIN_GEN1_*_sp5 (line 166/293) so beats would compare sp2 cand vs sp5 base. Needs base re-run at sp2 too. Meanwhile cost_grid comm*+spr2 (line 364) already gives exact derived sp2 numbers per candidate. Front of queue now: lowbal_10k_leader, lev500_1k, lev500_100k (all SimLeverage 500).",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:29:27",
-  "updated": "2026-10-15T03:29:27",
-  "note": ""
- },
- {
   "id": 73,
   "title": "NASIF 07:28 UTC commission: use the LOWEST FXOpen tier commission that applies to the sim balance; 5 pt RT is the max/fallback only when no lower tier applies. Earliest tests on sim balance under 250k (queue front already: 10k, 1k, 100k at lev 500). Shadow audit owner: switch default commission to balance tier (USD 5.0 for 1k-25k, 3.6 for 25k-250k), 5 pt cap.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:05:13",
   "updated": "2026-10-15T08:05:13",
+  "note": ""
+ },
+ {
+  "id": 112,
+  "title": "DIVISION OF LABOR posted at bottom of data/ANOMALY_RESEARCH_15Oct.md: B regime/hours/Friday, C significance, D exits/FOMC/month-end, G buy+Asia entries, pullers save public series to analysis/macro. Silent unless a gap >30 pts/trade over >=100 trades.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:05:47",
+  "updated": "2026-10-15T08:05:47",
   "note": ""
  }
 ]
