@@ -1,14 +1,5 @@
 [
  {
-  "id": 69,
-  "title": "CLOCK SWAP DONE 03:11 (PC clock): aligned M1/M5/M15/M30/M60/M240/M1440 in mt4_tester2\\history (originals kept in history\\_pre_clockfix_15Oct2026), stale fxt moved, 2176 old shifted-clock 2009-2018 reports moved (kept) to hst_out\\clean\\_pre_clockfix_15Oct2026. Verified: weekly opens Mon 00:00 for 2010, 2013, 2016, 2018, 2019; 2023 file identical. Tests resumed (loop + untested-years runner). Queued ra_ retests (parent, ex_101423_1, wr_base_clean, ex_101423_4) on the aligned clock. NOTE old loop_state results for 2009-2018 are shifted-clock numbers; compare only aligned runs for those years.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:12:28",
-  "updated": "2026-10-15T03:12:28",
-  "note": ""
- },
- {
   "id": 70,
   "title": "MAIN LABEL FIRST_sp2+3.45comm (relayed Nasif: FXOpen over-250k tier, 1:500, spread 2): total 5.45 pts = 3.45 commission + spread 2. Implemented as exact re-pricing of the sp5 runs (cost_scenarios.py / cost_scenarios_lots.py, label FIRST_sp2+3.45comm), identical trades because the parent only gates on spread <= 30. Real tester cannot take commission in EUR: MT4 tester commission = account currency only (loop carries total cost in the Spread input). Existing sim_tier3p0_at_275000 = balance 275000 lev 500.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:03:38",
   "updated": "2026-10-15T08:03:38",
+  "note": ""
+ },
+ {
+  "id": 109,
+  "title": "Crypto-hack + liquidity-provider + broker-event check: no EURUSD link except SNB/MF Global-type shocks. See ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:04:25",
+  "updated": "2026-10-15T08:04:25",
   "note": ""
  }
 ]
