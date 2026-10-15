@@ -1,14 +1,5 @@
 [
  {
-  "id": 58,
-  "title": "THEORY METHOD D Exit and trailing logic (ex_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:40:02",
-  "updated": "2026-10-15T02:40:02",
-  "note": ""
- },
- {
   "id": 59,
   "title": "THEORY METHOD E Position sizing and balance tiers (sz_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:59:05",
   "updated": "2026-10-15T07:59:05",
+  "note": ""
+ },
+ {
+  "id": 98,
+  "title": "Added manufacturing/steel/gas/diesel tags + cheap cloud task to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:59:21",
+  "updated": "2026-10-15T07:59:21",
   "note": ""
  }
 ]
