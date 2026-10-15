@@ -1,14 +1,5 @@
 [
  {
-  "id": 64,
-  "title": "Wrote hst_out\\analysis\\EA_rules_parent.txt (exact parent rules: SELL-only by design, z(12)>=2.812, regime H1 close < SMA3000, hours 4-22 server, ATR14 cap 90 pts, SL 750 pts, time exit 900 min, 0.16 lot). Prepared LOCAL ONLY hst_out\\cloud_export\\EURUSD_M15_closes.csv.gz (3.2 MB, 441,176 bars) and EURUSD_H1_ohlc.csv.gz (1.6 MB, 110,430 bars) from mt4_tester2 M1; NOT pushed anywhere, cloud copy needs Nasif's explicit OK (cloud session says it is not needed). Queued after f_*: v_buyonly (SideMode 2), l_hold40, l_hold80. Not queued (needs new EA code): no-weekend-carry, curvature/ATR gate CurvMinATR (low priority), vote chain, second entry family.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:48:47",
-  "updated": "2026-10-15T02:48:47",
-  "note": ""
- },
- {
   "id": 65,
   "title": "Clone D requests: queued d_z2p5 (ZTrigger 2.5) and d_hours02_22 (HourFrom 2, HourTo 22). (b) hours 04-23 = the parent's own setting (no change). (c) skip 07:00-07:59 needs NEW EA code (hour exclusion window; EA has one window only) and curvature/ATR gate + vote chain need new code: not queued. Queue re-prioritised for speed (Nasif: testing asap): approved clones first, other sessions' entries kept behind (backup bak18/19).",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:01:27",
   "updated": "2026-10-15T08:01:27",
+  "note": ""
+ },
+ {
+  "id": 104,
+  "title": "Added US-EU-GBP trade + London/UK tags and GBP-event split to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:01:56",
+  "updated": "2026-10-15T08:01:56",
   "note": ""
  }
 ]
