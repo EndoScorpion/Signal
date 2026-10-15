@@ -1,0 +1,42 @@
+{
+  "_note": "Scenario cost model for the FXOpen shadow ledger. Copy to fxopen_cost_model_<scenario>.json for new scenarios, never overwrite. Values marked null or UNVERIFIED must be filled in by Nasif. Backtest accounting only.",
+  "scenario": "default_ecn_5pt",
+  "account_type": "ECN",
+  "account_currency": "USD",
+  "leverage": 500,
+  "leverage_by_balance_rule": "Nasif: leverage follows FXOpen's balance rules (max allowed can depend on balance). Table NOT yet known to me: fill from FXOpen's published leverage-by-balance limits before tier runs; cap stays 500.",
+  "leverage_policy": "Nasif 2026-10-14: 500:1 is the max setup allowed, use it as long as balance and risk allow (never above it).",
+  "leverage_note": "Max 500:1 (relayed as Nasif's statement, confirm). Cap for margin and lot-size checks, never above it. Tester leverage setting not yet verified or changed.",
+  "sim_deposit": null,
+  "commission_rule_switch": "balance_bracket",
+  "commission_rule_options": {
+    "balance_bracket": "bracket by account balance (from research notes, still to be confirmed)",
+    "leverage_based": "UNVERIFIED (Nasif recollection only): commission from effective leverage = min(account leverage, max allowed), cap 500. Exact wording and rate table needed from Nasif."
+  },
+  "run_shadow_ledger_under_both": true,
+  "bracket_rule": "balance",
+  "bracket_rule_note": "UNVERIFIED: per research notes commission is by account balance with a volume matrix on top, recalculated monthly. Nasif/FXOpen to confirm balance vs volume.",
+  "commission_per_side_per_lot_eur": [
+    {"balance_from": 0, "balance_to": 1000, "eur": 3.50},
+    {"balance_from": 1000, "balance_to": 25000, "eur": 2.50},
+    {"balance_from": 25000, "balance_to": 250000, "eur": 1.80},
+    {"balance_from": 250000, "balance_to": null, "eur": 1.50}
+  ],
+  "currency_basis_decision": "USD (Nasif 2026-10-14: commission is quoted in points, then USD, because his account balance currency was USD). Use published USD brackets 7/5/3.6/3.0 pts RT. EUR family kept only as an unverified comparison.",
+  "scenarios": {
+    "published_usd": {"label": "published", "source": "fxopen.com/en/pricing via cloud fork relay, unverified by me", "per_side_per_lot_usd": {"<1k": 3.50, "1k-25k": 2.50, "25k-250k": 1.80, ">250k": 1.50}, "round_trip_pts": {"<1k": 7.0, "1k-25k": 5.0, "25k-250k": 3.6, ">250k": 3.0}, "volume_tiers_30d": ["<5M", "5-25M", "25-250M", ">250M"], "depends_on": "account equity and 30-day traded volume"},
+    "published_eur_basis": {"label": "published_eur", "note": "CONFLICT: Nasif's earlier real charge of 8.00 USD per RT matches 3.50 EUR x2 x1.15, i.e. commission in EUR; this gives 8.05/5.75/4.14/3.45. Currency basis (USD vs EUR) must be confirmed from a real FXOpen statement."},
+    "nasif_5pt": {"label": "5pt", "round_trip_pts": 5.0, "note": "max cap, separate from published"},
+    "nasif_6pt": {"label": "6pt", "round_trip_pts": 6.0, "note": "max cap, separate from published"},
+    "leverage_rule": {"label": "unverified", "priority": "low"}
+  },
+  "commission_currency_note": "EURUSD: commission is in base currency (EUR). USD = EUR x eurusd_rate.",
+  "eurusd_rate_for_conversion": 1.15,
+  "eurusd_rate_quote_format": "1 EUR / USD $ 1.15000 (Nasif rule 2026-10-14: always quote the EUR/USD rate this way in the model, reports and relays)",
+  "round_trip_pts_per_lot": {"<1k": 8.05, "1k-25k": 5.75, "25k-250k": 4.14, ">250k": 3.45},
+  "volume_matrix": null,
+  "spread_assumption_pts": {"mode": "recorded_yearly_mean_or_fixed", "fixed_pts": null, "note": "see data/SPREAD_COMMISSION_RECORDS.md"},
+  "swap": {"apply": true, "long_pts_per_lot_per_night": null, "short_pts_per_lot_per_night": null, "swap_free_or_reduced": null, "triple_swap_day": "Wednesday", "note": "UNVERIFIED: fill from the account's symbol specification"},
+  "other_fees": {"monthly_fee_usd": 0, "note": "none known"},
+  "tester_fixed_cost_pts_label": "5pt or 6pt per run, kept as a separate column"
+}

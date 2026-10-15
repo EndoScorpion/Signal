@@ -1,0 +1,23 @@
+EXACT RULES of the parent clone rc_th_g2_AtrCapPts_90_hours_00-03 (MR_RegimeSwitch_b57 inputs, identical logic in b62/b63/b64/b65 with these inputs). Written by laptop session b59d44, 15 Oct 2026, from the EA source (MR_RegimeSwitch_b62.mq4 OnTick / GatesPass / TimeExit). Local file, nothing pushed.
+
+INPUTS CHANGED FROM DEFAULT (all other inputs at EA defaults, i.e. every extra gate OFF):
+  UseRegime=true, RegimePeriod=3000, SLPts=750, HoldBars=60, ZPeriod=12, ZTrigger=2.812, SideMode=1, AtrCapPts=90, HourFrom=4, HourTo=23
+DEFAULTS THAT MATTER: ZTF=15 (M15 signal timeframe), Lots=0.16 (fixed lot, UseLotSim=0), BlockRollover=true RollFrom=23 RollTo=1, MaxSpreadPts=30, TPPts=0 (no take profit), TrailStartPts=0, BreakEvenStart=0, FastStopPts=0, CooldownBars=0, ZExitLevel=0, ConfMode=0, EntryMode=0, SplitMode=0, HedgeTriggerPts=0, MagicNumber=5350062.
+
+CLOCK: all times are MT4 SERVER time (TimeCurrent / TimeHour): UTC+2, UTC+3 during US DST (FXOpen). Point = 0.00001 (5-digit), so 750 pts = 75 pips = 0.00750.
+
+WHEN IT EVALUATES: once per NEW M15 bar (first tick of the bar), using CLOSED bar 1 (iClose shift 1 = the bar that just closed). Needs at least RegimePeriod+10 = 3010 H1 bars of history.
+SKIPS THE BAR (no entry) if any of these is true, in this order:
+  1. a trade of this magic is already open (max ONE position at a time)
+  2. spread (MODE_SPREAD, points) > 30
+  3. server hour is in the rollover window 23..1 (hour == 23, 0 or 1)
+  4. ATR(14) on M15 at shift 1, divided by Point, > 90 pts (AtrCapPts)
+SIGNAL: z = (Close[1] - mean(Close[1..12])) / populationStdDev(Close[1..12]) on M15 (ZPeriod=12; std = sqrt(E[x^2]-mean^2), not sample std; if std<=0 z=0).
+  SELL when z >= 2.812 AND regime "below": H1 Close[1] < SMA(H1 close, 3000, shift 1) (UseRegime). SideMode=1 means SELL ONLY BY DESIGN: the buy branch (z <= -2.812 and H1 close above the SMA) is disabled (SideMode!=1 required for buys). SideMode=2 would be buy-only, 0 both.
+  After the signal, GatesPass(): with these inputs the only active gate is the hour window: server hour of the bar's tick must be within HourFrom..HourTo = 4..23 (hour 23 is already blocked by the rollover rule, so effective entry hours 04:00 to 22:59). All other gates are off by default.
+ENTRY: market SELL at Bid on the first tick of the new bar (the report's open time is that bar's time). Stop loss = entry + 750 pts. No take profit.
+EXIT (whichever first): (a) stop loss at +750 pts; (b) TIME EXIT: when TimeCurrent - OrderOpenTime >= HoldBars*ZTF*60 = 60*15*60 s = 900 minutes, close at market (Ask for a sell) on the next tick (checked every tick, not only per bar); weekend/closed market carries the trade across (that is the ~3700-minute holds). No weekend rule, no break-even, no trailing, no z-exit.
+LOT: fixed 0.16 lots (rounded to lot step, min lot). Commission/spread: set by the tester Spread input as TOTAL cost in points per trade in the loop's runs (sp5 = 5 pts; sp3_T3p45 = spread 3, then 0.45 pt/trade subtracted afterwards); 1 pt of profit at 0.16 lot = USD 0.16.
+OTHER: Hedge, split, notifications, heartbeat, control file all default OFF. MT4 Strategy Tester modelling: every tick (Model 0) on the clean mt4_tester2 history.
+CHECK TARGETS (from your analysis): 177 trades over the 8 loop years (2010, 2013, 2014, 2015, 2016, 2018, 2023, 2024), all SELLS. Per-year pts at sp5 from the loop state: 2010 +1990, 2013 -308, 2014 +194, 2015 +5186, 2016 +2252, 2018 +6196, 2023 +107, 2024 +2623 (total +18,241 pts, labelled 5pt). The cheapest-tier labels are re-pricings of these.
+INPUT NAMES MT4 USES: ZTF, ZPeriod, ZTrigger, HoldBars, SideMode, UseRegime, RegimePeriod, SLPts, TPPts, AtrCapPts, HourFrom, HourTo, BlockRollover, RollFrom, RollTo, MaxSpreadPts, Lots, MagicNumber (full list in the .mq4 extern block).

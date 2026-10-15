@@ -1,0 +1,362 @@
+[
+ {
+  "id": 46,
+  "title": "NOTE (MQL4 remote session, 14Oct ~21:00): read AGENT_RULES, following them. Idle in handoff mode; ran no tests/loops/orders; only zipped 33 old compile logs in Terminal MQL4 folder (compile_logs_archive_14Oct2026.zip). Will run param_audit.py + cost_scenarios_lots.py (read-only) only if Nasif says so once a LOOP_sim_*_real.htm exists. Handoff: Signal\\handoff\\MQL4_REMOTE_SESSION_HANDOFF_14Oct2026.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-14T17:01:55",
+  "updated": "2026-10-14T17:01:55",
+  "note": ""
+ },
+ {
+  "id": 47,
+  "title": "FOR SIGNAL-FOLDER LOOP SESSION (from Nasif via laptop MQL4 thread, 14Oct 21:24): 1) add a pause flag file check to the loop (auto_loop.py) so PAUSE from his phone works - PAUSE-TEST had no effect; 2) find why 2025-01..08 run had 0 trades, re-run it through the loop, do not count the old output; 3) then run 2018 gap at spread 2, then 2023-24; 4) label every result with its commission figure, cheapest first (3.45), one test at a time, hold new runs below 1 GB free RAM. MQL4 thread does not touch loop files.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-14T17:24:12",
+  "updated": "2026-10-14T17:24:12",
+  "note": ""
+ },
+ {
+  "id": 48,
+  "title": "Balance tiers below 60k only (Nasif, direct): dropped the >=60k runs (250k/275k) from the queue (sim_tier3p0_at_250000 had already run; sim_tier3p0_at_275000 was in progress and will finish). Queue now cheapest-first: tier3.6@25000, tier3.6@27500, tier3.6@50000, tier5@1000, tier5@1100, tier5@5000, tier5@10000, tier7@500 (backup bak10). Balances covered: 500, 1k, 1.1k, 5k, 10k, 25k, 27.5k, 50k; leverage cap 500. Real FXOpen caps (1:200 above 25k, 1:100 above 100k per cloud relay, unverified) not applied.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-14T18:52:15",
+  "updated": "2026-10-14T18:52:15",
+  "note": ""
+ },
+ {
+  "id": 49,
+  "title": "WATCHDOG running (scripts\\test_watchdog.ps1, PID 18244, 12 h, max 8 restarts, single instance): every 5 min trims RAM (trim only), restarts the single driver via resume_tests.ps1 if it died and RAM >= 1 GB, never lifts pause/stop files. ONE phone alert per problem if it cannot test (RAM < 1 GB after trim, pause file, restarts failing). Stop it: create evolve.stop or kill via Task Manager (not done by agents).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:04:56",
+  "updated": "2026-10-15T02:04:56",
+  "note": ""
+ },
+ {
+  "id": 50,
+  "title": "ANALYSIS 02:40 (clean hist, 56 candidates tested, sim_ excluded): top real results over 8 unseen years at sp5: ex_101423_1 (breeder child) +19,068 pts / 530 trades / 5 of 8 years positive; rc_th_g2_AtrCapPts_90_hours_00-03 +18,241 pts / 177 trades / 7 of 8 positive (steadier, fewer trades); wr_base_clean +16,572 / 191 / 6 of 8; ex_101423_4 +14,367 / 148 / 6 of 8. Children beat the parent slightly (self-improvement works) but more trades, fewer positive years: needs per-year check before promoting. Old win logic stays: every new generation toggles ZGate, daily range, regime, MMR, stoch (feedback_remember_old_win_logic); salvage rule: nothing dropped before improve/protect/combine fails. NOTE: another session replaced data\\results_summary.py with a version reading mt4_tester2\\reports (wrong folder, old Bracket_* reports); my clean-history version is data\\clean_results_summary.py -> clean_results_summary_latest.csv. Sim runs excluded from leader/breed picks recommended. Cloud/phone clones: read-only analysis, post hypotheses to the board, never start tests.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:33:17",
+  "updated": "2026-10-15T02:33:17",
+  "note": ""
+ },
+ {
+  "id": 51,
+  "title": "METHOD F (risk/exits) claimed by laptop session b59d44: 7 one-change clones queued after sim_* runs (f_be150, f_faststop300, f_cooldown8, f_trail300_200, f_split300, f_dailyloss2, f_conf1), parent rc_th_g2_AtrCapPts_90_hours_00-03 untouched, backup bak11; theories in hst_out\\analysis\\theories_F.txt. Other methods (A loss-autopsy, B chaos, C calculus, D microstructure, G classics) = offline/cloud analysis -> input patches via board; laptop queues them as clones. Cost tags: sp5/real = 5 pts total, NOT 8. One test at a time.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:34:07",
+  "updated": "2026-10-15T02:34:07",
+  "note": ""
+ },
+ {
+  "id": 52,
+  "title": "Gen b64 (Backtest status check thread): analyze results, research new gates, build MR_RegimeSwitch_b64 as NEW file (b63 untouched, new gates default off), compile, queue candidates",
+  "owner": "backtest_status_thread",
+  "status": "done",
+  "created": "2026-10-15T02:35:05",
+  "updated": "2026-10-15T02:37:44",
+  "note": "b64 compiled 0 errors (b63 untouched, gates default off: DayBlockMask, VrqMax, BwPctMax). 6 g64_* children of sim_tier3p0_at_275000 appended to extra_candidates.json (backup .bak_b64_*). Results table for all agents: data\\results_summary.csv/.txt, refreshed every 30 min by task 'EA Results Summary'. Watchdog task 'EA Test Watchdog' (logon + 15 min, mutex single instance). Do not add another keep-awake or startup task."
+ },
+ {
+  "id": 53,
+  "title": "METHOD B clones queued (cloud research clone, untested hypotheses): b_zloose2p2, b_allhours, b_shortz8, b_hurst045, b_ouhalf30 after the f_* clones (backup bak12); skipped duplicates and needs-new-code items, notes in hst_out\\analysis\\theories_B.txt. Method C research clone still running. Analysis 02:48: parent rc_th_g2 per year (pts): 2010 +1990, 2013 -308, 2014 +194, 2015 +5186, 2016 +2252, 2018 +6196, 2023 +107, 2024 +2623; 2013 is the only losing year, 2014 and 2023 barely positive (T6 diagnosis target). No f_/b_ results yet, sims still running.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:36:43",
+  "updated": "2026-10-15T02:36:43",
+  "note": ""
+ },
+ {
+  "id": 54,
+  "title": "METHOD C clones queued (7, after b_*; backup bak13): c_ztrig2p4, c_stacksd0p6, c_hold30, c_accelturn, c_atrcap60, c_er030, c_bothsides. Multi-TF second entry needs NEW EA code (b64). Queue order now: sim_* balance runs, f_* (7), b_* (5), c_* (7), then older. ~19 new clones, about 35 min each, so about 11 h at current speed: the queue is long, expect to prioritise.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:37:10",
+  "updated": "2026-10-15T02:37:10",
+  "note": ""
+ },
+ {
+  "id": 55,
+  "title": "Cloud learning (clone D + offline tests): strategy is a SWING system (150/177 holds 8-30 h, ~22 trades/yr); hour/weekday/side/loss-streak filters REJECTED offline (shrink volume). Queued VOLUME clones after f_*: v_ztf30 (M30, periods halved), v_looser25 (ZTrigger 2.11), v_looser50 (ZTrigger 1.41); removed queue-only duplicate c_ztrig2p4 (backup bak14, no results deleted). NOT queued, need new EA code: ER-flip exit, flat-slope exit, jerk skip, Stoch+MACD+%R vote chain, second entry family. Judge on hold-out (last 30%) vs parent.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:39:22",
+  "updated": "2026-10-15T02:39:22",
+  "note": ""
+ },
+ {
+  "id": 56,
+  "title": "THEORY METHOD B Regime and volatility gates (rg_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:39:59",
+  "updated": "2026-10-15T02:39:59",
+  "note": ""
+ },
+ {
+  "id": 57,
+  "title": "THEORY METHOD C Entry-trigger variants (en_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:00",
+  "updated": "2026-10-15T02:40:00",
+  "note": ""
+ },
+ {
+  "id": 58,
+  "title": "THEORY METHOD D Exit and trailing logic (ex_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:02",
+  "updated": "2026-10-15T02:40:02",
+  "note": ""
+ },
+ {
+  "id": 59,
+  "title": "THEORY METHOD E Position sizing and balance tiers (sz_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:03",
+  "updated": "2026-10-15T02:40:03",
+  "note": ""
+ },
+ {
+  "id": 60,
+  "title": "THEORY METHOD F Session and time filters (ss_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:05",
+  "updated": "2026-10-15T02:40:05",
+  "note": ""
+ },
+ {
+  "id": 61,
+  "title": "THEORY METHOD G Phone subagents: propose theories from results_summary.txt as board notes (ph_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:06",
+  "updated": "2026-10-15T02:40:06",
+  "note": ""
+ },
+ {
+  "id": 62,
+  "title": "THEORY METHOD A Loss-cluster analysis (th64_, lc_) - owned by Backtest status check thread; 18 candidates queued at front",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:07",
+  "updated": "2026-10-15T02:40:07",
+  "note": ""
+ },
+ {
+  "id": 63,
+  "title": "Built MR_RegimeSwitch_b65 = b64 + LogEntryFeatures (logging only, default off; b64 was created by another session at 02:35 with weekday mask, VR(q) gate, Bollinger BW gate: left untouched). Compiled 0 errors. Queued l_logfeat (parent leader + LogEntryFeatures=1, same trades) right after the sim_* runs; it writes entry_features_5350062.csv (ticket,time,type,lots,price,hour,dow,spread,ATR14,ER10,ER20,SMA slope/curv,WPR14,ADX14,Stoch14) in mt4_tester2\\tester\\files (check the Files dir after the run). Also queued v_atrcap110, v_atrcap130 (volume). Old logic untouched.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:40:48",
+  "updated": "2026-10-15T02:40:48",
+  "note": ""
+ },
+ {
+  "id": 64,
+  "title": "Wrote hst_out\\analysis\\EA_rules_parent.txt (exact parent rules: SELL-only by design, z(12)>=2.812, regime H1 close < SMA3000, hours 4-22 server, ATR14 cap 90 pts, SL 750 pts, time exit 900 min, 0.16 lot). Prepared LOCAL ONLY hst_out\\cloud_export\\EURUSD_M15_closes.csv.gz (3.2 MB, 441,176 bars) and EURUSD_H1_ohlc.csv.gz (1.6 MB, 110,430 bars) from mt4_tester2 M1; NOT pushed anywhere, cloud copy needs Nasif's explicit OK (cloud session says it is not needed). Queued after f_*: v_buyonly (SideMode 2), l_hold40, l_hold80. Not queued (needs new EA code): no-weekend-carry, curvature/ATR gate CurvMinATR (low priority), vote chain, second entry family.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:48:47",
+  "updated": "2026-10-15T02:48:47",
+  "note": ""
+ },
+ {
+  "id": 65,
+  "title": "Clone D requests: queued d_z2p5 (ZTrigger 2.5) and d_hours02_22 (HourFrom 2, HourTo 22). (b) hours 04-23 = the parent's own setting (no change). (c) skip 07:00-07:59 needs NEW EA code (hour exclusion window; EA has one window only) and curvature/ATR gate + vote chain need new code: not queued. Queue re-prioritised for speed (Nasif: testing asap): approved clones first, other sessions' entries kept behind (backup bak18/19).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:51:31",
+  "updated": "2026-10-15T02:51:31",
+  "note": ""
+ },
+ {
+  "id": 66,
+  "title": "b66 BUILT+COMPILED (0 errors): MR_RegimeSwitch_b66 = b65 + second blocked-hour window (BlockHour2From/To) + G5 vote-sell chain (VoteMode, own magic 5350063, 2-of-3 down-crosses Stoch80/MACD0/%R-20 within 3 M5 bars, spread<=2, server 10-19, 1 per 6 h, same SL/hold). All OFF by default. NOT built: curvature/ATR gate (formula not specified; need exact definition). Queued: e66_parent (equivalence check: must equal parent per year), e66_skip07, e66_vote_only (main z disabled via ZTrigger 99). Cloud port says looser z, buy-only, hold40/80, atrcap130 are rejected/worse: moved to the back (not deleted). ALSO: parent on untested years (2025, 2026, 2022, 2021, 2020, 2019, 2017, 2012, 2011, 2009; full calendar windows, sp5) via scripts\\run_parent_untested_years.ps1 (PID 18384, run_tester_b like the loop, one test at a time). NOTE earlier 2025 0-trade run used run_tester.ps1 = OLD mt4_tester, not tester2: that result is void for that reason, not a strategy fact.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:54:21",
+  "updated": "2026-10-15T02:54:21",
+  "note": ""
+ },
+ {
+  "id": 67,
+  "title": "CLOCK CHECK CONFIRMED (read-only, EURUSD1.hst weekly opens): 2009-2018 open Mon 02:00 winter / Mon 03:00 summer; 2019-2025 open Mon 00:00 (clean NY-close clock, server UTC+2/+3 DST). Hour-gated results for 2010, 2013-16, 2018 (6 of the loop's 8 years) are 2-3 h off live; 2023, 2024 are correct. Parent-on-untested-years runner already goes 2025, 2026, 2022, 2021, 2020, 2019 first (clean clock), then 2017, 2012, 2011, 2009. A re-aligned 2009-2018 copy is BUILDABLE (shift M1 timestamps -2h winter / -3h summer into a NEW folder, never overwrite the original, ~400 MB, needs Nasif's go). Memory note saved.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T02:55:08",
+  "updated": "2026-10-15T02:55:08",
+  "note": ""
+ },
+ {
+  "id": 68,
+  "title": "CLOCK FIX built (original untouched): CAUSE = raw FXOpen CSV for 2009-2018 is already on the server clock while 2019+ is true UTC; rebuild_history.py added +2/+3 h to all, so 2009-2018 ended 2 h (winter)/3 h (summer) late. ALIGNED M1 = C:\\Users\\endos\\Desktop\\hst_aligned\\EURUSD1.hst (394,609,888 bytes, 6,576,829 bars, monotonic, every year now opens Mon 00:00; boundary at 2019-01-28, one 2019 week shows Sun 21:01 = boundary-week artifact). Script data\\build_aligned_m1.py. NOT yet used by any test: mt4_tester2 still has the shifted file. To test: either pause the loop, back up mt4_tester2's EURUSD1.hst and swap, or build a separate tester copy; needs Nasif's choice. Then re-test 2010, 2013-16, 2018 (hour-gated results change).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:03:39",
+  "updated": "2026-10-15T03:03:39",
+  "note": ""
+ },
+ {
+  "id": 69,
+  "title": "CLOCK SWAP DONE 03:11 (PC clock): aligned M1/M5/M15/M30/M60/M240/M1440 in mt4_tester2\\history (originals kept in history\\_pre_clockfix_15Oct2026), stale fxt moved, 2176 old shifted-clock 2009-2018 reports moved (kept) to hst_out\\clean\\_pre_clockfix_15Oct2026. Verified: weekly opens Mon 00:00 for 2010, 2013, 2016, 2018, 2019; 2023 file identical. Tests resumed (loop + untested-years runner). Queued ra_ retests (parent, ex_101423_1, wr_base_clean, ex_101423_4) on the aligned clock. NOTE old loop_state results for 2009-2018 are shifted-clock numbers; compare only aligned runs for those years.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:12:28",
+  "updated": "2026-10-15T03:12:28",
+  "note": ""
+ },
+ {
+  "id": 70,
+  "title": "MAIN LABEL FIRST_sp2+3.45comm (relayed Nasif: FXOpen over-250k tier, 1:500, spread 2): total 5.45 pts = 3.45 commission + spread 2. Implemented as exact re-pricing of the sp5 runs (cost_scenarios.py / cost_scenarios_lots.py, label FIRST_sp2+3.45comm), identical trades because the parent only gates on spread <= 30. Real tester cannot take commission in EUR: MT4 tester commission = account currency only (loop carries total cost in the Spread input). Existing sim_tier3p0_at_275000 = balance 275000 lev 500.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:20:56",
+  "updated": "2026-10-15T03:20:56",
+  "note": ""
+ },
+ {
+  "id": 71,
+  "title": "NASIF RULE 07:27 UTC test order: per candidate run cheapest-commission balance tier first EXCLUDING 250k (i.e. 25k-250k bracket, 1.8 EUR/side), then lower tiers, and run 250k tier + SimDeposit/UseLotSim sim-balance tests LAST. Loop owner: apply in auto_loop ordering; b64 queue entries currently carry SimDeposit 275000 (sim) so they need a non-sim 25k-250k first pass.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:27:44",
+  "updated": "2026-10-15T03:27:44",
+  "note": ""
+ },
+ {
+  "id": 72,
+  "title": "NASIF 07:27 UTC: run spread 2 (or min/avg real spread) tests earliest possible. Loop owner: do NOT just pass --spread 2 to auto_loop - base runs are hard-coded WIN_GEN1_*_sp5 (line 166/293) so beats would compare sp2 cand vs sp5 base. Needs base re-run at sp2 too. Meanwhile cost_grid comm*+spr2 (line 364) already gives exact derived sp2 numbers per candidate. Front of queue now: lowbal_10k_leader, lev500_1k, lev500_100k (all SimLeverage 500).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:29:27",
+  "updated": "2026-10-15T03:29:27",
+  "note": ""
+ },
+ {
+  "id": 73,
+  "title": "NASIF 07:28 UTC commission: use the LOWEST FXOpen tier commission that applies to the sim balance; 5 pt RT is the max/fallback only when no lower tier applies. Earliest tests on sim balance under 250k (queue front already: 10k, 1k, 100k at lev 500). Shadow audit owner: switch default commission to balance tier (USD 5.0 for 1k-25k, 3.6 for 25k-250k), 5 pt cap.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:29:41",
+  "updated": "2026-10-15T03:29:41",
+  "note": ""
+ },
+ {
+  "id": 74,
+  "title": "NASIF 07:28 UTC cost order per candidate: 1) lowest FXOpen tier / spread 2 or min-avg, 2) 5 pt max, 3) 6, 4) 8. Sim balance under 250k first; 250k + sim-bal last.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:29:59",
+  "updated": "2026-10-15T03:29:59",
+  "note": ""
+ },
+ {
+  "id": 75,
+  "title": "CLOCK CHECK 2 (real-world NFP anchor): in the ALIGNED file the biggest first-Friday M1 bar sits at 14:30 server for 2009 to Nov 2014 (both seasons) and 15:30 from Dec 2014/2015 on (2016-2018, 2023 correct). Expected 15:30 (13:30 UTC winter / 12:30 UTC summer, server UTC+2/+3 NY-close clock). So aligned is still 1 h EARLY for ~2009-2014: raw CSV there looks CET/CEST. Week-open evidence (Mon 00:00) disagrees with NFP evidence; NFP is the stronger anchor. Proposed aligned v2: +1h on bars before ~2014-12, new file, then re-test 2009-2014 (NEEDS NASIF OK). Intra-week gaps >30 min are few per year, mostly Dec 24/31 holiday closes and ad hoc outages (details sent to the cloud session).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T03:44:18",
+  "updated": "2026-10-15T03:44:18",
+  "note": ""
+ },
+ {
+  "id": 76,
+  "title": "CLOCK SWAP V2 DONE 04:03 (PC clock): aligned v2 history in the tester (EU-DST rule for bars before 2014-12-01; NFP bar 15:30 in 2009-2015), previous files in mt4_tester2\\history\\_pre_clockfix2_15Oct2026, v0 pre-fix in _pre_clockfix_15Oct2026, 36 first-alignment 2009-2014 reports moved to clean\\_pre_clockfix2_15Oct2026. Tests resumed. Queued rb_ re-tests (parent, ex_101423_1, wr_base_clean, ex_101423_4) at the front: compare 2009-2014 only from these.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T04:03:43",
+  "updated": "2026-10-15T04:03:43",
+  "note": ""
+ },
+ {
+  "id": 77,
+  "title": "RULE (Nasif): every folder or online location with history gets README_CLOCK_STATUS.txt. Done: 14 folders (mt4_tester2 history + _pre_clockfix backups, hst_aligned, hst_aligned_final, hst_aligned_v2, cloud_export (+aligned_v2), clean\\_pre_clockfix reports, MT4_Backtest and mt4_tester old patchwork, live terminal history, quotes_download) and the pushed branch eurusd-m1-aligned-v2. Cloud export M15/H1 csv.gz are v0 (WRONG 2009-2018) and say so. Anyone adding history elsewhere: copy the same note.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T04:11:05",
+  "updated": "2026-10-15T04:11:05",
+  "note": ""
+ },
+ {
+  "id": 78,
+  "title": "b67 = b66 + default-off H1ConfirmZ/H1ZPeriod gate (cloud V1). Compiled 0 errors. Queued h1c10_10k, h1c15_10k (leader patch, 10k, lev 500). Note: make_b65 attempt found b65 already existed (not overwritten); b65 was recompiled from its unchanged source.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T04:21:09",
+  "updated": "2026-10-15T04:21:09",
+  "note": ""
+ },
+ {
+  "id": 79,
+  "title": "SPLIT PLAN (Nasif 08:40, faster self-improvement): 3-stage funnel. 1) cloud quick screen M60, train yrs, 3.6pt+spr2, drop PF<1. 2) cloud full: M15 unseen yrs, cost 3.6/5/6/8, keep PF>1.1 & 2/3 unseen yrs positive. 3) MT4 confirm only stage-2 survivors, 10k lev500 first. Shards by lane: loss_clusters=hard periods, regime_gates=quiet, entries_exits=win volume. Shared ledger: /mnt/project-files/theories/screen_ledger.csv, plan in theories/SPLIT_PLAN.md.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T04:41:37",
+  "updated": "2026-10-15T04:41:37",
+  "note": ""
+ },
+ {
+  "id": 80,
+  "title": "LOSS AUTOPSY 04:51: g_cross_m15_20_50_sell (MT4, aligned v2, sp5): 767 tr, 49.7%, -6,648 pts; per year 2010 -8,593, 2013 -3,221, 2014 +6,668, 2015 +502, 2016 +1,601, 2018 -3,126, 2023 -1,890, 2024 +1,411 = a directional bet (wins in falling-EURUSD years, loses in rising ones), because the cross path ignores the regime filter. ADAPT: b68 (b67 + CrossUseRegime, compiled 0 errors; b67 was made by another session, untouched) -> queued g_cross_m15_regime, g_cross_m15_regime_h222. lowbal_10k_leader_m1 (other session's low-balance mutation): 380 tr 46.6% -4,041 pts, 3 of 5 yrs negative = noise-level, flat-to-loss. loss_watch.py (data) now lists new losers/flat results for the learn cycle (NEW_LOSSES.md).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T04:51:17",
+  "updated": "2026-10-15T04:51:17",
+  "note": ""
+ },
+ {
+  "id": 81,
+  "title": "Cloud frontier (aligned v2, 5.45, all-yrs h2-22): TP/BE do not beat base net; trail 400/200: win 61.2%, net -11%, maxDD -22%, hold 19,720 63.4%; trail 300/200: win 65.1%, net -17%; SL 1000: +2,658 net but bigger worst loss (pending bootstrap); 90/95% win unreachable (max ~86%). Queued hw_trail400_200_h222, hw_trail300_200_h222 for MT4 after hw_tp*.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T04:59:18",
+  "updated": "2026-10-15T04:59:18",
+  "note": ""
+ },
+ {
+  "id": 82,
+  "title": "FIRST 6pt TEST set up (Nasif: 6pt, first test, leverage 500 max): candidate six_parent_lev500 (parent + UseLotSim=1, SimDeposit 10000, SimLeverage 500, b66) queued at the queue front so the loop builds its set; scripts\\run_6pt_first.ps1 then runs the REAL tester at Spread 6 (6 pts total) on the 8 loop years (2016, 2018, 2023, 2024, 2014, 2013, 2015, 2010), reports LOOP_six_parent_lev500_<year>_sp6.htm, label 6pt. Aligned v2 history. Separate from sp5 results.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T05:11:52",
+  "updated": "2026-10-15T05:11:52",
+  "note": ""
+ },
+ {
+  "id": 83,
+  "title": "RULE (Nasif): deposit and commission are USD; track points per trade, round trip, MAX 5 pts, or the LOWEST commission, for the FIRST rounds of tests. So the real 6pt test (scripts\\run_6pt_first.ps1) is DEFERRED to a later round (stopped, nothing ran); first rounds = 5pt or cheaper (FIRST_sp2+3.45comm 5.45 is within spread-adjusted lowest tier; 3.0/3.45 commission labels), lev 500 max. six_parent_lev500 stays queued as a normal sp5 run (lev 500 sim).",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T05:12:15",
+  "updated": "2026-10-15T05:12:15",
+  "note": ""
+ },
+ {
+  "id": 84,
+  "title": "Cloud merges (aligned v2, 5.45 port): BEST = hours 02-22 + trail 400/200 (hw_trail400_200_h222): all-yrs 466tr 61% win (base 56%), net 41,606 (-11%), maxDD 2,359 (-22%), hold 63%/19,720 = PASS -> now FIRST in MT4 queue. h2-22+SMA4000/ATR100/z2.8+SL1000 (loop-yrs 211tr 55%, +37%, hold 60%, DD 3,230) -> queued mg_h222_sma4000_sl1000. FAILED on all-years (kept at queue back, not deleted): mg_h222_sma4000_trail, mg_h222_sma4000atr100. No 70%+ win without losing most net.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T05:13:17",
+  "updated": "2026-10-15T05:13:17",
+  "note": ""
+ },
+ {
+  "id": 85,
+  "title": "NAME UPDATE (Nasif 09:22 UTC): the coordinator is 'Coordinator Remote Control session (from a project)'. Use this name in board items and shared notes.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T05:23:16",
+  "updated": "2026-10-15T05:23:16",
+  "note": ""
+ }
+]
