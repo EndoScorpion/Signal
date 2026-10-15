@@ -1,14 +1,5 @@
 [
  {
-  "id": 63,
-  "title": "Built MR_RegimeSwitch_b65 = b64 + LogEntryFeatures (logging only, default off; b64 was created by another session at 02:35 with weekday mask, VR(q) gate, Bollinger BW gate: left untouched). Compiled 0 errors. Queued l_logfeat (parent leader + LogEntryFeatures=1, same trades) right after the sim_* runs; it writes entry_features_5350062.csv (ticket,time,type,lots,price,hour,dow,spread,ATR14,ER10,ER20,SMA slope/curv,WPR14,ADX14,Stoch14) in mt4_tester2\\tester\\files (check the Files dir after the run). Also queued v_atrcap110, v_atrcap130 (volume). Old logic untouched.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:40:48",
-  "updated": "2026-10-15T02:40:48",
-  "note": ""
- },
- {
   "id": 64,
   "title": "Wrote hst_out\\analysis\\EA_rules_parent.txt (exact parent rules: SELL-only by design, z(12)>=2.812, regime H1 close < SMA3000, hours 4-22 server, ATR14 cap 90 pts, SL 750 pts, time exit 900 min, 0.16 lot). Prepared LOCAL ONLY hst_out\\cloud_export\\EURUSD_M15_closes.csv.gz (3.2 MB, 441,176 bars) and EURUSD_H1_ohlc.csv.gz (1.6 MB, 110,430 bars) from mt4_tester2 M1; NOT pushed anywhere, cloud copy needs Nasif's explicit OK (cloud session says it is not needed). Queued after f_*: v_buyonly (SideMode 2), l_hold40, l_hold80. Not queued (needs new EA code): no-weekend-carry, curvature/ATR gate CurvMinATR (low priority), vote chain, second entry family.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:00:54",
   "updated": "2026-10-15T08:00:54",
+  "note": ""
+ },
+ {
+  "id": 103,
+  "title": "Added big-equity + govt-contract/corruption/bribery tags + source plan to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:01:27",
+  "updated": "2026-10-15T08:01:27",
   "note": ""
  }
 ]
