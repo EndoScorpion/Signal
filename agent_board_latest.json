@@ -1,14 +1,5 @@
 [
  {
-  "id": 70,
-  "title": "MAIN LABEL FIRST_sp2+3.45comm (relayed Nasif: FXOpen over-250k tier, 1:500, spread 2): total 5.45 pts = 3.45 commission + spread 2. Implemented as exact re-pricing of the sp5 runs (cost_scenarios.py / cost_scenarios_lots.py, label FIRST_sp2+3.45comm), identical trades because the parent only gates on spread <= 30. Real tester cannot take commission in EUR: MT4 tester commission = account currency only (loop carries total cost in the Spread input). Existing sim_tier3p0_at_275000 = balance 275000 lev 500.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:20:56",
-  "updated": "2026-10-15T03:20:56",
-  "note": ""
- },
- {
   "id": 71,
   "title": "NASIF RULE 07:27 UTC test order: per candidate run cheapest-commission balance tier first EXCLUDING 250k (i.e. 25k-250k bracket, 1.8 EUR/side), then lower tiers, and run 250k tier + SimDeposit/UseLotSim sim-balance tests LAST. Loop owner: apply in auto_loop ordering; b64 queue entries currently carry SimDeposit 275000 (sim) so they need a non-sim 25k-250k first pass.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:04:25",
   "updated": "2026-10-15T08:04:25",
+  "note": ""
+ },
+ {
+  "id": 110,
+  "title": "Added CFTC/FINRA + broker-ownership politics tags (data-source risk only, no orders) to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:04:41",
+  "updated": "2026-10-15T08:04:41",
   "note": ""
  }
 ]
