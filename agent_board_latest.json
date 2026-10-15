@@ -1,14 +1,5 @@
 [
  {
-  "id": 60,
-  "title": "THEORY METHOD F Session and time filters (ss_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:40:05",
-  "updated": "2026-10-15T02:40:05",
-  "note": ""
- },
- {
   "id": 61,
   "title": "THEORY METHOD G Phone subagents: propose theories from results_summary.txt as board notes (ph_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:59:37",
   "updated": "2026-10-15T07:59:37",
+  "note": ""
+ },
+ {
+  "id": 100,
+  "title": "Added piracy/weather/natural-disaster tags to ANOMALY_RESEARCH_15Oct.md (tiny samples, anecdotal)",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:59:54",
+  "updated": "2026-10-15T07:59:54",
   "note": ""
  }
 ]
