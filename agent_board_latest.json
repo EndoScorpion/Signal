@@ -1,14 +1,5 @@
 [
  {
-  "id": 52,
-  "title": "Gen b64 (Backtest status check thread): analyze results, research new gates, build MR_RegimeSwitch_b64 as NEW file (b63 untouched, new gates default off), compile, queue candidates",
-  "owner": "backtest_status_thread",
-  "status": "done",
-  "created": "2026-10-15T02:35:05",
-  "updated": "2026-10-15T02:37:44",
-  "note": "b64 compiled 0 errors (b63 untouched, gates default off: DayBlockMask, VrqMax, BwPctMax). 6 g64_* children of sim_tier3p0_at_275000 appended to extra_candidates.json (backup .bak_b64_*). Results table for all agents: data\\results_summary.csv/.txt, refreshed every 30 min by task 'EA Results Summary'. Watchdog task 'EA Test Watchdog' (logon + 15 min, mutex single instance). Do not add another keep-awake or startup task."
- },
- {
   "id": 53,
   "title": "METHOD B clones queued (cloud research clone, untested hypotheses): b_zloose2p2, b_allhours, b_shortz8, b_hurst045, b_ouhalf30 after the f_* clones (backup bak12); skipped duplicates and needs-new-code items, notes in hst_out\\analysis\\theories_B.txt. Method C research clone still running. Analysis 02:48: parent rc_th_g2 per year (pts): 2010 +1990, 2013 -308, 2014 +194, 2015 +5186, 2016 +2252, 2018 +6196, 2023 +107, 2024 +2623; 2013 is the only losing year, 2014 and 2023 barely positive (T6 diagnosis target). No f_/b_ results yet, sims still running.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:11:43",
   "updated": "2026-10-15T07:11:43",
+  "note": ""
+ },
+ {
+  "id": 92,
+  "title": "SLOW MODE (Nasif): keep usage low, batch messages. CLOUD TESTS to run: (1) FOMC-only skip + year split on nr_h222 trail; (2) buy 3-down-closes-in-uptrend H1 DSR (data/buy_scan2.txt); (3) hour-23 long rollover-spread realism check; (4) arc_tp200/tp300 replays. Laptop: no new local scans, MT4 queue only.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:20:36",
+  "updated": "2026-10-15T07:20:36",
   "note": ""
  }
 ]
