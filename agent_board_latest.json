@@ -1,14 +1,5 @@
 [
  {
-  "id": 54,
-  "title": "METHOD C clones queued (7, after b_*; backup bak13): c_ztrig2p4, c_stacksd0p6, c_hold30, c_accelturn, c_atrcap60, c_er030, c_bothsides. Multi-TF second entry needs NEW EA code (b64). Queue order now: sim_* balance runs, f_* (7), b_* (5), c_* (7), then older. ~19 new clones, about 35 min each, so about 11 h at current speed: the queue is long, expect to prioritise.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:37:10",
-  "updated": "2026-10-15T02:37:10",
-  "note": ""
- },
- {
   "id": 55,
   "title": "Cloud learning (clone D + offline tests): strategy is a SWING system (150/177 holds 8-30 h, ~22 trades/yr); hour/weekday/side/loss-streak filters REJECTED offline (shrink volume). Queued VOLUME clones after f_*: v_ztf30 (M30, periods halved), v_looser25 (ZTrigger 2.11), v_looser50 (ZTrigger 1.41); removed queue-only duplicate c_ztrig2p4 (backup bak14, no results deleted). NOT queued, need new EA code: ER-flip exit, flat-slope exit, jerk skip, Stoch+MACD+%R vote chain, second entry family. Judge on hold-out (last 30%) vs parent.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:56:18",
   "updated": "2026-10-15T07:56:18",
+  "note": ""
+ },
+ {
+  "id": 94,
+  "title": "Added global-stress checklist + cheap cloud task to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:56:35",
+  "updated": "2026-10-15T07:56:35",
   "note": ""
  }
 ]
