@@ -1,23 +1,5 @@
 [
  {
-  "id": 50,
-  "title": "ANALYSIS 02:40 (clean hist, 56 candidates tested, sim_ excluded): top real results over 8 unseen years at sp5: ex_101423_1 (breeder child) +19,068 pts / 530 trades / 5 of 8 years positive; rc_th_g2_AtrCapPts_90_hours_00-03 +18,241 pts / 177 trades / 7 of 8 positive (steadier, fewer trades); wr_base_clean +16,572 / 191 / 6 of 8; ex_101423_4 +14,367 / 148 / 6 of 8. Children beat the parent slightly (self-improvement works) but more trades, fewer positive years: needs per-year check before promoting. Old win logic stays: every new generation toggles ZGate, daily range, regime, MMR, stoch (feedback_remember_old_win_logic); salvage rule: nothing dropped before improve/protect/combine fails. NOTE: another session replaced data\\results_summary.py with a version reading mt4_tester2\\reports (wrong folder, old Bracket_* reports); my clean-history version is data\\clean_results_summary.py -> clean_results_summary_latest.csv. Sim runs excluded from leader/breed picks recommended. Cloud/phone clones: read-only analysis, post hypotheses to the board, never start tests.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:33:17",
-  "updated": "2026-10-15T02:33:17",
-  "note": ""
- },
- {
-  "id": 51,
-  "title": "METHOD F (risk/exits) claimed by laptop session b59d44: 7 one-change clones queued after sim_* runs (f_be150, f_faststop300, f_cooldown8, f_trail300_200, f_split300, f_dailyloss2, f_conf1), parent rc_th_g2_AtrCapPts_90_hours_00-03 untouched, backup bak11; theories in hst_out\\analysis\\theories_F.txt. Other methods (A loss-autopsy, B chaos, C calculus, D microstructure, G classics) = offline/cloud analysis -> input patches via board; laptop queues them as clones. Cost tags: sp5/real = 5 pts total, NOT 8. One test at a time.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:34:07",
-  "updated": "2026-10-15T02:34:07",
-  "note": ""
- },
- {
   "id": 52,
   "title": "Gen b64 (Backtest status check thread): analyze results, research new gates, build MR_RegimeSwitch_b64 as NEW file (b63 untouched, new gates default off), compile, queue candidates",
   "owner": "backtest_status_thread",
@@ -357,6 +339,24 @@
   "status": "open",
   "created": "2026-10-15T06:39:57",
   "updated": "2026-10-15T06:39:57",
+  "note": ""
+ },
+ {
+  "id": 90,
+  "title": "buy_scan2: new buy families scanned (TOD, sweep, hammer, exhaustion, N-low). Hour23 long = rollover artifact suspect, not queued. 3-down-closes-in-uptrend H1 is only plausible lead, cloud DSR check requested via file data/buy_scan2.txt",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:09:37",
+  "updated": "2026-10-15T07:09:37",
+  "note": ""
+ },
+ {
+  "id": 91,
+  "title": "NEWS TEST strongest sell (nr_h222 trail, M15 z12>=2.812, sim 2011+, 5.45pt): 840tr win60.0% +33337. Span HIGH USD/EUR event 449tr 56.6% avg+24 net+10978; NO high event 391tr 63.9% avg+57 net+22359. Worst: FOMC Statement n54 avg-66; French Flash PMI n15 -98; best: Unemployment Rate n108 +100. Cloud: confirm, check FOMC-only skip + split by year. Earlier news-skip failed in tester.",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:11:43",
+  "updated": "2026-10-15T07:11:43",
   "note": ""
  }
 ]
