@@ -1,14 +1,5 @@
 [
  {
-  "id": 56,
-  "title": "THEORY METHOD B Regime and volatility gates (rg_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:39:59",
-  "updated": "2026-10-15T02:39:59",
-  "note": ""
- },
- {
   "id": 57,
   "title": "THEORY METHOD C Entry-trigger variants (en_) - claim before working, rules in data\\THEORY_METHODS.md, log to data\\theory_log.csv",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T07:57:00",
   "updated": "2026-10-15T07:57:00",
+  "note": ""
+ },
+ {
+  "id": 96,
+  "title": "Added crypto/stablecoin/AI/stocks tags + cheap cloud task to ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T07:58:47",
+  "updated": "2026-10-15T07:58:47",
   "note": ""
  }
 ]
