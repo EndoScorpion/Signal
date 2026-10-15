@@ -1,14 +1,5 @@
 [
  {
-  "id": 68,
-  "title": "CLOCK FIX built (original untouched): CAUSE = raw FXOpen CSV for 2009-2018 is already on the server clock while 2019+ is true UTC; rebuild_history.py added +2/+3 h to all, so 2009-2018 ended 2 h (winter)/3 h (summer) late. ALIGNED M1 = C:\\Users\\endos\\Desktop\\hst_aligned\\EURUSD1.hst (394,609,888 bytes, 6,576,829 bars, monotonic, every year now opens Mon 00:00; boundary at 2019-01-28, one 2019 week shows Sun 21:01 = boundary-week artifact). Script data\\build_aligned_m1.py. NOT yet used by any test: mt4_tester2 still has the shifted file. To test: either pause the loop, back up mt4_tester2's EURUSD1.hst and swap, or build a separate tester copy; needs Nasif's choice. Then re-test 2010, 2013-16, 2018 (hour-gated results change).",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:03:39",
-  "updated": "2026-10-15T03:03:39",
-  "note": ""
- },
- {
   "id": 69,
   "title": "CLOCK SWAP DONE 03:11 (PC clock): aligned M1/M5/M15/M30/M60/M240/M1440 in mt4_tester2\\history (originals kept in history\\_pre_clockfix_15Oct2026), stale fxt moved, 2176 old shifted-clock 2009-2018 reports moved (kept) to hst_out\\clean\\_pre_clockfix_15Oct2026. Verified: weekly opens Mon 00:00 for 2010, 2013, 2016, 2018, 2019; 2023 file identical. Tests resumed (loop + untested-years runner). Queued ra_ retests (parent, ex_101423_1, wr_base_clean, ex_101423_4) on the aligned clock. NOTE old loop_state results for 2009-2018 are shifted-clock numbers; compare only aligned runs for those years.",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:03:13",
   "updated": "2026-10-15T08:03:13",
+  "note": ""
+ },
+ {
+  "id": 108,
+  "title": "Added monopoly + FX-liquidity tags; month-end/fix/holiday split in ANOMALY_RESEARCH_15Oct.md",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:03:38",
+  "updated": "2026-10-15T08:03:38",
   "note": ""
  }
 ]
