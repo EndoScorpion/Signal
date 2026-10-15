@@ -1,14 +1,5 @@
 [
  {
-  "id": 71,
-  "title": "NASIF RULE 07:27 UTC test order: per candidate run cheapest-commission balance tier first EXCLUDING 250k (i.e. 25k-250k bracket, 1.8 EUR/side), then lower tiers, and run 250k tier + SimDeposit/UseLotSim sim-balance tests LAST. Loop owner: apply in auto_loop ordering; b64 queue entries currently carry SimDeposit 275000 (sim) so they need a non-sim 25k-250k first pass.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T03:27:44",
-  "updated": "2026-10-15T03:27:44",
-  "note": ""
- },
- {
   "id": 72,
   "title": "NASIF 07:27 UTC: run spread 2 (or min/avg real spread) tests earliest possible. Loop owner: do NOT just pass --spread 2 to auto_loop - base runs are hard-coded WIN_GEN1_*_sp5 (line 166/293) so beats would compare sp2 cand vs sp5 base. Needs base re-run at sp2 too. Meanwhile cost_grid comm*+spr2 (line 364) already gives exact derived sp2 numbers per candidate. Front of queue now: lowbal_10k_leader, lev500_1k, lev500_100k (all SimLeverage 500).",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:04:41",
   "updated": "2026-10-15T08:04:41",
+  "note": ""
+ },
+ {
+  "id": 111,
+  "title": "Added billionaire/SpaceX/Tesla/Amazon tags to ANOMALY_RESEARCH_15Oct.md (weak link, cheap cloud test)",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:05:13",
+  "updated": "2026-10-15T08:05:13",
   "note": ""
  }
 ]
