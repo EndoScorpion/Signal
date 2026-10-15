@@ -1,14 +1,5 @@
 [
  {
-  "id": 67,
-  "title": "CLOCK CHECK CONFIRMED (read-only, EURUSD1.hst weekly opens): 2009-2018 open Mon 02:00 winter / Mon 03:00 summer; 2019-2025 open Mon 00:00 (clean NY-close clock, server UTC+2/+3 DST). Hour-gated results for 2010, 2013-16, 2018 (6 of the loop's 8 years) are 2-3 h off live; 2023, 2024 are correct. Parent-on-untested-years runner already goes 2025, 2026, 2022, 2021, 2020, 2019 first (clean clock), then 2017, 2012, 2011, 2009. A re-aligned 2009-2018 copy is BUILDABLE (shift M1 timestamps -2h winter / -3h summer into a NEW folder, never overwrite the original, ~400 MB, needs Nasif's go). Memory note saved.",
-  "owner": "",
-  "status": "open",
-  "created": "2026-10-15T02:55:08",
-  "updated": "2026-10-15T02:55:08",
-  "note": ""
- },
- {
   "id": 68,
   "title": "CLOCK FIX built (original untouched): CAUSE = raw FXOpen CSV for 2009-2018 is already on the server clock while 2019+ is true UTC; rebuild_history.py added +2/+3 h to all, so 2009-2018 ended 2 h (winter)/3 h (summer) late. ALIGNED M1 = C:\\Users\\endos\\Desktop\\hst_aligned\\EURUSD1.hst (394,609,888 bytes, 6,576,829 bars, monotonic, every year now opens Mon 00:00; boundary at 2019-01-28, one 2019 week shows Sun 21:01 = boundary-week artifact). Script data\\build_aligned_m1.py. NOT yet used by any test: mt4_tester2 still has the shifted file. To test: either pause the loop, back up mt4_tester2's EURUSD1.hst and swap, or build a separate tester copy; needs Nasif's choice. Then re-test 2010, 2013-16, 2018 (hour-gated results change).",
   "owner": "",
@@ -357,6 +348,15 @@
   "status": "open",
   "created": "2026-10-15T08:02:52",
   "updated": "2026-10-15T08:02:52",
+  "note": ""
+ },
+ {
+  "id": 107,
+  "title": "Added hedge-fund/bank, VC, M&A/trade-talk, antitrust tags to ANOMALY_RESEARCH_15Oct.md; month-end/fix split first",
+  "owner": "",
+  "status": "open",
+  "created": "2026-10-15T08:03:13",
+  "updated": "2026-10-15T08:03:13",
   "note": ""
  }
 ]
