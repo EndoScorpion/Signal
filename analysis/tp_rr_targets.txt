@@ -1,0 +1,56 @@
+TP / R:R TARGET ANALYSIS — Strong2010b_claude EA
+EURUSD M1 | FXOpen ECN 5-digit | SL=290 pts | Cost=9 pts (spread 3 + comm 6)
+Net R:R formula: (TP - 9) / (SL + 9) = (TP - 9) / 299
+Generated: 2026-10-12
+====================================================================
+
+1. NET R:R FOR CURRENT TP VALUES (SL=290)
+------------------------------------------------------------------
+TP (pts)    Net R:R    Verdict
+300         0.973      Sub-1 (barely below breakeven at 50% WR)
+360         1.174      Marginal (needs 46% WR)
+
+2. TP REQUIRED FOR TARGET NET R:R (SL=290)
+------------------------------------------------------------------
+Target R:R  TP formula          TP (pts)
+1.0         1.0×299 + 9 = 308   308
+1.5         1.5×299 + 9 = 458   458
+2.0         2.0×299 + 9 = 607   607
+
+3. ATR-BASED SL SCENARIOS — TP FOR NET R:R=1.5
+Formula: TP = 1.5×(ATR_SL + 9) + 9
+------------------------------------------------------------------
+ATR mult   ATR=8 pts   ATR=10 pts  ATR=12 pts
+           SL=8        SL=10       SL=12
+1.0×ATR    35 pts      38 pts      41 pts
+1.5×ATR    41 pts      45 pts      50 pts
+2.0×ATR    47 pts      53 pts      59 pts
+
+Note: ATR-based SL dramatically lowers required TP vs fixed SL=290.
+At SL=10 pts and R:R=1.5, TP=38 vs TP=458 with fixed SL=290.
+
+4. MINIMUM WIN RATE FOR BREAKEVEN  WR = 1/(1+R:R)
+------------------------------------------------------------------
+Scenario                R:R     Min WR%
+Current TP=300          0.973   50.7%
+Current TP=360          1.174   46.0%
+Target R:R=1.0 (TP308)  1.0     50.0%
+Target R:R=1.5 (TP458)  1.5     40.0%
+Target R:R=2.0 (TP607)  2.0     33.3%
+
+5. CostGateOK — BUG ANALYSIS
+------------------------------------------------------------------
+Current (broken):  tp / total_cost >= InpMinRR
+                   e.g. 300/9 = 33.3 >= 1.5 → PASSES (wrong)
+
+Corrected:         (tp - cost) / (sl + cost) >= InpMinRR
+                   e.g. (300-9)/(290+9) = 291/299 = 0.973 < 1.5 → FILTERED
+                   e.g. (360-9)/(290+9) = 351/299 = 1.174 < 1.5 → FILTERED
+
+With InpMinRR=1.5 and fixed SL=290, BOTH current TP values (300 and 360)
+would be filtered out by the corrected formula. TP must reach 458 pts
+to pass. The broken formula effectively passes everything (any TP > 14 pts).
+
+====================================================================
+RECOMMENDATION: Either raise TP to 458+ pts, or switch to ATR-based SL
+(~10 pts on M1) which requires only TP ~38 pts to achieve net R:R=1.5.
