@@ -1,0 +1,89 @@
+## v11 ADDENDUM: T133-T144 Findings
+
+### T136-T138 RESULTS
+
+**T136 (PROMISING, low n): T131 + London 10h bearish**
+- n=3, WR=100%, PF=∞, avg=+0.1273%
+- 2024: n=1 PF=∞, 2026: n=2 PF=∞
+- London 10:00 UTC bar direction filter overlaps too tightly with T131 signals → tiny sample
+- Conclusion: directionally interesting, need more data
+
+**T137: T59 2026 Month-by-Month**
+- 2026 total: n=12, WR=75%
+- Jan: WR=0% (1 loss), Feb: WR=66.7% PF=4.58, Mar-Jul: WR=100%
+- Aug 2026: WR=50% PF=0.96 — possible recent deterioration, watch
+- Conclusion: Edge holding in 2026, Jan-Jul strong, Aug mixed
+
+**T138 (FAILED): Coiling 2 narrow bars (range<0.5xATR)**
+- No trades — threshold too strict, eliminates all signals
+- Tried 0.5×ATR threshold for "inside bar" coiling pattern
+- Note: 0.75×ATR also fails (T141 no trades)
+
+### T139-T141 RESULTS
+
+**T139 (PROMISING, low n): T131 + Tue/Wed DOW filter**
+- n=5, WR=100%, PF=∞, avg=+0.1140%
+- All years profitable: 2024 n=2, 2025 n=1, 2026 n=2
+- Consistent n per year — DOW filter doesn't hurt quality
+- Conclusion: real signal, need more n for production
+
+**T140 (NEW SURVIVOR): T131 + prior bar bearish**
+- n=10, WR=90%, PF=10.43, avg=+0.0887%
+- 2024: n=2 PF=∞, 2025: n=1 PF=∞, 2026: n=7 WR=85.7% PF=6.46
+- Prior bar being bearish = momentum confirmation for the short
+- Same quality as T131, slightly different trade selection (overlap check needed)
+- Conclusion: viable additional filter or alternative signal
+
+**T141 (FAILED): T131 + 1 prior narrow bar (range<0.75xATR)**
+- No trades — same coiling threshold issue as T138
+
+### T142-T144 RESULTS
+
+**T142: T131 + 2-bar hold**
+- n=11, WR=81.8%, PF=10.03, avg=+0.0838%
+- 2024: n=2 PF=∞, 2025: n=1 PF=∞, 2026: n=8 WR=75% PF=6.37
+- Slightly lower WR and PF than 4-bar T131 (PF=11.39 vs 10.03)
+- Conclusion: 4-bar hold remains canonical; 2-bar exit loses some upside
+
+**T143: T131 + bar itself bearish close**
+- n=8, WR=87.5%, PF=7.85, avg=+0.0805%
+- 2024: n=1, 2026: n=7 WR=85.7% PF=6.36
+- Missing 2025 data point — small n variance
+- Conclusion: bar direction filter reduces n without improving quality vs T131
+
+**T144 (TOO RARE): T131 + gap down open**
+- n=2, WR=100%, PF=∞
+- H1 FX has almost no true gaps (continuous market) — filter eliminates nearly all signals
+
+### UPDATED SURVIVOR TABLE
+
+| Theory | n | WR | PF | Note |
+|--------|---|----|----|------|
+| T3 | 65 | ~55% | 2.17 | Long-running |
+| T25 | 23 | ~65% | 3.41 | After-loss MR |
+| T38a | 28 | ~64% | 3.21 | Compression |
+| T59 | 18 | 77.8% | 4.90 | 4-bar hold |
+| T106 | 14 | 85.7% | 6.68 | T59+13-14h |
+| T128 | 10 | 90.0% | 10.33 | T59+13-14h+body≤1.5 |
+| T131 | 11 | 90.9% | 11.39 | Relaxed lo10+body+13-14h ← BEST |
+| T140 | 10 | 90.0% | 10.43 | T131+prior bearish bar |
+| T75 | 8 | 87.5% | 21.14 | Wick-poke |
+| T86/T108 | 5-6 | 100% | ∞ | Wick-poke+13-14h |
+
+### CLONE LOGIC UPDATE
+
+New correlations to propagate to non-pupil clone logic:
+1. **Prior bar direction**: Bearish prior bar confirms short momentum (T140)
+2. **Day-of-week**: Tue+Wed are cleanest (T139 WR=100%)
+3. **2-bar exit option**: PF=10.03 vs 4-bar PF=11.39 — 4-bar still better
+4. **London 10h bearish**: T136 promising but needs more data
+5. **August 2026**: Monitor for edge decay in recent bars (T137 Aug WR=50%)
+
+### KEY INSIGHTS
+
+- **Coiling pattern not viable on H1**: Narrow bar thresholds (0.5-0.75×ATR) eliminate all signals. H1 bars in ATR compression are ALREADY narrow by definition — looking for "even narrower" prior bars creates impossible filter.
+- **Bar direction filters redundant**: T143 (bar bearish) and T140 (prior bearish) both reduce n without much quality gain vs T131. The compression + lo10 break is already a directional signal.
+- **Hold time**: 4-bar remains canonical. 2-bar loses ~15% of profitable runners.
+- **DOW filter**: Tue+Wed pattern from T103 holds but can't be used alone (too few trades per year). May combine with T131 as a weighting factor in live trading.
+
+*All results net of COST=0.00008. Need n≥30 for production.*
