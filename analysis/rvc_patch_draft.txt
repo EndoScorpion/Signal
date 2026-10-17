@@ -1,0 +1,110 @@
+RVC/RPC PATCH DRAFT
+===================
+File: /home/user/Signal/Strong2010b_claude.mq4
+Date: 2026-10-12
+
+1. EARLY RETURN (dead-code boundary)
+-------------------------------------
+Line 199 contains an unconditional bare `return;` that sits immediately after
+the OrderSend else-if block (lines 193-198). Every live execution path through
+that block already returns (line 194 on success, line 197 on error + no open
+order). Line 199 therefore covers only the edge case where OrderSend returns
+<= 0 but another order of the same magic already exists — and returns
+unconditionally regardless. All code from line 202 onward (the extended slope
+block, stoch block, BB/ratio block, and the entire peak/valley scanner at
+lines 281-381) is unreachable.
+
+
+2. WHAT THE RVC/RPC LOGIC CHECKS
+----------------------------------
+Scan window: last 20 bars on M1 (`for (int a = 20; a >= 1; a--)`).
+
+Peak detection (lines 338-343):
+  A bar at index a+1 is a local HIGH if:
+    hi[a+1] > hi[a]    (strictly above right neighbour)
+    hi[a+1] > hi[a+2]  (strictly above left neighbour)
+  Each qualifying bar increments pkc (total peak count).
+  A *rising* peak (rpc++) is counted when the new peak price is strictly
+  greater than the previous peak: pk[pkc] > pk[pkc-1].
+
+Valley detection (lines 346-351):
+  A bar at index a+1 is a local LOW if:
+    lo[a+1] < lo[a]    (strictly below right neighbour)
+    lo[a+1] < lo[a+2]  (strictly below left neighbour)
+  Each qualifying bar increments vlc (total valley count).
+  A *rising* valley (rvc++) is counted when the new valley floor is strictly
+  higher than the previous valley: vall[vlc] > vall[vlc-1].
+
+Guard at line 381:
+  `if (rvc > 0 && rpc > 0)` — requires AT LEAST ONE rising valley AND
+  AT LEAST ONE rising peak in the scanned 20-bar window before proceeding
+  (otherwise returns). Development log documents the most reliable patterns
+  as rvc≥1/rpc≥1, rvc≥2/rpc≥1, rvc≥1/rpc≥2.
+
+
+3. MINIMAL PATCH — relocate rvc/rpc guard into the active entry path
+----------------------------------------------------------------------
+Insertion point: after the stochastic check (line 176), before RefreshRates /
+OrderSend (line 191). Specifically, insert between the second stochastic guard
+and the Print statement that follows it (line 180).
+
+--- PATCH (plain text, NOT applied) ---
+
+// After line 176 (stoch[1] >= 50 guard), before line 180 (Print):
+
+    // ---- RISING PEAK / RISING VALLEY GUARD (relocated from dead block) ----
+    // Scans the last 20 M1 bars for at least one rising local low (rvc) and
+    // one rising local high (rpc).  Window and thresholds kept exactly as
+    // originally written (lines 281-381).
+    {
+        double lo_[50], hi_[50], vall_[50], pk_[50];
+        ArrayInitialize(lo_, 0); ArrayInitialize(hi_, 0);
+        ArrayInitialize(vall_, 0); ArrayInitialize(pk_, 0);
+        int pkc_ = 0, vlc_ = 0, rvc_ = 0, rpc_ = 0;
+
+        for (int a_ = 20; a_ >= 1; a_--) {
+            hi_[a_] = iHigh(s, 1, a_);
+            if (hi_[a_+1] > hi_[a_] && hi_[a_+1] > 0 && hi_[a_+2] > 0
+                && hi_[a_] > 0 && hi_[a_+1] > hi_[a_+2]) {
+                pkc_++;
+                pk_[pkc_] = hi_[a_+1];
+                if (pk_[pkc_] > 0 && pk_[pkc_-1] > 0 && pk_[pkc_] > pk_[pkc_-1]) { rpc_++; }
+            }
+            lo_[a_] = iLow(s, 1, a_);
+            if (lo_[a_+1] < lo_[a_] && lo_[a_+1] > 0 && lo_[a_+2] > 0
+                && lo_[a_] > 0 && lo_[a_+1] < lo_[a_+2]) {
+                vlc_++;
+                vall_[vlc_] = lo_[a_+1];
+                if (vall_[vlc_] > 0 && vall_[vlc_-1] > 0 && vall_[vlc_] > vall_[vlc_-1]) { rvc_++; }
+            }
+        }
+
+        if (!(rvc_ > 0 && rpc_ > 0)) { return; }   // core rising-pattern gate
+    }
+
+// Continue with existing Print / OrderSend from line 180 onward.
+--- END PATCH ---
+
+Structural notes:
+- The code is wrapped in a bare block `{}` so the loop variable `a_` and the
+  local arrays do not conflict with the existing `slope[]`/`stoch[]` arrays
+  declared earlier in OnTick.  Underscore suffix avoids name collisions.
+- Array sizes remain 50 elements; max index accessed is hi_[22] (a_=20,
+  a_+2=22), which is within bounds.
+- The rp[]/rv[] arrays from the original (used only for logging) are omitted
+  because the gate only tests rvc_>0 && rpc_>0, not the stored values.
+- No threshold is changed; scan window stays at exactly 20 bars.
+
+
+4. CURVE-FIT RISK
+------------------
+The 20-bar window and the "at least one rising valley / peak" threshold were
+calibrated against the Feb 2011 backtest (272 trades, 98.16% win rate noted in
+the file header).  The entire filter stack was tuned in July 2021 on that same
+2011 dataset.  Adding the rvc/rpc guard to the live path will reduce trade
+frequency, but whether the filter generalises to current market structure
+(2024-2026 EURUSD) is unverified.  A forward walkforward test on at least
+12 months of out-of-sample data is recommended before deploying the patched
+version in a live account.  The risk of over-filtering (missing valid entries)
+is symmetric with the risk of the guard being spuriously permissive on unseen
+regimes.
