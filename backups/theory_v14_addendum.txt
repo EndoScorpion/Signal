@@ -1,0 +1,65 @@
+THEORY ADDENDUM v14 — T187-T195
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-17
+
+=== T187-T189 RESULTS ===
+T187: T182+T186 combined (multi-day compression + no new high) → n=5, WR=100%, PF=∞ (overlap, n too small)
+T188: Extreme compression rank<10 → n=4, WR=75%, PF=2.44
+      KEY INSIGHT: rank<10 is WORSE than rank<20. Tighter compression threshold degrades results.
+      Sweet spot is rank<20 — tighter is not better.
+T189: Signal bar TR at 5-bar minimum → no trades
+
+=== T190-T192 RESULTS ===
+T190: T131 + lower highs during compression → n=6, WR=100%, PF=∞ ← NEW SURVIVOR
+      MECHANISM: When compression period shows a sequence of lower highs (descending resistance),
+      all 6 trades win. Directional bias forming within the compression = stronger trap
+T191: T131 + ATR14 below annual median → IDENTICAL to T131 (all T131 trades inherently have this)
+T192: T131 at 15:00 UTC → n=2, WR=50%, PF=2.58 (not viable)
+
+=== T193-T195 RESULTS ===
+T193: T186+T190 combined (no new high + lower highs) → n=5, WR=100%, PF=∞ (n too small)
+T194: T131 + close below mean of compression highs → IDENTICAL to T131 (inherent property)
+T195: Hold-length systematic study (all using T131 base, n=11):
+      2-bar: WR=81.8%, PF=10.03
+      3-bar: WR=90.9%, PF=11.09
+      4-bar: WR=90.9%, PF=11.39 ← CANONICAL BEST
+      5-bar: WR=90.9%, PF=11.39 ← TIED WITH 4-BAR
+      6-bar: WR=81.8%, PF=10.03
+      8-bar: WR=90.9%, PF=11.09
+      KEY INSIGHT: 3-5 bar hold all give 90.9% WR. 4-bar is canonical optimal.
+      Holding past 5 bars doesn't help (6-bar drops WR). 2-bar is too early.
+
+=== ADDITIONAL T131 INHERENT PROPERTIES (newly confirmed) ===
+T191: ATR14 below annual median — all T131 trades already have this
+T194: Close below mean of compression-period highs — all T131 trades already have this
+
+=== UPDATED SURVIVOR TABLE (v14) ===
+Theory  n    WR      PF      Note
+T3      65   ~55%    2.17    Long-running base
+T25     23   ~65%    3.41    After-loss MR
+T38a    28   ~64%    3.21    Compression
+T59     18   77.8%   4.90    4-bar hold
+T106    14   85.7%   6.68    T59+13-14h
+T128    10   90.0%   10.33   T59+13-14h+body≤1.5
+T131    11   90.9%   11.39   Relaxed lo10+body+13-14h ← CANONICAL BEST
+T140    10   90.0%   10.43   T131+prior bearish bar
+T146    11   90.9%   10.44   T131+delayed next-bar entry (ACTIONABLE)
+T182    8    100%    ∞       T131+multi-day compression
+T186    7    100%    ∞       T131+no new high in compression period
+T190    6    100%    ∞       T131+lower highs during compression ← NEW
+T75     8    87.5%   21.14   Wick-poke
+T86/T108 5-6 100%   ∞       Wick-poke+13-14h
+
+=== HOLD-LENGTH CANONICAL CONCLUSION ===
+Optimal hold: 4 bars (or 5 bars — identical performance)
+Minimum hold: 3 bars (acceptable 90.9% WR)
+Avoid: 2-bar (81.8% WR) and 6-bar (drops to 81.8%)
+
+=== CLONE/PUPIL UPDATES ===
+New correlations to propagate:
+1. Lower highs in compression (T190): if compression period has descending resistance, higher confidence
+2. No new high in compression (T186): flat or falling range top → stronger
+3. Multi-day compression (T182): compression spanning multiple calendar days → stronger
+4. Rank<10 IS NOT BETTER than rank<20 (T188): counterintuitive — moderate compression is optimal
+5. Hold-length: 4-5 bar optimal; 3-bar acceptable; avoid 2-bar and 6-bar (T195)
+6. ATR below annual median is inherent to T131 (T191) — not an independent filter
