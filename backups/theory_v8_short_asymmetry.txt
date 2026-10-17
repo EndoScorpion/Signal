@@ -152,3 +152,48 @@ Long compression breakouts require EUR buyers to commit during NY session — a 
 ---
 
 *Not financial advice. n borderline on all theories — need 5yr data. FXOpen ECN EURUSD H1 only.*
+
+---
+
+## Addendum: T59 Parameter Optimization (T63-T65)
+
+### T63 — T7 Long with MA50 Trend Gate
+- In uptrend (price>MA50): n=14, WR=57.1%, PF=1.83 — 2024+2026 still fail
+- In downtrend: n=7, PF=0.87
+- **REJECTED**: Trend filter doesn't rescue T7 longs. The problem is NY structural short bias, not trend ignorance.
+
+### T64 — T59 Shorts DOW Split
+- Mon-Wed shorts: n=12, WR=83.3%, PF=9.14 — the cream of T59
+- Thu-Fri shorts: n=6, WR=66.7%, PF=2.01 — weaker but still contributes
+- **Mon-Wed shorts are T25 shorts** (T25 = T7 Mon-Wed). T25 long/short separation reveals the real signal was always the shorts.
+
+### T65 — T59 Shorts with Wider Stop (2.0×ATR Stop, 1.5×ATR Target) ← STRONGEST CONFIGURATION
+
+**Results:**
+- Overall: n=18, WR=88.9%, avg=+0.087%/trade, PF=14.12
+- 2024: n=2, WR=100%, PF=∞
+- 2025: n=4, WR=75.0%, PF=6.13
+- 2026: n=12, WR=91.7%, PF=25.05
+
+**Why wider stop works**: During ATR compression, ATR itself is small (rank<20th pct). A 2.0× stop is still absolutely tight. Shorts often retrace partway (normal oscillation) before continuing down — 1.5× was too tight and shook out valid trades.
+
+**Caution**: n=18, 2.0×/1.5× was discovered by in-sample optimization. True performance between 1.5×/1.5× (PF=4.01) and 2.0×/1.5× (PF=14.12). Mechanical justification exists.
+
+### Theory 59 — Canonical Definition (UPDATED)
+
+| Version | Stop | Target | n | WR | PF | Notes |
+|---------|------|--------|---|-----|-----|-------|
+| T59_std | 1.5× | 1.5× | 18 | 77.8% | 4.01 | Conservative |
+| **T59_opt** | **2.0×** | **1.5×** | **18** | **88.9%** | **14.12** | **Optimal — needs OOS validation** |
+
+### Updated Surviving Theories (v8 Final)
+
+| Theory | Concept | n | PF | Status |
+|--------|---------|---|-----|--------|
+| T3 | Session divergence Mon+Thu | 65 | 2.17 | SURVIVES |
+| T25 | T7 Mon-Wed | 23 | 3.41 | SURVIVES (note: long side weak, short strong) |
+| T38a | T7 body>0.3 (both dirs) | 28 | 3.21 | SURVIVES |
+| T59 | T7 SHORT only, all days, 1.5x/1.5x | 18 | 4.01 | **NEW SURVIVOR** |
+| T59_opt | T7 SHORT only, all days, 2.0x/1.5x | 18 | 14.12 | **CANDIDATE — needs 5yr OOS** |
+
+**Portfolio note**: T25 should be traded SHORT ONLY. T38a long side borderline (PF=2.70, inconsistent 2026). T59 + T3 = uncorrelated mechanisms. Total uncorrelated trades: ~83 (T3=65, T59=18).
