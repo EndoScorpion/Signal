@@ -18,3 +18,9 @@
 **Seeds:** n=20,30; h=60,55 (H>0.6, H>0.55)
 **Root cause:** Hurst R/S on 20-bar windows is extremely noisy — values swing between 0.2 and 0.9 within a single session. The threshold H>0.55 fires as often as random, and EMA20 cross adds a conflicting filter. The combination never builds a stable exit.
 **Next fix:** Use n≥50 (need longer series for R/S stability); or replace with a simpler persistence check (3 consecutive positive log-returns).
+
+## DOW — Day-of-Week Bias (0 winners)
+**Condition:** enter on UTC day d (d=1=Mon, d=2=Tue, d=5=Fri), close > prev close
+**Seeds:** d=1,2,5
+**Root cause:** The 156 series are dominated by intraday bars (M15/M30/M60/M120/M240) where `new Date(b[i][0]).getUTCDay()` correctly returns day-of-week, but the entry filter fires every bar on the target day-of-week, not just the first bar. This swamps the entry signal — the series fills with "entries" on every Monday/Tuesday bar rather than targeting session open. The effect is noise. Additionally, DOW bias on stocks and crypto is weak over 2015-2026 after cost (1-2 pts spread + 8pt commission wipes any weekday edge).
+**Next fix:** Restrict to daily (H4/H2) series only and require the first bar after the weekend open (b[i][0] - b[i-1][0] > 14*3600*1000 for Mon open gap).

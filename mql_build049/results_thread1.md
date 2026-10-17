@@ -60,3 +60,35 @@
 
 ## Root Cause Fixed (Session Log)
 The critical bug was w2_node.js not including BASE5 in Gen A. T5 detection used `typeof BASE4!=='undefined'` (CNV/tier-3) but there was no T6 for BASE5 (tier-4 VQZ et al). Fix: added T6 detection + BASE5 concat across all 8 relevant lines in the harness pipeline (lines 14, 31, 34, 35, 36, 37, 38, 43).
+
+---
+
+## Run 4 — Build 049d: ZSCO / STRK / DOW (2026-10-17)
+
+**Harness:** node tools/w2_node.js | 156 series | 575,952 jobs | 120 s
+
+**New families:**
+- **ZSCO** (Z-score mean-reversion): n=267 survivors | train wp=72.5% avg=+5.4% | holdout wp=73.7% avg=+2.7%
+- **STRK** (Consecutive-bar streak reversal): n=275 survivors | train wp=70.3% avg=+5.8% | holdout wp=70.2% avg=+3.7%
+- **DOW** (Day-of-week bias): 0 winners — autopsy: entry fires every bar of target day, noise; autopsied in autopsy.md
+
+**Top ZSCO entries:**
+- ZSCO atp4 asl2 | TSLA | M240 — wp=71% ha=23.6%
+- ZSCO | TSLA | M240 — wp=69% ha=23.6%
+
+**Top STRK entries:**
+- STRK hold8 | AAPL | M240 — wp=56% ha=24.3%
+- STRK hold6 | AAPL | M240 — wp=60% ha=14.6%
+
+**Total unique winners (build 049d): 35,646** (+929 from 049c, +7,990 from build 048 baseline of 27,656)
+
+**Tier-4 leaderboard (holdout avg, top 5):**
+1. PBR h_wp=81.3% h_avg=+4.9%
+2. ACG h_wp=75.8% h_avg=+4.4%
+3. RSI (t4 regime) h_wp=77.9% h_avg=+4.1%
+4. CCI (t4 regime) h_wp=71.2% h_avg=+4.0%
+5. GAP h_wp=70.0% h_avg=+3.8%
+
+STRK ranks 10th, ZSCO 14th out of 20 t4 families.
+
+All results net of 8-pt commission + spread + swap. Holdout = last 30% of each series.
