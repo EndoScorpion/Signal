@@ -1,0 +1,14 @@
+# ══════════════════════════════════════════════════════════
+# DATA SOURCE CHECK — MANDATORY BEFORE ANY BACKTEST
+# ══════════════════════════════════════════════════════════
+# REQUIRED: FXOpen ECN EUR/USD 5-digit (5 decimal) data
+#           Path: data/fxopen_eurusd/
+#
+# If this file was produced from ANY other data source:
+#   → Label result: [FLAWED - NON-FXOPEN DATA]
+#   → Move to: results/reference_tier/
+#   → DO NOT include in main test queue
+#
+# Matching prices from another broker do NOT qualify.
+# Non-FXOpen data = reference tier only, never main queue.
+# ══════════════════════════════════════════════════════════
