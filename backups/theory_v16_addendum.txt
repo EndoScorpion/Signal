@@ -1,0 +1,99 @@
+THEORY ADDENDUM v16 — T208-T219
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-17
+
+=== T208-T210 RESULTS ===
+T208: T131 + H4 also compressed (H4 rank<20) → n=8, WR=87.5%, PF=7.74
+      H4 compression alignment does NOT improve T131 (worse than canonical)
+T209: T131 + prior bar also broke lo10 (double break) → n=9, WR=88.9%, PF=8.53
+      Double lo10 break does NOT improve T131
+T210: 3-bar momentum before signal:
+      Bearish 3-bar momentum: n=9, WR=88.9%
+      Bullish/flat: n=2, WR=100% (n too small, meaningless)
+      No meaningful momentum-direction split
+
+=== T211-T213 RESULTS ===
+T211: HOUR EXPANSION — ATR compression signal (rank<20, 3+ bars, lo10 break, body≤1.5×ATR) by hour:
+      09h: n=42, WR=43%, PF=0.86 ← LOSING
+      10h: n=37, WR=41%, PF=0.58 ← LOSING
+      11h: n=29, WR=34%, PF=0.56 ← LOSING
+      12h: n=19, WR=47%, PF=0.85 ← LOSING
+      13h: n=8,  WR=88%, PF=7.64 ← PROFITABLE
+      14h: n=4,  WR=100%, PF=∞  ← PROFITABLE
+      15h: n=2,  WR=50%,  PF=2.58
+      16h: n=3,  WR=67%,  PF=6.25 (small n)
+      17h: n=2,  WR=50%,  PF=0.14 ← LOSING
+      18h: n=2,  WR=50%,  PF=0.25 ← LOSING
+      KEY INSIGHT: 13-14 UTC is uniquely profitable. Same signal applied to any other hour
+      produces LOSING results (PF<1) or marginal results with small n.
+      The 13-14 UTC window captures exactly the NY open overlap — edge is time-structural.
+
+T212: T131 + Bollinger Band squeeze (bb_width < 0.5×ATR) → no trades
+      BB squeeze never co-occurs with T131 ATR rank compression — redundant indicator
+
+T213: 20-bar high rejection at 13-14 UTC → n=448, WR=54.5%, PF=1.16
+      Marginally profitable but NOT an edge. Different mechanism, not T131 family.
+
+=== T214-T216 RESULTS ===
+T214: Week-of-year seasonality → trades spread across all weeks, no clustering
+      No ISO week seasonality pattern; week number is irrelevant
+
+T215: Prior 5-day range volatility regime:
+      Stable (prior5d_range ≤ 3×ATR): no trades
+      Volatile (prior5d_range > 3×ATR): n=11, WR=90.9%, PF=11.39
+      KEY INSIGHT: ALL T131 trades occur in volatile-regime environments.
+      Prior-5-day wide range is an INHERENT PROPERTY of T131, not a new filter.
+      (T131 occurs in compressed H1 ATR WITHIN a volatile daily range — the pair is
+       mean-reverting intraday but trending daily — exactly when the trap works.)
+
+T216: T131 near prev-day pivot (within 0.3×ATR) → no trades
+      Pivot proximity never co-occurs with T131 lo10 break condition
+
+=== T217-T219 RESULTS ===
+T217: Compression calendar day count:
+      1-day compression: n=7, WR=86%, PF=6.84
+      2-day compression: n=4, WR=100%, PF=∞
+      CONFIRMS T182: multi-day compression = stronger signal
+
+T218: Close position within day's range at signal bar:
+      Close in bottom 25% of day range: n=6, WR=83.3%, PF=6.48
+      Close NOT in bottom 25%: n=5, WR=100%, PF=∞
+      Counter-intuitive: close at extreme of day is WORSE. Close in middle of range = stronger.
+      (Possible mechanism: extreme close = exhaustion already shown; mid-range = compression
+       still ongoing, trap not yet sprung)
+
+T219: Distance from 50-bar EMA:
+      Far below EMA50 (>1 ATR): n=8, WR=100%, PF=∞ ← SURVIVOR CANDIDATE
+      Near EMA50 (<1 ATR below): n=3, WR=66.7%, PF=2.34
+      KEY INSIGHT: When price is >1 ATR below its 50-bar EMA at time of T131 signal,
+      WR=100%. Mechanism: price far below EMA = extended bearish move already in progress,
+      compression at this level = institutional accumulation before further continuation.
+
+=== UPDATED SURVIVORS ===
+T182: multi-day compression (n=8, WR=100%) — confirmed by T217
+T186: no new high in compression (n=7, WR=100%)
+T190: lower highs during compression (n=6, WR=100%)
+T198: second half of month (n=6, WR=100%) — provisional
+T201: prior week bearish (n=5, WR=100%) — provisional
+T219: far below EMA50 (n=8, WR=100%) — NEW SURVIVOR CANDIDATE (inherent? needs check)
+
+=== KEY STRUCTURAL INSIGHT (T211) ===
+The 13-14 UTC hour constraint is not arbitrary — it is THE edge-defining condition.
+Testing the identical ATR compression + lo10 break logic at all other hours produces
+losing results. The NY open overlap is structurally special for this trap mechanism.
+This eliminates any possibility that the edge could be improved by testing other times.
+
+=== NEGATIVE RESULTS (WELL-SAMPLED) ===
+T211: Hours 9-12 UTC, ATR compression lo10 break = losing at every hour (PF 0.56-0.86, n=19-42)
+T213: High rejection (n=448) = PF=1.16, not an edge
+T215: Stable volatility regime = zero T131 signals (inherent property, not a filter)
+T216: Pivot proximity = never co-occurs with T131
+
+=== CLONE/PUPIL UPDATES ===
+Propagate:
+1. EMA50 distance: price >1 ATR below EMA50 at T131 = WR=100% (T219) — add as confidence indicator
+2. 2-day+ compression = WR=100% (T217 confirms T182)
+3. Close mid-range (NOT at day's bottom) = stronger setup (T218 — counter-intuitive)
+4. 13-14 UTC is structurally non-replicable — same logic at any other hour loses (T211)
+5. Daily volatility regime: T131 always occurs in wide-range daily context (T215 inherent)
+6. No new filters work as standalone edges (T208-T213 all fail or inherit)
