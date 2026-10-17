@@ -1,0 +1,50 @@
+// node tools/w2_node.js <w2_module_source.html> <page.html> <data/slc_win2_hl.json> <out.json>
+// Runs the Win Logic v2 engine (indicators..generation slice of the module) in Node on ALL real series the page would see:
+// Hyperliquid seed (cost class perp) + the page's embedded hourly BARS_S (stocks/ETFs/crypto; M60 + resampled M120/H4).
+// Same A->B->C->D generation, same passes()/dedupe as the page's runAll()/fin(); works for build 042-047 engines.
+const fs=require('fs');const [mod,page,seedF,out]=process.argv.slice(2);
+const m=fs.readFileSync(mod,'utf8');
+eval(m.slice(m.indexOf('var CLS='),m.indexOf('var COSTS=')));let COSTS=JSON.parse(JSON.stringify(CLS));
+function clsOf(se){return se.cls||(se.src==="hl"?"perp":(/USD[TC]?$/.test(se.s)&&se.s.length>4?"crypto":"stock"))}
+const PTS=process.env.W2_PTS;function ptOf(px){return px>=10?0.01:px>=1?0.001:px>=0.01?0.0001:0.00001}
+// commission points per ROUND TRIP like the page (build 048: class field pts, default 8 when present); W2_PTS=N overrides for every class
+function costOf(se){const c=COSTS[clsOf(se)]||COSTS.stock;const p=PTS!=null?+PTS:(c.pts==null?0:+c.pts);if(!p)return c;if(se._mc==null){let m=0;se.b.forEach(x=>m+=x.c);se._mc=m/se.b.length}return Object.assign({},c,{comm:(+c.comm||0)+p*ptOf(se._mc)/2/se._mc*100})}
+eval(m.slice(m.indexOf('function nb(r)'),m.indexOf('var SC=null')));           // nb, rs, TFM
+eval(m.slice(m.indexOf('/* ---------- indicators'),m.indexOf('var RUN={on:false'))); // engine + generation
+const NEW=typeof BASE2!=='undefined',T3=typeof tierOf==='function',T4=m.indexOf('function memGet(')>=0,T5=typeof BASE4!=='undefined',T6=typeof BASE5!=='undefined';
+// ---- series exactly like the page's series(): HL seed first, then embedded BARS_S (M60, M120, H4)
+const S=[],seen={},BAD={};
+function add(s,tf,arr,src,cls){var b=arr.map(nb).filter(Boolean);if(b.length<150||seen[s+"|"+tf])return;seen[s+"|"+tf]=1;var mx=0;for(var i=1;i<b.length;i++){var d=Math.abs(b[i].c/b[i-1].c-1);if(d>mx)mx=d}if(mx>0.25){BAD[s+" "+tf]=(mx*100).toFixed(0)+"%";return}S.push({s:s,tf:tf,m:TFM[tf]||60,b:b,src:src,cls:cls})}
+const HL=JSON.parse(fs.readFileSync(seedF,'utf8'));Object.keys(HL).forEach(k=>{const p=k.split('|');if(Array.isArray(HL[k]))add(p[0],p[1],HL[k],'hl')});
+const extF=process.env.W2_EXT||'data/slc_win2_ext.json';if(!process.env.W2_NOEXT&&fs.existsSync(extF)){const EX=JSON.parse(fs.readFileSync(extF,'utf8'));Object.keys(EX).forEach(k=>{const p=k.split('|'),e=EX[k];if(e&&Array.isArray(e.b)&&p.length===2)add(p[0],p[1],e.b,e.src||'ext',e.cls)})}
+const h=fs.readFileSync(page,'utf8');const i0=h.indexOf('var BARS_S=')+'var BARS_S='.length;let d=0,i=i0;for(;i<h.length;i++){const ch=h[i];if(ch==='{')d++;else if(ch==='}'){d--;if(d===0)break}}
+const BS=JSON.parse(h.slice(i0,i+1));Object.keys(BS).forEach(s=>{const b=BS[s].map(nb).filter(Boolean);if(b.length<150)return;let mx=0;for(let j=1;j<b.length;j++){const q=Math.abs(b[j].c/b[j-1].c-1);if(q>mx)mx=q}if(mx>0.25){BAD[s]=(mx*100).toFixed(0)+"%";return}add(s,"M60",b,"emb");add(s,"M120",rs(b,120),"emb");add(s,"H4",rs(b,240),"emb")});
+// W2_RETEST=<winners.json> W2_OUT=<file>: re-test those exact branches (and their ancestors) on their own symbol/TF at the current costs, no generation
+if(process.env.W2_RETEST){const RW=JSON.parse(fs.readFileSync(process.env.W2_RETEST,'utf8')).winners,bySe={};S.forEach(se=>bySe[se.s+'|'+se.tf]=se);
+ const SEEDS=BASE.concat(typeof BASE2!=='undefined'?BASE2:[],typeof BASE3!=='undefined'?BASE3:[],typeof BASE4!=='undefined'?BASE4:[]),seedN={},nbOf={};SEEDS.forEach(s=>{seedN[nm(s)]=1;neighbours(s).forEach(c=>{if(!nbOf[nm(c)])nbOf[nm(c)]=s})});const CL=o=>JSON.parse(JSON.stringify(o));
+ const par=sp=>{if(sp.reg){const c=CL(sp);delete c.reg;return[c]}if(sp.k==='MIX')return[sp.a,sp.b];if(sp.x){const c=CL(sp);delete c.x;return[c]}if(seedN[nm(sp)])return[];return nbOf[nm(sp)]?[nbOf[nm(sp)]]:[]};
+ const out={win:[],anc:{}};RW.forEach(w=>{const se=bySe[w.s+'|'+w.tf];if(!se)return;const r=metrics(w.spec,se);out.win.push({key:w.key,cls:r.cls,old:{t:w.t,w:w.w,wp:w.wp,ht:w.ht,hwp:w.hwp,a:w.a,ha:w.ha},t:r.t,w:r.w,wp:r.wp,ht:r.ht,hwp:r.hwp,a:r.a,ha:r.ha,pass:passes(r),acm:r.acm,tier:T3?tierOf(w.spec):0});
+  (function go(sp,d){par(sp).forEach(p=>{const k=nm(p)+'|'+w.s+'|'+w.tf;if(!out.anc[k]){const q=metrics(p,se);out.anc[k]={d:d,t:q.t,w:q.w,ht:q.ht,hw:Math.round(q.hwp*q.ht/100),a:q.a,ha:q.ha,pass:passes(q)}}go(p,d+1)})})(w.spec,1)});
+ fs.writeFileSync(process.env.W2_OUT,JSON.stringify(out));console.log(JSON.stringify({retested:out.win.length,stillPass:out.win.filter(x=>x.pass).length,ancestors:Object.keys(out.anc).length}));process.exit(0)}
+// ---- generation (mirror of runAll)
+const t0=Date.now();let all=[],nJobs=0;function run(specs,label){const o=[];specs.forEach(sp=>S.forEach(se=>o.push(metrics(sp,se))));nJobs+=o.length;all=all.concat(o);console.error(label+': '+specs.length+' specs x '+S.length+' series = '+o.length+' backtests ('+(Date.now()-t0)+' ms)');return o}
+let A=BASE.concat.apply(BASE,BASE.map(neighbours));if(NEW)A=A.concat(BASE2.concat.apply(BASE2,BASE2.map(neighbours)));if(T3)A=A.concat(BASE3.concat.apply(BASE3,BASE3.map(neighbours)));if(T5)A=A.concat(BASE4.concat.apply(BASE4,BASE4.map(neighbours)));if(T6)A=A.concat(BASE5.concat.apply(BASE5,BASE5.map(neighbours)));A=uniqSpecs(A);
+const rA=run(A,'Gen A');
+const topG=T3?tierTop(rA,0,12).concat(tierTop(rA,1,8),tierTop(rA,2,6)):NEW?topSpecs(rA.filter(r=>isLeg(r.spec)),12).concat(topSpecs(rA.filter(r=>!isLeg(r.spec)),8)):topSpecs(rA,12);
+let top=topG,BGN={};if(T4){const TFS={};S.forEach(se=>TFS[se.tf]=1);let topX=[];Object.keys(TFS).forEach(tf=>{const rT=rA.filter(r=>r.tf===tf);topX=topX.concat(tierTop(rT,0,3),tierTop(rT,1,2),tierTop(rT,2,1))});let top4=[];if(T5){top4=tierTop(rA,3,6);Object.keys(TFS).forEach(tf=>{top4=top4.concat(tierTop(rA.filter(r=>r.tf===tf),3,1))})}let top5=[];if(T6){top5=tierTop(rA,4,6);Object.keys(TFS).forEach(tf=>{top5=top5.concat(tierTop(rA.filter(r=>r.tf===tf),4,1))})}top=uniqSpecs(topG.concat(topX,top4,top5))}
+let B=[];top.forEach(sp=>{const g=topG.indexOf(sp)>=0;(T6?EXITS.concat(EXITS2,EXITS3,EXITS4,EXITS5):T5?EXITS.concat(EXITS2,EXITS3,EXITS4):T3?EXITS.concat(EXITS2,EXITS3):NEW?EXITS.concat(EXITS2):EXITS).forEach(x=>{const c=JSON.parse(JSON.stringify(sp));c.x=x;B.push(c);if(g)BGN[nm(c)]=1})});const rB=run(uniqSpecs(B),'Gen B');
+let Cm=[];const tg4=T6?topG.concat(tierTop(rA,3,6),tierTop(rA,4,6)):T5?topG.concat(tierTop(rA,3,6)):topG;for(let p=0;p<tg4.length;p++)for(let q=p+1;q<tg4.length;q++)Cm.push({k:"MIX",a:tg4[p],b:tg4[q],w:3});const rC=run(Cm,'Gen C');
+const rBG=rB.filter(r=>BGN[r.sig]);let D=[],seed=T4?top.concat(tierUpTo(rBG,0,6),tierUpTo(rC,0,4),tierUpTo(rBG,1,6),tierUpTo(rC,1,4),topSpecs(rBG,6),topSpecs(rC,4),topSpecs(rB,6),T6?tierUpTo(rB,4,6):[],T6?tierUpTo(rC,4,4):[],T5?tierUpTo(rB,3,6):[],T5?tierUpTo(rC,3,4):[]):T3?top.concat(tierUpTo(rB,0,6),tierUpTo(rC,0,4),tierUpTo(rB,1,6),tierUpTo(rC,1,4),topSpecs(rB,6),topSpecs(rC,4)):NEW?top.concat(topSpecs(rB.filter(r=>isLeg(r.spec)),6),topSpecs(rC.filter(r=>isLeg(r.spec)),4),topSpecs(rB,6),topSpecs(rC,4)):top.concat(topSpecs(rB,6),topSpecs(rC,4));
+seed.forEach(sp=>(T6?REGS2.concat(REGS3,REGS4,REGS5):T5?REGS2.concat(REGS3,REGS4):T3?REGS2.concat(REGS3):NEW?REGS2:["quiet","trend"]).forEach(rg=>{const c=JSON.parse(JSON.stringify(sp));c.reg=rg;D.push(c)}));const rD=run(uniqSpecs(D),'Gen D');
+// ---- fin() mirror
+const win=all.filter(passes);win.sort((a,b)=>(b.hwp-a.hwp)||(b.wp-a.wp)||(T3?(tierOf(a.spec)-tierOf(b.spec)):NEW?((isLeg(b.spec)?1:0)-(isLeg(a.spec)?1:0)):0));
+const sn={},uniq=[];win.forEach(r=>{const k=r.s+"|"+r.tf+"|"+r.ent;if(sn[k])return;sn[k]=1;uniq.push(r)});
+const idx={};uniq.forEach(r=>{const k=r.sig+"|"+r.s+"|"+r.tf;if(!idx[k])idx[k]=r});
+const winners=Object.keys(idx).map(k=>idx[k]).sort((a,b)=>(b.hwp-a.hwp)||(b.wp-a.wp)).slice(0,+process.env.W2_CAP||(T6?50000:T5?50000:T4?20000:T3?8000:NEW?5000:300)).map(r=>({key:r.sig+"|"+r.s+"|"+r.tf,sig:r.sig,spec:r.spec,s:r.s,tf:r.tf,cls:r.cls,src:r.src,t:r.t,w:r.w,wp:+r.wp.toFixed(1),g:+r.g.toFixed(2),k:+r.k.toFixed(2),x:+r.x.toFixed(2),a:+r.a.toFixed(2),mdd:+r.mdd.toFixed(2),add:+r.add.toFixed(2),tdd:+r.tdd.toFixed(2),hmdd:+r.hmdd.toFixed(2),acm:+r.acm.toFixed(3),afe:+r.afe.toFixed(3),asp:+r.asp.toFixed(3),asw:+r.asw.toFixed(4),atx:+r.atx.toFixed(3),ht:r.ht,hwp:+r.hwp.toFixed(1),hnet:+r.hnet.toFixed(2),ha:+r.ha.toFixed(2),avgb:+r.avgb.toFixed(1),ddok:r.ddok==null?null:!!r.ddok,ent:r.ent,leg:NEW?isLeg(r.spec):true,tier:T3?tierOf(r.spec):(NEW?(isLeg(r.spec)?0:1):0)}));
+const byTf={};all.forEach(r=>{const o=byTf[r.tf]=byTf[r.tf]||{n:0,w:0,u:0};o.n++;if(passes(r))o.w++});uniq.forEach(r=>byTf[r.tf].u++);
+// W2_AGG=<file>: wins / trades per family over EVERY backtest (not just winners), train + hold-out, net after all costs
+if(process.env.W2_AGG){const G={};const fam=sp=>sp.k==='MIX'?'MIX ('+fam(sp.a)+' & '+fam(sp.b)+')':sp.k;all.forEach(r=>{const keys=[fam(r.spec).replace(/^MIX.*/,'MIX'),'tier '+(T3?tierOf(r.spec):0),'exit '+(r.spec.x?Object.keys(r.spec.x).join('+'):'signal'),'regime '+(r.spec.reg||'none'),'ALL'];const hw=Math.round(r.hwp*r.ht/100);keys.forEach(k=>{const g=G[k]=G[k]||{bt:0,pass:0,t:0,w:0,ht:0,hw:0,a:0,ha:0};g.bt++;if(passes(r))g.pass++;g.t+=r.t;g.w+=r.w;g.ht+=r.ht;g.hw+=hw;g.a+=r.a;g.ha+=r.ha})});fs.writeFileSync(process.env.W2_AGG,JSON.stringify(G))}
+// W2_DUMP=<file>: every backtest as key sig|sym|tf -> [t,w,ht,hw,a,ha,passes] (for lineage reports)
+if(process.env.W2_DUMP){const D={};all.forEach(r=>{D[r.sig+'|'+r.s+'|'+r.tf]=[r.t,r.w,r.ht,Math.round(r.hwp*r.ht/100),+r.a.toFixed(3),+r.ha.toFixed(3),passes(r)?1:0]});fs.writeFileSync(process.env.W2_DUMP,JSON.stringify(D))}
+const res={engine:mod,when:new Date().toISOString(),ms:Date.now()-t0,series:S.length,bad:BAD,jobs:nJobs,passes:win.length,uniq:uniq.length,clones:win.length-uniq.length,inMemory:winners.length,byTf:byTf,costs:COSTS,winners:winners};
+fs.writeFileSync(out,JSON.stringify(res));console.log(JSON.stringify({engine:mod,series:S.length,jobs:nJobs,passes:win.length,uniq:uniq.length,clones:win.length-uniq.length,inMemory:winners.length,ms:res.ms,byTf:byTf,bad:BAD}));
