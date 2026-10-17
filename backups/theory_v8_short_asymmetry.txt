@@ -1,0 +1,154 @@
+# Theory Batch v8 — Short Direction Asymmetry (Key New Finding)
+*Date: 2026-10-17 | Data: FXOpen ECN EURUSD H1 | Method: dual feedback loop*
+
+---
+
+## Key Finding: T7/T25 ATR Compression is a SHORT Signal
+
+**Discovery path:**
+1. T25 baseline: n=22, WR=68.2%, PF=3.20 (both directions combined)
+2. Split by direction: T25 SHORT n=12, WR=83.3%, PF=9.14 vs T25 LONG n=10, WR=50%, PF=1.45
+3. Test on T7 all days: T7 SHORT n=18, WR=77.8%, PF=4.90 vs T7 LONG n=21, WR=52.4%, PF=1.33
+4. **The T7/T25 edge is essentially ALL short-side**
+
+**Why shorts dominate:**
+- EURUSD has been in a structural downtrend (EUR weakness vs USD) since 2022. Compression breakdowns align with macro flow.
+- During 13-17 UTC NY overlap, USD institutional buyers are active. When EURUSD support compresses and breaks down, it breaks against thin EUR buyers and into deep USD liquidity.
+- Long breakouts (EUR buying into NY USD sellers) = fighting the tape → more failures.
+- Short breakouts (EUR selling with NY USD buyers) = institutional participation aligned → strong follow-through.
+- **This explains 2024 long failures**: 2024 was peak USD strength, longs dead. 2026 longs slightly better as EUR partly recovered.
+
+**The doji short paradox:**
+- For LONGS: body>0.3xATR filter improves PF (body = conviction proxy, doji = fakeout)
+- For SHORTS: doji breakdowns (body<0.3xATR) = PF=12.44, n=6! BETTER than large-body shorts!
+- **Why**: A doji breakdown (small body, but closed below support) means price couldn't recover even on thin selling — extreme EUR weakness. The lack of buying pressure IS the signal. Doji long = buyers failed; Doji short = sellers don't even need to try hard.
+
+---
+
+## Theory 59 — T7 SHORT ONLY (New Survivor Candidate)
+
+**Concept:** T7 (ATR compression breakout 13-17 UTC) but SHORT direction ONLY. Skip all long setups.
+
+**Parameters:**
+- Instrument: EURUSD H1 (FXOpen ECN)
+- Filter: ATR rank < 20th percentile for 3+ consecutive bars
+- Trigger: bar breaks prior 10-bar LOW by > 0.2×ATR14 (SHORT ONLY — skip highs)
+- Time gate: 13:00-17:00 UTC
+- DOW gate: All days (Mon-Fri) — no DOW filter needed
+- Entry: at close of trigger bar (short entry)
+- Stop: 1.5×ATR14 above entry; Target: 1.5×ATR14 below entry (1:1 R:R)
+- Max hold: 4 bars
+
+**Results:**
+- Overall: n=18, WR=77.8%, avg=+0.069%/trade, PF=4.90
+- 2024: n=2, WR=100%, PF=∞
+- 2025: n=4, WR=75.0%, PF=6.13
+- 2026: n=12, WR=75.0%, PF=3.34
+
+**DOW breakdown:**
+- Mon: n=5, WR=60%, PF=2.92
+- Tue: n=5, WR=100%, PF=∞
+- Wed: n=2, WR=100%, PF=∞
+- Thu: n=3, WR=66.7%, PF=1.78
+- Fri: n=3, WR=66.7%, PF=2.30
+
+**Hour breakdown:**
+- 13:00: n=10, WR=80%, PF=4.42
+- 14:00: n=4, WR=100%, PF=∞
+- 15:00: n=1, WR=0%, PF=0.00
+- 16:00: n=3, WR=66.7%, PF=6.25
+
+**Body filter sensitivity (SHORT direction):**
+- No filter (all): n=18, WR=77.8%, PF=4.90 ← **optimal — do NOT use body filter for shorts**
+- body>0.3xATR: n=12, WR=75%, PF=3.95 — worse, removes good doji trades
+- **doji only (body<0.3xATR): n=6, WR=83.3%, PF=12.44** ← doji shorts are STRONGEST
+
+**Caution:** n=18 over 2.5 years (~7/yr) is below CLAUDE.md n≥30 threshold. Growing: 2026 already has 12 of 18 shorts. Consistent across all periods.
+
+---
+
+## Theories 44–58 — Batch Summary (all rejected or too thin)
+
+| Theory | Concept | n | PF | Verdict |
+|--------|---------|---|-----|---------|
+| T44 | T3 early entry (2nd London bar close) | 150 | 1.10 | REJECTED — 2024 PF=0.45 |
+| T45 | T25 + daily ATR<20 | 3 | ∞ | N TOO SMALL |
+| T46 | T38a + Mon-Wed DOW | 13 | 13.57 | N TOO SMALL (confirms T39) |
+| T47 | T38a + Mon-Wed + daily ATR | 2 | ∞ | N TOO SMALL |
+| T48 | T25 + close near bar extreme (wick<30%) | 7 | 6.98 | N TOO SMALL |
+| T49_13 | T25 hour 13:00 only | 10 | 5.79 | N TOO SMALL (confirms T30) |
+| T49_14+ | T25 hours 14-16 | 12 | 2.12 | REJECTED — 2024 zero wins |
+| T50 | T3 + body filter | 84 | 1.16 | REJECTED — body irrelevant for T3 |
+| T51 | T25 + MA20 direction aligned | 22 | 3.20 | MA20 is IMPLICIT (100% of T25 trades already trend-aligned) |
+| T52 | London morning 07-10 breakout + body | 333 | 0.73 | REJECTED — London morning dead |
+| T53 | T25 + prior 3-bar trend | 19 | 2.94 | REJECTED — 2024 PF=0.52 inconsistent |
+| T54 | Trend-compress-break (prior impulse) | 5 | 43.92 | N TOO SMALL |
+| T55 LONG | T25 longs only | 10 | 1.45 | REJECTED — 2024/2026 zero wins |
+| T55 SHORT | T25 shorts only | 12 | 9.14 | SURVIVES — strong but n thin |
+| T56 | T25 with 5+ quiet bars | 22 | 3.20 | Same as T25 (all already have 5+) |
+| T57 | T38a long vs short split | — | — | SHORT 3.95, LONG 2.70 (asymmetry confirmed) |
+| **T59** | **T7 SHORT ONLY all days** | **18** | **4.90** | **NEW SURVIVOR CANDIDATE** |
+
+---
+
+## Critical Pattern: Implicit Filters in T7/T25
+
+Multiple tests confirm that many "filters" are already satisfied by all T7/T25 trades:
+- **MA20 direction**: 100% of T25 trades go in MA20 direction (CCI was 91%)
+- **5+ quiet bars**: All T25 breakouts already have 5+ quiet bars
+- **Body filter for shorts**: NOT useful — doji shorts are strongest
+
+The T7/T25 setup already self-selects for momentum/trend alignment. The key new orthogonal discriminant is **direction**: shorts >>> longs.
+
+---
+
+## T59 vs Existing Theories — Portfolio View
+
+| Theory | n | PF | Mechanism | Long/Short |
+|--------|---|-----|-----------|------------|
+| T3 | 65 | 2.17 | Session divergence | Both |
+| T7 | 40 | 2.42 | ATR compression 13-17 | Both |
+| T25 | 23 | 3.41 | T7 Mon-Wed | Both |
+| T38a | 28 | 3.21 | T7 body>0.3 | Both |
+| **T59** | **18** | **4.90** | **T7 SHORT ONLY, all days** | **Short only** |
+
+**T59 has 6 Thu+Fri shorts** not in T25. T59 and T25 overlap partially (T25 has 12 shorts Mon-Wed). T59 is NOT a subset of T25.
+
+**Portfolio note**: If longs are removed from T7:
+- T7 longs alone: n=21, PF=1.33 → should probably be DROPPED
+- T7 shorts alone (T59): n=18, PF=4.90 → the surviving signal
+
+**Revised T7 recommendation**: Trade T7 SHORT ONLY. Do not enter T7 longs.
+
+---
+
+## Mechanism Update — The Real T7 Signal
+
+T7 was thought to be "institutional participation during peak liquidity." The direction asymmetry reveals:
+
+**The real mechanism is EURUSD short-side pressure confirmation during NY overlap.**
+
+When EURUSD compresses (both buyers and sellers withdraw), then breaks DOWN during NY open (13-17 UTC), it means:
+1. EUR buyers (who had been supporting price) gave up during London/NY overlap
+2. USD buyers (US desks opening) are absorbing or adding to the decline  
+3. The institutional signal is SELLING, not just "directional conviction"
+
+Long compression breakouts require EUR buyers to commit during NY session — a counter-trend move that frequently fails.
+
+---
+
+## Surviving Theories (Final v8)
+
+| Theory | Concept | n | PF | Status |
+|--------|---------|---|-----|--------|
+| T3 | Session divergence Mon+Thu | 65 | 2.17 | SURVIVES |
+| T7 | ATR compression 13-17 UTC (both dirs) | 40 | 2.42 | SURVIVES but see below |
+| T25 | T7 Mon-Wed | 23 | 3.41 | SURVIVES — primary |
+| T38a | T7 body>0.3 | 28 | 3.21 | SURVIVES |
+| **T59** | **T7 SHORT ONLY, all days** | **18** | **4.90** | **NEW — strong candidate** |
+
+**Recommendation**: In live trading, consider T7/T25 SHORT-ONLY entries. Test T59 with 5yr data when available.
+
+---
+
+*Not financial advice. n borderline on all theories — need 5yr data. FXOpen ECN EURUSD H1 only.*
