@@ -1,0 +1,103 @@
+# Theory Batch v9 — Wick-Poke Short Discovery
+*Date: 2026-10-17 | Data: FXOpen ECN EURUSD H1 | Method: dual feedback loop*
+
+---
+
+## Key Finding: T75 — Wick-Poke Shorts (New Strongest Signal)
+
+**Discovery path from T72:**
+T72 tested whether the T59 short trigger bar closed BELOW the 10-bar low vs just wicked below:
+- Full close below lo10 (close < lo10): n=10, WR=70%, PF=2.85
+- **Wick-poke only (close >= lo10, but low < lo10 - 0.2×ATR): n=8, WR=87.5%, PF=21.14**
+
+**The wick-poke filter is the strongest discriminant found so far.**
+
+### Mechanism
+A wick-poke short means:
+1. Price wicked below the 10-bar support level (ATR-compressed range broke down)
+2. BUT the bar CLOSED back above the 10-bar low — buyers defended and pushed price back
+3. This "defense" is temporary and unsustainable (bearish continuation follows)
+
+**Why this is the stronger signal:** The wick poke shows EUR buyers tried to defend support and STILL failed to push price up. The close-back is a short trap. Next bars continue lower. In contrast, a full close below lo10 = obvious breakdown = sometimes already priced in and chased.
+
+---
+
+## Theory 75 — T75: Wick-Poke ATR Compression Short
+
+**Concept:** T59 (ATR compression short, 13-17 UTC) but ONLY when trigger bar closes ABOVE lo10 (wick poke only — not full close below).
+
+**Parameters:**
+- Instrument: EURUSD H1 (FXOpen ECN)
+- Filter: ATR rank < 20th percentile for 3+ consecutive bars
+- Trigger: bar LOW < (prior 10-bar LOW - 0.2×ATR14) AND bar CLOSE >= prior 10-bar LOW
+- Time gate: 13:00-17:00 UTC
+- DOW gate: None (but ALL 8 trades are Mon-Wed — implicit filter)
+- Entry: at close of trigger bar (short entry)
+- Stop: 1.5×ATR14 above entry; Target: 1.5×ATR14 below entry
+- Max hold: 4 bars
+
+**Results:**
+- Overall: n=8, WR=87.5%, avg=+0.091%/trade, PF=21.14
+- 2024: n=1, WR=100%, PF=∞
+- 2025: n=2, WR=100%, PF=∞
+- 2026: n=5, WR=80%, PF=8.56
+
+**DOW breakdown (wick trades):**
+- Mon: n=3, WR=66.7%, PF=5.83
+- Tue: n=3, WR=100%, PF=∞
+- Wed: n=2, WR=100%, PF=∞
+- Thu+Fri: n=0 (no wick-poke shorts occur late in week)
+
+**Note:** n=8 is well below n≥30 threshold. Growing: 2026 has 5 of 8. All in-sample. Needs OOS validation with longer data. The PF=21.14 is extraordinary — treat with caution.
+
+**Stop width:** 2.0×ATR stop makes no difference (none of the 8 wick trades hit 1.5× stop). These wick shorts don't retrace enough to be stopped.
+
+---
+
+## Theories 66-74 — Batch Summary
+
+| Theory | Concept | n | PF | Verdict |
+|--------|---------|---|-----|---------|
+| T66_exit17 | T3 with exit at 17:00 UTC | 150 | 1.15 | REJECTED — 2024 PF=0.46 still fails |
+| T66_exit19 | T3 with exit at 19:00 UTC | 150 | 1.15 | REJECTED — same failure |
+| T67 | (merged into T68) | — | — | — |
+| T68 | T25 serial correlation | n=21 | — | INTERESTING: after LOSS trades WR=83.3% vs after WIN 66.7% — mean-reversion tendency. n too small. |
+| T69 | T59 compression run ≥5 bars | 18 | 4.90 | REJECTED — all T59 trades already have ≥5 bars |
+| T70 | T59 compression depth ≤3.0 | 9 | 6.24 | MARGINAL — win/loss depth nearly identical (3.23 vs 3.30) |
+| T71 | T59 hour 13 vs 14-16 | 18 | — | Hours 14-16 PF=5.72 slightly better but no clean gating |
+| T72 | T59 wick-poke vs full-close | 8/10 | 21.14/2.85 | **KEY FINDING** — wick poke = strongest signal |
+| T73 | T3+T59 portfolio overlap | 168 | — | Low overlap (4 shared days), T3 n=150 PF=1.10, T59 n=18 PF=4.90 |
+| T74 | T59 week-of-month pattern | 18 | — | Week 2 weakest PF=1.20, weeks 1/5 best but n=3 each |
+| **T75** | **Wick-poke shorts only** | **8** | **21.14** | **NEW CANDIDATE — extraordinary but n=8** |
+
+---
+
+## Updated Surviving Theories (Final v9)
+
+| Theory | Concept | n | PF | Status |
+|--------|---------|---|-----|--------|
+| T3 | Session divergence Mon+Thu | 65 | 2.17 | SURVIVES (2026 PF=1.96 improving) |
+| T25 | T7 Mon-Wed compression | 23 | 3.41 | SURVIVES (short side dominant) |
+| T38a | T7 body>0.3 (both dirs) | 28 | 3.21 | SURVIVES |
+| T59 | T7 SHORT only, all days, 1.5×/1.5× | 18 | 4.01 | SURVIVOR |
+| T59_opt | T7 SHORT only, 2.0×/1.5× | 18 | 14.12 | CANDIDATE (needs OOS) |
+| **T75** | **Wick-poke ATR compression short** | **8** | **21.14** | **NEW — extreme edge, n too thin** |
+
+### T59 Decomposition
+- T59 = T75 (wick pokes, n=8, PF=21.14) + Full-close shorts (n=10, PF=2.85)
+- The wick-poke subset is the cream; full-close shorts are still positive but ordinary
+
+### Portfolio view (T3 + T59)
+- Combined n=168, total +2.38% over ~2.5yr dataset
+- Low overlap (4 shared days of 164 total trade days)
+- T3 on high-n Mon+Thu session divergence (mechanism: session direction disagreement)
+- T59 on ATR compression short breakdowns (mechanism: EUR structural weakness, NY USD flow)
+
+---
+
+## Serial Correlation Note (T68)
+T25 trades show possible mean-reversion: after a LOSS the next trade wins 83.3% (PF=9.39) vs after a WIN 66.7% (PF=2.87). n=21 total, n=6 "after loss." Too thin to trade but worth monitoring — may support "losers recover" adaptive position sizing when sample grows.
+
+---
+
+*Not financial advice. n borderline on all theories — need 5yr data. FXOpen ECN EURUSD H1 only.*
