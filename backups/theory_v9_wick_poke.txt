@@ -101,3 +101,56 @@ T25 trades show possible mean-reversion: after a LOSS the next trade wins 83.3% 
 ---
 
 *Not financial advice. n borderline on all theories — need 5yr data. FXOpen ECN EURUSD H1 only.*
+
+---
+
+## Addendum: T83-T87 — Wick-Poke Refinements (2026-10-17)
+
+### T83/T87 — Close Position Filter
+Wick-poke shorts where bar closes in top 40%+ of bar range (close_pos ≥ 0.6):
+- n=5, WR=100%, PF=∞, avg=+0.133%/trade
+- 2024: n=1 ✓, 2025: n=2 ✓✓, 2026: n=2 ✓✓
+
+### T86 — One Trade Per Day Rule (Strongest Practical Rule)
+Wick-poke shorts, first signal of day only (Mon-Wed, 13-17 UTC):
+- **n=6, WR=100%, PF=∞, avg=+0.124%/trade**
+- 2024: n=1, 2025: n=2, 2026: n=3
+- Eliminates the only loss (a second signal same day as an earlier winner)
+
+### T86 Canonical Parameters
+```
+Setup:   ATR rank < 20th percentile, 3+ consecutive bars
+Trigger: Bar low < (prior 10-bar low - 0.2×ATR14)
+         AND bar close >= prior 10-bar low  ← wick-poke filter
+Time:    13:00-17:00 UTC
+DOW:     All (in practice only Mon-Wed trigger)
+Rule:    Max 1 trade per calendar day (take first)
+Entry:   Short at close of trigger bar
+Stop:    1.5×ATR14 above entry
+Target:  1.5×ATR14 below entry
+Hold:    Max 4 bars
+```
+
+### T80-T82 — Rejected
+- T80 failed long wick: PF=1.57, 2025 PF=0.40 — REJECTED
+- T82 next-bar confirmation: n=4, 2026 PF=0.22 — REJECTED
+- T81 20-bar wick: n=5, PF=10.83 — weaker than 10-bar, SKIP
+
+### T84 — Close Position Analysis
+The one loss (2026-02-16 16:00) has close_pos=0.506 (midpoint of bar). All wins close_pos ≥ 0.555. Wins avg=0.586, loss=0.506. Close_pos ≥ 0.6 perfectly separates wins from the loss — but this is post-hoc.
+
+### Updated Surviving Theories (v9 Final)
+
+| Theory | Concept | n | PF | Status |
+|--------|---------|---|-----|--------|
+| T3 | Session divergence Mon+Thu | 65 | 2.17 | SURVIVES |
+| T25 | T7 Mon-Wed compression | 23 | 3.41 | SURVIVES |
+| T38a | T7 body>0.3 (both dirs) | 28 | 3.21 | SURVIVES |
+| T59 | T7 SHORT only, 1.5×/1.5× | 18 | 4.01 | SURVIVOR |
+| T59_opt | T7 SHORT only, 2.0×/1.5× | 18 | 14.12 | CANDIDATE (needs OOS) |
+| **T75** | **Wick-poke ATR compression short** | **8** | **21.14** | **CANDIDATE (n thin)** |
+| **T86** | **T75 + one-trade-per-day rule** | **6** | **∞** | **EXCEPTIONAL (n=6 only)** |
+
+**Warning**: T75/T86 n is far below the n≥30 threshold. Perfect records with n=6 have ~1.6% probability of occurring by chance at 50% base WR. The consistency and mechanistic explanation are compelling, but these are not tradeable with confidence at current sample size.
+
+**Action**: Monitor T75/T86 in live paper trading. Every new signal adds significant statistical weight. Need ~20 more qualifying trades.
