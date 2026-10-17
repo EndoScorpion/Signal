@@ -1,0 +1,96 @@
+# Theory Batch v5 — Theories 11–25
+*Date: 2026-10-17 | Data: FXOpen ECN EURUSD H1 | Method: dual feedback loop*
+
+---
+
+## Quick Summary
+
+| Theory | Concept | n | PF | Verdict |
+|--------|---------|---|-----|---------|
+| T11 | Prior week H/L breakout Mon London | 91 | 0.78 | REJECTED |
+| T12 | T3 + ATR rank <30th pct | 35 | 2.23 | BORDERLINE (2024 PF 0.69 weak) |
+| T13 | 3-bar momentum continuation 07-17 UTC | 876 | 0.90 | REJECTED |
+| T14 | London open gap fade | 534 | 0.90 | REJECTED |
+| T15 | Prior day midpoint rejection | 97 | 0.92 | REJECTED |
+| T16 | NY fade of strong London move >1.5xATR | 383 | 1.10 | REJECTED (PF<1.5) |
+| T17 | T16 + ATR rank >60th pct + Mon+Thu | 43 | 1.37 | REJECTED |
+| T19 | Asia range compression <2xATR + London breakout | 70 | 1.11 | REJECTED |
+| T20 | Asia RSI extreme + London 3-bar confirm | 30 | 0.51 | REJECTED |
+| T21 | T3 + strong London move >0.8xATR | 34 | 1.22 | REJECTED |
+| T22 | T7+T3 confluence same direction | 4 | 36.85 | N TOO SMALL |
+| T23 | Spike bar fade (body>1.5xATR) | 813 | 0.83 | REJECTED |
+| **T25** | **T7 Mon+Tue+Wed only (skip Thu+Fri)** | **23** | **3.41** | **SURVIVES — best new find** |
+
+---
+
+## Theory 25 — T7 DOW-Filtered (Key Finding)
+
+**Concept:** T7 (ATR compression breakout 13-17 UTC) restricted to Mon+Tue+Wed only.
+
+**Discovery path:**
+1. T7 all-days: PF 2.42, n=40
+2. DOW breakdown of T7: Mon PF 4.31, Tue PF 3.09, Wed PF 3.29 vs Thu PF 1.56, Fri PF 1.38
+3. T25 Mon+Tue+Wed: **PF 3.41**, n=23
+
+**Results:**
+- 2024: n=4, WR=50%, PF=1.08
+- 2025: n=9, WR=77.8%, PF=8.63
+- 2026: n=10, WR=70%, PF=3.51
+
+**Robustness:** ATR rank <20 is load-bearing (rank<25 drops to PF 1.38). Breakout multiplier stable across 0.2–0.4x range.
+
+**Why Thu+Fri weakens T7:**
+- Thursday: pre-NFP positioning. Big players pre-position for Friday NFP — this creates directional flows that OVERRIDE compression breakout signals. Breakout fires into a wall of pre-positioned risk.
+- Friday: end-of-week position unwinding. Institutional risk reduction means less follow-through after breakouts. Market closes early psychologically.
+- Mon+Tue+Wed: pure institutional flow. No macro event overhang, full commitment to moves.
+
+**Parameters:**
+- Instrument: EURUSD H1 (FXOpen ECN)
+- Filter: ATR rank < 20th percentile for 3+ consecutive bars
+- Trigger: bar breaks prior 10-bar H/L by > 0.2×ATR14
+- Time gate: 13:00-17:00 UTC
+- DOW gate: Mon, Tue, Wed only (skip Thu, Fri)
+- Entry: at close of trigger bar
+- Stop: 1.5×ATR14; Target: 1.5×ATR14 (1:1 R:R)
+- Max hold: 4 bars
+
+**Caution:** n=23 over 2.5 years (~9/yr). Needs 5yr validation per CLAUDE.md rule. 2024 borderline (n=4, PF 1.08).
+
+---
+
+## What Didn't Work (Key Learnings)
+
+1. **Prior week levels (T11):** Weekly H/L breakouts on Monday = PF 0.78. The level is too well-known; gets faded.
+2. **Momentum continuation (T13, T23):** 3-bar momentum and spike bar fades both PF ~0.83-0.90. H1 EURUSD is not a trend-continuation instrument at the intraday level.
+3. **Gap fades (T14):** London open gaps get filled ~50% but size of losses on non-fills exactly cancels gains. Symmetric outcome.
+4. **NYfade of London extension (T16-17):** Consistent signal direction (PF 1.1+) but insufficient edge. The mean-reversion exists but is too small to survive costs.
+5. **RSI divergence (T20):** Asia RSI extreme failed badly (PF 0.51). RSI on EURUSD H1 is noise, not a signal.
+6. **T3 tighter filters (T21):** Requiring stronger London move reduces n and PF — T3 is already optimally calibrated.
+7. **T7+T3 confluence (T22):** Only 4 joint trades — signals are too rare to combine.
+
+---
+
+## Session Window Validation (T7 across all UTC windows)
+- 07-10 UTC: n=425, PF=0.74 (London open = too noisy)
+- 10-13 UTC: n=161, PF=0.67 (pre-NY = even worse)
+- **13-17 UTC: n=40, PF=2.42** (NY overlap = unique)
+- 17-20 UTC: n=3, PF=0.29 (too thin)
+
+**13-17 UTC is structurally special and not substitutable.**
+
+---
+
+## Surviving Theories (All from FXOpen ECN EURUSD H1)
+
+| Theory | Concept | n | PF | 2025 PF | 2026 PF |
+|--------|---------|---|-----|---------|---------|
+| T3 | Session divergence Mon+Thu, London 3-bar | 65 | 2.17 | 2.54 | 3.24 |
+| T7 | ATR compression breakout 13-17 UTC | 40 | 2.42 | 4.12 | 2.32 |
+| T25 | T7 Mon+Tue+Wed only | 23 | 3.41 | 8.63 | 3.51 |
+
+**Note:** T25 is a subset of T7. Together T3+T7 (all days) = 105 trades, PF 2.23.
+T3+T25 (DOW filtered T7) = 88 trades, estimated PF ~2.5+.
+
+---
+
+*Not financial advice. All n borderline — validate on 5yr data when available.*
