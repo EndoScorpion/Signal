@@ -1,0 +1,338 @@
+<style>
+#slcALFBtn{position:fixed;top:4px;right:380px;z-index:2147483190;background:#39ff14;color:#000;border:2px solid #39ff14;border-radius:5px;font:bold 12px "Times New Roman",serif;padding:2px 9px;cursor:pointer;box-shadow:0 0 8px #39ff14}
+#slcALF{position:fixed;left:140px;top:180px;width:880px;max-width:96vw;max-height:76vh;overflow:auto;z-index:2147483105;background:#000;color:#39ff14;border:2px solid #39ff14;border-radius:9px;font:12px/1.35 "Times New Roman",serif;box-shadow:0 6px 26px #000;padding:5px 10px;display:none;cursor:move}
+#slcALF h4{margin:0;color:#ffb000;font-size:14px;display:flex;justify-content:space-between}
+#slcALF button{font:12px "Times New Roman",serif;background:#000;color:#39ff14;border:1px solid #39ff14;border-radius:4px;cursor:pointer;padding:1px 7px;margin:2px 3px 2px 0}#slcALF button.go{background:#39ff14;color:#000;font-weight:bold}
+#slcALF table{border-collapse:collapse;width:100%;font-size:11.5px}#slcALF td,#slcALF th{border-bottom:1px solid #123d12;padding:1px 5px;text-align:left;white-space:nowrap}#slcALF th{background:#031a03}
+#slcALF .ok{color:#39ff14;font-weight:bold}#slcALF .bad{color:#ff6b6b}#slcALF .wn{color:#ffd24a}
+#slcALF pre{background:#010;color:#9dffa0;border:1px solid #1f6b1f;padding:4px;margin:3px 0;white-space:pre-wrap;font:11px monospace}
+</style>
+<script>
+(function(){
+function g(i){return document.getElementById(i)}
+
+/* ─── v2.1 spec (confirmed Cycles 1-11) ─── */
+var SPEC={
+ name:"EURUSD H1 Asia-London Fade v2.1 (Shorts Only)",
+ /* Filters */
+ ema_period:120,    /* EMA(120) slope < 0  */
+ adx_period:14,     /* ADX(14) < 30        */
+ adx_max:30,
+ atr_period:14,     /* ATR14 rolling %ile  */
+ atr_pct_max:0.75,  /* < 75th percentile   */
+ atr_pct_window:252,/* rolling window      */
+ atr_floor:0.0005,  /* 5 pip min           */
+ weekdays:[1,2,3],  /* Tue Wed Thu (0=Mon) */
+ asia_mult:0.35,    /* Asia UP >= 0.35*ATR */
+ asia_start:0,      /* 00:00 UTC           */
+ asia_end:7,        /* <07:00 UTC          */
+ entry_hour:7,      /* SHORT at 07:00 bar open */
+ stop_mult:0.85,    /* Entry + 0.85*ATR14  */
+ exit_hour:21,      /* 21:00 UTC close     */
+ cost:0.00008,      /* FXOpen ECN round-trip */
+ /* Validation summary */
+ validation:"TD IS 2020-23 n=25 PF=1.44 avg=+0.029% | TD OOS 2024-26 n=24 PF=2.88 avg=+0.080% | FXOpen OOS 2024-26 n=44 PF=4.76 avg=+0.163% ✅ | All 3 OOS years profitable on FXOpen ECN. IS n=25 below n>=30 (ATR filter removes 6 IS trades). IS 2022 PF=0.00 inflation-spike structural."
+};
+
+function msg(t,c){var m=g("alfMsg");if(m){m.className=c||"";m.textContent=t}}
+
+/* ─── indicator helpers ─── */
+function ewm(arr,span){
+ var a=2/(span+1),out=new Array(arr.length);
+ out[0]=arr[0];
+ for(var i=1;i<arr.length;i++) out[i]=arr[i]*a+out[i-1]*(1-a);
+ return out;
+}
+function atr14(bars){
+ var tr=new Array(bars.length);
+ tr[0]=bars[0].h-bars[0].l;
+ for(var i=1;i<bars.length;i++){
+  var h=bars[i].h,l=bars[i].l,pc=bars[i-1].c;
+  tr[i]=Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc));
+ }
+ return ewm(tr,14);
+}
+function ema120(bars){return ewm(bars.map(function(b){return b.c}),120)}
+function adx14(bars,atrArr){
+ var pdm=new Array(bars.length).fill(0),ndm=new Array(bars.length).fill(0);
+ for(var i=1;i<bars.length;i++){
+  var up=bars[i].h-bars[i-1].h,dn=bars[i-1].l-bars[i].l;
+  pdm[i]=(up>dn&&up>0)?up:0;
+  ndm[i]=(dn>up&&dn>0)?dn:0;
+ }
+ var pdi=ewm(pdm,14).map(function(v,i){return atrArr[i]>0?100*v/atrArr[i]:0});
+ var ndi=ewm(ndm,14).map(function(v,i){return atrArr[i]>0?100*v/atrArr[i]:0});
+ var dx=pdi.map(function(p,i){var s=p+ndi[i];return s>0?100*Math.abs(p-ndi[i])/s:0});
+ return ewm(dx,14);
+}
+function atrPct(atrArr,window){
+ var out=new Array(atrArr.length).fill(null);
+ for(var i=window-1;i<atrArr.length;i++){
+  var win=atrArr.slice(i-window+1,i+1);
+  var cur=atrArr[i],below=0;
+  for(var j=0;j<win.length;j++) if(win[j]<=cur) below++;
+  out[i]=below/window;
+ }
+ return out;
+}
+
+/* ─── parse H1 CSV ─── */
+function parseCSV(text){
+ var L=text.split(/\r?\n/).filter(function(x){return x.trim()});
+ if(!L.length) throw new Error("Empty file");
+ /* detect separator */
+ var sep=L[0].indexOf(';')>=0?';':',';
+ var H=L[0].split(sep).map(function(h){return h.trim().toLowerCase().replace(/"/g,'')});
+ /* required cols - flexible naming */
+ function col(names){for(var i=0;i<names.length;i++){var k=H.indexOf(names[i]);if(k>=0)return k}return -1}
+ var iDt=col(['datetime','time','date','timestamp','time_utc','time (utc)']);
+ var iO=col(['open']);var iH=col(['high']);var iL=col(['low']);var iC=col(['close']);
+ var iMs=col(['timestamp_ms']);
+ if((iDt<0&&iMs<0)||iO<0||iH<0||iL<0||iC<0) throw new Error("CSV needs open/high/low/close and datetime or timestamp_ms columns. Got: "+H.join(','));
+ var bars=[];
+ for(var j=1;j<L.length;j++){
+  var c=L[j].split(sep);
+  if(c.length<4) continue;
+  var dt;
+  if(iMs>=0) dt=new Date(parseInt(c[iMs],10));
+  else dt=new Date(c[iDt].replace(/"/g,''));
+  if(isNaN(dt.getTime())) continue;
+  var o=parseFloat(c[iO]),h=parseFloat(c[iH]),l=parseFloat(c[iL]),cl=parseFloat(c[iC]);
+  if(isNaN(o)||isNaN(cl)) continue;
+  bars.push({dt:dt,utcH:dt.getUTCHours(),wd:dt.getUTCDay(),o:o,h:h,l:l,c:cl});
+ }
+ if(bars.length<300) throw new Error("Too few bars: "+bars.length+" (need 300+)");
+ bars.sort(function(a,b){return a.dt-b.dt});
+ return bars;
+}
+
+/* ─── backtest engine ─── */
+function backtest(bars){
+ var atrA=atr14(bars);
+ var emaA=ema120(bars);
+ var adxA=adx14(bars,atrA);
+ var pctA=atrPct(atrA,SPEC.atr_pct_window);
+ /* group by UTC date */
+ var byDate={};
+ for(var i=0;i<bars.length;i++){
+  var b=bars[i];
+  if(pctA[i]===null) continue;
+  var dk=b.dt.toISOString().slice(0,10);
+  if(!byDate[dk]) byDate[dk]=[];
+  byDate[dk].push({i:i,b:b,atr:atrA[i],ema:emaA[i],adx:adxA[i],pct:pctA[i]});
+ }
+ var trades=[];
+ var dates=Object.keys(byDate).sort();
+ for(var d=0;d<dates.length;d++){
+  var dk=dates[d];
+  var day=byDate[dk];
+  if(!day.length) continue;
+  /* weekday from first bar */
+  var wd=day[0].b.wd; /* 0=Sun,1=Mon,...,5=Fri,6=Sat */
+  /* convert to Mon=0: wd-1, but Sun(0)=>6 */
+  var wdm=(wd+6)%7;
+  if(SPEC.weekdays.indexOf(wdm)<0) continue;
+  /* Asia bars 00-06 UTC */
+  var asia=day.filter(function(x){return x.b.utcH>=SPEC.asia_start&&x.b.utcH<SPEC.asia_end});
+  if(!asia.length) continue;
+  /* entry bar: first bar at 07:00 UTC */
+  var entryBars=day.filter(function(x){return x.b.utcH===SPEC.entry_hour});
+  if(!entryBars.length) continue;
+  var eb=entryBars[0];
+  /* check indicators at entry bar */
+  var atr=eb.atr,ema=eb.ema,adx=eb.adx,pct=eb.pct,slope=eb.ema-(day.find(function(x){return x.b.utcH<SPEC.entry_hour})||{ema:eb.ema}).ema;
+  /* use slope sign from EMA vs bar before */
+  var prevEma=eb.i>0?emaA[eb.i-1]:ema;
+  var slopeOk=ema<prevEma; /* slope < 0 */
+  if(!slopeOk) continue;
+  if(adx>=SPEC.adx_max) continue;
+  if(pct>SPEC.atr_pct_max) continue;
+  if(atr<SPEC.atr_floor) continue;
+  /* Asia move */
+  var asiaOpen=asia[0].b.o,asiaClose=asia[asia.length-1].b.c;
+  var asiaMove=asiaClose-asiaOpen;
+  if(asiaMove<=0||asiaMove<SPEC.asia_mult*atr) continue;
+  /* entry */
+  var entry=eb.b.o;
+  var stop=entry+SPEC.stop_mult*atr;
+  /* walk exit bars 08-21 UTC */
+  var exitBars=day.filter(function(x){return x.b.utcH>SPEC.entry_hour&&x.b.utcH<=SPEC.exit_hour});
+  var exitPrice=null,stopHit=false;
+  for(var k=0;k<exitBars.length;k++){
+   var xb=exitBars[k].b;
+   if(xb.h>=stop){exitPrice=stop;stopHit=true;break}
+   if(xb.utcH===SPEC.exit_hour){exitPrice=xb.c;break}
+  }
+  if(exitPrice===null) continue;
+  var pnl=(entry-exitPrice)/entry-SPEC.cost/entry;
+  trades.push({date:dk,year:parseInt(dk.slice(0,4),10),entry:entry,stop:stop,exit:exitPrice,atr:atr,pnl:pnl,stopHit:stopHit,asiaMove:asiaMove});
+ }
+ return trades;
+}
+
+function pf(trades){
+ var w=0,l=0;
+ trades.forEach(function(t){if(t.pnl>0)w+=t.pnl;else l+=Math.abs(t.pnl)});
+ return l>0?w/l:Infinity;
+}
+function S(trades){
+ var n=trades.length;
+ if(!n)return{n:0,pf:0,avg:0,wr:0};
+ var w=0,l=0,wins=0;
+ trades.forEach(function(t){if(t.pnl>0){w+=t.pnl;wins++}else l+=Math.abs(t.pnl)});
+ return{n:n,pf:l>0?w/l:Infinity,avg:100*trades.reduce(function(s,t){return s+t.pnl},0)/n,wr:100*wins/n};
+}
+
+function renderResults(trades,label){
+ if(!trades.length){return "<p class=wn>No trades matched for "+label+".</p>"}
+ var stat=S(trades);
+ var byYear={};
+ trades.forEach(function(t){(byYear[t.year]=byYear[t.year]||[]).push(t)});
+ var h="<b>"+label+"</b> &mdash; n="+stat.n+", PF="+stat.pf.toFixed(2)+", WR="+stat.wr.toFixed(0)+"%, avg=<span class="+(stat.avg>=0?"ok":"bad")+">"+stat.avg.toFixed(3)+"%</span>/trade";
+ h+="<table><tr><th>Year</th><th>n</th><th>PF</th><th>WR%</th><th>avg%/trade</th><th>Status</th></tr>";
+ var years=Object.keys(byYear).sort();
+ years.forEach(function(yr){
+  var ys=S(byYear[yr]);
+  var ok=ys.pf>=1.5&&ys.n>=8;
+  h+="<tr><td>"+yr+"</td><td>"+ys.n+"</td><td class="+(ok?"ok":"wn")+">"+ys.pf.toFixed(2)+"</td><td>"+ys.wr.toFixed(0)+"</td><td class="+(ys.avg>=0?"ok":"bad")+">"+ys.avg.toFixed(3)+"</td><td class="+(ok?"ok":"wn")+">"+( ys.pf<1?"❌ losing":ys.n<8?"⚠️ thin":"✅")+"</td></tr>";
+ });
+ h+="</table>";
+ if(stat.n<30) h+="<p class=wn>⚠️ n="+stat.n+" is below the n≥30 threshold — treat with caution.</p>";
+ return h;
+}
+
+/* ─── check today's signal ─── */
+function checkNow(bars){
+ if(!bars.length) return "<p class=bad>No bars.</p>";
+ var atrA=atr14(bars);
+ var emaA=ema120(bars);
+ var adxA=adx14(bars,atrA);
+ var pctA=atrPct(atrA,SPEC.atr_pct_window);
+ var last=bars[bars.length-1];
+ var i=bars.length-1;
+ var lastDk=last.dt.toISOString().slice(0,10);
+ /* find today's bars */
+ var today=[];
+ for(var k=i;k>=0&&bars[k].dt.toISOString().slice(0,10)===lastDk;k--) today.unshift({idx:k,b:bars[k],atr:atrA[k],ema:emaA[k],adx:adxA[k],pct:pctA[k]});
+ var latestHour=last.utcH;
+ var h="<b>Signal check for "+lastDk+" (last bar: "+latestHour+":00 UTC)</b><br>";
+ /* weekday */
+ var wd=(last.dt.getUTCDay()+6)%7;
+ var wdNames=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+ var wdOk=SPEC.weekdays.indexOf(wd)>=0;
+ h+="Weekday: "+wdNames[wd]+" &mdash; <span class="+(wdOk?"ok":"bad")+">"+( wdOk?"✅ PASS":"❌ FAIL (not Tue/Wed/Thu)")+"</span><br>";
+ /* find 07:00 bar */
+ var eb=today.find(function(x){return x.b.utcH===7});
+ if(!eb){h+="<span class=wn>⚠️ Entry bar (07:00 UTC) not yet available in this file.</span>"; return h;}
+ var atr=eb.atr,ema=eb.ema,adx=eb.adx,pct=eb.pct;
+ var prevEma=eb.idx>0?emaA[eb.idx-1]:ema;
+ var slopeOk=ema<prevEma;
+ var adxOk=adx<SPEC.adx_max;
+ var pctOk=pct!==null&&pct<=SPEC.atr_pct_max;
+ var floorOk=atr>=SPEC.atr_floor;
+ h+="EMA(120) slope: "+(slopeOk?"<span class=ok>✅ NEGATIVE (downtrend)</span>":"<span class=bad>❌ POSITIVE (no signal)</span>")+"<br>";
+ h+="ADX(14)="+adx.toFixed(1)+": "+(adxOk?"<span class=ok>✅ <30 (ranging)</span>":"<span class=bad>❌ ≥30 (trending, no signal)</span>")+"<br>";
+ h+="ATR14 pct="+( pct!==null?(pct*100).toFixed(0)+"th":"n/a")+"%ile: "+(pctOk?"<span class=ok>✅ <75% (non-extreme vol)</span>":"<span class=bad>❌ ≥75% (high vol, no signal)</span>")+"<br>";
+ h+="ATR14="+atr.toFixed(5)+" ("+(atr/0.0001).toFixed(1)+" pips): "+(floorOk?"<span class=ok>✅ ≥5 pips</span>":"<span class=bad>❌ <5 pips floor</span>")+"<br>";
+ /* Asia move */
+ var asia=today.filter(function(x){return x.b.utcH>=0&&x.b.utcH<7});
+ if(!asia.length){h+="<span class=wn>⚠️ No Asia session bars found.</span>";return h;}
+ var asiaMove=asia[asia.length-1].b.c-asia[0].b.o;
+ var asiaThr=SPEC.asia_mult*atr;
+ var asiaOk=asiaMove>0&&asiaMove>=asiaThr;
+ h+="Asia move: "+(asiaMove>=0?"+":"")+( asiaMove*10000).toFixed(1)+" pips (need +≥"+(asiaThr*10000).toFixed(1)+" pips): "+(asiaOk?"<span class=ok>✅ PASS</span>":"<span class=bad>❌ FAIL</span>")+"<br>";
+ var allOk=wdOk&&slopeOk&&adxOk&&pctOk&&floorOk&&asiaOk;
+ h+="<br><b style='font-size:13px;color:"+(allOk?"#39ff14":"#ff6b6b")+"'>→ "+(allOk?"🎯 SIGNAL: SHORT at next 07:00 UTC open. Stop: entry + "+(SPEC.stop_mult*atr*10000).toFixed(1)+" pips. Exit: 21:00 UTC.":"NO SIGNAL today.")+"</b><br>";
+ if(allOk){
+  var entry=eb.b.o;
+  var stop=entry+SPEC.stop_mult*atr;
+  var tgt=entry-1.5*atr;
+  h+="<small>Entry ~"+entry.toFixed(5)+" | Stop "+stop.toFixed(5)+" (+"+( SPEC.stop_mult*atr*10000).toFixed(1)+" pips) | Target (1.5R) ~"+tgt.toFixed(5)+" | Cost 0.8 pip ECN</small>";
+ }
+ return h;
+}
+
+/* ─── main ─── */
+function runFile(text){
+ msg("Parsing...");
+ try{
+  var bars=parseCSV(text);
+  msg("Parsed "+bars.length+" bars. Running backtest...");
+  var trades=backtest(bars);
+  var h="<b>File loaded: "+bars.length+" bars</b> ("+bars[0].dt.toISOString().slice(0,10)+" to "+bars[bars.length-1].dt.toISOString().slice(0,10)+")<br>";
+  h+="<hr style='border-color:#1f6b1f'>";
+  /* IS / OOS split */
+  var is_trades=trades.filter(function(t){return t.year<=2023});
+  var oos_trades=trades.filter(function(t){return t.year>=2024});
+  h+=renderResults(is_trades,"IS 2020-2023");
+  h+="<br>"+renderResults(oos_trades,"OOS 2024-2026");
+  h+="<hr style='border-color:#1f6b1f'>";
+  h+=renderResults(trades,"All periods combined");
+  h+="<hr style='border-color:#1f6b1f'><b>Signal check (latest day in file):</b><br>";
+  h+=checkNow(bars);
+  h+="<br><hr style='border-color:#1f6b1f'><b>Reference (confirmed spec v2.1):</b><br><small class=wn>"+SPEC.validation+"</small>";
+  g("alfOut").innerHTML=h;
+  msg("Done: "+trades.length+" trades found.","ok");
+ }catch(e){msg(e.message,"bad");g("alfOut").innerHTML="<span class=bad>Error: "+e.message+"</span>"}
+}
+function pick(){var i=document.createElement("input");i.type="file";i.accept=".csv,.txt";i.onchange=function(){var f=i.files[0];if(!f)return;msg("Reading "+f.name+" ("+Math.round(f.size/1024)+" KB)...");var r=new FileReader();r.onload=function(){runFile(String(r.result))};r.readAsText(f)};i.click()}
+
+function specText(){
+ return ["EURUSD H1 Asia-London Fade — Shorts Only — v2.1",
+ "═══════════════════════════════════════════════",
+ "Filter 1: EMA(120) slope < 0  (downtrend context)",
+ "Filter 2: ADX(14) < 30        (ranging/non-trending regime)",
+ "Filter 3: ATR14 percentile < 75%  (non-extreme volatility)",
+ "Filter 4: ATR14 >= 0.0005 (5 pips minimum liquidity)",
+ "Filter 5: Weekday: Tue / Wed / Thu",
+ "Filter 6: Asia (00:00-07:00 UTC) moved UP >= 0.35 x ATR14",
+ "",
+ "Entry:  SHORT at 07:00 UTC bar open",
+ "Stop:   Entry + 0.85 x ATR14  (above entry)",
+ "Exit:   21:00 UTC bar close (or stop-out if hit earlier)",
+ "Cost:   0.00008 per trade (FXOpen ECN round-trip)",
+ "",
+ "Validation (Cycles 1-11):",
+ SPEC.validation,
+ "",
+ "NOT valid for: EURJPY (fails), EURGBP (source divergence), LONGS (no edge).",
+ "Past results. Not advice. Never place orders automatically."].join("\n");
+}
+
+function build(){
+ if(g("slcALF")) return;
+ var d=document.createElement("div");d.id="slcALF";
+ d.innerHTML=
+  "<h4><span>📡 EURUSD H1 Asia-London Fade v2.1 &middot; Shorts Only <small>(drag)</small></span><button id='alfX'>x</button></h4>"+
+  "<div id='alfMsg'></div>"+
+  "<table style='width:100%;font-size:11px'><tr><th>Filter</th><th>Value</th></tr>"+
+  "<tr><td>EMA(120) slope</td><td class=wn>&lt; 0 (downtrend)</td></tr>"+
+  "<tr><td>ADX(14)</td><td class=wn>&lt; 30 (ranging)</td></tr>"+
+  "<tr><td>ATR14 %ile</td><td class=wn>&lt; 75th (non-extreme vol)</td></tr>"+
+  "<tr><td>ATR14</td><td class=wn>≥ 0.0005 (5 pips min)</td></tr>"+
+  "<tr><td>Weekday</td><td class=wn>Tue / Wed / Thu</td></tr>"+
+  "<tr><td>Asia 00-07 UTC</td><td class=wn>moved UP ≥ 0.35 × ATR14</td></tr>"+
+  "<tr><td>Entry</td><td class=ok>SHORT at 07:00 UTC bar open</td></tr>"+
+  "<tr><td>Stop</td><td class=bad>Entry + 0.85 × ATR14</td></tr>"+
+  "<tr><td>Exit</td><td class=ok>21:00 UTC close (or stop-out)</td></tr>"+
+  "<tr><td>Cost</td><td>0.00008 (0.8 pip ECN)</td></tr></table>"+
+  "<div style='margin:3px 0'><small class=wn>Confirmed over 11 improvement cycles. FXOpen OOS 2024-26 n=44 PF=4.76. Not for EURJPY/EURGBP longs.</small></div>"+
+  "<div><button class='go' id='alfLoad'>📂 Load H1 CSV (backtest+signal check)</button><button id='alfCp'>copy spec</button><button id='alfSv'>download spec .txt</button></div>"+
+  "<div id='alfOut'></div>";
+ document.body.appendChild(d);
+ /* drag */
+ var mx=0,my=0,drag=false;
+ d.querySelector("h4").addEventListener("mousedown",function(e){drag=true;mx=e.clientX-d.offsetLeft;my=e.clientY-d.offsetTop;e.preventDefault()});
+ document.addEventListener("mousemove",function(e){if(drag){d.style.left=(e.clientX-mx)+"px";d.style.top=(e.clientY-my)+"px"}});
+ document.addEventListener("mouseup",function(){drag=false});
+ g("alfX").onclick=function(){d.style.display="none"};
+ g("alfLoad").onclick=pick;
+ g("alfCp").onclick=function(){var t=specText();try{navigator.clipboard.writeText(t);msg("Copied.","ok")}catch(e){msg("Copy blocked — use download.","wn")}};
+ g("alfSv").onclick=function(){var s=new Date().toISOString().slice(0,16).replace(/[-:T]/g,"");if(window.slcSave)window.slcSave("eurusd_alf_v2.1_"+s+".txt",specText(),"text/plain");else{var a=document.createElement("a");a.href="data:text/plain,"+encodeURIComponent(specText());a.download="eurusd_alf_v2.1_"+s+".txt";a.click()}};
+}
+function open(){build();g("slcALF").style.display="block"}
+function btn(){if(g("slcALFBtn"))return;var b=document.createElement("button");b.id="slcALFBtn";b.textContent="📡 EUR Fade";b.style.cssText="position:fixed;top:4px;right:380px;z-index:2147483190;background:#39ff14;color:#000;border:2px solid #39ff14;border-radius:5px;font:bold 12px 'Times New Roman',serif;padding:2px 9px;cursor:pointer;box-shadow:0 0 8px #39ff14";b.onclick=open;document.body.appendChild(b)}
+setInterval(function(){try{btn()}catch(e){}},1500);btn();
+window.slcALF={open:open,backtest:backtest,checkNow:checkNow,SPEC:SPEC};
+})();
+</script>
