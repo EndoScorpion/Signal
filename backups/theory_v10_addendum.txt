@@ -1,0 +1,64 @@
+## v10 ADDENDUM: T109-T132 Continued Findings
+
+### KEY FINDINGS SUMMARY
+
+**T106 (SURVIVOR): T59 SHORT 13-14 UTC only**
+- n=14, WR=85.7%, PF=6.68, avg=+0.0817%
+- 2024: PF=∞, 2025: PF=∞, 2026: PF=3.91
+
+**T108 (EXCEPTIONAL): Wick-poke + 13-14 UTC + 1/day**
+- n=5, WR=100%, PF=∞, avg=+0.1046%
+
+**T119 DISCOVERY: Small body filter (INVERSE — LARGER body is better at 13-14 UTC)**
+- Body ≤ 1.5x ATR: n=11, PF=10.52 (best n/quality balance)
+- Full 13-14 UTC: n=14, PF=6.68
+
+**T128 (NEW SURVIVOR): T59 13-14 UTC + body≤1.5×ATR + 1/day**
+- n=10, WR=90%, PF=10.33, avg=+0.0877%
+- 2026: n=7, WR=85.7%, PF=6.36
+
+**T131 (NEW SURVIVOR): Relaxed lo10 break + body≤1.5×ATR + 13-14 UTC + 1/day**
+- n=11, WR=90.9%, PF=11.39, avg=+0.0888%
+- 2026: n=8, WR=87.5%, PF=7.43
+- Best balance of n and quality — uses any lo10 break (not requiring 0.2×ATR extra depth)
+
+### FAILED THEORIES (T109-T132)
+- T99: BB squeeze PF=0.71
+- T102: Trailing stop degrades T59 (PF=2.95 vs 4.90)
+- T113: Skip 15 UTC — PF=6.91 but 2026 PF=3.04 (noisy)
+- T115/T116: NY vs Asia range comparison — only n=2 when still compressed
+- T117: qc threshold — all trades already have qc≥12
+- T119/T124: Body filter sweet spot is body≤1.5×ATR (NOT small body as hypothesized)
+- T120: LONG compression breakout PF=1.33 (2024 PF=0.24, 2026 PF=0.57) — LONGS FAIL
+- T126/T127: RSI divergence PF=1.08-1.24 — not viable
+
+### MECHANISM: Why 13-14 UTC + body filter works
+- 13:00 UTC = London-NY overlap opens with full institutional presence
+- 14:00 UTC = NY momentum confirmation hour
+- Body ≤ 1.5×ATR filter: removes the "huge momentum candles" that are actually continuation
+  of existing trend (not a breakout trap) — keeps the mechanical/stop-hunt breakouts
+- Very large body (>1.5×ATR) = genuine conviction breakdown, often already chased = worse entry
+- Medium-to-small body at 13-14 UTC = ATR compression still intact, support just being probed
+
+### UPDATED SURVIVOR TABLE
+| Theory | n | WR | PF | Note |
+|--------|---|----|----|------|
+| T3 | 65 | ~55% | 2.17 | Long-running |
+| T25 | 23 | ~65% | 3.41 | After-loss MR |
+| T38a | 28 | ~64% | 3.21 | Compression |
+| T59 | 18 | 77.8% | 4.90 | 4-bar hold |
+| T106 | 14 | 85.7% | 6.68 | T59+13-14h |
+| T128 | 10 | 90.0% | 10.33 | T59+13-14h+body<=1.5 |
+| T131 | 11 | 90.9% | 11.39 | Relaxed lo10+body+13-14h |
+| T75 | 8 | 87.5% | 21.14 | Wick-poke |
+| T86/T108 | 5-6 | 100% | ∞ | Wick-poke+13-14h |
+
+### CLONE LOGIC PROPAGATION
+For non-pupil clone logic:
+1. 13-14 UTC = primary window for EURUSD H1 compression shorts
+2. Body ≤ 1.5×ATR filter removes large-body false positives
+3. Relaxed lo10 (any break, not just >0.2×ATR) increases signal count
+4. Combination of body filter + hour filter is more powerful than either alone
+5. Trail stop: after target hit, 63.6% continue >0.5×ATR — consider trailing vs fixed exit
+
+*All results net of COST=0.00008. All theories need n≥30 for production.*

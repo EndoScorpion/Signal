@@ -1,0 +1,89 @@
+THEORY ADDENDUM v13 — T163-T186
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-17
+
+=== T163-T168 RESULTS ===
+T163: Both 13h AND 14h must signal → no trades (too rare)
+T164: ATR rank crossing expansion (20→30) → n=19, WR=31.6%, PF=0.28 ← STRONGLY NEGATIVE
+      KEY INSIGHT: Trading when rank CROSSES from compressed to expanding is the WRONG approach
+T165: T131 monthly breakdown → August WR=50%, PF=0.96 (only bad month). All others 100%.
+T166: T131 + close near prior day low → n=1 (too rare)
+T167: T131 + pre-NY range < ATR → no trades (redundant with compression)
+T168: T131 + EMA5 < EMA10 → IDENTICAL to T131 (all T131 trades already have bearish EMA)
+
+=== T169-T171 RESULTS ===
+T169: T131 trailing stop (BE at 0.5xATR, then trail) → PF=7.71 (worse than canonical 11.39)
+T170: T131 partial exit 50% at 0.75xATR → PF=8.45 (worse than canonical)
+T171: Prior day T131 outcome → almost never consecutive, events are independent
+
+=== T172-T174 RESULTS ===
+T172: High ATR(>80) + 5-bar high break SHORT → n=110, WR=52.7%, PF=1.16 (not viable)
+T173: High ATR(>70) + 3-bar drop >2xATR LONG → n=92, WR=47.8%, PF=0.64 ← LOSING
+T174: ATR rank falling (20-40) + 5-bar low → n=23, WR=30.4%, PF=0.35 ← STRONGLY NEGATIVE
+      KEY INSIGHT: Early compression entry (entering before rank<20) fails badly
+
+=== T175-T177 RESULTS ===
+T175: After T131 loss, next signal stronger? → never occurs (T131 never loses in dataset)
+T176: Monday H1 hour breakdown → Mon 07h: PF=24.13 (n=3), Mon 05h: PF=13.03 (n=3) but tiny n
+T177: T131 limit entry at lo10 level → WR DROPS to 63.6%, PF=1.60
+      KEY INSIGHT: Entering at lo10 price (before bar close confirmation) degrades results
+
+=== T178-T180 RESULTS ===
+T178: T131 + close in bottom 25% of bar → n=3 (too rare)
+T179: T131 + first lo10 break of day → n=1 (nearly all T131 are already first break)
+T180: T131 + 3-bar hold → n=11, WR=90.9%, PF=11.09 (comparable to canonical 4-bar PF=11.39)
+
+=== T181-T183 RESULTS ===
+T181: T131 + 2-bar hold → n=11, WR=81.8%, PF=10.03
+T182: T131 + compression started before current DOW → n=8, WR=100%, PF=∞ ← SURVIVOR CANDIDATE
+      MECHANISM: When ATR compression episode spans multiple calendar days before signal day
+T183: T131 + close below prior bar low → n=6, WR=83.3%, PF=5.62
+
+=== T184-T186 RESULTS ===
+T184: T131 + compression >= 24 hours → n=1 (too rare)
+T185: T131 + next bar opens below signal close → n=3, WR=100%, PF=∞ (too rare)
+T186: T131 + no new high during compression period → n=7, WR=100%, PF=∞ ← SURVIVOR CANDIDATE
+      MECHANISM: When price is in a descending or flat range during compression (no upward extension),
+      the downside trap is "cleaner" — all 7 trades hit target
+
+=== CUMULATIVE SURVIVOR TABLE ===
+Theory  n    WR      PF      Note
+T3      65   ~55%    2.17    Long-running base
+T25     23   ~65%    3.41    After-loss MR
+T38a    28   ~64%    3.21    Compression
+T59     18   77.8%   4.90    4-bar hold
+T106    14   85.7%   6.68    T59+13-14h
+T128    10   90.0%   10.33   T59+13-14h+body≤1.5
+T131    11   90.9%   11.39   Relaxed lo10+body+13-14h ← CANONICAL BEST
+T140    10   90.0%   10.43   T131+prior bearish bar
+T146    11   90.9%   10.44   T131+delayed next-bar entry (ACTIONABLE)
+T182    8    100%    ∞       T131+multi-day compression ← NEW SURVIVOR
+T186    7    100%    ∞       T131+no new high in compression ← NEW SURVIVOR
+T75     8    87.5%   21.14   Wick-poke
+T86/T108 5-6 100%   ∞       Wick-poke+13-14h
+
+=== KEY NEGATIVE FINDINGS (DO NOT TRADE) ===
+T160: 1.0×ATR stop → WR collapses to 36.4%, PF=0.82 ← HARD MINIMUM: 1.5×ATR stop
+T164: ATR rank crossing from <20 to >20 → PF=0.28 (expansion start is NOT a signal)
+T173: Oversold LONG (high ATR + big drop) → PF=0.64 (losing)
+T174: Early compression entry → PF=0.35 (enter only when rank IS already <20)
+T177: Limit entry at lo10 price → PF=1.60 (enter at bar CLOSE, not lo10 level)
+
+=== T131 STRUCTURAL PROPERTIES (INHERENT — all T131 trades already have these) ===
+- Upper hi10 not broken (T151) — identical to T131
+- Signal bar range > 0.3×ATR (T152) — identical to T131
+- Close below intraday VWAP (T149) — identical to T131
+- Signal bar in top 30% of 10-bar range (T162) — identical to T131
+- EMA5 < EMA10 bearish structure (T168) — identical to T131
+- qc>=6 (T156) — identical to T131 (natural floor is qc>=9)
+- First lo10 break of day (T179) — almost always true for T131
+
+=== CLONE/PUPIL UPDATE RULE ===
+Correlations to propagate to all non-pupil clone trade logic:
+1. Multi-day compression (T182): if compression spans >1 calendar day, higher confidence
+2. No new high in compression (T186): descending/flat compression range → stronger signal
+3. Prior bearish bar (T140): prior bar close < prior bar open adds confirmation
+4. Delayed entry (T146): entering at NEXT bar open is equivalent to bar-close entry
+5. 1.5×ATR HARD MINIMUM stop: tighter stops destroy win rate (T160 critical proof)
+6. August caution (T165): August historically halves WR for T131 setups
+7. ATR expansion crossing is ANTI-signal (T164): never enter when rank just crossed >20

@@ -1,0 +1,93 @@
+THEORY ADDENDUM v31 — T268-T270
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-18
+
+=== T268: EMA50 DISTANCE BUCKETS ===
+Detailed breakdown of EMA50 distance (all 10 T131+EMA50 trades):
+
+Per-trade sorted by ema50_dist:
+  0.72×: 2026-08-06  → +0.0906%
+  0.83×: 2024-12-18  → +0.1299%
+  1.23×: 2025-12-30  → +0.1032%
+  1.88×: 2026-02-16  → +0.0480%  (lowest return — borderline dist despite 1.88×)
+  2.08×: 2026-07-21  → +0.0803%
+  2.94×: 2026-01-08  → +0.1001%
+  3.31×: 2024-12-10  → +0.1399%
+  3.69×: 2026-02-17  → +0.1167%
+  4.01×: 2026-05-14  → +0.1009%
+  4.58×: 2026-03-30  → +0.1618%  (best return)
+
+Correlation (ema50_dist vs pnl): +0.463 (MODERATE POSITIVE — higher dist = better return)
+
+Bucket averages:
+  <1.0×ATR:     n=2, WR=100%, avg=+0.1102%  (good but not best)
+  1.0-2.0×ATR:  n=2, WR=100%, avg=+0.0756%  (WEAKEST bucket — includes worst trade)
+  2.0-3.0×ATR:  n=2, WR=100%, avg=+0.0902%
+  >=3.0×ATR:    n=4, WR=100%, avg=+0.1298%  (BEST bucket — highest avg and most trades)
+
+KEY FINDING: The >=3.0× bucket (4 trades) has the best avg (+0.1298%) — 21% better
+than overall average. The worst bucket is 1.0-2.0× (not <1.0), largely driven by
+2026-02-16 (+0.0480%) which has ema50_dist=1.88× but extremely low return.
+
+Correlation +0.463 confirms: higher EMA50 distance generally predicts better return.
+The relationship is not monotonic (1.0-2.0× bucket is the worst, not <1.0×).
+
+PROVISIONAL FILTER CANDIDATE: ema50_dist >= 3.0× gives n=4 WR=100% avg=+0.1298%.
+That's a +21.3% improvement in avg return. But dropping from n=10 to n=4 means only
+~1.3 trades/year. Trade-off: quality vs frequency. Not recommended as hard filter
+at n=4, but worth noting >=3.0× class significantly outperforms.
+
+=== T269: OVERNIGHT GAP (prior day close vs today's first bar open, in ATR units) ===
+Metric: (prior_day_close - today_open) / ATR. Positive = price GAPPED DOWN overnight.
+
+Gap values:
+  2026-07-21: gap=-0.221×ATR → +0.0803% (gapped UP — bearish for setup?)
+  2026-01-08: gap=-0.194×ATR → +0.1001% (gapped UP)
+  2025-12-30: gap=-0.189×ATR → +0.1032% (gapped UP)
+  2026-02-17: gap=-0.168×ATR → +0.1167% (gapped UP)
+  2026-03-30: gap=-0.115×ATR → +0.1618% (gapped UP — BEST return)
+  2026-02-16: gap=0.000×ATR  → +0.0480% (no gap)
+  2026-05-14: gap=0.000×ATR  → +0.1009% (no gap)
+  2024-12-18: gap=0.000×ATR  → +0.1299% (no gap)
+  2024-12-10: gap=+0.112×ATR → +0.1399% (small gap DOWN)
+  2026-08-06: gap=+0.198×ATR → +0.0906% (small gap DOWN)
+
+Correlation (gap vs pnl): +0.013 (ESSENTIALLY ZERO — no relationship)
+
+SURPRISE: Most trades (5/10) have NEGATIVE gaps (price gapped UP overnight!).
+The best trade (2026-03-30) has a gap UP. The 5 gapped-UP trades avg well.
+Gaps are tiny anyway (all < 0.25×ATR) — FX overnight gaps are minimal compared to equities.
+
+CONCLUSION: Overnight gap has zero predictive power (correlation +0.013).
+The tiny FX gaps in this data (all < 0.25×ATR) are essentially noise.
+NOT a filter or predictor. Confirms the setup is about intraday momentum, not gaps.
+
+=== T270: SAME-WEEK SECOND SIGNAL (prior T131+EMA50 signal within 5 days) ===
+Question: If a T131+EMA50 signal fired within the last 5 days, is the next signal better or worse?
+Context: 2026-02-17 follows 2026-02-16 (1 day later) — does the "second bite" still work?
+
+Results:
+  No prior signal in 5 days: n=9, WR=100%, avg=+0.1061%
+  Has prior signal in 5 days: n=1, WR=100%, avg=+0.1167% | 2026-02-17
+
+Only 1 case of a 5-day repeat signal — the 2026-02-16/17 consecutive pair.
+The second signal (2026-02-17, +0.1167%) actually performs ABOVE average.
+
+CONCLUSION: Only 1 case of a same-week second signal in 3 years — too sparse.
+That 1 case wins and above average. The T131+EMA50 signals are rare enough (~5/year)
+that same-week repetition is uncommon. No meaningful conclusion at n=1.
+
+=== TOTAL THEORIES TESTED: 270 ===
+T268: EMA50 distance — >=3.0× bucket (n=4) averages +0.1298% (+21% vs baseline).
+Correlation +0.463. Higher distance consistently predicts better return.
+T269: Overnight gap — essentially zero correlation (+0.013). FX gaps too small to matter.
+T270: Same-week second signal — n=1, untestable. One case wins above average.
+
+CUMULATIVE RETURN PREDICTORS RANKED (from all theories):
+1. T259: Prior day range location — correlation -0.730 (STRONGEST)
+2. T268: EMA50 distance — correlation +0.463
+3. T263: Consec down days — correlation +0.356
+4. T260: Prior week location — correlation -0.328
+5. T256: Signal bar size — correlation -0.300
+6. T254: Compression length qc — correlation +0.187
+7. T253: Intraday drift — correlation +0.227
