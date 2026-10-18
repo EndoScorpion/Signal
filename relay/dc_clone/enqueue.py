@@ -3,11 +3,13 @@
 Cloud-side helper — enqueue a tool call and wait for the result.
 Any number of cloud sessions can call this concurrently.
 
+Uses `gh api` CLI for writes (has OAuth write access); urllib for reads.
+
 Usage:
   python3 enqueue.py read_file '{"path":"C:\\\\Users\\\\endos\\\\Desktop\\\\hst_work\\\\Signal\\\\CLAUDE.md"}'
   python3 enqueue.py execute_powershell '{"command":"Get-Date"}'
 """
-import sys, json, time, uuid, os, urllib.request, urllib.error, base64
+import sys, json, time, uuid, os, urllib.request, urllib.error, base64, subprocess
 
 OWNER  = "EndoScorpion"
 REPO   = "Signal"
@@ -19,16 +21,10 @@ POLL_S  = 3
 TOKEN  = os.environ.get("GITHUB_TOKEN", "")
 
 HDR = {"Authorization": f"token {TOKEN}", "User-Agent": "dc-clone-enqueue",
-       "Accept": "application/vnd.github+json", "Content-Type": "application/json"}
+       "Accept": "application/vnd.github+json"}
 
 def gh_get(path):
     req = urllib.request.Request(f"https://api.github.com{path}", headers=HDR)
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read())
-
-def gh_put(path, body):
-    data = json.dumps(body).encode()
-    req = urllib.request.Request(f"https://api.github.com{path}", data=data, headers=HDR, method="PUT")
     with urllib.request.urlopen(req) as r:
         return json.loads(r.read())
 
@@ -40,11 +36,21 @@ def get_file(p):
         if e.code == 404: return None, None
         raise
 
-def put_file(p, content, sha, msg):
-    body = {"message": msg, "content": base64.b64encode(content.encode()).decode(),
-            "branch": BRANCH}
-    if sha: body["sha"] = sha
-    return gh_put(f"/repos/{OWNER}/{REPO}/contents/{p}", body)
+def put_file_gh_cli(p, content, sha, msg):
+    """Write file via gh api CLI (has OAuth write access)."""
+    encoded = base64.b64encode(content.encode()).decode()
+    body = {"message": msg, "content": encoded, "branch": BRANCH}
+    if sha:
+        body["sha"] = sha
+    result = subprocess.run(
+        ["gh", "api", f"/repos/{OWNER}/{REPO}/contents/{p}",
+         "-X", "PUT", "--input", "-"],
+        input=json.dumps(body).encode(),
+        capture_output=True, timeout=30
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"gh api PUT failed: {result.stderr.decode()}")
+    return json.loads(result.stdout)
 
 def enqueue(tool, args):
     req_id = str(uuid.uuid4())[:8]
@@ -54,10 +60,13 @@ def enqueue(tool, args):
         queue.append({"id": req_id, "tool": tool, "args": args, "status": "pending",
                        "queued_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
         try:
-            put_file(QUEUE, json.dumps(queue, indent=2), sha, f"enqueue {req_id}")
+            put_file_gh_cli(QUEUE, json.dumps(queue, indent=2), sha, f"enqueue {req_id}")
             return req_id
-        except Exception:
-            time.sleep(1)
+        except Exception as e:
+            if "422" in str(e) or "409" in str(e):
+                time.sleep(1)
+                continue
+            raise
     raise RuntimeError("failed to enqueue after retries")
 
 def wait_result(req_id):

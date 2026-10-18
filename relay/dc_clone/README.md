@@ -32,9 +32,29 @@ No inbound connections. No ngrok. Works behind NAT on a locked PC.
 4. The Task Scheduler task `DcCloneServer` starts now and at every logon.
 5. Check log: `relay\dc_clone\dc_clone.log`
 
-## Cloud usage
+## Cloud usage (Claude sessions — MCP tools)
 
-From any cloud session with `GITHUB_TOKEN` set:
+Cloud sessions inside claude.ai use `mcp__github__` tools directly (the proxy blocks raw GitHub writes):
+
+```python
+# 1. Read current queue
+mcp__github__get_file_contents(owner="EndoScorpion", repo="Signal",
+    path="tasks/dc_queue.json", ref="relay")
+
+# 2. Append your job and write back (sha required)
+mcp__github__create_or_update_file(owner="EndoScorpion", repo="Signal",
+    path="tasks/dc_queue.json", branch="relay",
+    content="[{...}]", sha="<sha from step 1>",
+    message="enqueue <id>")
+
+# 3. Poll for result
+mcp__github__get_file_contents(owner="EndoScorpion", repo="Signal",
+    path="tasks/dc_results/<id>.json", ref="relay")
+```
+
+## Device / local usage (enqueue.py CLI)
+
+From the Lenovo (or any machine with a write-scoped PAT in `GITHUB_TOKEN`):
 
 ```bash
 python3 relay/dc_clone/enqueue.py read_file '{"path":"C:\\Users\\endos\\Desktop\\hst_work\\Signal\\CLAUDE.md"}'
@@ -42,6 +62,9 @@ python3 relay/dc_clone/enqueue.py execute_powershell '{"command":"Get-Date"}'
 python3 relay/dc_clone/enqueue.py write_file '{"path":"C:\\Users\\endos\\Desktop\\test.txt","content":"hello"}'
 python3 relay/dc_clone/enqueue.py list_dir '{"path":"C:\\Users\\endos\\Desktop\\hst_work\\Signal"}'
 ```
+
+> **Note:** Cloud GITHUB_TOKEN is read-only (proxy restriction). enqueue.py uses `gh api`
+> which also fails from cloud. From cloud, use the MCP pattern above.
 
 Result is printed as JSON to stdout. Timeout: 60 s.
 
