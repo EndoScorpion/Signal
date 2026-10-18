@@ -14,7 +14,7 @@ var RULES=[
  {id:"R3",name:"Below-band extreme",if:"Bollinger %B < 5 AND 12h drop > 3%",t:function(f){return f.bbp<5&&f.ret12<-3}},
  {id:"R4",name:"Z-score dip",if:"price more than 2 std below SMA20 AND 12h drop > 3%",t:function(f){return f.ext<-2&&f.ret12<-3}}];
 var EXCL=["ETH","ZEC","TAO","ADA"];
-var VAL="Backtest (H1, one trade at a time, 4-bar exit, 0.04% cost): last 20% of the 6 tuning coins n=156 win 64% avg +0.30%/trade; 8 coins never used for tuning n=859 win 58% avg +0.33%/trade (+0.25% at 0.12% cost); all 14 coins n=1802 win 59% avg +0.31%. With a hard 1.5% stop: avg +0.41%/trade (win 57%). Take-profit exits made it worse. SELL rules failed out-of-sample and were dropped.";
+var VAL="Backtest (H1, one trade at a time, 4-bar exit, 0.04% cost): last 20% of the 6 tuning coins n=156 win 64% avg +0.30%/trade; 8 coins never used for tuning n=859 win 58% avg +0.33%/trade (+0.25% at 0.12% cost); all 14 coins n=1802 win 59% avg +0.31%. With a hard 1.5% stop: avg +0.41%/trade (win 57%). Take-profit exits made it worse. SELL rules failed out-of-sample and were dropped. NOTE: Daily crypto backtest (4d hold, 0.32% RT cost, 24% tax) shows no after-tax edge — these H1 rules are not testable at daily resolution. Re-test on hourly data when available.";
 function csvLine(s){var o=[],c="",q=false;for(var i=0;i<s.length;i++){var ch=s[i];if(q){if(ch==='"'){if(s[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===","){o.push(c);c=""}else c+=ch}o.push(c);return o}
 function msg(t,c){var m=g("rbMsg");m.className=c||"";m.textContent=t}
 /* ---- 1) forward-test episode dedup ---- */

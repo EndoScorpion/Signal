@@ -38,3 +38,13 @@ PLTR yahoo 1519
 RIVN yahoo 1238
 SOFI yahoo 1454
 HOOD yahoo 1311
+BTC-USD yahoo 3653
+ETH-USD yahoo 3266
+SOL-USD yahoo 2383
+XRP-USD yahoo 3266
+ADA-USD yahoo 3266
+AVAX-USD yahoo 2220
+DOT-USD yahoo 2251
+LINK-USD yahoo 3266
+LTC-USD yahoo 3653
+DOGE-USD yahoo 3266
