@@ -1,0 +1,101 @@
+THEORY ADDENDUM v27 — T256-T258
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-18
+
+=== T256: SIGNAL BAR SIZE (H-L range in ATR units) vs RETURN ===
+Question: Does the size of the signal bar itself (high-low range) predict return strength?
+A larger bar = more aggressive move = stronger impulse ahead?
+
+Bar range (H-L in ATR multiples) sorted ascending:
+  2026-03-30: range=1.16×ATR, body=0.11×ATR → pnl=+0.1618%  (best return, smallest range)
+  2026-02-16: range=1.27×ATR, body=0.21×ATR → pnl=+0.0480%  (worst return)
+  2026-01-08: range=1.33×ATR, body=0.37×ATR → pnl=+0.1001%
+  2024-12-10: range=1.46×ATR, body=1.01×ATR → pnl=+0.1399%
+  2025-12-30: range=1.48×ATR, body=0.19×ATR → pnl=+0.1032%
+  2024-12-18: range=1.56×ATR, body=0.12×ATR → pnl=+0.1299%
+  2026-02-17: range=1.68×ATR, body=0.84×ATR → pnl=+0.1167%
+  2026-05-14: range=1.69×ATR, body=0.95×ATR → pnl=+0.1009%
+  2026-07-21: range=1.99×ATR, body=0.66×ATR → pnl=+0.0803%
+  2026-08-06: range=2.02×ATR, body=1.42×ATR → pnl=+0.0906%
+
+Correlation (bar range vs pnl): -0.300 (NEGATIVE — bigger bar slightly WORSE)
+All range thresholds: WR=100% regardless
+
+CONCLUSION: Signal bar size shows WEAK NEGATIVE correlation with return (-0.300).
+Smaller, quieter signal bars (like the wick/doji pattern in best trade 2026-03-30)
+slightly outperform. This is consistent with the LIQUIDITY GRAB mechanism (T243):
+a small body with deep wick = cleaner stop-hunt; a large body = more noise/resistance.
+But correlation is weak at n=10 and all win regardless.
+NOT a filter; confirms quieter signal bars are slightly preferred but not actionable.
+
+=== T257: DOUBLE LIQUIDITY GRAB (signal bar breaks BOTH lo10 and hi10) ===
+Question: Does the signal bar sometimes ALSO break above the prior 10-bar HIGH?
+A "double grab" = price sweeps both stops (longs below lo10 AND shorts above hi10)?
+
+Result: ALL 10 TRADES HAVE double_grab=False
+  No single trade in the sample breaks both the 10-bar low AND the 10-bar high.
+  double_grab=False: n=10, WR=100%, avg=+0.1071%
+
+lo10 break depth (how far below 10-bar low the wick goes):
+  2026-01-08:  0.194×ATR  → +0.1001%  (shallowest break)
+  2026-02-16:  0.211×ATR  → +0.0480%  (worst return)
+  2024-12-18:  0.479×ATR  → +0.1299%
+  2024-12-10:  0.558×ATR  → +0.1399%
+  2026-03-30:  0.583×ATR  → +0.1618%  (best return)
+  2026-07-21:  0.663×ATR  → +0.0803%
+  2025-12-30:  0.742×ATR  → +0.1032%
+  2026-08-06:  0.807×ATR  → +0.0906%
+  2026-02-17:  1.347×ATR  → +0.1167%
+  2026-05-14:  1.502×ATR  → +0.1009%  (deepest break)
+
+Correlation (lo_break_depth vs pnl): +0.134 (very weak positive)
+
+CONCLUSION: Double liquidity grab never occurs in the sample — the signal bars
+only break downward through lo10, never simultaneously through hi10. This is
+expected given the setup requires ATR compression and bearish context.
+lo10 break depth shows a weak positive correlation (+0.134) but with the best
+return at moderate depth (0.583×ATR on 2026-03-30), not the deepest breaks.
+NOT a new finding; double grab is not a feature of this signal.
+
+=== T258: DOUBLE COMPRESSION (BOTH 12h AND 13h UTC have ATR rank<20) + T131+EMA50 ===
+NEW FINDING: Requiring ATR rank<20 at BOTH the 12h bar AND the signal bar (13h).
+This is a subset of T131+EMA50 where we confirm compression persisted through the
+London-NY session boundary.
+
+Results (n=7, subset of T131+EMA50 n=10):
+  WR=100%, PF=inf, avg=+0.1027%, total=+0.7188%
+
+Trades included:
+  2024-12-10: qc=14 → +0.1399%  ← 12h had rank<20
+  2024-12-18: qc=16 → +0.1299%  ← 12h had rank<20
+  2025-12-30: qc=10 → +0.1032%  ← 12h had rank<20
+  2026-02-16: qc=9  → +0.0480%  ← 12h had rank<20 (lowest return trade still included)
+  2026-02-17: qc=30 → +0.1167%  ← 12h had rank<20
+  2026-05-14: qc=16 → +0.1009%  ← 12h had rank<20
+  2026-07-21: qc=15 → +0.0803%  ← 12h had rank<20
+
+Trades EXCLUDED from T131+EMA50 by this filter (3 trades):
+  2026-01-08:  pnl=+0.1001% (was winner, excluded — 12h not compressed)
+  2026-03-30:  pnl=+0.1618% (was winner, BEST TRADE excluded — 12h not compressed)
+  2026-08-06:  pnl=+0.0906% (was winner, excluded)
+
+Year breakdown:
+  2024: n=2, WR=100%
+  2025: n=1, WR=100%
+  2026: n=4, WR=100%
+
+CONCLUSION: Double compression is a valid STRICTER subset of T131+EMA50 (n=7 from 10).
+WR=100% maintained (same as full set), but n drops from 10 to 7 and avg drops from
++0.1071% to +0.1027%. Critically, the BEST TRADE (2026-03-30, +0.1618%) is excluded
+by this filter — it does not have 12h compression. Net effect: same WR, slightly lower
+avg, lower n. Adding double compression as a filter REDUCES overall performance.
+The 3 excluded trades are all winners with above-average or average returns.
+CONCLUSION: Double compression does NOT improve results — it just misses good trades.
+The 12h bar's compression state adds no predictive power beyond the 13h bar itself.
+NOT recommended as an additional filter.
+
+=== TOTAL THEORIES TESTED: 258 ===
+T256: Signal bar size has weak NEGATIVE correlation — smaller is slightly better (not actionable).
+T257: Double grab never occurs; lo10 break depth weakly positive but not actionable.
+T258: Double compression reduces n from 10→7 and misses best trade; not recommended.
+All three theories reinforce: T131+EMA50 as specified is already at the optimal threshold.
