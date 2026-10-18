@@ -27,3 +27,21 @@ GOAL: use autonomous agent + planning mode to (1) pull sandbox/real daily histor
 - Crypto H1 dip-rebound BUY R1-R4: hold 4 bars, hard stop 1.5%; unseen coins n=859 win 58% avg +0.33% at 0.04% cost, +0.25% at 0.12% cost. Re-check with full cost model.
 - Daily stocks/ETFs/metals: no consistent edge yet; weak lead = below Bollinger & Stoch<10 in uptrend, 3d hold, blue chips.
 - Dividend capture is zero-sum pre-cost (price drops ~ dividend). Only pays if price recovers; costs+tax usually eat it.
+
+## Local CLI backtest hook
+
+Run from `C:\Users\endos\Desktop\hst_work\Signal` (or wherever the repo is cloned locally):
+
+```
+# One-liner — runs backtest on data/history/ CSVs, writes results/, pushes branch
+python3 run_backtest.py [--hold 3] [--group fx|stock|crypto]
+```
+
+Or use the slash command in Claude Code CLI:
+```
+/backtest
+```
+(defined in `.claude/commands/backtest.md`)
+
+**Data prep:** Drop MT4-exported CSVs (date,open,high,low,close,volume) into `data/history/`, or run `python3 fetch_history.py`.
+**Output:** `results/cli_backtest_YYYY-MM-DD.md` + auto-copied to `/mnt/project-files/results/` if mounted.
