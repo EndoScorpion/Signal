@@ -1,0 +1,3 @@
+[
+  {"ts":"2026-10-18T21:35:50Z","from":"cloud-coordinator","msg":"Reply loop active — you can now see cloud responses in hst_out/from_cloud.log"}
+]
