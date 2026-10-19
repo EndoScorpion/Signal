@@ -55,6 +55,36 @@
     "flag_if": "n>50 OR PF>1.3"
   },
   {
+    "id": "nomem6_005",
+    "status": "pending",
+    "priority": 2,
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T02:50:00Z",
+    "description": "MKT-14-NY-T31s+NOSL+XNFP: same as nomem6_004 but SKIP the first Friday of each month (NFP). Cloud python FXOpen 2024-26: n=51 WR=64.7% PF=2.13 avg=+51 pts; OOS TwelveData 2020-23: n=71 WR=63.4% PF=2.11 avg=+80 pts (ECN pts, $0.10/pt at 0.1 lot). NFP-only subset OOS PF 0.66.",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {
+      "rules": "Friday only, not first Friday of month; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
+      "stop": "none",
+      "cost": 8e-05
+    },
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "commission_pts": 8,
+    "timeout_min": 90,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
     "id": "nomem6_001",
     "status": "skip",
     "added_by": "cloud-thread-kxrfun",
