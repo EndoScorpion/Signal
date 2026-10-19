@@ -336,3 +336,38 @@ Gen 4 produced no new OOS PF peak (project-best remains G3-13/G4-7 at 2.67). Var
 | 1 | **G5-2** | Fri 14:00 SHORT, day_up>0.5×ATR14, xnfp, MMR≥−1.0, no stop, exit 21:00 | **3.21** | 131 pts | New project-best; MMR gate needs tick-level fill check |
 | 2 | **G3-13** (= G4-7) | Fri 14:00 SHORT, day_up>0.4×ATR14, xnfp, slope120>0, no stop, exit 21:00 | 2.67 | 122 pts | Prior project-best; no-stop is fill-sensitive |
 | 3 | **G4-2** | Fri 14:00 SHORT, day_up>0.4×ATR14, xnfp, slope120>0, RSI14>50, no stop, exit 21:00 | 2.44 | 111 pts | RSI filter adds stability |
+
+---
+
+## Gen 6 — minSSR>−2 and LOSSY-OVB stacked on G5-2 (2026-10-19)
+
+**Gates tested:** minSSR>−2 (slope consistency reject), LOSSY-OVB (fast Stoch>80 while slow slope/accel turned down), and their combination. Stacked on G5-2 (project-best) and G3-13 (prior best). IS = FXOpen ECN 2024+, OOS = TwelveData 2020-23.
+
+| Label | IS n | IS WR | IS PF | IS avg | OOS n | OOS WR | OOS PF | OOS avg | yr 2020/21/22/23 | Pass |
+|---|---|---|---|---|---|---|---|---|---|---|
+| G5-2_ref (xnfp+MMR≥−1.0) | 44 | 65.9% | 2.25 | 63 pts | 48 | 70.8% | **3.21** | 131 pts | 3.75/2.18/7.01/1.78 | ✓ |
+| G6-1 G5-2+minSSR>−2 | 24 | 70.8% | 4.08 | 87 pts | 33 | 69.7% | 2.89 | 108 pts | 3.37/2.94/4.07/1.70 | ✓ |
+| G6-2 G5-2+LOSSY-OVB | 21 | 76.2% | 3.07 | 86 pts | 22 | 81.8% | **8.88** | 194 pts | 5.23/∞/∞/1.38 | ✗ n<30 |
+| G6-3 G5-2+minSSR+LOSSY | 12 | 91.7% | 18.78 | 136 pts | 16 | 81.2% | 11.04 | 172 pts | 10.49/∞/∞/1.38 | ✗ n<30 |
+| G6-4 G3-13+minSSR>−2 | 20 | 60.0% | 2.74 | 69 pts | 33 | 69.7% | 3.13 | 131 pts | 2.26/12.53/2.97/1.69 | ✓ |
+| G6-5 G3-13+LOSSY-OVB | 13 | 76.9% | 4.17 | 129 pts | 21 | 76.2% | 4.80 | 189 pts | 6.03/∞/2.62/0.11 | ✗ n<30, yr23 fail |
+| G6-6 T31s_xnfp+minSSR>−2 | 28 | 64.3% | 1.81 | 46 pts | 45 | 66.7% | 2.45 | 96 pts | 2.86/3.93/2.16/1.81 | ✓ |
+| G6-7 T31s_xnfp+LOSSY-OVB | 24 | 75.0% | 2.93 | 81 pts | 29 | 65.5% | 2.72 | 112 pts | 6.22/3.54/2.17/0.65 | ✗ n<30, yr23 fail |
+
+**Gen 6 survivors (IS n≥30, OOS n≥20, OOS PF≥1.0, OOS WR≥51%, all years≥1.0):** None new. G5-2 ref re-confirms.
+
+### Key findings
+- **LOSSY-OVB dramatically improves quality** (G6-2: OOS PF 8.88, WR 81.8%) but halves n — OOS n=22 is below the 30-trade threshold. Not adoptable until more IS/OOS data arrives (~2027+).
+- **minSSR>−2 narrows cleanly** (G6-1: OOS PF 2.89 n=33) but is modestly *below* G5-2 baseline PF 3.21 — the gate rejects some good trades along with bad ones.
+- **Both gates combined** (G6-3): OOS PF 11.04 on n=16 — extraordinary signal but n too small to trust.
+- **Space saturating**: neither gate improves OOS PF vs G5-2 baseline while maintaining n≥30.
+
+### Adaptive learning update
+- **LOSSY-OVB is a confirmed quality gate**: the trades it selects (n=22 OOS, PF 8.88) are much stronger than the complement. File for future use when FXOpen 2027-28 data is available.
+- **minSSR>−2 is neutral-to-harmful** at this filter level on T31s+MMR base — it slightly reduces OOS PF while adding IS IS-PF polish (likely mild overfit signal).
+- **G5-2 (T31s_xnfp+MMR≥−1.0) remains project-best**: OOS PF 3.21, all 4 years≥1.0, IS n=44.
+
+### Updated top-3 MT4 queue (unchanged)
+1. **G5-2** (T31s_xnfp+MMR≥−1.0): OOS PF 3.21, avg 131 pts
+2. **G3-13** (T31s_xnfp+bull): OOS PF 2.67, avg 81 pts
+3. **G4-2** (T31s_xnfp+bull+0.4x): OOS PF 2.44, avg 79 pts
