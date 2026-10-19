@@ -1,0 +1,416 @@
+"""Clone+improve engine for top EURUSD H1 winners. IS=FXOpen 2024-26, OOS=TwelveData 2020-23."""
+import pandas as pd, numpy as np, sys
+
+COST = 0.00008
+IS_FILE  = '/mnt/project-files/data/eurusd_fxopen_h1.csv'
+OOS_FILE = '/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv'
+
+# ── data loader ──────────────────────────────────────────────────────────────
+def load(path, ts_col='timestamp_ms', unit='ms'):
+    df = pd.read_csv(path)
+    if ts_col in df.columns:
+        df['t'] = pd.to_datetime(df[ts_col], unit=unit)
+    else:  # TwelveData uses 'datetime' string
+        df['t'] = pd.to_datetime(df.iloc[:,0])
+    df = df.set_index('t').sort_index()
+    # normalise column names
+    df.columns = [c.lower() for c in df.columns]
+    for c in ['open','high','low','close']:
+        if c not in df.columns:
+            # try first four numeric cols
+            nums = [x for x in df.columns if df[x].dtype in (float,int)][:4]
+            df[['open','high','low','close']] = df[nums[:4]]
+            break
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek   # 0=Mon
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    return df
+
+def add_indicators(df):
+    tr = np.maximum(df.high-df.low,
+         np.maximum((df.high-df.close.shift()).abs(),
+                    (df.low -df.close.shift()).abs()))
+    df['atr']    = tr.rolling(14).mean()
+    df['atr_pct']= df.atr.rolling(252).rank(pct=True)
+    d = df.close.diff()
+    g = d.clip(lower=0).ewm(alpha=1/14,adjust=False).mean()
+    l = (-d.clip(upper=0)).ewm(alpha=1/14,adjust=False).mean()
+    df['rsi14']  = 100-100/(1+g/l)
+    df['rsi5']   = 100-100/(1+(d.clip(lower=0).ewm(span=5,adjust=False).mean()/
+                               (-d.clip(upper=0)).ewm(span=5,adjust=False).mean()))
+    df['ema20']  = df.close.ewm(span=20,adjust=False).mean()
+    df['ema30']  = df.close.ewm(span=30,adjust=False).mean()
+    df['ema120'] = df.close.ewm(span=120,adjust=False).mean()
+    df['slope120']= df.ema120.diff(5)
+    sma20 = df.close.rolling(20).mean()
+    sd    = df.close.rolling(20).std()
+    df['bbz']    = (df.close-sma20)/sd
+    df['mom3']   = df.close - df.close.shift(3)
+    df['rng']    = df.high-df.low
+    df['rng20']  = df.rng.rolling(20).mean()
+    # shift 1 bar — entry at open[i] can only use bar i-1
+    for c in ['atr','atr_pct','rsi14','rsi5','ema20','ema30','ema120',
+              'slope120','bbz','mom3','rng','rng20']:
+        df[c] = df[c].shift(1)
+    df['pc'] = df.close.shift(1)
+    # daily aggregates
+    asia_o = df[df.hour==0].groupby('date').open.first()
+    asia_c = df[df.hour==6].groupby('date').close.first()
+    D = pd.DataFrame({'asia_net': asia_c - asia_o})
+    D['prev_close'] = df.groupby('date').close.last().shift(1)
+    for c in D.columns:
+        df[c] = df.date.map(D[c])
+    return df
+
+# ── backtest runner ───────────────────────────────────────────────────────────
+def run(df, mask, direction, stop_mult=None, hold=None, exit_hour=None,
+        entry_offset=0.0, no_overlap=True):
+    O=df.open.values; H=df.high.values; L=df.low.values; C=df.close.values
+    HR=df.hour.values; A=df.atr.values; idx=df.index; N=len(df)
+    rows=[]; last_exit=-1
+    dirs = np.broadcast_to(np.array(direction), N) if np.ndim(direction)==1 else direction
+    for i in np.where(mask)[0]:
+        if no_overlap and i<=last_exit: continue
+        if i+1>=N: continue
+        dr = dirs[i] if np.ndim(direction)!=0 else int(direction)
+        ep = O[i] + entry_offset*dr
+        atr= A[i]
+        stop = ep - dr*stop_mult*atr if stop_mult else None
+        j=i; pnl=None
+        while True:
+            j+=1
+            if j>=N: break
+            if stop and ((dr>0 and L[j]<=stop) or (dr<0 and H[j]>=stop)):
+                pnl=(stop-ep)*dr; break
+            done = (hold and j-i>=hold) or \
+                   (exit_hour is not None and (HR[j]==exit_hour or j-i>=24))
+            if done: pnl=(C[j]-ep)*dr; break
+        if pnl is None: continue
+        last_exit=j
+        rows.append((idx[i], dr, ep, pnl-COST, j-i, idx[i].year))
+    if not rows: return pd.DataFrame(columns=['t','dir','entry','pnl','bars','year'])
+    return pd.DataFrame(rows, columns=['t','dir','entry','pnl','bars','year'])
+
+def stats(tr, label=''):
+    if tr is None or len(tr)==0:
+        return dict(label=label,n=0,wr=0,pf=0,avg_pts=0,avg_pct=0)
+    p=tr.pnl; w=p[p>0].sum(); lo=-p[p<0].sum()
+    pf=round(w/lo,2) if lo>0 else 99.0
+    wr=round(100*(p>0).mean(),1)
+    avg_pts=round(p.mean()/0.00001,1)  # convert to ECN points
+    avg_pct=round(100*p.mean()/tr.entry.mean(),4)
+    yr={}
+    for y in sorted(tr.year.unique()):
+        q=tr[tr.year==y].pnl
+        yr[y]=round(q[q>0].sum()/-q[q<0].sum(),2) if (q<0).any() else 99.0
+    return dict(label=label,n=len(tr),wr=wr,pf=pf,avg_pts=avg_pts,avg_pct=avg_pct,yr=yr)
+
+# ── load datasets ─────────────────────────────────────────────────────────────
+print("Loading IS data...")
+dfIS = add_indicators(load(IS_FILE))
+dfIS_2024 = dfIS[dfIS.year>=2024].copy()
+
+print("Loading OOS data...")
+dfOOS = add_indicators(load(OOS_FILE))
+dfOOS_2020 = dfOOS[(dfOOS.year>=2020)&(dfOOS.year<=2023)].copy()
+
+def test_both(label, make_mask_fn):
+    """make_mask_fn(df) -> (mask, direction, kwargs)"""
+    r_is  = make_mask_fn(dfIS_2024)
+    r_oos = make_mask_fn(dfOOS_2020)
+    if r_is is None: return None,None
+    mask_is, dir_is, kw_is = r_is
+    mask_oos, dir_oos, kw_oos = r_oos
+    tr_is  = run(dfIS_2024,  mask_is,  dir_is,  **kw_is)
+    tr_oos = run(dfOOS_2020, mask_oos, dir_oos, **kw_oos)
+    s_is  = stats(tr_is,  f"{label}_IS")
+    s_oos = stats(tr_oos, f"{label}_OOS")
+    return s_is, s_oos
+
+results = []  # list of (label, s_is, s_oos)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ORIGINALS (re-confirmed baselines)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _ok(df):
+    return ~np.isnan(df.atr_pct.values)&~np.isnan(df.asia_net.values)
+
+# ── T11: SS-MOM3H-LN (14:00 short when 3h momentum < -0.5×ATR) ───────────────
+def orig_T11(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values
+    mask = ok & (HR==14) & (M3 < -0.5*A)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# ── T31s: MKT-14-NY (Fri SHORT, day-up > 0.5×ATR, no stop) ──────────────────
+def orig_T31s(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; daymove = df.pc.values - df.groupby('date').close.last().shift(1).values if False else None
+    # daymove = close-of-prev-day context; use pc (prev close) vs open of day
+    # simplified: day_up = current open vs prev_close
+    day_up = df.open.values - df.groupby('date').open.first().reindex(df.index).values
+    # recalc: prev_close is df.pc (close shifted 1), open of day is first open each day
+    day_o = df.groupby('date').open.first()
+    df2 = df.copy(); df2['day_open'] = df2.date.map(day_o)
+    day_up2 = df2.open.values - df2.prev_close.values  # open vs prev session close
+    mask = ok & (HR==14) & (DOW==4) & (day_up2 > 0.5*A)  # DOW==4 = Friday
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── T6: MKT-20-NY (LONG 20:00, EMA20>close, Mon-Thu) ────────────────────────
+def orig_T6(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values
+    mask = ok & (HR==20) & (DOW<4) & (E20>C)
+    return mask, 1, dict(stop_mult=None, hold=None, exit_hour=7)
+
+# ── v2.3 Asia fade ─────────────────────────────────────────────────────────────
+def orig_v23(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; AP=df.atr_pct.values; S=df.slope120.values
+    try: ADX=df.adx14.values
+    except: ADX=None
+    AN=df.asia_net.values
+    base = ok & (HR==7) & (DOW>=2)&(DOW<=3) & (AN>=0.25*A) & (AP<0.75) & (A>=0.0005) & (S<0)
+    if ADX is not None: base = base & (ADX<30)
+    return base, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# baseline table
+for lbl, fn in [('T11_BASE', orig_T11),('T31s_BASE', orig_T31s),
+                ('T6_BASE',  orig_T6), ('v23_BASE',  orig_v23)]:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl, si, so))
+    print(f"  {lbl}: IS n={si['n'] if si else 0} OOS n={so['n'] if so else 0}")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CLONE ROUND 1: Filter crosses between winners
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Clone 1a: T11 + Asia-fade prerequisite (Asia moved UP; momentum fade follows Asia)
+def clone_T11_asia(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values; AN=df.asia_net.values
+    S=df.slope120.values; AP=df.atr_pct.values
+    mask = ok & (HR==14) & (M3 < -0.5*A) & (AN>0) & (S<0) & (AP<0.75)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 1b: T11 + Wed/Thu only (stronger days for v23)
+def clone_T11_wedthu(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values; DOW=df.dow.values
+    mask = ok & (HR==14) & (M3 < -0.5*A) & (DOW>=2)&(DOW<=3)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 1c: T11 + ATR floor (like v2.3)
+def clone_T11_atrfloor(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values
+    mask = ok & (HR==14) & (M3 < -0.5*A) & (A>=0.0005)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 1d: T31s + EMA120 slope < 0 (trend filter)
+def clone_T31s_slope(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; S=df.slope120.values
+    day_o = df.groupby('date').open.first()
+    df2 = df.copy(); df2['day_open'] = df2.date.map(day_o)
+    day_up = df2.open.values - df2.prev_close.values
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 0.5*A) & (S<0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# Clone 1e: T6 + Asia-fade prerequisite (Asia moved UP, meaning correction likely overnight)
+def clone_T6_asia(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values; AN=df.asia_net.values; A=df.atr.values
+    mask = ok & (HR==20) & (DOW<4) & (E20>C) & (AN>0)
+    return mask, 1, dict(stop_mult=None, exit_hour=7)
+
+# Clone 1f: T6 + ATR floor (only trade on meaningful-vol days)
+def clone_T6_atrfloor(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values; A=df.atr.values
+    mask = ok & (HR==20) & (DOW<4) & (E20>C) & (A>=0.0005)
+    return mask, 1, dict(stop_mult=None, exit_hour=7)
+
+# Clone 1g: v2.3 + mom3h momentum confirmation at 14:00 (buy dip when London session also showing fade)
+def clone_v23_mom(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; AP=df.atr_pct.values; S=df.slope120.values
+    AN=df.asia_net.values; M3=df.mom3.values
+    base = ok & (HR==7) & (DOW>=2)&(DOW<=3) & (AN>=0.25*A) & (AP<0.75) & (A>=0.0005) & (S<0)
+    # add: 14:00 bar mom3<0 (shift -7 relative to entry bar is complex; skip, use current mom3 at entry bar)
+    base = base & (M3<0)   # momentum negative at entry (continuation)
+    return base, -1, dict(stop_mult=0.8, exit_hour=21)
+
+for lbl, fn in [
+    ('T11+asia+slope', clone_T11_asia),
+    ('T11+wedthu',     clone_T11_wedthu),
+    ('T11+atrfloor',   clone_T11_atrfloor),
+    ('T31s+slope',     clone_T31s_slope),
+    ('T6+asia',        clone_T6_asia),
+    ('T6+atrfloor',    clone_T6_atrfloor),
+    ('v23+mom',        clone_v23_mom),
+]:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl, si, so))
+    print(f"  {lbl}: IS n={si['n'] if si else 0} OOS n={so['n'] if so else 0}")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CLONE ROUND 2: Adaptive thresholds
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Clone 2a: T11 adaptive — threshold = rolling-percentile of mom3, not fixed 0.5×ATR
+def clone_T11_adaptive(df):
+    ok=_ok(df); HR=df.hour.values; A=df.atr.values
+    # dynamic threshold: 25th percentile of |mom3| over 52 bars
+    m3=df.mom3; m3_pct=m3.rolling(52).quantile(0.15)
+    df2=df.copy(); df2['m3_thresh']=m3_pct.shift(1).values
+    M3=df2.mom3.values; TH=df2.m3_thresh.values
+    mask = ok & (HR==14) & (M3<TH)  # short when mom3 below 15th pct
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 2b: T11 ATR-pct filtered — only trade when ATR in top 50% (volatile, directional)
+def clone_T11_atrpct(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values; AP=df.atr_pct.values
+    mask = ok & (HR==14) & (M3 < -0.5*A) & (AP>0.25) & (AP<0.75)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 2c: T6 adaptive exit — hold 8 bars instead of to 07:00 (shorter overnight)
+def clone_T6_hold8(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values
+    mask = ok & (HR==20) & (DOW<4) & (E20>C)
+    return mask, 1, dict(stop_mult=None, hold=8, exit_hour=None)
+
+# Clone 2d: T6 with soft stop (1.0×ATR) — was no stop; adding stop to see if it improves
+def clone_T6_stop(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values
+    mask = ok & (HR==20) & (DOW<4) & (E20>C)
+    return mask, 1, dict(stop_mult=1.0, exit_hour=7)
+
+# Clone 2e: v2.3 with ATR pct floor raised to 50th percentile (only medium+ vol)
+def clone_v23_atrpct50(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; AP=df.atr_pct.values; S=df.slope120.values
+    AN=df.asia_net.values
+    base = ok & (HR==7) & (DOW>=2)&(DOW<=3) & (AN>=0.25*A) & (AP>0.25)&(AP<0.75) & (A>=0.0005) & (S<0)
+    return base, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 2f: T31s with magnitude filter — only if day_up > 1.0×ATR (stronger move)
+def clone_T31s_strong(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values
+    day_o = df.groupby('date').open.first()
+    df2 = df.copy(); df2['day_open'] = df2.date.map(day_o)
+    day_up = df2.open.values - df2.prev_close.values
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 1.0*A)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# Clone 2g: T31s with NFP exclusion (first Friday of month)
+def clone_T31s_xnfp(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; dates=pd.to_datetime(df.date.values)
+    day_o = df.groupby('date').open.first()
+    df2 = df.copy(); df2['day_open'] = df2.date.map(day_o)
+    day_up = df2.open.values - df2.prev_close.values
+    # NFP = first Friday of month: day<=7 and Friday
+    is_nfp = (dates.day <= 7) & (DOW==4)
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 0.5*A) & ~is_nfp
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+for lbl, fn in [
+    ('T11+adapt_m3pct', clone_T11_adaptive),
+    ('T11+atrpct25-75', clone_T11_atrpct),
+    ('T6+hold8',        clone_T6_hold8),
+    ('T6+stop1x',       clone_T6_stop),
+    ('v23+atrpct50',    clone_v23_atrpct50),
+    ('T31s+strong',     clone_T31s_strong),
+    ('T31s+xnfp',       clone_T31s_xnfp),
+]:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl, si, so))
+    print(f"  {lbl}: IS n={si['n'] if si else 0} OOS n={so['n'] if so else 0}")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CLONE ROUND 3: Entry/exit merges across families
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Clone 3a: T11 signals → exit at 21:00 like T31 (longer hold; T11 base exits at 21 anyway — try 23)
+def clone_T11_exit23(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values
+    mask = ok & (HR==14) & (M3 < -0.5*A)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=23)
+
+# Clone 3b: T6 entry improved — use mom3>0 at 20:00 (momentum positive) as additional filter
+def clone_T6_mom(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values; M3=df.mom3.values; A=df.atr.values
+    mask = ok & (HR==20) & (DOW<4) & (E20>C) & (M3>0)
+    return mask, 1, dict(stop_mult=None, exit_hour=7)
+
+# Clone 3c: T31s + T6 merge — Friday short COMBINED with Mon-Thu long (portfolio = two rules)
+# (run separately and combine stats)
+# Shown as two separate entries above
+
+# Clone 3d: Asia-fade (v2.3) but entry via sell-stop like E7 (stop 0.10×ATR below open)
+def clone_v23_e7(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; AP=df.atr_pct.values; S=df.slope120.values
+    AN=df.asia_net.values
+    base = ok & (HR==7) & (DOW>=2)&(DOW<=3) & (AN>=0.25*A) & (AP<0.75) & (A>=0.0005) & (S<0)
+    return base, -1, dict(stop_mult=0.8, exit_hour=21, entry_offset=0.10)
+
+# Clone 3e: T11 + v2.3 combined trigger (mom fade at London AND Asia already moved up)
+def clone_T11_v23(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values
+    AN=df.asia_net.values; AP=df.atr_pct.values; S=df.slope120.values; DOW=df.dow.values
+    mask = ok & (HR==14) & (M3 < -0.5*A) & (AN>0.25*A) & (S<0) & (AP<0.75) & (DOW>=2)&(DOW<=3)
+    return mask, -1, dict(stop_mult=0.8, exit_hour=21)
+
+# Clone 3f: T6 alternative DOW — also Mon-Fri (add Friday to see if adds n)
+def clone_T6_monfri(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    E20=df.ema20.values; C=df.close.values
+    mask = ok & (HR==20) & (DOW<=4) & (E20>C)
+    return mask, 1, dict(stop_mult=None, exit_hour=7)
+
+# Clone 3g: T11 long mirror (buy on mom3h>0.5×ATR) — check if it also works
+def clone_T11_long(df):
+    ok=_ok(df); HR=df.hour.values; M3=df.mom3.values; A=df.atr.values
+    mask = ok & (HR==14) & (M3 > 0.5*A)
+    return mask, 1, dict(stop_mult=0.8, exit_hour=21)
+
+for lbl, fn in [
+    ('T11+exit23',     clone_T11_exit23),
+    ('T6+mom3pos',     clone_T6_mom),
+    ('v23+e7',         clone_v23_e7),
+    ('T11+v23merge',   clone_T11_v23),
+    ('T6+monfri',      clone_T6_monfri),
+    ('T11_long',       clone_T11_long),
+]:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl, si, so))
+    print(f"  {lbl}: IS n={si['n'] if si else 0} OOS n={so['n'] if so else 0}")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+print("\n\n=== RESULTS TABLE ===")
+print(f"{'Label':<26} {'n_IS':>5} {'WR_IS':>7} {'PF_IS':>6} {'pts_IS':>7} | {'n_OOS':>6} {'WR_OOS':>8} {'PF_OOS':>7} {'pts_OOS':>8} | VERDICT")
+print("-"*110)
+for label, si, so in results:
+    n_is  = si['n']; n_oos = so['n'] if so else 0
+    skip  = '' if n_is>=30 else '⚠n<30'
+    oos_ok= so and so['pf']>=1.0 and so['wr']>=50
+    verdict = 'OOS-PASS' if (n_is>=30 and n_oos>=20 and oos_ok) else ('OOS-WEAK' if oos_ok else 'FAIL')
+    yr_str = ''
+    if si.get('yr'):
+        yr_str = ' '.join(f"{y}:{v:.1f}" for y,v in sorted(si['yr'].items()))
+    print(f"{label:<26} {n_is:>5} {si['wr']:>7.1f}% {si['pf']:>6.2f} {si['avg_pts']:>7.0f}pts | "
+          f"{n_oos:>6} {so['wr'] if so else 0:>8.1f}% {so['pf'] if so else 0:>7.2f} {so['avg_pts'] if so else 0:>8.0f}pts | "
+          f"{verdict} {skip}")
+
+print("\n=== SURVIVORS (IS n>=30, OOS PF>=1.0, OOS WR>=50%) ===")
+surv=[(l,si,so) for l,si,so in results if si['n']>=30 and so and so['pf']>=1.0 and so['wr']>=50 and so['n']>=20]
+for l,si,so in surv:
+    print(f"  ✓ {l}: IS WR={si['wr']}% PF={si['pf']} n={si['n']} avg={si['avg_pts']}pts | OOS WR={so['wr']}% PF={so['pf']} n={so['n']} avg={so['avg_pts']}pts")
