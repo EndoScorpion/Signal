@@ -551,5 +551,17 @@
   "cloud_result": "IS FXOpen 24-26 n=24 WR75 PF2.93 +73pts; OOS TD 20-23 n=30 WR67 PF2.99 +114pts",
   "cost": "0.00008/trade",
   "flag_if": "n>20 and PF>1.5"
+ },
+ {
+  "id": "nomem6_010",
+  "name": "MKT-17-NY-T81l+MMRl+GATEAl",
+  "priority": 2,
+  "status": "pending",
+  "symbol": "EURUSD",
+  "timeframe": "H1",
+  "logic": "Monday 17:00 UTC LONG if close[16:00] - prev day close < -0.3*ATR14 AND mirrored MMR: -(max 1-bar close move last 12 H1 bars)/(min 1-bar move) >= -1 (no up-bar bigger than biggest down-bar) AND EMA120 5-bar slope <= +0.1*ATR14. No stop. Exit 21:00 Monday close.",
+  "cloud_result": "IS FXOpen 24-26 n=57 WR56 PF2.35 +35pts; OOS TD 20-23 n=68 WR56 PF1.58 +47pts; 3x cost 1.63/1.37; 6 of 7 years positive (2021 0.76)",
+  "cost": "0.00008/trade",
+  "flag_if": "n>30 and PF>1.3"
  }
 ]
