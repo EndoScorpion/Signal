@@ -695,5 +695,17 @@
     "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
     "cost": 8e-05,
     "flag_if": "PF<1.5 or n<30"
+  },
+  {
+    "id": "nomem6_022",
+    "name": "MKT-14-NY-T31s+NOSL+XNFP+MMR05",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "G5-2 plus XNFP: Friday 14:00 bar open, SELL at market if day so far (00:00 open to 13:00 close) is UP by more than 0.5 x ATR14 AND MMR >= -1.0, SKIP first Friday of month (dom<=7). No Gate A. No stop. Exit 21:00 bar close. Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=44 WR66 PF2.25 avg+57pts (3x 1.83); OOS TD 2020-23 n=49 WR71 PF3.40 avg+124 yrs 3.7/2.7/7.0 (3x 2.96). Without XNFP: IS 2.48/60, OOS 2.57/63; first-Friday slice OOS PF0.73 avg-22 n14 (IS 3.11 n16 - inconsistent). XNFP helps OOS only; G11-3 (0.3xATR + Gate A + XNFP) remains the stronger T31s form.",
+    "cost": 8e-05,
+    "flag_if": "PF<1.5 or n<30"
   }
 ]
