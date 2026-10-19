@@ -1,0 +1,22 @@
+[
+  {
+    "_comment": "Cloud writes candidates here. CLI polls and runs each pending entry.",
+    "_schema": {
+      "id": "unique string e.g. theory_001",
+      "status": "pending | running | done | failed",
+      "added_by": "cloud-coordinator | phone-GOON | etc",
+      "added_at": "ISO8601",
+      "description": "human-readable description",
+      "ea": "Strong2010b_claude_b31 (or other)",
+      "set_base": "path or name of base .set file",
+      "set_overrides": {"key": "value overrides to apply on top of base"},
+      "symbol": "EURUSD",
+      "period": "M1",
+      "spread": 3,
+      "years": [2020, 2021],
+      "commission_pts": 8,
+      "timeout_min": 180,
+      "flag_if": "more_trades OR better_pf_no_dd_increase"
+    }
+  }
+]
