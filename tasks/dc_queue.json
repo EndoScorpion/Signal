@@ -1,7 +1,7 @@
 [
   {
-    "id": "diag_dc_logs_001",
+    "id": "restart_dcclone_002",
     "tool": "execute_powershell",
-    "command": "$base = 'C:\\Users\\endos\\Desktop\\hst_work\\Signal\\relay\\dc_clone'; Write-Host '=== dc_clone.log (last 50) ==='; Get-Content \"$base\\dc_clone.log\" -Tail 50 -ErrorAction SilentlyContinue; Write-Host '=== dcremote event log (last 20) ==='; Get-WinEvent -LogName Application -MaxEvents 20 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'desktop-commander|dcremote|npx'} | Select-Object TimeCreated,LevelDisplayName,Message | Format-List; Write-Host '=== task states ==='; foreach ($t in @('DCRemoteService','DcCloneServer','CloudCmdPollerGH','ClaudeRemoteControl')) { $s = (Get-ScheduledTask -TaskName $t -ErrorAction SilentlyContinue).State; Write-Host \"$t : $s\" }"
+    "command": "Set-Location 'C:\\Users\\endos\\Desktop\\hst_work\\Signal'; git pull origin relay; Stop-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue; Start-Sleep 3; Start-ScheduledTask -TaskName 'DcCloneServer'; Write-Host 'DcCloneServer restarted with updated server.js'"
   }
 ]
