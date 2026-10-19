@@ -4,6 +4,8 @@
     "tool": "execute_powershell",
     "args": {
       "command": "Stop-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue; Start-Sleep 3; Start-ScheduledTask -TaskName 'DcCloneServer'; Write-Host 'DcCloneServer restarted with fixed server.js'"
-    }
+    },
+    "status": "claimed",
+    "claimed_at": "2026-10-19T14:48:42.236Z"
   }
 ]
