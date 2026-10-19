@@ -104,3 +104,68 @@ Weak OOS across all variants — OOS 2020-23 PF<0.6 for all T6 clones. The edge 
 | T31s+xnfp | — | — | — |
 
 *(Year-level PF not captured in this run — re-run with per-year stats flag if needed)*
+
+---
+
+## Generation 2 — Clone+Improve (2026-10-19, same IS/OOS datasets)
+
+**Starting from:** T31s_BASE, T31s+strong, T31s+xnfp (gen 1 survivors)  
+**Tested:** 20 new variants — ATR regime, RSI filters, trend direction, threshold variants, entry/exit timing, stop variants  
+**Pass criterion:** IS n≥30, OOS n≥20, OOS PF≥1.0, OOS WR≥51%, all 4 OOS years PF>1.0
+
+### Gen 2 Re-confirmed baselines (slightly updated numbers vs gen 1 run)
+
+| Label | IS n | IS WR% | IS PF | IS avg pts | OOS n | OOS WR% | OOS PF | OOS avg pts |
+|-------|------|--------|-------|-----------|-------|---------|--------|-------------|
+| T31s_BASE | 72 | 62.5% | 1.63 | 44 pts | 87 | 62.1% | 1.71 | 60 pts |
+| T31s+strong | 52 | 63.5% | 1.67 | 51 pts | 71 | 62.0% | 1.77 | 66 pts |
+| T31s+xnfp | 53 | 62.3% | 1.40 | 30 pts | 70 | 62.9% | 2.02 | 83 pts |
+
+### Gen 2 New Survivors (OOS all 4 years positive, strict criteria)
+
+| Label | IS n | IS WR% | IS PF | IS avg pts | OOS n | OOS WR% | OOS PF | OOS avg pts | OOS yr PF (20/21/22/23) | Notes |
+|-------|------|--------|-------|-----------|-------|---------|--------|-------------|------------------------|-------|
+| **G2-9_xnfp+bulltrend** | 32 | 62.5% | 1.70 | 49 pts | 48 | **66.7%** | **2.52** | **114 pts** | 1.76/2.42/5.15/1.76 | xnfp + EMA120 slope>0 (bull trend). OOS>>IS. Best new discovery. |
+| **G2-1_strong+xnfp** | 36 | 61.1% | 1.17 | 16 pts | 55 | 63.6% | **2.19** | **96 pts** | 2.32/1.76/3.32/1.22 | Combine gen1 strong+xnfp. OOS>>IS (non-overfit sign). |
+| **G2-14_thresh0.75x+xnfp** | 45 | 62.2% | 1.23 | 20 pts | 60 | 65.0% | **2.22** | **94 pts** | 2.38/1.76/3.57/1.18 | Threshold 0.75×ATR +xnfp. OOS>>IS. |
+| **G2-2_xnfp+lowATR** | 31 | 61.3% | 1.57 | 38 pts | 47 | 61.7% | 1.81 | 69 pts | 2.31/1.06/4.75/1.86 | xnfp + ATR pct<0.5 (low-vol regime). All years pass. |
+| **G2-12_thresh1.5x** | 45 | 62.2% | 1.60 | 46 pts | 60 | 60.0% | 1.79 | 68 pts | 1.26/2.67/2.54/1.58 | Threshold 1.5×ATR (no xnfp). All years positive. |
+| **G2-17_strong_enter13** | 59 | 64.4% | 2.18 | 75 pts | 67 | 59.7% | 1.71 | 67 pts | 1.02/4.00/2.16/1.13 | Enter 13:00 UTC (1hr earlier), strong threshold. Higher n IS. |
+
+### Gen 2 Rejected / Marginal
+
+| Label | Issue |
+|-------|-------|
+| G2-4_xnfp+highATR | IS n=22 < 30 |
+| G2-5_xnfp+RSI14>50 | OOS 2023 PF=0.99 (year fails) |
+| G2-6_xnfp+RSI14<50 | IS n=5, no signal |
+| G2-7_xnfp+RSI5>60 | OOS 2021 PF=0.05 — year collapse |
+| G2-8_xnfp+beartrend | IS avg 0.2 pts — flat |
+| G2-10_xnfp_exit20 | OOS PF 1.71 < baseline 2.02 — exit 21 better |
+| G2-11_xnfp_exit22 | IS WR=48.1% < 51% threshold |
+| G2-15_xnfp+stop1.5x | OOS 2023 PF=0.71 — inconsistent year |
+| G2-16_xnfp+stop1.0x | IS WR=47.2%, OOS WR=42.9% — stop kills edge |
+| G2-18_xnfp+mom3<0 | IS n=8 — no signal |
+| G2-19_xnfp+mom3>0 | OOS 2021 PF=0.04 — year collapse |
+| G2-21_base_smallmove | OOS n=15 |
+| G2-3_xnfp+midATR | OOS PF 1.55 < 1.67 baseline — no improvement |
+
+### Key Gen 2 Learning
+
+**Biggest discovery:** `G2-9_xnfp+bulltrend` (EMA120 slope>0) — OOS PF **2.52**, avg **114 pts**, WR 66.7% OOS, all 4 years positive.  
+The Friday 14:00 short *works better when the week's trend is UP* — counterintuitive but robust. The "reverting to mean after a strong up-week" edge is stronger in bullish regimes.
+
+**OOS >> IS pattern on all 3 top gen 2 survivors** (G2-9, G2-1, G2-14): strong evidence of genuine edge, not mining.
+
+**Trend direction splits sharply:**
+- Bull trend (slope120>0): OOS PF 2.52 — trade this side
+- Bear trend (slope120<0): OOS PF 1.16, avg 15 pts — nearly flat; skip
+
+**Threshold sweet spot:** 0.5–0.75×ATR captures the most trades with best OOS performance; 1.0× and 1.5× work but fewer trades.
+
+### Gen 2 Recommended Next Steps
+
+1. **Gen 3: combine G2-9 (bulltrend) with G2-1 (strong+xnfp)** → "T31s+strong+xnfp+bull" — expected n≈20-25, may hit n<30 boundary
+2. **Gen 3: G2-9 (bulltrend) + RSI14>50** → RSI+trend dual filter, tightest subset
+3. **Gen 3: G2-14 (0.75x+xnfp) + bulltrend** → see if threshold+trend compound
+4. **Queue G2-9 to LocalThug** for MT4 tick-level confirmation (stop-fill sensitivity on no-stop variant)
