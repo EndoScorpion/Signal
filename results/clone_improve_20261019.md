@@ -464,3 +464,28 @@ Approach: (A) TD IS 2020-23 / TD OOS 2024-26 flip; (B) T31s thresh 0.3x + FX IS 
 - Near-miss watchlist (needs 2027+ data): G10-6, G10-8 — exceptional quality when n sufficient
 - T31s 0.3x+MMR may be G5-2 relaxed variant — needs investigation whether gate overlap is high
 
+
+## Gen 11 — G10-7 Refinements + GateA/GateB + DWillR sweep (2026-10-19)
+Script: clone_gen11.py
+
+### STD SPLIT (FX IS / TD OOS std, 0.3x threshold)
+- G11-base (G10-7 ref): IS n=45 PF=2.21 | OOS n=53 WR=67.9% PF=2.85 — confirmed
+- G11-1_+minSSR>-2: IS n=25 (FAIL IS n<30), OOS PF=2.78
+- **G11-2_+stoch53<85: IS n=38 WR=60.5% PF=2.09 | OOS n=46 WR=67.4% PF=3.02 avg=+123.5pts | yr=6.23/2.18/2.82/1.76 ✓ALL_YRS — SURVIVOR**
+- **G11-3_+GateA (slope120≥-0.1×ATR): IS n=34 WR=70.6% PF=2.84 | OOS n=36 WR=75.0% PF=5.19 avg=+176.7pts | yr=3.27/13.33/18.90/1.74 ✓ALL_YRS — NEW BEST (beats G5-2 PF=3.21)**
+- G11-4_+GateA+GateB: IS n=28 (FAIL IS n<30), OOS PF=6.17 avg=+184.6pts watchlist
+- G11-5_+LOSSY: IS n=22 (FAIL IS n<30), OOS PF=9.83 watchlist
+- G11-6_+minSSR+LOSSY: IS n=13 (FAIL), OOS PF=12.93 watchlist
+
+### D_WillR threshold sweep on 0.3x (all IS n≤28 — blocked)
+Best: DWillR<-5.0 OOS PF=4.18 IS n=24 — consistently ~5 below n=30 threshold
+
+### TD SPLIT (TD IS 2020-23 / TD OOS 2024-26)
+- G11-TD1 (G10-4 ref): confirmed IS n=33 OOS n=23 PF=2.79
+- G11-TD4_0.3x+MMR+minSSR>-2: IS n=36 PF=2.78 | OOS n=23 PF=2.79 ✓ (same OOS as ref)
+
+### Key Finding
+GateA (EMA120 slope ≥ -0.1×ATR, the 2011a loss gate) dramatically boosts G10-7:
+OOS PF 2.85 → 5.19 (+82%), WR 67.9% → 75.0%, avg +119.5 → +176.7pts
+This confirms the 2011a_port finding extends to T31s 0.3x family.
+
