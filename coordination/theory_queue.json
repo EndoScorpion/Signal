@@ -1,675 +1,687 @@
 [
- {
-  "_comment": "Cloud writes candidates here. CLI polls and runs each pending entry.",
-  "_schema": {
-   "id": "unique string e.g. theory_001",
-   "status": "pending | running | done | failed",
-   "added_by": "cloud-coordinator | phone-GOON | etc",
-   "added_at": "ISO8601",
-   "description": "human-readable description",
-   "ea": "Strong2010b_claude_b31 (or other)",
-   "set_base": "path or name of base .set file",
-   "set_overrides": {
-    "key": "value overrides to apply on top of base"
-   },
-   "symbol": "EURUSD",
-   "period": "M1",
-   "spread": 3,
-   "years": [
-    2020,
-    2021
-   ],
-   "commission_pts": 8,
-   "timeout_min": 180,
-   "flag_if": "more_trades OR better_pf_no_dd_increase"
+  {
+    "_comment": "Cloud writes candidates here. CLI polls and runs each pending entry.",
+    "_schema": {
+      "id": "unique string e.g. theory_001",
+      "status": "pending | running | done | failed",
+      "added_by": "cloud-coordinator | phone-GOON | etc",
+      "added_at": "ISO8601",
+      "description": "human-readable description",
+      "ea": "Strong2010b_claude_b31 (or other)",
+      "set_base": "path or name of base .set file",
+      "set_overrides": {
+        "key": "value overrides to apply on top of base"
+      },
+      "symbol": "EURUSD",
+      "period": "M1",
+      "spread": 3,
+      "years": [
+        2020,
+        2021
+      ],
+      "commission_pts": 8,
+      "timeout_min": 180,
+      "flag_if": "more_trades OR better_pf_no_dd_increase"
+    }
+  },
+  {
+    "id": "nomem6_004",
+    "status": "pending",
+    "priority": 1,
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:50:00Z",
+    "description": "MKT-14-NY-T31s+NOSL: Friday 14:00 UTC SHORT when (close of 13:00 bar - prior-day close) > 0.5*ATR14; no stop; exit at 21:00 UTC open. Cloud python FXOpen 2024-26: n=70 WR=64.3% PF=2.23 avg=+57 pts (ECN, 1 pip=10 pts; $0.10/pt at 0.1 lot). OOS TwelveData 2020-23: n=89 WR=61.8% PF=1.78. Positive every year 2020-2026. SURVIVOR CANDIDATE - please confirm on MT4 M1/H1 FXOpen.",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {
+      "rules": "Friday only; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
+      "stop": "none",
+      "cost": 8e-05
+    },
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "commission_pts": 8,
+    "timeout_min": 90,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_005",
+    "status": "pending",
+    "priority": 2,
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T02:50:00Z",
+    "description": "MKT-14-NY-T31s+NOSL+XNFP: same as nomem6_004 but SKIP the first Friday of each month (NFP). Cloud python FXOpen 2024-26: n=51 WR=64.7% PF=2.13 avg=+51 pts; OOS TwelveData 2020-23: n=71 WR=63.4% PF=2.11 avg=+80 pts (ECN pts, $0.10/pt at 0.1 lot). NFP-only subset OOS PF 0.66.",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {
+      "rules": "Friday only, not first Friday of month; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
+      "stop": "none",
+      "cost": 8e-05
+    },
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "commission_pts": 8,
+    "timeout_min": 90,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_001",
+    "status": "skip",
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:40:00Z",
+    "description": "MKT-20-SEAS-T34l+D2: Wednesday 20:00 UTC LONG, no stop, exit close of 4th bar. SKIPPED: failed OOS 2020-23 (PF 0.84).",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {
+      "rules": "Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu)",
+      "stop": "none",
+      "cost": 8e-05
+    },
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [
+      2024,
+      2025,
+      2026
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_002",
+    "status": "pending",
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:40:00Z",
+    "description": "MKT-21-ON-T24r_l+NOSL: 21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open. Cloud python: n=328 WR=51.5% PF=1.26 avg=+18 pts (ECN, 1 pip=10 pts; $0.10/pt at 0.1 lot) (marginal)",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {
+      "rules": "21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open",
+      "stop": "none",
+      "cost": 8e-05
+    },
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [
+      2024,
+      2025,
+      2026
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_003",
+    "status": "pending",
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:40:00Z",
+    "description": "MKT-MOM3H-10-T27l+SLNone: 10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar. Cloud python: n=267 WR=56.6% PF=1.25 avg=+24 pts (ECN, 1 pip=10 pts; $0.10/pt at 0.1 lot) (marginal)",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {
+      "rules": "10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar",
+      "stop": "none",
+      "cost": 8e-05
+    },
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [
+      2024,
+      2025,
+      2026
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "adapt_atrtrail_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG+FB+AtrTrl: ATR trailing stop on b31_zrfb base. UseAtrTrail=1 AtrTrailStart=1.0 AtrTrailMult=1.0 AtrTF=15 AtrPeriod=14",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseAtrTrail": "1",
+      "AtrTrailStart": "1.0",
+      "AtrTrailMult": "1.0",
+      "AtrTF": "15",
+      "AtrPeriod": "14"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_adaptwpr_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG+FB+AdpW3: adaptive WPR tightens after 3 consecutive losses",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseAdaptiveWPR": "1",
+      "AdaptLossCount": "3"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_wpr_trail_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG+FB+AdpW3+AtrTrl: both adaptive WPR + ATR trail",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseAtrTrail": "1",
+      "AtrTrailStart": "1.0",
+      "AtrTrailMult": "1.0",
+      "AtrTF": "15",
+      "AtrPeriod": "14",
+      "UseAdaptiveWPR": "1",
+      "AdaptLossCount": "3"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_s2s4_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG+FB+S2S4: extra S2+S4 entry signals added",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseS2Signal": "1",
+      "UseS4Signal": "1"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_lowrev_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG+FB+LowRev15: low-reversal buy at 15-bar swing low",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseLowReversal": "1",
+      "LowRevBars": "15"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_atrbracket_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+AtrBkt1.5: ATR-scaled SL/TP brackets SLmult=1.5",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseAtrBracket": "1",
+      "AtrSLMult": "1.5",
+      "AtrTPMult": "2.0"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_emacross_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+EMA20x50: EMA 20/50 cross as additional entry filter",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseEmaCross": "1",
+      "EmaFast": "20",
+      "EmaSlow": "50"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_fracbuy_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T22:00:00Z",
+    "description": "MKT-FL-LO-b31+FB-Reg: FracBuy with regime filter enabled",
+    "ea": "Strong2010b_claude_b31",
+    "set_base": "b31_zrfb.set",
+    "set_overrides": {
+      "UseFracBuy": "1",
+      "FracBuyRegime": "1"
+    },
+    "symbol": "EURUSD",
+    "period": "M1",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 180,
+    "flag_if": "more_wins AND no_dd_increase",
+    "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_gate_zgate07_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG0.7-Reg: regime OFF + Z-gate ZMax=0.7",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_zgate07_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_wpr60_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+WPR60-Reg: regime OFF + WPR gate WprMax=-60",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_wpr60_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_chop_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+Chop50-Reg: regime OFF + chop gate ChopMax=50",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_chop_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_atrbrk_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+AtrBkt-Reg: regime OFF + ATR bracket",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_atrbrk_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_reg200_zgate_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+Reg200+ZG0.8: period=200 + Z-gate",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_reg200_zgate.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_reg500_wpr_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+Reg500+WPR55: period=500 + WPR gate",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_reg500_wpr.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "nomem6_006",
+    "name": "MKT-14-NY-T31s+NOSL+XNFP+MMR",
+    "priority": 1,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Friday 14:00 UTC SHORT if close[13:00]-prev_day_close > 0.5*ATR14 AND not first Friday of month AND MMR>=-1.0 where MMR=min(1-bar close move last 12 H1 bars)/max(1-bar close move last 12 bars). No stop. Exit 21:00 Friday close.",
+    "cloud_result": "IS FXOpen 24-26 n=44 WR66 PF2.25 +57pts; OOS TD 20-23 n=49 WR71 PF3.40 +124pts, all 7 years positive",
+    "cost": "0.00008/trade",
+    "needs": "MT4 tick run, ECN pts, 0.1 lot",
+    "flag_if": "n>30 and PF>1.5"
+  },
+  {
+    "id": "nomem6_007",
+    "name": "MKT-14-NY-T31s+NOSL+XNFP+VOV",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "As nomem6_005 plus vol-of-vol filter: std(ATR14,48)/mean(ATR14,48) < 0.35 at entry.",
+    "cloud_result": "IS n=49 WR65 PF2.01 +46pts; OOS n=64 WR64 PF2.31 +83pts",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.5"
+  },
+  {
+    "id": "nomem6_008",
+    "name": "MKT-14-NY-T31s+NOSL+XNFP+SSR",
+    "priority": 1,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "As nomem6_005 (Friday 14:00 short, day up >0.5*ATR14, skip first Friday, no stop, exit 21:00) plus Nasif minSSR>-2: for 18 slope slots (H1/H4/D1 x SMA2/5/10 x shift0/1, slope=(SMA-SMA.shift(scale))/point) require min over k in {1,6,8,10,12,14,16} of slp0/slp[k] > -2.",
+    "cloud_result": "IS FXOpen 24-26 n=27 WR67 PF3.32 +67pts; OOS TD 20-23 n=47 WR66 PF2.25 +83pts",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.5"
+  },
+  {
+    "id": "nomem6_009",
+    "name": "MKT-14-NY-T31s+NOSL+XNFP+LOSSYOVB",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "As nomem6_005 plus Nasif lossy-overbought divergence state at the 14:00 bar: Stoch(14,3) on H1 > 80 AND (min slope of SMA2/5/10 on 24-bar scale (slope=(SMA(pd*24)-SMA(pd*24).shift(24))/point) < 0 OR its accel < 0) AND at least one of the 18 slope slots negative.",
+    "cloud_result": "IS FXOpen 24-26 n=24 WR75 PF2.93 +73pts; OOS TD 20-23 n=30 WR67 PF2.99 +114pts",
+    "cost": "0.00008/trade",
+    "flag_if": "n>20 and PF>1.5"
+  },
+  {
+    "id": "nomem6_010",
+    "name": "MKT-17-NY-T81l+MMRl+GATEAl",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Monday 17:00 UTC LONG if close[16:00] - prev day close < -0.3*ATR14 AND mirrored MMR: -(max 1-bar close move last 12 H1 bars)/(min 1-bar move) >= -1 (no up-bar bigger than biggest down-bar) AND EMA120 5-bar slope <= +0.1*ATR14. No stop. Exit 21:00 Monday close.",
+    "cloud_result": "IS FXOpen 24-26 n=57 WR56 PF2.35 +35pts; OOS TD 20-23 n=68 WR56 PF1.58 +47pts; 3x cost 1.63/1.37; 6 of 7 years positive (2021 0.76)",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_011",
+    "name": "MKT-17-NY-T81l+GATEAl+X22",
+    "priority": 1,
+    "logic": "Monday 17:00 UTC LONG if close[16:00] - prev day close < -0.3*ATR14 AND EMA120 5-bar slope <= +0.1*ATR14. No stop. Exit 22:00 Monday close. (replaces nomem6_010: mirrored MMR redundant, exit 22 better)",
+    "cloud_result": "IS FXOpen 24-26 n=57 WR56 PF2.53 +40pts; OOS TD 20-23 n=68 WR62 PF1.77 +60pts; combined 20-26 n=125 PF1.94 net $706 maxDD $110 at 0.1 lot, 7/7 years positive",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_012",
+    "name": "MKT-15-NY-T82l+LOSSYl+SSR",
+    "priority": 2,
+    "logic": "Monday 15:00 or 16:00 UTC LONG (first hit) if mirrored lossy-divergence: Stoch(14) at scale1 < 20 AND (max SMA2 slope over slots 12-18 > 0 OR max accel > 0) AND count(slope>0)>0, AND min SSR > -2 (feat_ratios2 exact port). No stop. Exit 21:00.",
+    "cloud_result": "IS n=28 WR57 PF3.56 +50pts; OOS n=35 WR60 PF2.21 +90pts (2020/21 <1); combined n=63 PF2.44 net $506 maxDD $107",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_013",
+    "name": "MKT-13-16-NY-T81s+LOSSY+SSR+FRI",
+    "priority": 1,
+    "logic": "Friday 13:00-16:00 UTC SHORT (first hit) if lossy-overbought divergence: Stoch(14) scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0, AND min SSR > -2. No stop. Exit 21:00 Friday.",
+    "cloud_result": "IS n=35 WR71 PF2.31 +62pts all yrs>1; OOS n=55 WR66 PF2.08 +78pts all yrs>1",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_014",
+    "name": "MKT-07-10-LO-T84s+LOSSY+SSR+THU",
+    "logic": "Thursday 07:00-09:00 UTC SHORT (first hit) if lossy-overbought divergence (Stoch14 scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND min SSR > -2 (feat_ratios2 exact port). No stop. Exit 21:00.",
+    "cloud_result": "IS FXOpen 24-26 n=21 WR57 PF2.03 +90pts; OOS TD 20-23 n=31 WR55 PF1.82 +68pts",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3",
+    "priority": 2
+  },
+  {
+    "id": "nomem6_015",
+    "name": "MKT-10-13-LO-T85s+LOSSY+SSR+WED",
+    "logic": "Wednesday 10:00-12:00 UTC SHORT (first hit), same LOSSY divergence + min SSR > -2 gate as nomem6_014. No stop. Exit 21:00.",
+    "cloud_result": "IS n=24 WR79 PF3.07 +167pts; OOS n=41 WR54 PF1.65 +64pts",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3",
+    "priority": 2
+  },
+  {
+    "id": "nomem6_016",
+    "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI",
+    "priority": 1,
+    "logic": "Friday 13:00-16:00 UTC SHORT (first hit per day) if lossy-overbought divergence (Stoch14 scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND z-score (close-SMA20)/SD20 >= 0.9 on previous bar. No stop. Exit 21:00 Friday.",
+    "cloud_result": "IS FXOpen 24-26 n=45 WR67 PF2.67 +81pts (3x cost 2.25); OOS TD 20-23 n=44 WR70 PF3.07 +112pts all yrs>1.6 (3x cost 2.67); cross-pair FXOpen 24-26: GBPUSD PF1.50 n42, USDCHF 1.87 n40, EURGBP 1.62 n35 (same sign on all EUR/GBP/CHF pairs)",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_017",
+    "name": "MKT-13-16-NY-T87s+Z09+MMR+FRI",
+    "priority": 2,
+    "logic": "Friday 13:00-16:00 UTC SHORT (first hit) if z-score >= 0.9 AND MMR >= -1 (12-bar max 1-bar up move / |min down move|, g2a form). No stop. Exit 21:00.",
+    "cloud_result": "IS n=81 WR67 PF2.59 +81pts (3x 2.19); OOS n=55 WR71 PF2.33 +94pts (3x 2.07)",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_018",
+    "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI+TRAIL08",
+    "priority": 1,
+    "logic": "Same entry as nomem6_016 (Friday 13:00-16:00 UTC SHORT first hit, lossy-overbought divergence AND z-score >= 0.9). Exit 21:00 Friday close, PLUS trailing stop: once price is 0.5*ATR14 in favour, trail a stop 0.8*ATR14 behind the best price (H1 low). No hard initial stop. Tick-level MT4 run needed: cloud emulation checks the trail on H1 high/low touch.",
+    "cloud_result": "IS FXOpen 24-26 n=49 WR69 PF4.34 +81pts (3x cost 3.30); OOS TD 20-23 n=45 WR64 PF5.65 +79pts (3x 3.86); DD -0.36/-0.38%. Fixed exit 21 without trail: 2.67 / 3.07; bar-close-only trail emulation: IS 2.88 / OOS 2.55 (below untrailed base) -> MT4 tick run decides",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3 AND tick-run PF >= nomem6_016 PF; cloud lift is intrabar-touch dependent (bar-close emulation OOS 2.55 < untrailed 3.07)"
+  },
+  {
+    "id": "nomem6_019",
+    "name": "MKT-15-16-NY-T88l+LOSSYl+Zm09+MON",
+    "priority": 2,
+    "logic": "Monday 15:00 or 16:00 UTC LONG (first hit) if mirrored lossy divergence (Stoch14 scale1 < 20 AND (max SMA2 slope slots 12-18 > 0 OR max accel > 0) AND count(slope>0)>0) AND z-score <= -0.9. No stop. Exit 21:00 Monday.",
+    "cloud_result": "IS n=36 WR58 PF2.22 +37pts; OOS n=31 WR61 PF2.71 +119pts (2021 0.38)",
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "cost": "0.00008/trade",
+    "flag_if": "n>30 and PF>1.3"
+  },
+  {
+    "id": "nomem6_020",
+    "name": "MKT-13-16-NY-T89s+SARAPRV+Z09+FRI",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Friday only, 13:00-16:00 bar opens, one trade/day. SELL at market when previous bar SARA/PRV ratio >= 0.17 (feat_ratios: sara=slope+accel+roa of EMA20 in pts; prv=range+10*vrel+(K-D)+K/10, vrel=1 no volume) AND z-score (close-SMA20)/SD20 >= 0.9. No stop. Exit 21:00 bar close. Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=66 WR65 PF2.59 avg+76pts yrs 3.1/2.7/1.8; OOS TD 2020-23 n=51 WR71 PF2.38 avg+91 yrs 1.5/1.2/8.9; 3x cost 2.16/2.09. Shares 37 of its signal days with nomem6_016 (LOSSY+z) - NOT an independent leg; n016 stays stronger OOS (3.07). SARA/PRV alone Fri fade IS 2.38 OOS 1.42 (fails OOS). Weekday bias confirmed: Tue/Wed/Thu same rule PF 0.6-1.2 both periods.",
+    "cost": 8e-05,
+    "flag_if": "PF<1.5 or n<30 or 2022-only profit"
   }
- },
- {
-  "id": "nomem6_004",
-  "status": "pending",
-  "priority": 1,
-  "added_by": "cloud-thread-kxrfun",
-  "added_at": "2026-10-19T00:50:00Z",
-  "description": "MKT-14-NY-T31s+NOSL: Friday 14:00 UTC SHORT when (close of 13:00 bar - prior-day close) > 0.5*ATR14; no stop; exit at 21:00 UTC open. Cloud python FXOpen 2024-26: n=70 WR=64.3% PF=2.23 avg=+57 pts (ECN, 1 pip=10 pts; $0.10/pt at 0.1 lot). OOS TwelveData 2020-23: n=89 WR=61.8% PF=1.78. Positive every year 2020-2026. SURVIVOR CANDIDATE - please confirm on MT4 M1/H1 FXOpen.",
-  "ea": "python_rules",
-  "set_base": "none",
-  "set_overrides": {
-   "rules": "Friday only; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
-   "stop": "none",
-   "cost": 8e-05
-  },
-  "symbol": "EURUSD",
-  "period": "H1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2022,
-   2023,
-   2024,
-   2025,
-   2026
-  ],
-  "commission_pts": 8,
-  "timeout_min": 90,
-  "flag_if": "n>50 OR PF>1.3"
- },
- {
-  "id": "nomem6_005",
-  "status": "pending",
-  "priority": 2,
-  "added_by": "cloud-thread-kxrfun",
-  "added_at": "2026-10-19T02:50:00Z",
-  "description": "MKT-14-NY-T31s+NOSL+XNFP: same as nomem6_004 but SKIP the first Friday of each month (NFP). Cloud python FXOpen 2024-26: n=51 WR=64.7% PF=2.13 avg=+51 pts; OOS TwelveData 2020-23: n=71 WR=63.4% PF=2.11 avg=+80 pts (ECN pts, $0.10/pt at 0.1 lot). NFP-only subset OOS PF 0.66.",
-  "ea": "python_rules",
-  "set_base": "none",
-  "set_overrides": {
-   "rules": "Friday only, not first Friday of month; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
-   "stop": "none",
-   "cost": 8e-05
-  },
-  "symbol": "EURUSD",
-  "period": "H1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2022,
-   2023,
-   2024,
-   2025,
-   2026
-  ],
-  "commission_pts": 8,
-  "timeout_min": 90,
-  "flag_if": "n>50 OR PF>1.3"
- },
- {
-  "id": "nomem6_001",
-  "status": "skip",
-  "added_by": "cloud-thread-kxrfun",
-  "added_at": "2026-10-19T00:40:00Z",
-  "description": "MKT-20-SEAS-T34l+D2: Wednesday 20:00 UTC LONG, no stop, exit close of 4th bar. SKIPPED: failed OOS 2020-23 (PF 0.84).",
-  "ea": "python_rules",
-  "set_base": "none",
-  "set_overrides": {
-   "rules": "Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu)",
-   "stop": "none",
-   "cost": 8e-05
-  },
-  "symbol": "EURUSD",
-  "period": "H1",
-  "spread": 3,
-  "years": [
-   2024,
-   2025,
-   2026
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "n>50 OR PF>1.3"
- },
- {
-  "id": "nomem6_002",
-  "status": "pending",
-  "added_by": "cloud-thread-kxrfun",
-  "added_at": "2026-10-19T00:40:00Z",
-  "description": "MKT-21-ON-T24r_l+NOSL: 21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open. Cloud python: n=328 WR=51.5% PF=1.26 avg=+18 pts (ECN, 1 pip=10 pts; $0.10/pt at 0.1 lot) (marginal)",
-  "ea": "python_rules",
-  "set_base": "none",
-  "set_overrides": {
-   "rules": "21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open",
-   "stop": "none",
-   "cost": 8e-05
-  },
-  "symbol": "EURUSD",
-  "period": "H1",
-  "spread": 3,
-  "years": [
-   2024,
-   2025,
-   2026
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "n>50 OR PF>1.3"
- },
- {
-  "id": "nomem6_003",
-  "status": "pending",
-  "added_by": "cloud-thread-kxrfun",
-  "added_at": "2026-10-19T00:40:00Z",
-  "description": "MKT-MOM3H-10-T27l+SLNone: 10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar. Cloud python: n=267 WR=56.6% PF=1.25 avg=+24 pts (ECN, 1 pip=10 pts; $0.10/pt at 0.1 lot) (marginal)",
-  "ea": "python_rules",
-  "set_base": "none",
-  "set_overrides": {
-   "rules": "10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar",
-   "stop": "none",
-   "cost": 8e-05
-  },
-  "symbol": "EURUSD",
-  "period": "H1",
-  "spread": 3,
-  "years": [
-   2024,
-   2025,
-   2026
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "n>50 OR PF>1.3"
- },
- {
-  "id": "adapt_atrtrail_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+ZG+FB+AtrTrl: ATR trailing stop on b31_zrfb base. UseAtrTrail=1 AtrTrailStart=1.0 AtrTrailMult=1.0 AtrTF=15 AtrPeriod=14",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseAtrTrail": "1",
-   "AtrTrailStart": "1.0",
-   "AtrTrailMult": "1.0",
-   "AtrTF": "15",
-   "AtrPeriod": "14"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_adaptwpr_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+ZG+FB+AdpW3: adaptive WPR tightens after 3 consecutive losses",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseAdaptiveWPR": "1",
-   "AdaptLossCount": "3"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_wpr_trail_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+ZG+FB+AdpW3+AtrTrl: both adaptive WPR + ATR trail",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseAtrTrail": "1",
-   "AtrTrailStart": "1.0",
-   "AtrTrailMult": "1.0",
-   "AtrTF": "15",
-   "AtrPeriod": "14",
-   "UseAdaptiveWPR": "1",
-   "AdaptLossCount": "3"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_s2s4_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+ZG+FB+S2S4: extra S2+S4 entry signals added",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseS2Signal": "1",
-   "UseS4Signal": "1"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_lowrev_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+ZG+FB+LowRev15: low-reversal buy at 15-bar swing low",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseLowReversal": "1",
-   "LowRevBars": "15"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_atrbracket_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+AtrBkt1.5: ATR-scaled SL/TP brackets SLmult=1.5",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseAtrBracket": "1",
-   "AtrSLMult": "1.5",
-   "AtrTPMult": "2.0"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_emacross_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+EMA20x50: EMA 20/50 cross as additional entry filter",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseEmaCross": "1",
-   "EmaFast": "20",
-   "EmaSlow": "50"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_fracbuy_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T22:00:00Z",
-  "description": "MKT-FL-LO-b31+FB-Reg: FracBuy with regime filter enabled",
-  "ea": "Strong2010b_claude_b31",
-  "set_base": "b31_zrfb.set",
-  "set_overrides": {
-   "UseFracBuy": "1",
-   "FracBuyRegime": "1"
-  },
-  "symbol": "EURUSD",
-  "period": "M1",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 180,
-  "flag_if": "more_wins AND no_dd_increase",
-  "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
- },
- {
-  "id": "adapt_gate_zgate07_noreg_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T23:00:00Z",
-  "description": "MKT-FL-LO-b31+ZG0.7-Reg: regime OFF + Z-gate ZMax=0.7",
-  "ea": "Strong2010b_claude_b31",
-  "set_file": "b31_adapt_zgate07_noreg.set",
-  "symbol": "EURUSD",
-  "period": "M5",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "WR>50 AND PF>1.2 AND n>30"
- },
- {
-  "id": "adapt_gate_wpr60_noreg_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T23:00:00Z",
-  "description": "MKT-FL-LO-b31+WPR60-Reg: regime OFF + WPR gate WprMax=-60",
-  "ea": "Strong2010b_claude_b31",
-  "set_file": "b31_adapt_wpr60_noreg.set",
-  "symbol": "EURUSD",
-  "period": "M5",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "WR>50 AND PF>1.2 AND n>30"
- },
- {
-  "id": "adapt_gate_chop_noreg_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T23:00:00Z",
-  "description": "MKT-FL-LO-b31+Chop50-Reg: regime OFF + chop gate ChopMax=50",
-  "ea": "Strong2010b_claude_b31",
-  "set_file": "b31_adapt_chop_noreg.set",
-  "symbol": "EURUSD",
-  "period": "M5",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "WR>50 AND PF>1.2 AND n>30"
- },
- {
-  "id": "adapt_gate_atrbrk_noreg_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T23:00:00Z",
-  "description": "MKT-FL-LO-b31+AtrBkt-Reg: regime OFF + ATR bracket",
-  "ea": "Strong2010b_claude_b31",
-  "set_file": "b31_adapt_atrbrk_noreg.set",
-  "symbol": "EURUSD",
-  "period": "M5",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "WR>50 AND PF>1.2 AND n>30"
- },
- {
-  "id": "adapt_gate_reg200_zgate_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T23:00:00Z",
-  "description": "MKT-FL-LO-b31+Reg200+ZG0.8: period=200 + Z-gate",
-  "ea": "Strong2010b_claude_b31",
-  "set_file": "b31_adapt_reg200_zgate.set",
-  "symbol": "EURUSD",
-  "period": "M5",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "WR>50 AND PF>1.2 AND n>30"
- },
- {
-  "id": "adapt_gate_reg500_wpr_001",
-  "status": "needs_local_mt4",
-  "added_by": "cli-local",
-  "added_at": "2026-10-18T23:00:00Z",
-  "description": "MKT-FL-LO-b31+Reg500+WPR55: period=500 + WPR gate",
-  "ea": "Strong2010b_claude_b31",
-  "set_file": "b31_adapt_reg500_wpr.set",
-  "symbol": "EURUSD",
-  "period": "M5",
-  "spread": 3,
-  "years": [
-   2020,
-   2021,
-   2019,
-   2022
-  ],
-  "commission_pts": 8,
-  "timeout_min": 60,
-  "flag_if": "WR>50 AND PF>1.2 AND n>30"
- },
- {
-  "id": "nomem6_006",
-  "name": "MKT-14-NY-T31s+NOSL+XNFP+MMR",
-  "priority": 1,
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "logic": "Friday 14:00 UTC SHORT if close[13:00]-prev_day_close > 0.5*ATR14 AND not first Friday of month AND MMR>=-1.0 where MMR=min(1-bar close move last 12 H1 bars)/max(1-bar close move last 12 bars). No stop. Exit 21:00 Friday close.",
-  "cloud_result": "IS FXOpen 24-26 n=44 WR66 PF2.25 +57pts; OOS TD 20-23 n=49 WR71 PF3.40 +124pts, all 7 years positive",
-  "cost": "0.00008/trade",
-  "needs": "MT4 tick run, ECN pts, 0.1 lot",
-  "flag_if": "n>30 and PF>1.5"
- },
- {
-  "id": "nomem6_007",
-  "name": "MKT-14-NY-T31s+NOSL+XNFP+VOV",
-  "priority": 2,
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "logic": "As nomem6_005 plus vol-of-vol filter: std(ATR14,48)/mean(ATR14,48) < 0.35 at entry.",
-  "cloud_result": "IS n=49 WR65 PF2.01 +46pts; OOS n=64 WR64 PF2.31 +83pts",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.5"
- },
- {
-  "id": "nomem6_008",
-  "name": "MKT-14-NY-T31s+NOSL+XNFP+SSR",
-  "priority": 1,
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "logic": "As nomem6_005 (Friday 14:00 short, day up >0.5*ATR14, skip first Friday, no stop, exit 21:00) plus Nasif minSSR>-2: for 18 slope slots (H1/H4/D1 x SMA2/5/10 x shift0/1, slope=(SMA-SMA.shift(scale))/point) require min over k in {1,6,8,10,12,14,16} of slp0/slp[k] > -2.",
-  "cloud_result": "IS FXOpen 24-26 n=27 WR67 PF3.32 +67pts; OOS TD 20-23 n=47 WR66 PF2.25 +83pts",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.5"
- },
- {
-  "id": "nomem6_009",
-  "name": "MKT-14-NY-T31s+NOSL+XNFP+LOSSYOVB",
-  "priority": 2,
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "logic": "As nomem6_005 plus Nasif lossy-overbought divergence state at the 14:00 bar: Stoch(14,3) on H1 > 80 AND (min slope of SMA2/5/10 on 24-bar scale (slope=(SMA(pd*24)-SMA(pd*24).shift(24))/point) < 0 OR its accel < 0) AND at least one of the 18 slope slots negative.",
-  "cloud_result": "IS FXOpen 24-26 n=24 WR75 PF2.93 +73pts; OOS TD 20-23 n=30 WR67 PF2.99 +114pts",
-  "cost": "0.00008/trade",
-  "flag_if": "n>20 and PF>1.5"
- },
- {
-  "id": "nomem6_010",
-  "name": "MKT-17-NY-T81l+MMRl+GATEAl",
-  "priority": 2,
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "logic": "Monday 17:00 UTC LONG if close[16:00] - prev day close < -0.3*ATR14 AND mirrored MMR: -(max 1-bar close move last 12 H1 bars)/(min 1-bar move) >= -1 (no up-bar bigger than biggest down-bar) AND EMA120 5-bar slope <= +0.1*ATR14. No stop. Exit 21:00 Monday close.",
-  "cloud_result": "IS FXOpen 24-26 n=57 WR56 PF2.35 +35pts; OOS TD 20-23 n=68 WR56 PF1.58 +47pts; 3x cost 1.63/1.37; 6 of 7 years positive (2021 0.76)",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- },
- {
-  "id": "nomem6_011",
-  "name": "MKT-17-NY-T81l+GATEAl+X22",
-  "priority": 1,
-  "logic": "Monday 17:00 UTC LONG if close[16:00] - prev day close < -0.3*ATR14 AND EMA120 5-bar slope <= +0.1*ATR14. No stop. Exit 22:00 Monday close. (replaces nomem6_010: mirrored MMR redundant, exit 22 better)",
-  "cloud_result": "IS FXOpen 24-26 n=57 WR56 PF2.53 +40pts; OOS TD 20-23 n=68 WR62 PF1.77 +60pts; combined 20-26 n=125 PF1.94 net $706 maxDD $110 at 0.1 lot, 7/7 years positive",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- },
- {
-  "id": "nomem6_012",
-  "name": "MKT-15-NY-T82l+LOSSYl+SSR",
-  "priority": 2,
-  "logic": "Monday 15:00 or 16:00 UTC LONG (first hit) if mirrored lossy-divergence: Stoch(14) at scale1 < 20 AND (max SMA2 slope over slots 12-18 > 0 OR max accel > 0) AND count(slope>0)>0, AND min SSR > -2 (feat_ratios2 exact port). No stop. Exit 21:00.",
-  "cloud_result": "IS n=28 WR57 PF3.56 +50pts; OOS n=35 WR60 PF2.21 +90pts (2020/21 <1); combined n=63 PF2.44 net $506 maxDD $107",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- },
- {
-  "id": "nomem6_013",
-  "name": "MKT-13-16-NY-T81s+LOSSY+SSR+FRI",
-  "priority": 1,
-  "logic": "Friday 13:00-16:00 UTC SHORT (first hit) if lossy-overbought divergence: Stoch(14) scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0, AND min SSR > -2. No stop. Exit 21:00 Friday.",
-  "cloud_result": "IS n=35 WR71 PF2.31 +62pts all yrs>1; OOS n=55 WR66 PF2.08 +78pts all yrs>1",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- },
- {
-  "id": "nomem6_014",
-  "name": "MKT-07-10-LO-T84s+LOSSY+SSR+THU",
-  "logic": "Thursday 07:00-09:00 UTC SHORT (first hit) if lossy-overbought divergence (Stoch14 scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND min SSR > -2 (feat_ratios2 exact port). No stop. Exit 21:00.",
-  "cloud_result": "IS FXOpen 24-26 n=21 WR57 PF2.03 +90pts; OOS TD 20-23 n=31 WR55 PF1.82 +68pts",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3",
-  "priority": 2
- },
- {
-  "id": "nomem6_015",
-  "name": "MKT-10-13-LO-T85s+LOSSY+SSR+WED",
-  "logic": "Wednesday 10:00-12:00 UTC SHORT (first hit), same LOSSY divergence + min SSR > -2 gate as nomem6_014. No stop. Exit 21:00.",
-  "cloud_result": "IS n=24 WR79 PF3.07 +167pts; OOS n=41 WR54 PF1.65 +64pts",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3",
-  "priority": 2
- },
- {
-  "id": "nomem6_016",
-  "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI",
-  "priority": 1,
-  "logic": "Friday 13:00-16:00 UTC SHORT (first hit per day) if lossy-overbought divergence (Stoch14 scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND z-score (close-SMA20)/SD20 >= 0.9 on previous bar. No stop. Exit 21:00 Friday.",
-  "cloud_result": "IS FXOpen 24-26 n=45 WR67 PF2.67 +81pts (3x cost 2.25); OOS TD 20-23 n=44 WR70 PF3.07 +112pts all yrs>1.6 (3x cost 2.67); cross-pair FXOpen 24-26: GBPUSD PF1.50 n42, USDCHF 1.87 n40, EURGBP 1.62 n35 (same sign on all EUR/GBP/CHF pairs)",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- },
- {
-  "id": "nomem6_017",
-  "name": "MKT-13-16-NY-T87s+Z09+MMR+FRI",
-  "priority": 2,
-  "logic": "Friday 13:00-16:00 UTC SHORT (first hit) if z-score >= 0.9 AND MMR >= -1 (12-bar max 1-bar up move / |min down move|, g2a form). No stop. Exit 21:00.",
-  "cloud_result": "IS n=81 WR67 PF2.59 +81pts (3x 2.19); OOS n=55 WR71 PF2.33 +94pts (3x 2.07)",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- },
- {
-  "id": "nomem6_018",
-  "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI+TRAIL08",
-  "priority": 1,
-  "logic": "Same entry as nomem6_016 (Friday 13:00-16:00 UTC SHORT first hit, lossy-overbought divergence AND z-score >= 0.9). Exit 21:00 Friday close, PLUS trailing stop: once price is 0.5*ATR14 in favour, trail a stop 0.8*ATR14 behind the best price (H1 low). No hard initial stop. Tick-level MT4 run needed: cloud emulation checks the trail on H1 high/low touch.",
-  "cloud_result": "IS FXOpen 24-26 n=49 WR69 PF4.34 +81pts (3x cost 3.30); OOS TD 20-23 n=45 WR64 PF5.65 +79pts (3x 3.86); DD -0.36/-0.38%. Fixed exit 21 without trail: 2.67 / 3.07; bar-close-only trail emulation: IS 2.88 / OOS 2.55 (below untrailed base) -> MT4 tick run decides",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3 AND tick-run PF >= nomem6_016 PF; cloud lift is intrabar-touch dependent (bar-close emulation OOS 2.55 < untrailed 3.07)"
- },
- {
-  "id": "nomem6_019",
-  "name": "MKT-15-16-NY-T88l+LOSSYl+Zm09+MON",
-  "priority": 2,
-  "logic": "Monday 15:00 or 16:00 UTC LONG (first hit) if mirrored lossy divergence (Stoch14 scale1 < 20 AND (max SMA2 slope slots 12-18 > 0 OR max accel > 0) AND count(slope>0)>0) AND z-score <= -0.9. No stop. Exit 21:00 Monday.",
-  "cloud_result": "IS n=36 WR58 PF2.22 +37pts; OOS n=31 WR61 PF2.71 +119pts (2021 0.38)",
-  "status": "pending",
-  "symbol": "EURUSD",
-  "timeframe": "H1",
-  "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
- }
 ]
