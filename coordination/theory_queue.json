@@ -539,5 +539,17 @@
   "cloud_result": "IS FXOpen 24-26 n=27 WR67 PF3.32 +67pts; OOS TD 20-23 n=47 WR66 PF2.25 +83pts",
   "cost": "0.00008/trade",
   "flag_if": "n>30 and PF>1.5"
+ },
+ {
+  "id": "nomem6_009",
+  "name": "MKT-14-NY-T31s+NOSL+XNFP+LOSSYOVB",
+  "priority": 2,
+  "status": "pending",
+  "symbol": "EURUSD",
+  "timeframe": "H1",
+  "logic": "As nomem6_005 plus Nasif lossy-overbought divergence state at the 14:00 bar: Stoch(14,3) on H1 > 80 AND (min slope of SMA2/5/10 on 24-bar scale (slope=(SMA(pd*24)-SMA(pd*24).shift(24))/point) < 0 OR its accel < 0) AND at least one of the 18 slope slots negative.",
+  "cloud_result": "IS FXOpen 24-26 n=24 WR75 PF2.93 +73pts; OOS TD 20-23 n=30 WR67 PF2.99 +114pts",
+  "cost": "0.00008/trade",
+  "flag_if": "n>20 and PF>1.5"
  }
 ]
