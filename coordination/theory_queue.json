@@ -651,7 +651,7 @@
   {
     "id": "nomem6_018",
     "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI+TRAIL08",
-    "priority": 1,
+    "priority": 3,
     "logic": "Same entry as nomem6_016 (Friday 13:00-16:00 UTC SHORT first hit, lossy-overbought divergence AND z-score >= 0.9). Exit 21:00 Friday close, PLUS trailing stop: once price is 0.5*ATR14 in favour, trail a stop 0.8*ATR14 behind the best price (H1 low). No hard initial stop. Tick-level MT4 run needed: cloud emulation checks the trail on H1 high/low touch.",
     "cloud_result": "IS FXOpen 24-26 n=49 WR69 PF4.34 +81pts (3x cost 3.30); OOS TD 20-23 n=45 WR64 PF5.65 +79pts (3x 3.86); DD -0.36/-0.38%. Fixed exit 21 without trail: 2.67 / 3.07; bar-close-only trail emulation: IS 2.88 / OOS 2.55 (below untrailed base) -> MT4 tick run decides",
     "status": "pending",
@@ -743,5 +743,41 @@
     "cloud_result": "IS FXOpen 2024-26 n=45 WR78 PF5.33 dd0.35% (base 2.67/0.53) 3x PF4.01; OOS TD 2020-23 n=44 WR77 PF3.10 dd0.39% (base 3.07/0.61) 3x 2.37. BUT net $ at 0.1 lot: IS 416 vs 406, OOS 273 vs 552 - early exit gives up half the OOS profit. PF/DD tool, not a better exit; 016 stays the base.",
     "cost": 8e-05,
     "flag_if": "WITHDRAWN 18:50Z: failed cloud OOS (EURUSD/EURGBP analogues PF<1.05 on 2020-23). Do not run."
+  },
+  {
+    "id": "nomem6_026",
+    "name": "STACKA-FULL-vs-NOMON17",
+    "priority": 1,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "cost": 8e-05,
+    "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
+  },
+  {
+    "id": "nomem6_027",
+    "name": "STACKA-DAYSTOP-AFTER-LOSS",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "cost": 8e-05,
+    "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
+  },
+  {
+    "id": "nomem6_028",
+    "name": "MKT-07-ASIA-E7+SL08ATR",
+    "priority": 3,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "cost": 8e-05,
+    "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
   }
 ]
