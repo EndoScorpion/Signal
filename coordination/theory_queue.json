@@ -779,5 +779,17 @@
     "cloud_result": "Cloud (bar-close stop approximation) FXOpen OOS 2024-26 n=32 PF6.29; v2.3 in results/eurusd_asia_london FINAL. Flag if MT4 PF<2 or stop-outs >40% of trades.",
     "cost": 8e-05,
     "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
+  },
+  {
+    "id": "nomem6_029",
+    "name": "STACKA-MON17-HALFLOT",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Exactly nomem6_026 run 1 (stack A, all four legs, Model 1 M15, -TimeoutMin 180, 2020-2026 per year) but Mon17x22 leg at 0.05 lot while G11-3, T82, n016 stay at 0.1 lot.",
+    "cloud_result": "Cloud from cached trades: IS 2024-26 PF 2.80 net $963 maxDD $94 (equal lots 2.76/$1090/$100); OOS 2020-23 PF 2.76 net $1765 maxDD $92 (equal 2.54/$1989/$122).",
+    "cost": 8e-05,
+    "flag_if": "flag if MT4 PF or maxDD worse than the equal-lot run (nomem6_026 run 1)"
   }
 ]
