@@ -407,3 +407,60 @@ Gen 4 produced no new OOS PF peak (project-best remains G3-13/G4-7 at 2.67). Var
 - **T24/T27 low-edge confirmed:** Gates A+B add +0.05–0.12 PF but 2023 year always fails (PF 0.59–0.89). Not viable without 2023 fix.
 - **D_WillR is T31s-specific:** Orthogonal to T11/T27/T34 logic — adding it to those families doesn't help.
 
+
+---
+
+## Gen 8 — ATR-scaled hard rejects + D_WillR sweep (04:45Z 2026-10-19)
+
+**Goal:** ATR-scale the hard-reject thresholds (minslp, minSSR) per coordinator suggestion; sweep D_WillR threshold to find IS n≥30 on G5-2 family.
+
+| Clone | IS n | IS PF | OOS n | OOS PF | OOS avg | 2020/21/22/23 | Note |
+|---|---|---|---|---|---|---|---|
+| G5-2_ref | 44 | 2.25 | 48 | 3.21 | +131 pts | 3.75/2.18/7.01/1.78 | baseline |
+| G8-1_G5-2+ATR_slp1.5x | 23 | 1.58 | 24 | 3.34 | +136 pts | 1.27/5.17/694/1.73 | IS n<30 |
+| G8-2_T31s+ATR_slp1.5x_noMMR | 26 | 1.14 | 38 | 2.23 | +91 pts | 1.05/5.83/3.76/1.99 | IS n<30 |
+| G8-3_G5-2+ATR_slp1.0x | 15 | 1.54 | 19 | 2.36 | +100 pts | 1.00/5.17/311/1.73 | IS n<30 OOS n<20 |
+| G8-4_G5-2+ATR_slp2.0x | 25 | 1.67 | 31 | 3.66 | +129 pts | 1.99/6.86/17.55/1.73 | IS n<30 near-miss |
+| G8-5_G5-2+ATR_slp1.5x_fast | 44 | 2.25 | 48 | 3.21 | +131 pts | 3.75/2.18/7.01/1.78 | = G5-2 (fast-scale gate inactive) |
+| **G8-6_G5-2+ATR_SSR_dyn** | 23 | **3.57** | 34 | **3.0** | +111 pts | 3.37/3.51/4.07/1.70 | IS n<30 near-miss |
+| G8-W1_T31s+DWillR<-5 | 23 | 1.08 | 26 | 4.18 | +149 pts | 2.89/6.96/7.22/1.10 | IS n<30 OOS n<30 |
+| G8-W2_T31s+DWillR<-8 | 20 | 1.57 | 16 | 3.03 | +123 pts | 0.48/34/1.84/1.18 | yr2020 fail |
+| G8-W3..W4_tighter | <20 | — | <10 | — | — | — | too few |
+| G8-W5_G5-2+DWillR<-5 | 19 | 1.75 | 18 | 13.49 | +216 pts | 99/27.6/99/1.78 | IS n<30 OOS n<20 |
+| G8-W6..W8_tighter | <17 | — | <10 | — | — | — | too few |
+| G8-C1/C2_ATRslp+DWillR | 11-12 | <1 | 12-15 | 11-12 | +195-213 pts | — | IS n<30, IS PF<1 |
+
+**Gen 8 findings:**
+- **No new strict survivors.** Fast-scale ATR gate (minslp1) is inactive on these Friday bars — H1-scale slopes never breach -1.5×ATR at Fri 14:00.
+- **G8-6 near-miss:** Dynamic ATR-SSR gate (minSSR ≥ -ATR_pts/50) achieves IS PF 3.57 OOS PF 3.0 n=34 all years ≥1.70. IS n=23 — blocked by short IS window.
+- **G8-4 near-miss:** ATR_slp2.0x OOS PF 3.66 n=31 all years ≥1.73. IS n=25.
+- **D_WillR degradation:** threshold -3.2→-5→-8 cuts OOS n from 30→26→16; OOS quality stays high but OOS n drops below 20. Threshold -3.2 is optimal.
+- **Root cause across gens 6-8:** All promising gates fragment IS to n<30. IS window is 2.8yr of Fridays (~17/yr = 47 total). Any gate at >40% selectivity hits the n<30 wall.
+- **Gen 9 plan:** Extend IS to 2023 (FXOpen 2023 + 2024-26) to double Fri count. Re-test G8-6, G8-4, G8-W1 and the D_WillR<-3.2 family.
+
+
+## Gen 10 — Alternate Split + Threshold Widening (2026-10-19)
+Script: clone_gen10.py
+Approach: (A) TD IS 2020-23 / TD OOS 2024-26 flip; (B) T31s thresh 0.3x + FX IS / TD OOS std
+
+### SPLIT A: TD IS 2020-23 / TD OOS 2024-26
+- G5-2_ref_TDsplit: IS n=48 WR=70.8% PF=3.21 | OOS n=37 WR=64.9% PF=1.29 avg=+15.6pts | yr=3.91/1.53/0.59 ⚠year_fail
+- G10-1_G5-2+DWillR<-3.2: IS n=21 PF=12.92 | OOS n=10 WR=50.0% PF=1.05 avg=+2.8pts | yr=1.88/0.19/3.77 ⚠year_fail (IS n<30)
+- G10-2_T31s+DWillR<-3.2: IS n=30 PF=3.16 | OOS n=15 WR=40.0% PF=0.64 | FAIL (OOS WR<51%)
+- G10-3_G5-2+LOSSY: IS n=22 | FAIL (IS n<30)
+- **G10-4_G5-2+minSSR>-2: IS n=33 WR=69.7% PF=2.89 | OOS n=23 WR=69.6% PF=2.79 avg=+55.6pts | yr=9.40/3.24/1.48 ✓ALL_YRS — NEW SURVIVOR**
+
+### THRESHOLD WIDENING: T31s 0.3x + FX IS / TD OOS std (4 OOS years)
+- G10-9_T31s_0.3x_base: IS n=54 PF=1.39 | OOS n=75 WR=61.3% PF=1.93 avg=+78.4pts | yr=2.07/1.68/2.10/1.88 ✓ALL_YRS (weak PF)
+- **G10-7_T31s_0.3x+MMR: IS n=45 WR=64.4% PF=2.21 | OOS n=53 WR=67.9% PF=2.85 avg=+119.5pts | yr=3.28/2.68/3.35/1.78 ✓ALL_YRS — NEW SURVIVOR**
+- G10-5_T31s_0.3x+DWillR<-3.2: IS n=25 | FAIL (IS n<30), OOS PF=3.05 watchlist
+- G10-6_T31s_0.3x+MMR+DWillR<-3.2: IS n=21 | FAIL (IS n<30), OOS PF=8.47 avg=+200pts watchlist
+- G10-8_T31s_0.3x+MMR+LOSSY: IS n=22 | FAIL (IS n<30), OOS PF=9.83 avg=+208pts watchlist
+
+### Analysis
+- G10-4 = G5-2 with minSSR>-2 gate on TD split: passes all 3 OOS years but only 3 OOS years (2024-26)
+- G10-7 = T31s 0.3x+MMR: more OOS trades (n=53) than G5-2 (n=48) but lower PF (2.85 vs 3.21)
+- D_WillR<-3.2 quality persists: G10-6 OOS PF 8.47 avg+200pts — blocked purely by IS n=21
+- Near-miss watchlist (needs 2027+ data): G10-6, G10-8 — exceptional quality when n sufficient
+- T31s 0.3x+MMR may be G5-2 relaxed variant — needs investigation whether gate overlap is high
+

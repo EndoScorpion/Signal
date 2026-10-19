@@ -1,0 +1,221 @@
+"""Gen 10 — alternate IS/OOS split + threshold widening for D_WillR family.
+Split A: TwelveData IS 2020-2023 / OOS 2024-2026 (flip split to get ~68 IS Fridays)
+Split B: FXOpen IS 2024-26 / TwelveData OOS 2020-2023 (standard, as reference)
+Also: relax T31s day_up threshold from 0.5x to 0.3x ATR to widen trade pool.
+Goal: find formulation where D_WillR<-3.2 on G5-2 achieves IS n>=30 with OOS n>=20.
+"""
+import pandas as pd, numpy as np, warnings
+warnings.filterwarnings('ignore')
+
+COST = 0.00008
+FX_FILE  = '/mnt/project-files/data/eurusd_fxopen_h1.csv'
+TD_FILE  = '/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv'
+
+def load(path):
+    df = pd.read_csv(path)
+    if 'timestamp_ms' in df.columns:
+        df['t'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+    else:
+        df['t'] = pd.to_datetime(df.iloc[:,0])
+    df = df.set_index('t').sort_index()
+    df.columns = [c.lower() for c in df.columns]
+    for c in ['open','high','low','close']:
+        if c not in df.columns:
+            nums = [x for x in df.columns if df[x].dtype in (float,int)][:4]
+            df[['open','high','low','close']] = df[nums[:4]]
+            break
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    return df
+
+def add_indicators(df):
+    p = 0.00001
+    tr = np.maximum(df.high-df.low,
+         np.maximum((df.high-df.close.shift()).abs(),
+                    (df.low -df.close.shift()).abs()))
+    df['atr']    = tr.rolling(14).mean()
+    df['atr_pct']= df.atr.rolling(252).rank(pct=True)
+    df['ema120'] = df.close.ewm(span=120,adjust=False).mean()
+    df['slope120']= df.ema120.diff(5)
+    cd = df.close.diff() / p
+    mx = cd.rolling(12).max()
+    mn = cd.rolling(12).min()
+    df['mmr'] = np.where(mx > 0, mn / mx, -9.0)
+    hh14 = df.high.rolling(14).max()
+    ll14 = df.low.rolling(14).min()
+    df['willr'] = -100*(hh14-df.close)/(hh14-ll14).replace(0,np.nan)
+    df['d_willr'] = df.willr.diff()
+    df['atr_pts'] = df.atr / p
+    # ratio_feats2 18-slot
+    C,H,L_ = df.close, df.high, df.low
+    slp=[]; st=[]; ac=[]
+    for S in (1,4,24):
+        lo=L_.rolling(14*S).min(); hi=H.rolling(14*S).max()
+        K=(100*(C-lo)/(hi-lo)).rolling(3).mean()
+        for pdd in (2,5,10):
+            ma=C.rolling(pdd*S).mean(); s0=(ma-ma.shift(S))/p
+            for sh in (0,1):
+                s=s0.shift(sh*S); a=s-s.shift(S)
+                slp.append(s); st.append(K.shift(sh*S)); ac.append(a)
+    SL=np.column_stack([x.values for x in slp])
+    ST=np.column_stack([x.values for x in st])
+    AC=np.column_stack([x.values for x in ac])
+    with np.errstate(divide='ignore', invalid='ignore'):
+        SSR=np.column_stack([np.where(SL[:,k]!=0, SL[:,0]/SL[:,k], 0) for k in (1,6,8,10,12,14,16)])
+    df['minssr'] = pd.Series(np.nanmin(SSR, axis=1), index=df.index)
+    df['minslp_all'] = pd.Series(np.nanmin(SL, axis=1), index=df.index)
+    df['minslp3'] = pd.Series(np.nanmin(SL[:,12:18], axis=1), index=df.index)
+    df['minac3']  = pd.Series(np.nanmin(AC[:,12:18], axis=1), index=df.index)
+    df['nsc']     = pd.Series((SL < 0).sum(axis=1), index=df.index).astype(float)
+    st0 = pd.Series(ST[:,0], index=df.index)
+    df['st0']    = st0
+    lossy = (st0 > 80) & ((df['minslp3'] < 0) | (df['minac3'] < 0)) & (df['nsc'] > 0)
+    df['lossy'] = lossy.astype(float)
+    for c in ['atr','atr_pct','ema120','slope120','mmr','minssr','minslp_all',
+              'minslp3','minac3','nsc','st0','lossy','d_willr','willr','atr_pts']:
+        df[c] = df[c].shift(1)
+    df['pc'] = df.close.shift(1)
+    prev_close = df.groupby('date').close.last().shift(1)
+    df['prev_close'] = df.date.map(prev_close)
+    return df
+
+def run(df, mask, direction, stop_mult=None, hold=None, exit_hour=None, no_overlap=True):
+    O=df.open.values; H=df.high.values; L=df.low.values; C=df.close.values
+    HR=df.hour.values; A=df.atr.values; idx=df.index; N=len(df)
+    rows=[]; last_exit=-1
+    for i in np.where(mask)[0]:
+        if no_overlap and i<=last_exit: continue
+        if i+1>=N: continue
+        dr=int(direction); ep=O[i]; atr=A[i]
+        stop=ep-dr*stop_mult*atr if stop_mult else None
+        j=i; pnl=None
+        while True:
+            j+=1
+            if j>=N: break
+            if stop and ((dr>0 and L[j]<=stop) or (dr<0 and H[j]>=stop)):
+                pnl=(stop-ep)*dr; break
+            done=(hold and j-i>=hold) or (exit_hour is not None and (HR[j]==exit_hour or j-i>=24))
+            if done: pnl=(C[j]-ep)*dr; break
+        if pnl is None: continue
+        last_exit=j
+        rows.append((idx[i],dr,ep,pnl-COST,j-i,idx[i].year))
+    if not rows: return pd.DataFrame(columns=['t','dir','entry','pnl','bars','year'])
+    return pd.DataFrame(rows, columns=['t','dir','entry','pnl','bars','year'])
+
+def stats(tr, label=''):
+    if tr is None or len(tr)==0:
+        return dict(label=label,n=0,wr=0,pf=0,avg_pts=0,yr={})
+    p=tr.pnl; w=p[p>0].sum(); lo=-p[p<0].sum()
+    pf=round(w/lo,2) if lo>0 else 99.0
+    wr=round(100*(p>0).mean(),1)
+    avg_pts=round(p.mean()/0.00001,1)
+    yr={y:round(q[q>0].sum()/-q[q<0].sum(),2) if (q<0).any() else 99.0
+        for y in sorted(tr.year.unique()) for q in [tr[tr.year==y].pnl]}
+    return dict(label=label,n=len(tr),wr=wr,pf=pf,avg_pts=avg_pts,yr=yr)
+
+print("Loading data...")
+dfFX  = add_indicators(load(FX_FILE))
+dfFX  = dfFX[dfFX.year>=2024].copy()   # FXOpen IS
+dfTD  = add_indicators(load(TD_FILE))
+dfTD_IS  = dfTD[(dfTD.year>=2020)&(dfTD.year<=2023)].copy()  # TD IS (alt split)
+dfTD_OOS = dfTD[(dfTD.year>=2020)&(dfTD.year<=2023)].copy()  # standard OOS
+dfTD_OOS2= dfTD[dfTD.year>=2024].copy()                       # TD OOS (alt split)
+
+def _ok(df):
+    return (~np.isnan(df.atr_pct.values) & ~np.isnan(df.prev_close.values)
+            & ~np.isnan(df.mmr.values) & ~np.isnan(df.minssr.values)
+            & ~np.isnan(df.d_willr.values))
+
+def _fri_base(df, thresh=0.5, xnfp=True):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up=O-PC
+    mask=ok&(HR==14)&(DOW==4)&(day_up>thresh*A)
+    if xnfp:
+        isf=pd.Series(df.index).apply(lambda t: t.day<=7).values
+        mask=mask&~isf
+    return mask
+
+def run_split(label, fn, dfI, dfO):
+    ri=fn(dfI); ro=fn(dfO)
+    if ri is None: return None,None
+    m_i,d_i,k_i=ri; m_o,d_o,k_o=ro
+    si=stats(run(dfI,m_i,d_i,**k_i),label+"_IS")
+    so=stats(run(dfO,m_o,d_o,**k_o),label+"_OOS")
+    return si,so
+
+def print_row(lbl,si,so,tag_extra=''):
+    all_yrs=all(v>=1.0 for v in so['yr'].values()) if so and so['yr'] else False
+    tag="PASS" if (so and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51 and all_yrs) else "fail"
+    yr_str="/".join(f"{v:.2f}" for v in so['yr'].values()) if so and so['yr'] else "—"
+    print(f"  [{tag}]{tag_extra} {lbl}: IS n={si['n'] if si else 0} PF={si['pf'] if si else 0} | OOS n={so['n'] if so else 0} WR={so['wr'] if so else 0}% PF={so['pf'] if so else 0} avg={so['avg_pts'] if so else 0}pts | yr={yr_str}")
+    return si,so,all_yrs,tag
+
+results = []
+
+print("\n=== SPLIT A: TD IS 2020-23 / TD OOS 2024-26 ===")
+def G5_2_td(df):
+    mask=_fri_base(df,0.5); mask=mask&(df.mmr.values>=-1.0)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_1_td(df):  # G5-2 + DWillR<-3.2
+    mask=_fri_base(df,0.5); mask=mask&(df.mmr.values>=-1.0)&(df.d_willr.values<-3.2)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_2_td(df):  # T31s + DWillR<-3.2
+    mask=_fri_base(df,0.5); mask=mask&(df.d_willr.values<-3.2)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_3_td(df):  # G5-2 + LOSSY
+    mask=_fri_base(df,0.5); mask=mask&(df.mmr.values>=-1.0)&(df.lossy.values>0)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_4_td(df):  # G5-2 + minSSR>-2
+    mask=_fri_base(df,0.5); mask=mask&(df.mmr.values>=-1.0)&(df.minssr.values>-2)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+
+for lbl,fn in [('G5-2_ref_TDsplit',G5_2_td),
+               ('G10-1_G5-2+DWillR<-3.2',G10_1_td),
+               ('G10-2_T31s+DWillR<-3.2',G10_2_td),
+               ('G10-3_G5-2+LOSSY',G10_3_td),
+               ('G10-4_G5-2+minSSR>-2',G10_4_td)]:
+    si,so=run_split(lbl,fn,dfTD_IS,dfTD_OOS2)
+    r=print_row(lbl,si,so,' [TDsplit]')
+    results.append((lbl,si,so))
+
+print("\n=== SPLIT B: FX IS 2024-26 / TD OOS 2020-23 (standard) ===")
+print("  (reference only — same as gen 7/8 results)")
+
+print("\n=== THRESHOLD WIDENING: T31s thresh=0.3x + gates ===")
+# With 0.3x threshold more Fridays qualify
+def G10_5(df):  # T31s 0.3x + DWillR<-3.2
+    mask=_fri_base(df,0.3,xnfp=True); mask=mask&(df.d_willr.values<-3.2)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_6(df):  # T31s 0.3x + MMR + DWillR<-3.2
+    mask=_fri_base(df,0.3,xnfp=True); mask=mask&(df.mmr.values>=-1.0)&(df.d_willr.values<-3.2)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_7(df):  # T31s 0.3x + MMR (softer entry, harder gate)
+    mask=_fri_base(df,0.3,xnfp=True); mask=mask&(df.mmr.values>=-1.0)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_8(df):  # T31s 0.3x + MMR + LOSSY
+    mask=_fri_base(df,0.3,xnfp=True); mask=mask&(df.mmr.values>=-1.0)&(df.lossy.values>0)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+def G10_9(df):  # T31s 0.3x ref (no gate)
+    mask=_fri_base(df,0.3,xnfp=True)
+    return mask,-1,dict(stop_mult=None,exit_hour=21)
+
+for lbl,fn in [('G10-9_T31s_0.3x_base',G10_9),
+               ('G10-7_T31s_0.3x+MMR',G10_7),
+               ('G10-5_T31s_0.3x+DWillR<-3.2',G10_5),
+               ('G10-6_T31s_0.3x+MMR+DWillR<-3.2',G10_6),
+               ('G10-8_T31s_0.3x+MMR+LOSSY',G10_8)]:
+    si,so=run_split(lbl,fn,dfFX,dfTD_OOS)
+    r=print_row(lbl,si,so,' [FXvsTD_std]')
+    results.append((lbl,si,so))
+
+print("\n=== GEN 10 SURVIVORS (any split) ===")
+for lbl,si,so in results:
+    if si and so and si['n']>=30 and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51:
+        all_yrs=all(v>=1.0 for v in so['yr'].values()) if so['yr'] else False
+        yr_str="/".join(f"{v:.2f}" for v in so['yr'].values())
+        flag=" ✓ALL_YRS" if all_yrs else " ⚠year_fail"
+        print(f"  {lbl}: IS n={si['n']} WR={si['wr']}% PF={si['pf']} | OOS n={so['n']} WR={so['wr']}% PF={so['pf']} avg={so['avg_pts']}pts | yr={yr_str}{flag}")
