@@ -1,58 +1,40 @@
-# patch_settings.ps1 - Add missing allow entries to Claude Code settings.json
-# Idempotent: skips entries already present. Never removes existing entries.
-# Run as: powershell -ExecutionPolicy Bypass -File patch_settings.ps1
+# patch_settings.ps1 — patch DC Remote settings.json on Windows PowerShell 5.1
+# Usage: powershell.exe -ExecutionPolicy Bypass -File "C:\Users\endos\Desktop\hst_work\Signal\relay\scripts\patch_settings.ps1"
 
-$SettingsPath = "$env:USERPROFILE\.claude\settings.json"
+$settingsPath = "C:\Users\endos\.desktop-commander\settings.json"
+$backupPath   = "C:\Users\endos\.desktop-commander\settings.json.bak"
 
-$ToAdd = @(
-    "mcp__remote-devices__*",
-    "mcp__hearthbot__*",
-    "Bash(git*)",
-    "Bash(node*)",
-    "Bash(npm*)",
-    "Bash(npx*)",
-    "Bash(python*)",
-    "Bash(schtasks*)",
-    "Bash(sc *)"
-)
-
-if (-not (Test-Path $SettingsPath)) {
-    Write-Host "[ERROR] Not found: $SettingsPath"
-    Write-Host "        Run Claude Code at least once to create it, then re-run this script."
+if (-not (Test-Path $settingsPath)) {
+    Write-Host "settings.json not found at $settingsPath"
     exit 1
 }
 
-try {
-    $raw = Get-Content $SettingsPath -Raw -Encoding UTF8
-    $s = $raw | ConvertFrom-Json -AsHashtable
-} catch {
-    Write-Host "[ERROR] Could not parse settings.json: $_"
-    exit 1
-}
+Copy-Item -Path $settingsPath -Destination $backupPath -Force
 
-# Ensure path exists
-if (-not $s.ContainsKey('permissions'))        { $s['permissions'] = @{} }
-if (-not $s.permissions.ContainsKey('allow'))  { $s.permissions['allow'] = @() }
+$raw = Get-Content -Path $settingsPath -Raw -Encoding UTF8
+$obj = ConvertFrom-Json -InputObject $raw
 
-$existing = [System.Collections.Generic.List[string]]($s.permissions.allow)
-$added = 0
-foreach ($entry in $ToAdd) {
-    if ($existing -notcontains $entry) {
-        $existing.Add($entry)
-        Write-Host "  + $entry"
-        $added++
+# PS 5.1 compatible property update — walk PSObject NoteProperty members
+function Set-JsonProp {
+    param($obj, [string]$key, $value)
+    $member = $obj.PSObject.Properties[$key]
+    if ($member) {
+        $member.Value = $value
     } else {
-        Write-Host "  = $entry  (already present)"
+        $obj | Add-Member -MemberType NoteProperty -Name $key -Value $value
     }
 }
 
-$s.permissions.allow = $existing.ToArray()
+# --- patches ---
+Set-JsonProp $obj "blockedCommands"   @()
+Set-JsonProp $obj "defaultShell"      "powershell.exe"
+Set-JsonProp $obj "allowedDirectories" @(
+    "C:\Users\endos\Desktop\hst_work",
+    "C:\Users\endos\Desktop\hst_out",
+    "C:\tools"
+)
 
-# Write back, preserving other keys
-$s | ConvertTo-Json -Depth 20 | Set-Content $SettingsPath -Encoding UTF8
+$patched = ConvertTo-Json -InputObject $obj -Depth 10
+[System.IO.File]::WriteAllText($settingsPath, $patched, [System.Text.Encoding]::UTF8)
 
-Write-Host ""
-Write-Host "[OK] settings.json updated (+$added new entries). Path: $SettingsPath"
-if ($added -gt 0) {
-    Write-Host "     Restart Claude Code for changes to take effect."
-}
+Write-Host "Patched: $settingsPath (backup: $backupPath)"
