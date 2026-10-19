@@ -1,12 +1,1 @@
-[
-  {
-    "id": "healthcheck_001",
-    "tool": "execute_powershell",
-    "params": {
-      "command": "Write-Host 'DC Clone alive'"
-    },
-    "status": "claimed",
-    "ts": "2026-10-19T01:27:00Z",
-    "claimed_at": "2026-10-19T01:28:06.330Z"
-  }
-]
+[]
