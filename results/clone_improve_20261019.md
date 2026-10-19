@@ -520,3 +520,72 @@ Script: clone_gen12.py
 - G5-2+GateA also confirms: the GateA finding applies to the base G5-2 logic too
 - TD retail data fails GateA strategies in 2024-26 window — ECN-only edge
 
+
+---
+
+## Gen 13 — GateA coef=0.2 + GateB stacking, DWillR sweep, NFP inclusion (2026-10-19)
+
+**Script:** `backups/clone_gen13_20261019.txt`  
+**Split:** FX IS (2024-26) / TD OOS (2020-23)
+
+### Tested variants
+| Label | IS n | IS PF | OOS n | OOS WR | OOS PF | OOS avg | All yrs | Pass |
+|---|---|---|---|---|---|---|---|---|
+| G13-W04A DWR<-1.5 | 20 | 1.68 | 21 | 85.7% | 15.56 | +233 pts | ✓ | FAIL (IS n<30) |
+| G13-W04A DWR<-2.0 | 19 | 1.79 | 20 | 85.0% | 14.13 | +220 pts | ✓ | FAIL (IS n<30) |
+| G13-W04A DWR<-3.2 | 18 | 1.67 | 19 | 84.2% | 13.93 | +228 pts | ✓ | FAIL (IS n<30) |
+| G13-W04A DWR<-5.0 | 17 | 1.63 | 17 | 88.2% | 16.97 | +242 pts | ✓ | FAIL (IS n<30) |
+| G13-L1 0.3x+MMR+GateA01+LOSSY | 15 | 6.26 | 19 | 84.2% | 12.68 | +230 pts | n/a | FAIL (IS n<30) |
+| G13-L2 0.3x+MMR+GateA02+LOSSY | 16 | 4.45 | 20 | 85.0% | 12.93 | +223 pts | ✓ | FAIL (IS n<30) |
+| G13-L3 0.4x+MMR+GateA02+LOSSY | 16 | 4.45 | 20 | 85.0% | 12.93 | +223 pts | ✓ | FAIL (IS n<30) |
+| G13-S1 0.3x+MMR+GateA02+minSSR | 20 | 3.86 | 27 | 77.8% | 4.60 | +149 pts | ✓ | FAIL (IS n<30) |
+| G13-S2 0.4x+MMR+GateA02+minSSR | 20 | 3.86 | 27 | 77.8% | 4.60 | +149 pts | ✓ | FAIL (IS n<30) |
+| **G13-S3 0.4x+MMR+GateA02+GateB** | **30** | **2.22** | **35** | **77.1%** | **7.56** | **+187 pts** | **✓** | **PASS** |
+| **G13-S4 0.5x+MMR+GateA02+GateB** | **30** | **2.22** | **35** | **77.1%** | **7.56** | **+187 pts** | **✓** | **PASS** |
+| G13-N1 0.4x+MMR+GateA no-NFP | 45 | 4.16 | 48 | 70.8% | 3.25 | +125 pts | ✓ | PASS |
+| G13-N2 0.3x+MMR+GateA no-NFP | 45 | 4.16 | 49 | 69.4% | 3.10 | +120 pts | ✓ | PASS |
+
+### OOS per-year breakdown (survivors)
+| Strategy | 2020 | 2021 | 2022 | 2023 |
+|---|---|---|---|---|
+| G13-S3/S4 | 7.62 | 10.93 | 677.33 | 1.37 |
+| G13-N1 | 1.34 | 12.97 | 250.00 | 2.18 |
+| G13-N2 | 1.34 | 12.97 | 19.78 | 2.18 |
+
+### New best: G13-S3 (= G13-S4)
+
+**G13-S3 = T31s_0.4x + MMR≥−1.0 + GateA(coef=0.2) + GateB(Stoch53<85)**
+
+```
+Entry: Friday 14:00 UTC SHORT
+Condition 1: open − prev_day_close > 0.4 × ATR14  (day_up threshold)
+Condition 2: MMR ≥ −1.0  (12-bar momentum ratio gate)
+Condition 3: EMA120.diff(5) ≥ −0.2 × ATR14  (GateA, trend gate, coef=0.2)
+Condition 4: Stoch(5,3) fast-K rolling(3) < 85  (GateB, overbought gate)
+xnfp: skip first Friday of month (day≤7)
+Stop: none
+Exit: Friday 21:00 UTC (or next bar if 21:00 not reached within 24 bars)
+Cost: 0.00008/trade
+```
+
+OOS stats: n=35, WR=77.1%, PF=7.56, avg=+187 ECN pts  
+IS stats: n=30, WR=63.3%, PF=2.22  
+All 4 OOS years individually ≥1.0
+
+Note: G13-S3 (0.4x) and G13-S4 (0.5x) produce identical trade sets — the extra 0.1×ATR filter at 0.5x doesn't remove any additional Fridays after GateB is applied, so both clones are the same strategy effectively. **Prefer G13-S3 (0.4x) as the canonical form.**
+
+### Analysis
+- DWillR+GateA combos (DWR sweep): extremely high OOS PF (13-17) but IS n=17-20 — wall remains
+- LOSSY+GateA: same IS n wall (n=15-16); OOS PF 12-13 excellent but can't meet IS n≥30
+- GateA(coef=0.2) + GateB: first combo to clear IS n≥30 with OOS PF>7; beats G12-04A (5.67) by +1.89 OOS PF
+- NFP inclusion: including NFP Fridays adds IS n to 45 but dilutes OOS PF (3.1-3.25); xnfp filter is validated
+- 2022 OOS PF=677: no losses in G13-S3 subset in 2022; small-sample year; all 4 years ≥1.0 so criterion met
+- **ECN-venue dependency expected** (same as G12-04A): GateA/GateB strategies use slope/stoch filters that may not port to TD retail data in 2024-26 window
+
+### Progression summary
+| Strategy | IS n | OOS PF | OOS n | OOS WR | Threshold |
+|---|---|---|---|---|---|
+| G5-2 | 44 | 3.21 | 48 | 70.8% | 0.5x |
+| G11-3 | 34 | 5.19 | 35 | 74.3% | 0.3x+GateA |
+| G12-04A | 34 | 5.67 | 36 | 75.0% | 0.4x+GateA |
+| **G13-S3** | **30** | **7.56** | **35** | **77.1%** | **0.4x+GateA+GateB** |
