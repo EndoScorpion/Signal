@@ -707,5 +707,17 @@
     "cloud_result": "IS FXOpen 2024-26 n=44 WR66 PF2.25 avg+57pts (3x 1.83); OOS TD 2020-23 n=49 WR71 PF3.40 avg+124 yrs 3.7/2.7/7.0 (3x 2.96). Without XNFP: IS 2.48/60, OOS 2.57/63; first-Friday slice OOS PF0.73 avg-22 n14 (IS 3.11 n16 - inconsistent). XNFP helps OOS only; G11-3 (0.3xATR + Gate A + XNFP) remains the stronger T31s form.",
     "cost": 8e-05,
     "flag_if": "PF<1.5 or n<30"
+  },
+  {
+    "id": "nomem6_023",
+    "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI+XLOSSY",
+    "priority": 2,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Entry as nomem6_016 (Friday 13-16 opens, SELL when prev bar LOSSY AND z>=0.9, no stop). EXIT at the close of the first bar on which LOSSY is no longer true (Stoch%K<=80 or no negative slope/accel or nsc==0), else at 21:00 close. Bar-close only, no intrabar logic. Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=45 WR78 PF5.33 dd0.35% (base 2.67/0.53) 3x PF4.01; OOS TD 2020-23 n=44 WR77 PF3.10 dd0.39% (base 3.07/0.61) 3x 2.37. BUT net $ at 0.1 lot: IS 416 vs 406, OOS 273 vs 552 - early exit gives up half the OOS profit. PF/DD tool, not a better exit; 016 stays the base.",
+    "cost": 8e-05,
+    "flag_if": "net profit below nomem6_016 by >30%"
   }
 ]
