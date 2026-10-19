@@ -1,12 +1,7 @@
 [
   {
-    "id": "trim_ram_001",
+    "id": "fetch_2011a_ea_001",
     "tool": "execute_powershell",
-    "command": "$before = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB, 1); Write-Host \"FREE_BEFORE: $before GB\"; & 'C:\\Users\\endos\\Desktop\\hst_out\\trim_ram.ps1'; Start-Sleep 3; $after = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB, 1); Write-Host \"FREE_AFTER: $after GB\""
-  },
-  {
-    "id": "discover_tester_001",
-    "tool": "execute_powershell",
-    "command": "Write-Host '=== run_tester.ps1 ==='; Get-Content 'C:\\Users\\endos\\Desktop\\hst_out\\run_tester.ps1' -Raw; Write-Host '=== SET FILES ==='; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_work\\Signal\\mt4_tester\\tester\\' -Filter '*.set' -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_work\\mt4_clone\\' -ErrorAction SilentlyContinue | Select-Object Name | Head 20; Write-Host '=== MT4_TESTER DIR ==='; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_out\\' -ErrorAction SilentlyContinue | Select-Object Name"
+    "command": "$paths = @('C:\\Users\\endos\\AppData\\Roaming\\MetaQuotes\\Terminal\\6278E353D77D4E501C6775ACEC85F415\\MQL4\\Experts', 'C:\\Users\\endos\\Desktop\\hst_work'); foreach ($p in $paths) { $found = Get-ChildItem -Path $p -Recurse -Filter '*2011a*' -ErrorAction SilentlyContinue; foreach ($f in $found) { Write-Host \"FOUND: $($f.FullName)\"; Write-Host \"CONTENT_START\"; Get-Content $f.FullName -Raw; Write-Host \"CONTENT_END\" } }; Write-Host 'SEARCH_COMPLETE'"
   }
 ]
