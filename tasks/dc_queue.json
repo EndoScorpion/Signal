@@ -1,7 +1,7 @@
 [
   {
-    "id": "create_rc_task_001",
+    "id": "patch_watchdog_rc_001",
     "tool": "execute_powershell",
-    "command": "$action = New-ScheduledTaskAction -Execute 'cmd.exe' -Argument '/c claude remote-control' -WorkingDirectory 'C:\\Users\\endos\\Desktop\\hst_work'; $trigger = New-ScheduledTaskTrigger -AtLogOn -User 'endos'; $settings = New-ScheduledTaskSettingsSet -RestartCount 9999 -RestartInterval (New-TimeSpan -Minutes 1) -StartWhenAvailable; $principal = New-ScheduledTaskPrincipal -UserId 'endos' -LogonType Interactive -RunLevel Highest; Register-ScheduledTask -TaskName 'ClaudeRemoteControl' -Action $action -Trigger $trigger -Settings $settings -Principal $principal -Description 'RC auto-restart for Claude Code remote control' -Force; Write-Host 'Created ClaudeRemoteControl task'; Start-ScheduledTask -TaskName 'ClaudeRemoteControl'; Write-Host 'Started ClaudeRemoteControl'"
+    "command": "$f = 'C:\\Users\\endos\\Desktop\\hst_work\\watchdog_pollers.ps1'; $c = Get-Content $f -Raw; $old = '@(\"CloudCmdPollerGH\", \"DcCloneServer\")'; $new = '@(\"CloudCmdPollerGH\", \"DcCloneServer\", \"ClaudeRemoteControl\")'; if ($c -match [regex]::Escape($old)) { $c = $c.Replace($old, $new); Set-Content $f $c -Encoding UTF8; Write-Host 'Patched watchdog_pollers.ps1' } else { Write-Host 'Pattern not found - current task list:'; $c | Select-String 'foreach' }"
   }
 ]
