@@ -371,3 +371,39 @@ Gen 4 produced no new OOS PF peak (project-best remains G3-13/G4-7 at 2.67). Var
 1. **G5-2** (T31s_xnfp+MMR≥−1.0): OOS PF 3.21, avg 131 pts
 2. **G3-13** (T31s_xnfp+bull): OOS PF 2.67, avg 81 pts
 3. **G4-2** (T31s_xnfp+bull+0.4x): OOS PF 2.44, avg 79 pts
+
+---
+
+## Gen 7 — D_WillR / CCI14 / Gate A+B on multi-logic families (04:30Z 2026-10-19)
+
+**Goal:** Apply D_WillR<-3.2, CCI14>77.6, Gate A (EMA120 slope≥-0.1×ATR), Gate B (Stoch5k<85), LOSSY-OVB to non-T31s logics from win_logic_all_WR51. Find OOS-passing subsets within IS-strong but OOS-failing strategies.
+
+| Clone | IS n | IS WR | IS PF | IS avg | OOS n | OOS WR | OOS PF | OOS avg | 2020 | 2021 | 2022 | 2023 | Note |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| G5-2_ref (T31s_xnfp+MMR≥-1.0) | 44 | 65.9% | 2.25 | +63 pts | 48 | 70.8% | 3.21 | +131 pts | 3.75 | 2.18 | 7.01 | 1.78 | PASS ✓ALL_YRS |
+| G7-1_T31s_xnfp+DWillR<-3.2 | 24 | 54.2% | 1.10 | +11 pts | 30 | 66.7% | 3.16 | +135 pts | 2.12 | 2.79 | 8.22 | 1.10 | near-miss IS n=24 |
+| G7-2_G5-2+DWillR<-3.2 | 20 | 60.0% | 1.79 | +56 pts | 21 | 81.0% | 12.92 | +221 pts | 7.90 | 37.58 | 99.0 | 1.78 | near-miss IS n=20 OOS n=21 |
+| G7-3_G5-2+DWillR+GateA | 19 | 57.9% | 1.52 | +40 pts | 25 | 72.0% | 3.80 | +149 pts | 0.96 | 3.14 | 137 | 1.10 | fail yr2020<1.0 |
+| G7-T11_ref (mom3h SHORT 14:00) | 218 | 45.0% | 0.96 | -3 pts | 207 | 50.7% | 0.96 | -6 pts | 0.94 | 1.04 | 1.30 | 0.63 | fail |
+| G7-4_T11+LOSSY-OVB | 1 | 100% | 99.0 | +192 pts | 10 | 70.0% | 1.26 | +33 pts | — | — | — | — | n too small |
+| G7-5_T11+DWillR<-3.2 | 111 | 46.8% | 0.85 | -14 pts | 126 | 54.8% | 1.30 | +31 pts | 2.47 | 1.20 | 1.96 | 0.58 | yr2023 fail |
+| G7-T34_ref (Wed 20:00 LONG) | 143 | 60.1% | 1.80 | +26 pts | 199 | 47.2% | 0.84 | -22 pts | 0.79 | 0.69 | 1.01 | 0.81 | fail OOS |
+| G7-6_T34+CCI14>77.6 | 34 | 70.6% | 3.52 | +51 pts | 77 | 49.4% | 0.92 | -9 pts | 0.47 | 0.70 | 1.08 | 1.64 | fail OOS |
+| G7-7_T34+GateA | 84 | 58.3% | 2.10 | +34 pts | 119 | 49.6% | 0.94 | -8 pts | 0.81 | 0.58 | 1.08 | 1.23 | fail OOS |
+| G7-T24_ref (21:00 LONG day-dn) | 304 | 52.3% | 1.19 | +12 pts | 380 | 47.4% | 1.06 | +9 pts | 1.33 | 1.07 | 1.02 | 0.89 | yr2023 fail |
+| G7-8_T24+GateA | 126 | 50.0% | 1.22 | +13 pts | 159 | 51.6% | 1.22 | +38 pts | 1.40 | 1.39 | 1.40 | 0.78 | yr2023 fail |
+| G7-9_T24+GateA+GateB | 118 | 49.2% | 1.19 | +12 pts | 153 | 51.0% | 1.15 | +27 pts | 1.40 | 1.39 | 1.34 | 0.59 | yr2023 fail |
+| G7-T27_ref (10:00 LONG mom3h) | 272 | 53.3% | 1.13 | +12 pts | 414 | 51.0% | 1.01 | +1 pt | 1.29 | 0.62 | 0.89 | 1.22 | yr2021/22 fail |
+| G7-10_T27+DWillR>11.7 | 100 | 57.0% | 1.31 | +27 pts | 49 | 51.0% | 0.93 | -5 pts | 0.80 | 1.10 | 0.98 | 1.25 | fail OOS |
+| G7-11_T27+GateA | 173 | 52.6% | 1.11 | +11 pts | 268 | 53.4% | 1.16 | +9 pts | 1.35 | 0.68 | 0.95 | 1.61 | yr2021/22 fail |
+| G7-T6_ref (20:00 LONG Mon-Thu) | 264 | 50.8% | 1.20 | +9 pts | 410 | 49.8% | 0.87 | -17 pts | 1.07 | 0.82 | 0.70 | 0.97 | fail OOS |
+| G7-12_T6+GateA+GateB | 172 | 47.7% | 1.18 | +8 pts | 246 | 49.2% | 0.88 | -16 pts | 1.03 | 0.53 | 0.76 | 1.13 | fail |
+
+**Gen 7 findings:**
+- **No new strict survivors.** G5-2 (OOS PF 3.21) remains project-best.
+- **G7-2 near-miss (watchlist):** G5-2+D_WillR<-3.2 → OOS PF **12.92** WR 81% avg +221 pts, all 4 years ≥1.78. Blocked by IS n=20 and OOS n=21. Adopt if IS 2027+ adds ≥10 more trades.
+- **G7-1 near-miss (watchlist):** T31s_xnfp+D_WillR<-3.2 → OOS PF 3.16 all years pass. Blocked by IS n=24 (<30). Comparable quality to G5-2 without MMR gate.
+- **T11, T34, T6 confirmed dead:** Gates (LOSSY, DWillR, CCI14, GateA) cannot rescue these families in OOS. T34 IS-strong but OOS structural fail persists regardless of gate.
+- **T24/T27 low-edge confirmed:** Gates A+B add +0.05–0.12 PF but 2023 year always fails (PF 0.59–0.89). Not viable without 2023 fix.
+- **D_WillR is T31s-specific:** Orthogonal to T11/T27/T34 logic — adding it to those families doesn't help.
+
