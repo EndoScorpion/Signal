@@ -19,12 +19,16 @@ const REPO  = "Signal";
 const BRANCH = "relay";
 const QUEUE_PATH  = "tasks/dc_queue.json";
 const RESULTS_DIR = "tasks/dc_results";
-const POLL_MS = 5000;
+const POLL_MS = 10000;          // base poll interval (10s)
+const BACKOFF_MIN  = 30000;     // 30s min on error
+const BACKOFF_MAX  = 300000;    // 5min max
 const TOKEN = process.env.GITHUB_TOKEN || (() => {
   try { return fs.readFileSync(path.join(os.homedir(), ".github_token"), "utf8").trim(); } catch { return ""; }
 })();
 
 if (!TOKEN) { console.error("GITHUB_TOKEN not set"); process.exit(1); }
+
+let errorBackoff = 0; // ms; 0 = no error, use POLL_MS
 
 // ── GitHub helpers ───────────────────────────────────────────────────────────
 function ghGet(apiPath) {
@@ -75,17 +79,23 @@ async function putFile(filePath, content, sha, msg) {
 }
 
 // ── Tool executor ────────────────────────────────────────────────────────────
-async function runTool(name, args) {
+async function runTool(req) {
+  const name = req.tool;
+  // Support both req.args.X and req.X (top-level shorthand used by cloud sessions)
+  const args = Object.assign({}, req.args || {}, {
+    path:    req.path    || (req.args && req.args.path),
+    content: req.content || (req.args && req.args.content),
+    command: req.command || (req.args && req.args.command),
+  });
+
   if (name === "read_file") {
-    const p = args.path;
-    if (!p) return { error: "path required" };
-    try { return { content: fs.readFileSync(p, "utf8") }; }
+    if (!args.path) return { error: "path required" };
+    try { return { content: fs.readFileSync(args.path, "utf8") }; }
     catch (e) { return { error: e.message }; }
   }
   if (name === "write_file") {
-    const { path: p, content } = args;
-    if (!p || content == null) return { error: "path and content required" };
-    try { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, content, "utf8"); return { ok: true }; }
+    if (!args.path || args.content == null) return { error: "path and content required" };
+    try { fs.mkdirSync(path.dirname(args.path), { recursive: true }); fs.writeFileSync(args.path, args.content, "utf8"); return { ok: true }; }
     catch (e) { return { error: e.message }; }
   }
   if (name === "list_dir") {
@@ -94,11 +104,10 @@ async function runTool(name, args) {
     catch (e) { return { error: e.message }; }
   }
   if (name === "execute_powershell") {
-    const { command } = args;
-    if (!command) return { error: "command required" };
+    if (!args.command) return { error: "command required" };
     return new Promise(res => {
-      execFile("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", command],
-        { timeout: 30000 }, (err, stdout, stderr) => {
+      execFile("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", args.command],
+        { timeout: 60000 }, (err, stdout, stderr) => {
           res({ stdout: stdout || "", stderr: stderr || "", exit: err ? err.code : 0 });
         });
     });
@@ -110,49 +119,51 @@ async function runTool(name, args) {
 async function poll() {
   try {
     const qf = await getFile(QUEUE_PATH);
-    if (!qf) { scheduleNext(); return; }
+    if (!qf) { errorBackoff = 0; scheduleNext(); return; }
 
     let queue;
     try { queue = JSON.parse(qf.content); } catch { scheduleNext(); return; }
-    if (!Array.isArray(queue) || queue.length === 0) { scheduleNext(); return; }
+    if (!Array.isArray(queue) || queue.length === 0) { errorBackoff = 0; scheduleNext(); return; }
 
-    // Claim first pending item
-    const idx = queue.findIndex(r => r.status === "pending");
-    if (idx === -1) { scheduleNext(); return; }
+    const idx = queue.findIndex(r => !r.status || r.status === "pending");
+    if (idx === -1) { errorBackoff = 0; scheduleNext(); return; }
 
-    const req = queue[idx];
-    queue[idx] = { ...req, status: "claimed", claimed_at: new Date().toISOString() };
+    const item = queue[idx];
+    queue[idx] = { ...item, status: "claimed", claimed_at: new Date().toISOString() };
 
-    // Write claimed queue back (optimistic lock via sha)
     try {
-      await putFile(QUEUE_PATH, JSON.stringify(queue, null, 2), qf.sha, `claim ${req.id}`);
-    } catch { scheduleNext(); return; } // another poller won the race
+      await putFile(QUEUE_PATH, JSON.stringify(queue, null, 2), qf.sha, `claim ${item.id}`);
+    } catch { scheduleNext(); return; }
 
-    console.log(`[dc-clone] executing ${req.id}: ${req.tool}`);
-    const result = await runTool(req.tool, req.args || {});
+    console.log(`[dc-clone] executing ${item.id}: ${item.tool}`);
+    const result = await runTool(item);
 
-    // Write result file
-    const resultPath = `${RESULTS_DIR}/${req.id}.json`;
-    const resultContent = JSON.stringify({ id: req.id, tool: req.tool, result, completed_at: new Date().toISOString() }, null, 2);
+    const resultPath = `${RESULTS_DIR}/${item.id}.json`;
+    const resultContent = JSON.stringify({ id: item.id, tool: item.tool, result, completed_at: new Date().toISOString() }, null, 2);
     const existing = await getFile(resultPath);
-    await putFile(resultPath, resultContent, existing?.sha || undefined, `result ${req.id}`);
+    await putFile(resultPath, resultContent, existing?.sha || undefined, `result ${item.id}`);
 
-    // Remove from queue
     const qf2 = await getFile(QUEUE_PATH);
     if (qf2) {
       try {
-        const q2 = JSON.parse(qf2.content).filter(r => r.id !== req.id);
-        await putFile(QUEUE_PATH, JSON.stringify(q2, null, 2), qf2.sha, `done ${req.id}`);
+        const q2 = JSON.parse(qf2.content).filter(r => r.id !== item.id);
+        await putFile(QUEUE_PATH, JSON.stringify(q2, null, 2), qf2.sha, `done ${item.id}`);
       } catch { /* non-fatal */ }
     }
-    console.log(`[dc-clone] done ${req.id}`);
+    console.log(`[dc-clone] done ${item.id}`);
+    errorBackoff = 0;
   } catch (e) {
-    console.error("[dc-clone] poll error:", e.message);
+    errorBackoff = errorBackoff === 0
+      ? BACKOFF_MIN
+      : Math.min(errorBackoff * 2, BACKOFF_MAX);
+    console.error(`[dc-clone] poll error (backoff ${errorBackoff}ms):`, e.message);
   }
   scheduleNext();
 }
 
-function scheduleNext() { setTimeout(poll, POLL_MS); }
+function scheduleNext() {
+  setTimeout(poll, errorBackoff > 0 ? errorBackoff : POLL_MS);
+}
 
 console.log("[dc-clone] starting, polling every", POLL_MS, "ms");
 poll();
