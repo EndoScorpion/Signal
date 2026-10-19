@@ -589,3 +589,12 @@ Note: G13-S3 (0.4x) and G13-S4 (0.5x) produce identical trade sets — the extra
 | G11-3 | 34 | 5.19 | 35 | 74.3% | 0.3x+GateA |
 | G12-04A | 34 | 5.67 | 36 | 75.0% | 0.4x+GateA |
 | **G13-S3** | **30** | **7.56** | **35** | **77.1%** | **0.4x+GateA+GateB** |
+
+### ❌ G13-S3 REJECTED (Theory thread retest, 2026-10-19)
+
+Theory thread independent retest (results/nomem6_T20-T40_20261019.md, Cycle 7c) found:
+- GateB removes 8 trades that are **winners in both IS and OOS** — it doesn't filter losers
+- The OOS PF=7.56 vs G12-04A PF=5.67 lift comes from a 2022 PF=769 tiny-loss artifact (1 loss removed)
+- G13-S3 minus GateB gives identical PF (2.79/3.58) — gate-stacking artifact, not genuine improvement
+- **G11-3 (T31s_0.3x+MMR+GateA, OOS PF=5.19) remains project best for the T31s family**
+- Drop GateB from all future T31s generations
