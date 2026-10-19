@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "id": "read_run_tester",
+    "tool": "execute_powershell",
+    "command": "Get-Content 'C:\\Users\\endos\\Desktop\\hst_out\\run_tester.ps1' -Raw; Write-Host '---SETFILES---'; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_work\\Signal\\mt4_tester\\tester\\' -Filter '*.set' | Select-Object -ExpandProperty Name"
+  }
+]
