@@ -1,0 +1,1198 @@
+{
+ "b7_2019_s2": {
+  "8": {
+   "all": 37.51,
+   "sell": 119.28,
+   "trades": 1340,
+   "sell_trades": 534
+  },
+  "5": {
+   "all": 77.71,
+   "sell": 135.3,
+   "trades": 1340,
+   "sell_trades": 534
+  },
+  "10": {
+   "all": 10.71,
+   "sell": 108.6,
+   "trades": 1340,
+   "sell_trades": 534
+  },
+  "15": {
+   "all": -56.29,
+   "sell": 81.9,
+   "trades": 1340,
+   "sell_trades": 534
+  }
+ },
+ "b7_2019_s8": {
+  "8": {
+   "all": -65.6,
+   "sell": 48.4,
+   "trades": 1207,
+   "sell_trades": 520
+  },
+  "5": {
+   "all": -29.39,
+   "sell": 64.0,
+   "trades": 1207,
+   "sell_trades": 520
+  },
+  "10": {
+   "all": -89.74,
+   "sell": 38.0,
+   "trades": 1207,
+   "sell_trades": 520
+  },
+  "15": {
+   "all": -150.09,
+   "sell": 12.0,
+   "trades": 1207,
+   "sell_trades": 520
+  }
+ },
+ "b7_2019_sp8": {
+  "8": {
+   "all": -65.6,
+   "sell": 48.4,
+   "trades": 1207,
+   "sell_trades": 520
+  },
+  "5": {
+   "all": -29.39,
+   "sell": 64.0,
+   "trades": 1207,
+   "sell_trades": 520
+  },
+  "10": {
+   "all": -89.74,
+   "sell": 38.0,
+   "trades": 1207,
+   "sell_trades": 520
+  },
+  "15": {
+   "all": -150.09,
+   "sell": 12.0,
+   "trades": 1207,
+   "sell_trades": 520
+  }
+ },
+ "b7_2021_s2": {
+  "8": {
+   "all": -48.28,
+   "sell": 38.07,
+   "trades": 1057,
+   "sell_trades": 439
+  },
+  "5": {
+   "all": -16.57,
+   "sell": 51.24,
+   "trades": 1057,
+   "sell_trades": 439
+  },
+  "10": {
+   "all": -69.42,
+   "sell": 29.29,
+   "trades": 1057,
+   "sell_trades": 439
+  },
+  "15": {
+   "all": -122.27,
+   "sell": 7.34,
+   "trades": 1057,
+   "sell_trades": 439
+  }
+ },
+ "b7_2021_s8": {
+  "8": {
+   "all": -106.76,
+   "sell": -4.14,
+   "trades": 983,
+   "sell_trades": 441
+  },
+  "5": {
+   "all": -77.27,
+   "sell": 9.09,
+   "trades": 983,
+   "sell_trades": 441
+  },
+  "10": {
+   "all": -126.42,
+   "sell": -12.96,
+   "trades": 983,
+   "sell_trades": 441
+  },
+  "15": {
+   "all": -175.57,
+   "sell": -35.01,
+   "trades": 983,
+   "sell_trades": 441
+  }
+ },
+ "b9_round_2017": {
+  "8": {
+   "all": -94.17,
+   "sell": null,
+   "trades": 511,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -78.84,
+   "sell": null,
+   "trades": 511,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -104.39,
+   "sell": null,
+   "trades": 511,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -129.94,
+   "sell": null,
+   "trades": 511,
+   "sell_trades": 0
+  }
+ },
+ "b9_round_2019": {
+  "8": {
+   "all": -49.22,
+   "sell": null,
+   "trades": 288,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -40.58,
+   "sell": null,
+   "trades": 288,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -54.98,
+   "sell": null,
+   "trades": 288,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -69.38,
+   "sell": null,
+   "trades": 288,
+   "sell_trades": 0
+  }
+ },
+ "b9_round_2019_s2": {
+  "8": {
+   "all": -50.5,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -40.66,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -57.06,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -73.46,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  }
+ },
+ "b9_roundra_2017": {
+  "8": {
+   "all": -91.28,
+   "sell": null,
+   "trades": 504,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -76.16,
+   "sell": null,
+   "trades": 504,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -101.36,
+   "sell": null,
+   "trades": 504,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -126.56,
+   "sell": null,
+   "trades": 504,
+   "sell_trades": 0
+  }
+ },
+ "b9_roundra_2019": {
+  "8": {
+   "all": -59.24,
+   "sell": null,
+   "trades": 283,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -50.75,
+   "sell": null,
+   "trades": 283,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -64.9,
+   "sell": null,
+   "trades": 283,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -79.05,
+   "sell": null,
+   "trades": 283,
+   "sell_trades": 0
+  }
+ },
+ "b9_wide_2017": {
+  "8": {
+   "all": -78.5,
+   "sell": null,
+   "trades": 464,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -64.58,
+   "sell": null,
+   "trades": 464,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -87.78,
+   "sell": null,
+   "trades": 464,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -110.98,
+   "sell": null,
+   "trades": 464,
+   "sell_trades": 0
+  }
+ },
+ "b9_wide_2019": {
+  "8": {
+   "all": -41.85,
+   "sell": null,
+   "trades": 272,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -33.69,
+   "sell": null,
+   "trades": 272,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -47.29,
+   "sell": null,
+   "trades": 272,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -60.89,
+   "sell": null,
+   "trades": 272,
+   "sell_trades": 0
+  }
+ },
+ "b9_wide_2019_s2": {
+  "8": {
+   "all": -50.5,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -40.66,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -57.06,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -73.46,
+   "sell": null,
+   "trades": 328,
+   "sell_trades": 0
+  }
+ },
+ "b10_round_2017": {
+  "8": {
+   "all": 9.36,
+   "sell": 99.16,
+   "trades": 681,
+   "sell_trades": 73
+  },
+  "5": {
+   "all": 29.79,
+   "sell": 101.35,
+   "trades": 681,
+   "sell_trades": 73
+  },
+  "10": {
+   "all": -4.26,
+   "sell": 97.7,
+   "trades": 681,
+   "sell_trades": 73
+  },
+  "15": {
+   "all": -38.31,
+   "sell": 94.05,
+   "trades": 681,
+   "sell_trades": 73
+  }
+ },
+ "b10_round_2019": {
+  "8": {
+   "all": 8.62,
+   "sell": 91.88,
+   "trades": 1363,
+   "sell_trades": 539
+  },
+  "5": {
+   "all": 49.51,
+   "sell": 108.05,
+   "trades": 1363,
+   "sell_trades": 539
+  },
+  "10": {
+   "all": -18.64,
+   "sell": 81.1,
+   "trades": 1363,
+   "sell_trades": 539
+  },
+  "15": {
+   "all": -86.79,
+   "sell": 54.15,
+   "trades": 1363,
+   "sell_trades": 539
+  }
+ },
+ "b10_roundra_2017": {
+  "8": {
+   "all": 15.41,
+   "sell": 99.16,
+   "trades": 673,
+   "sell_trades": 73
+  },
+  "5": {
+   "all": 35.6,
+   "sell": 101.35,
+   "trades": 673,
+   "sell_trades": 73
+  },
+  "10": {
+   "all": 1.95,
+   "sell": 97.7,
+   "trades": 673,
+   "sell_trades": 73
+  },
+  "15": {
+   "all": -31.7,
+   "sell": 94.05,
+   "trades": 673,
+   "sell_trades": 73
+  }
+ },
+ "b10_roundra_2019": {
+  "8": {
+   "all": 19.23,
+   "sell": 113.44,
+   "trades": 1347,
+   "sell_trades": 532
+  },
+  "5": {
+   "all": 59.64,
+   "sell": 129.4,
+   "trades": 1347,
+   "sell_trades": 532
+  },
+  "10": {
+   "all": -7.71,
+   "sell": 102.8,
+   "trades": 1347,
+   "sell_trades": 532
+  },
+  "15": {
+   "all": -75.06,
+   "sell": 76.2,
+   "trades": 1347,
+   "sell_trades": 532
+  }
+ },
+ "b10_wide_2017": {
+  "8": {
+   "all": -57.69,
+   "sell": null,
+   "trades": 530,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -41.79,
+   "sell": null,
+   "trades": 530,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -68.29,
+   "sell": null,
+   "trades": 530,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -94.79,
+   "sell": null,
+   "trades": 530,
+   "sell_trades": 0
+  }
+ },
+ "b10_wide_2019": {
+  "8": {
+   "all": -31.2,
+   "sell": null,
+   "trades": 318,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -21.66,
+   "sell": null,
+   "trades": 318,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -37.56,
+   "sell": null,
+   "trades": 318,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -53.46,
+   "sell": null,
+   "trades": 318,
+   "sell_trades": 0
+  }
+ },
+ "b11_wide_2017": {
+  "8": {
+   "all": -28.32,
+   "sell": null,
+   "trades": 204,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -22.2,
+   "sell": null,
+   "trades": 204,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -32.4,
+   "sell": null,
+   "trades": 204,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -42.6,
+   "sell": null,
+   "trades": 204,
+   "sell_trades": 0
+  }
+ },
+ "b11_wide_2019": {
+  "8": {
+   "all": -22.68,
+   "sell": -3.08,
+   "trades": 101,
+   "sell_trades": 1
+  },
+  "5": {
+   "all": -19.65,
+   "sell": -3.05,
+   "trades": 101,
+   "sell_trades": 1
+  },
+  "10": {
+   "all": -24.7,
+   "sell": -3.1,
+   "trades": 101,
+   "sell_trades": 1
+  },
+  "15": {
+   "all": -29.75,
+   "sell": -3.15,
+   "trades": 101,
+   "sell_trades": 1
+  }
+ },
+ "b11_wide_2021": {
+  "8": {
+   "all": -23.16,
+   "sell": null,
+   "trades": 77,
+   "sell_trades": 0
+  },
+  "5": {
+   "all": -20.85,
+   "sell": null,
+   "trades": 77,
+   "sell_trades": 0
+  },
+  "10": {
+   "all": -24.7,
+   "sell": null,
+   "trades": 77,
+   "sell_trades": 0
+  },
+  "15": {
+   "all": -28.55,
+   "sell": null,
+   "trades": 77,
+   "sell_trades": 0
+  }
+ },
+ "b12_A_2017": {
+  "8": {
+   "all": 6.95,
+   "sell": -0.06,
+   "trades": 109,
+   "sell_trades": 61
+  },
+  "5": {
+   "all": 10.22,
+   "sell": 1.77,
+   "trades": 109,
+   "sell_trades": 61
+  },
+  "10": {
+   "all": 4.77,
+   "sell": -1.28,
+   "trades": 109,
+   "sell_trades": 61
+  },
+  "15": {
+   "all": -0.68,
+   "sell": -4.33,
+   "trades": 109,
+   "sell_trades": 61
+  }
+ },
+ "b12_B_2017": {
+  "8": {
+   "all": 19.1,
+   "sell": 8.04,
+   "trades": 109,
+   "sell_trades": 61
+  },
+  "5": {
+   "all": 22.37,
+   "sell": 9.87,
+   "trades": 109,
+   "sell_trades": 61
+  },
+  "10": {
+   "all": 16.92,
+   "sell": 6.82,
+   "trades": 109,
+   "sell_trades": 61
+  },
+  "15": {
+   "all": 11.47,
+   "sell": 3.77,
+   "trades": 109,
+   "sell_trades": 61
+  }
+ },
+ "b12_B_2019": {
+  "8": {
+   "all": -47.66,
+   "sell": -22.81,
+   "trades": 91,
+   "sell_trades": 44
+  },
+  "5": {
+   "all": -44.93,
+   "sell": -21.49,
+   "trades": 91,
+   "sell_trades": 44
+  },
+  "10": {
+   "all": -49.48,
+   "sell": -23.69,
+   "trades": 91,
+   "sell_trades": 44
+  },
+  "15": {
+   "all": -54.03,
+   "sell": -25.89,
+   "trades": 91,
+   "sell_trades": 44
+  }
+ },
+ "b12_B_2021": {
+  "8": {
+   "all": -7.42,
+   "sell": 1.2,
+   "trades": 148,
+   "sell_trades": 79
+  },
+  "5": {
+   "all": -2.98,
+   "sell": 3.57,
+   "trades": 148,
+   "sell_trades": 79
+  },
+  "10": {
+   "all": -10.38,
+   "sell": -0.38,
+   "trades": 148,
+   "sell_trades": 79
+  },
+  "15": {
+   "all": -17.78,
+   "sell": -4.33,
+   "trades": 148,
+   "sell_trades": 79
+  }
+ },
+ "b12_C_2017": {
+  "8": {
+   "all": 17.46,
+   "sell": 15.23,
+   "trades": 119,
+   "sell_trades": 63
+  },
+  "5": {
+   "all": 21.03,
+   "sell": 17.12,
+   "trades": 119,
+   "sell_trades": 63
+  },
+  "10": {
+   "all": 15.08,
+   "sell": 13.97,
+   "trades": 119,
+   "sell_trades": 63
+  },
+  "15": {
+   "all": 9.13,
+   "sell": 10.82,
+   "trades": 119,
+   "sell_trades": 63
+  }
+ },
+ "b12_C_2019": {
+  "8": {
+   "all": -40.29,
+   "sell": -9.84,
+   "trades": 198,
+   "sell_trades": 94
+  },
+  "5": {
+   "all": -34.35,
+   "sell": -7.02,
+   "trades": 198,
+   "sell_trades": 94
+  },
+  "10": {
+   "all": -44.25,
+   "sell": -11.72,
+   "trades": 198,
+   "sell_trades": 94
+  },
+  "15": {
+   "all": -54.15,
+   "sell": -16.42,
+   "trades": 198,
+   "sell_trades": 94
+  }
+ },
+ "b12_C_2021": {
+  "8": {
+   "all": -13.38,
+   "sell": 18.91,
+   "trades": 217,
+   "sell_trades": 104
+  },
+  "5": {
+   "all": -6.87,
+   "sell": 22.03,
+   "trades": 217,
+   "sell_trades": 104
+  },
+  "10": {
+   "all": -17.72,
+   "sell": 16.83,
+   "trades": 217,
+   "sell_trades": 104
+  },
+  "15": {
+   "all": -28.57,
+   "sell": 11.63,
+   "trades": 217,
+   "sell_trades": 104
+  }
+ },
+ "b12_D_2017": {
+  "8": {
+   "all": 4.29,
+   "sell": 10.26,
+   "trades": 194,
+   "sell_trades": 107
+  },
+  "5": {
+   "all": 10.11,
+   "sell": 13.47,
+   "trades": 194,
+   "sell_trades": 107
+  },
+  "10": {
+   "all": 0.41,
+   "sell": 8.12,
+   "trades": 194,
+   "sell_trades": 107
+  },
+  "15": {
+   "all": -9.29,
+   "sell": 2.77,
+   "trades": 194,
+   "sell_trades": 107
+  }
+ },
+ "b12_bracket_2017": {
+  "8": {
+   "all": -184.72,
+   "sell": -70.56,
+   "trades": 1058,
+   "sell_trades": 282
+  },
+  "5": {
+   "all": -152.98,
+   "sell": -62.1,
+   "trades": 1058,
+   "sell_trades": 282
+  },
+  "10": {
+   "all": -205.88,
+   "sell": -76.2,
+   "trades": 1058,
+   "sell_trades": 282
+  },
+  "15": {
+   "all": -258.78,
+   "sell": -90.3,
+   "trades": 1058,
+   "sell_trades": 282
+  }
+ },
+ "b12_bracket_2019": {
+  "8": {
+   "all": 155.93,
+   "sell": 164.24,
+   "trades": 1780,
+   "sell_trades": 722
+  },
+  "5": {
+   "all": 209.33,
+   "sell": 185.9,
+   "trades": 1780,
+   "sell_trades": 722
+  },
+  "10": {
+   "all": 120.33,
+   "sell": 149.8,
+   "trades": 1780,
+   "sell_trades": 722
+  },
+  "15": {
+   "all": 31.33,
+   "sell": 113.7,
+   "trades": 1780,
+   "sell_trades": 722
+  }
+ },
+ "b12_bracket_2020": {
+  "8": {
+   "all": -12.48,
+   "sell": 27.76,
+   "trades": 832,
+   "sell_trades": 177
+  },
+  "5": {
+   "all": 12.48,
+   "sell": 33.07,
+   "trades": 832,
+   "sell_trades": 177
+  },
+  "10": {
+   "all": -29.12,
+   "sell": 24.22,
+   "trades": 832,
+   "sell_trades": 177
+  },
+  "15": {
+   "all": -70.72,
+   "sell": 15.37,
+   "trades": 832,
+   "sell_trades": 177
+  }
+ },
+ "b12_bracket_2021": {
+  "8": {
+   "all": -193.24,
+   "sell": 1.71,
+   "trades": 1467,
+   "sell_trades": 654
+  },
+  "5": {
+   "all": -149.23,
+   "sell": 21.33,
+   "trades": 1467,
+   "sell_trades": 654
+  },
+  "10": {
+   "all": -222.58,
+   "sell": -11.37,
+   "trades": 1467,
+   "sell_trades": 654
+  },
+  "15": {
+   "all": -295.93,
+   "sell": -44.07,
+   "trades": 1467,
+   "sell_trades": 654
+  }
+ },
+ "b12_bracketreg_2017": {
+  "8": {
+   "all": 155.96,
+   "sell": 119.64,
+   "trades": 1037,
+   "sell_trades": 117
+  },
+  "5": {
+   "all": 187.07,
+   "sell": 123.15,
+   "trades": 1037,
+   "sell_trades": 117
+  },
+  "10": {
+   "all": 135.22,
+   "sell": 117.3,
+   "trades": 1037,
+   "sell_trades": 117
+  },
+  "15": {
+   "all": 83.37,
+   "sell": 111.45,
+   "trades": 1037,
+   "sell_trades": 117
+  }
+ },
+ "b12_bracketreg_2019": {
+  "8": {
+   "all": 90.17,
+   "sell": 124.4,
+   "trades": 1702,
+   "sell_trades": 770
+  },
+  "5": {
+   "all": 141.23,
+   "sell": 147.5,
+   "trades": 1702,
+   "sell_trades": 770
+  },
+  "10": {
+   "all": 56.13,
+   "sell": 109.0,
+   "trades": 1702,
+   "sell_trades": 770
+  },
+  "15": {
+   "all": -28.97,
+   "sell": 70.5,
+   "trades": 1702,
+   "sell_trades": 770
+  }
+ },
+ "b12_bracketreg_2020": {
+  "8": {
+   "all": 46.36,
+   "sell": 79.88,
+   "trades": 781,
+   "sell_trades": 89
+  },
+  "5": {
+   "all": 69.79,
+   "sell": 82.55,
+   "trades": 781,
+   "sell_trades": 89
+  },
+  "10": {
+   "all": 30.74,
+   "sell": 78.1,
+   "trades": 781,
+   "sell_trades": 89
+  },
+  "15": {
+   "all": -8.31,
+   "sell": 73.65,
+   "trades": 781,
+   "sell_trades": 89
+  }
+ },
+ "b12_bracketreg_2021": {
+  "8": {
+   "all": -87.12,
+   "sell": 38.03,
+   "trades": 1378,
+   "sell_trades": 650
+  },
+  "5": {
+   "all": -45.78,
+   "sell": 57.53,
+   "trades": 1378,
+   "sell_trades": 650
+  },
+  "10": {
+   "all": -114.68,
+   "sell": 25.03,
+   "trades": 1378,
+   "sell_trades": 650
+  },
+  "15": {
+   "all": -183.58,
+   "sell": -7.47,
+   "trades": 1378,
+   "sell_trades": 650
+  }
+ },
+ "b12_ladder08_2021": {
+  "8": {
+   "all": 83.7,
+   "sell": 170.05,
+   "trades": 1803,
+   "sell_trades": 1185
+  },
+  "5": {
+   "all": 137.79,
+   "sell": 205.6,
+   "trades": 1803,
+   "sell_trades": 1185
+  },
+  "10": {
+   "all": 47.64,
+   "sell": 146.35,
+   "trades": 1803,
+   "sell_trades": 1185
+  },
+  "15": {
+   "all": -42.51,
+   "sell": 87.1,
+   "trades": 1803,
+   "sell_trades": 1185
+  }
+ },
+ "b12_ladder12_2017": {
+  "8": {
+   "all": 103.6,
+   "sell": 173.4,
+   "trades": 754,
+   "sell_trades": 195
+  },
+  "5": {
+   "all": 126.22,
+   "sell": 179.25,
+   "trades": 754,
+   "sell_trades": 195
+  },
+  "10": {
+   "all": 88.52,
+   "sell": 169.5,
+   "trades": 754,
+   "sell_trades": 195
+  },
+  "15": {
+   "all": 50.82,
+   "sell": 159.75,
+   "trades": 754,
+   "sell_trades": 195
+  }
+ },
+ "b12_ladder12_2019": {
+  "8": {
+   "all": 105.51,
+   "sell": 187.28,
+   "trades": 1990,
+   "sell_trades": 1184
+  },
+  "5": {
+   "all": 165.21,
+   "sell": 222.8,
+   "trades": 1990,
+   "sell_trades": 1184
+  },
+  "10": {
+   "all": 65.71,
+   "sell": 163.6,
+   "trades": 1990,
+   "sell_trades": 1184
+  },
+  "15": {
+   "all": -33.79,
+   "sell": 104.4,
+   "trades": 1990,
+   "sell_trades": 1184
+  }
+ },
+ "b12_ladder12_2020": {
+  "8": {
+   "all": 91.84,
+   "sell": 133.12,
+   "trades": 579,
+   "sell_trades": 136
+  },
+  "5": {
+   "all": 109.21,
+   "sell": 137.2,
+   "trades": 579,
+   "sell_trades": 136
+  },
+  "10": {
+   "all": 80.26,
+   "sell": 130.4,
+   "trades": 579,
+   "sell_trades": 136
+  },
+  "15": {
+   "all": 51.31,
+   "sell": 123.6,
+   "trades": 579,
+   "sell_trades": 136
+  }
+ },
+ "b12_ladder12_2021": {
+  "8": {
+   "all": 38.74,
+   "sell": 125.09,
+   "trades": 1644,
+   "sell_trades": 1026
+  },
+  "5": {
+   "all": 88.06,
+   "sell": 155.87,
+   "trades": 1644,
+   "sell_trades": 1026
+  },
+  "10": {
+   "all": 5.86,
+   "sell": 104.57,
+   "trades": 1644,
+   "sell_trades": 1026
+  },
+  "15": {
+   "all": -76.34,
+   "sell": 53.27,
+   "trades": 1644,
+   "sell_trades": 1026
+  }
+ },
+ "b12_ladder_2017": {
+  "8": {
+   "all": 120.96,
+   "sell": 190.76,
+   "trades": 762,
+   "sell_trades": 203
+  },
+  "5": {
+   "all": 143.82,
+   "sell": 196.85,
+   "trades": 762,
+   "sell_trades": 203
+  },
+  "10": {
+   "all": 105.72,
+   "sell": 186.7,
+   "trades": 762,
+   "sell_trades": 203
+  },
+  "15": {
+   "all": 67.62,
+   "sell": 176.55,
+   "trades": 762,
+   "sell_trades": 203
+  }
+ },
+ "b12_ladder_2020": {
+  "8": {
+   "all": 90.72,
+   "sell": 132.0,
+   "trades": 593,
+   "sell_trades": 150
+  },
+  "5": {
+   "all": 108.51,
+   "sell": 136.5,
+   "trades": 593,
+   "sell_trades": 150
+  },
+  "10": {
+   "all": 78.86,
+   "sell": 129.0,
+   "trades": 593,
+   "sell_trades": 150
+  },
+  "15": {
+   "all": 49.21,
+   "sell": 121.5,
+   "trades": 593,
+   "sell_trades": 150
+  }
+ },
+ "legs_2526": {
+  "8": {
+   "all": 159.32,
+   "sell": 159.32,
+   "trades": 393,
+   "sell_trades": 393
+  },
+  "5": {
+   "all": 171.11,
+   "sell": 171.11,
+   "trades": 393,
+   "sell_trades": 393
+  },
+  "10": {
+   "all": 151.46,
+   "sell": 151.46,
+   "trades": 393,
+   "sell_trades": 393
+  },
+  "15": {
+   "all": 131.81,
+   "sell": 131.81,
+   "trades": 393,
+   "sell_trades": 393
+  }
+ }
+}

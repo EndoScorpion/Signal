@@ -1,0 +1,3823 @@
+[
+ {
+  "default8": {
+   "report": "b7_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 31.04,
+   "trades": 1340,
+   "lots_avg": 0.01,
+   "gross": 144.71,
+   "commission": 107.2,
+   "net": 37.51,
+   "max_dd": 131.36,
+   "by_side": {
+    "buy": {
+     "n": 806,
+     "gross": -17.29,
+     "commission": 64.48,
+     "net": -81.77,
+     "win_pct": 95.9
+    },
+    "sell": {
+     "n": 534,
+     "gross": 162.0,
+     "commission": 42.72,
+     "net": 119.28,
+     "win_pct": 55.1
+    }
+   }
+  },
+  "balance": {
+   "report": "b7_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 31.04,
+   "trades": 1340,
+   "lots_avg": 0.01,
+   "gross": 144.71,
+   "commission": 67.0,
+   "net": 77.71,
+   "max_dd": 124.13,
+   "by_side": {
+    "buy": {
+     "n": 806,
+     "gross": -17.29,
+     "commission": 40.3,
+     "net": -57.59,
+     "win_pct": 95.9
+    },
+    "sell": {
+     "n": 534,
+     "gross": 162.0,
+     "commission": 26.7,
+     "net": 135.3,
+     "win_pct": 55.1
+    }
+   }
+  },
+  "under1k": {
+   "report": "b7_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 31.04,
+   "trades": 1340,
+   "lots_avg": 0.01,
+   "gross": 144.71,
+   "commission": 93.8,
+   "net": 50.91,
+   "max_dd": 128.6,
+   "by_side": {
+    "buy": {
+     "n": 806,
+     "gross": -17.29,
+     "commission": 56.42,
+     "net": -73.71,
+     "win_pct": 95.9
+    },
+    "sell": {
+     "n": 534,
+     "gross": 162.0,
+     "commission": 37.38,
+     "net": 124.62,
+     "win_pct": 55.1
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b7_2019_s8.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -72.5,
+   "trades": 1207,
+   "lots_avg": 0.01,
+   "gross": 30.96,
+   "commission": 96.56,
+   "net": -65.6,
+   "max_dd": 145.09,
+   "by_side": {
+    "buy": {
+     "n": 687,
+     "gross": -59.04,
+     "commission": 54.96,
+     "net": -114.0,
+     "win_pct": 93.7
+    },
+    "sell": {
+     "n": 520,
+     "gross": 90.0,
+     "commission": 41.6,
+     "net": 48.4,
+     "win_pct": 52.9
+    }
+   }
+  },
+  "balance": {
+   "report": "b7_2019_s8.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -72.5,
+   "trades": 1207,
+   "lots_avg": 0.01,
+   "gross": 30.96,
+   "commission": 60.35,
+   "net": -29.39,
+   "max_dd": 140.29,
+   "by_side": {
+    "buy": {
+     "n": 687,
+     "gross": -59.04,
+     "commission": 34.35,
+     "net": -93.39,
+     "win_pct": 93.7
+    },
+    "sell": {
+     "n": 520,
+     "gross": 90.0,
+     "commission": 26.0,
+     "net": 64.0,
+     "win_pct": 52.9
+    }
+   }
+  },
+  "under1k": {
+   "report": "b7_2019_s8.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -72.5,
+   "trades": 1207,
+   "lots_avg": 0.01,
+   "gross": 30.96,
+   "commission": 84.49,
+   "net": -53.53,
+   "max_dd": 143.49,
+   "by_side": {
+    "buy": {
+     "n": 687,
+     "gross": -59.04,
+     "commission": 48.09,
+     "net": -107.13,
+     "win_pct": 93.7
+    },
+    "sell": {
+     "n": 520,
+     "gross": 90.0,
+     "commission": 36.4,
+     "net": 53.6,
+     "win_pct": 52.9
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b7_2019_sp8.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -72.5,
+   "trades": 1207,
+   "lots_avg": 0.01,
+   "gross": 30.96,
+   "commission": 96.56,
+   "net": -65.6,
+   "max_dd": 145.09,
+   "by_side": {
+    "buy": {
+     "n": 687,
+     "gross": -59.04,
+     "commission": 54.96,
+     "net": -114.0,
+     "win_pct": 93.7
+    },
+    "sell": {
+     "n": 520,
+     "gross": 90.0,
+     "commission": 41.6,
+     "net": 48.4,
+     "win_pct": 52.9
+    }
+   }
+  },
+  "balance": {
+   "report": "b7_2019_sp8.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -72.5,
+   "trades": 1207,
+   "lots_avg": 0.01,
+   "gross": 30.96,
+   "commission": 60.35,
+   "net": -29.39,
+   "max_dd": 140.29,
+   "by_side": {
+    "buy": {
+     "n": 687,
+     "gross": -59.04,
+     "commission": 34.35,
+     "net": -93.39,
+     "win_pct": 93.7
+    },
+    "sell": {
+     "n": 520,
+     "gross": 90.0,
+     "commission": 26.0,
+     "net": 64.0,
+     "win_pct": 52.9
+    }
+   }
+  },
+  "under1k": {
+   "report": "b7_2019_sp8.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -72.5,
+   "trades": 1207,
+   "lots_avg": 0.01,
+   "gross": 30.96,
+   "commission": 84.49,
+   "net": -53.53,
+   "max_dd": 143.49,
+   "by_side": {
+    "buy": {
+     "n": 687,
+     "gross": -59.04,
+     "commission": 48.09,
+     "net": -107.13,
+     "win_pct": 93.7
+    },
+    "sell": {
+     "n": 520,
+     "gross": 90.0,
+     "commission": 36.4,
+     "net": 53.6,
+     "win_pct": 52.9
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b7_2021_s2.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -52.26,
+   "trades": 1057,
+   "lots_avg": 0.01,
+   "gross": 36.28,
+   "commission": 84.56,
+   "net": -48.28,
+   "max_dd": 181.63,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 49.44,
+     "net": -86.35,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 439,
+     "gross": 73.19,
+     "commission": 35.12,
+     "net": 38.07,
+     "win_pct": 52.6
+    }
+   }
+  },
+  "balance": {
+   "report": "b7_2021_s2.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -52.26,
+   "trades": 1057,
+   "lots_avg": 0.01,
+   "gross": 36.28,
+   "commission": 52.85,
+   "net": -16.57,
+   "max_dd": 161.26,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 30.9,
+     "net": -67.81,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 439,
+     "gross": 73.19,
+     "commission": 21.95,
+     "net": 51.24,
+     "win_pct": 52.6
+    }
+   }
+  },
+  "under1k": {
+   "report": "b7_2021_s2.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -52.26,
+   "trades": 1057,
+   "lots_avg": 0.01,
+   "gross": 36.28,
+   "commission": 73.99,
+   "net": -37.71,
+   "max_dd": 174.84,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 43.26,
+     "net": -80.17,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 439,
+     "gross": 73.19,
+     "commission": 30.73,
+     "net": 42.46,
+     "win_pct": 52.6
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b7_2021_s8.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -111.46,
+   "trades": 983,
+   "lots_avg": 0.01,
+   "gross": -28.12,
+   "commission": 78.64,
+   "net": -106.76,
+   "max_dd": 182.99,
+   "by_side": {
+    "buy": {
+     "n": 542,
+     "gross": -59.26,
+     "commission": 43.36,
+     "net": -102.62,
+     "win_pct": 93.0
+    },
+    "sell": {
+     "n": 441,
+     "gross": 31.14,
+     "commission": 35.28,
+     "net": -4.14,
+     "win_pct": 51.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b7_2021_s8.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -111.46,
+   "trades": 983,
+   "lots_avg": 0.01,
+   "gross": -28.12,
+   "commission": 49.15,
+   "net": -77.27,
+   "max_dd": 163.97,
+   "by_side": {
+    "buy": {
+     "n": 542,
+     "gross": -59.26,
+     "commission": 27.1,
+     "net": -86.36,
+     "win_pct": 93.0
+    },
+    "sell": {
+     "n": 441,
+     "gross": 31.14,
+     "commission": 22.05,
+     "net": 9.09,
+     "win_pct": 51.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b7_2021_s8.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -111.46,
+   "trades": 983,
+   "lots_avg": 0.01,
+   "gross": -28.12,
+   "commission": 68.81,
+   "net": -96.93,
+   "max_dd": 176.65,
+   "by_side": {
+    "buy": {
+     "n": 542,
+     "gross": -59.26,
+     "commission": 37.94,
+     "net": -97.2,
+     "win_pct": 93.0
+    },
+    "sell": {
+     "n": 441,
+     "gross": 31.14,
+     "commission": 30.87,
+     "net": 0.27,
+     "win_pct": 51.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_round_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -94.69,
+   "trades": 511,
+   "lots_avg": 0.01,
+   "gross": -53.29,
+   "commission": 40.88,
+   "net": -94.17,
+   "max_dd": 94.57,
+   "by_side": {
+    "buy": {
+     "n": 511,
+     "gross": -53.29,
+     "commission": 40.88,
+     "net": -94.17,
+     "win_pct": 75.5
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_round_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -94.69,
+   "trades": 511,
+   "lots_avg": 0.01,
+   "gross": -53.29,
+   "commission": 25.55,
+   "net": -78.84,
+   "max_dd": 79.84,
+   "by_side": {
+    "buy": {
+     "n": 511,
+     "gross": -53.29,
+     "commission": 25.55,
+     "net": -78.84,
+     "win_pct": 75.5
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_round_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -94.69,
+   "trades": 511,
+   "lots_avg": 0.01,
+   "gross": -53.29,
+   "commission": 35.77,
+   "net": -89.06,
+   "max_dd": 89.66,
+   "by_side": {
+    "buy": {
+     "n": 511,
+     "gross": -53.29,
+     "commission": 35.77,
+     "net": -89.06,
+     "win_pct": 75.5
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_round_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -49.64,
+   "trades": 288,
+   "lots_avg": 0.01,
+   "gross": -26.18,
+   "commission": 23.04,
+   "net": -49.22,
+   "max_dd": 49.3,
+   "by_side": {
+    "buy": {
+     "n": 288,
+     "gross": -26.18,
+     "commission": 23.04,
+     "net": -49.22,
+     "win_pct": 79.9
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_round_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -49.64,
+   "trades": 288,
+   "lots_avg": 0.01,
+   "gross": -26.18,
+   "commission": 14.4,
+   "net": -40.58,
+   "max_dd": 40.78,
+   "by_side": {
+    "buy": {
+     "n": 288,
+     "gross": -26.18,
+     "commission": 14.4,
+     "net": -40.58,
+     "win_pct": 79.9
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_round_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -49.64,
+   "trades": 288,
+   "lots_avg": 0.01,
+   "gross": -26.18,
+   "commission": 20.16,
+   "net": -46.34,
+   "max_dd": 46.46,
+   "by_side": {
+    "buy": {
+     "n": 288,
+     "gross": -26.18,
+     "commission": 20.16,
+     "net": -46.34,
+     "win_pct": 79.9
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_round_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -51.12,
+   "trades": 328,
+   "lots_avg": 0.01,
+   "gross": -24.26,
+   "commission": 26.24,
+   "net": -50.5,
+   "max_dd": 50.52,
+   "by_side": {
+    "buy": {
+     "n": 328,
+     "gross": -24.26,
+     "commission": 26.24,
+     "net": -50.5,
+     "win_pct": 84.8
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_round_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -51.12,
+   "trades": 328,
+   "lots_avg": 0.01,
+   "gross": -24.26,
+   "commission": 16.4,
+   "net": -40.66,
+   "max_dd": 40.71,
+   "by_side": {
+    "buy": {
+     "n": 328,
+     "gross": -24.26,
+     "commission": 16.4,
+     "net": -40.66,
+     "win_pct": 84.8
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_round_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -51.12,
+   "trades": 328,
+   "lots_avg": 0.01,
+   "gross": -24.26,
+   "commission": 22.96,
+   "net": -47.22,
+   "max_dd": 47.25,
+   "by_side": {
+    "buy": {
+     "n": 328,
+     "gross": -24.26,
+     "commission": 22.96,
+     "net": -47.22,
+     "win_pct": 84.8
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_roundra_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -92.0,
+   "trades": 504,
+   "lots_avg": 0.01,
+   "gross": -50.96,
+   "commission": 40.32,
+   "net": -91.28,
+   "max_dd": 91.68,
+   "by_side": {
+    "buy": {
+     "n": 504,
+     "gross": -50.96,
+     "commission": 40.32,
+     "net": -91.28,
+     "win_pct": 76.6
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_roundra_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -92.0,
+   "trades": 504,
+   "lots_avg": 0.01,
+   "gross": -50.96,
+   "commission": 25.2,
+   "net": -76.16,
+   "max_dd": 77.16,
+   "by_side": {
+    "buy": {
+     "n": 504,
+     "gross": -50.96,
+     "commission": 25.2,
+     "net": -76.16,
+     "win_pct": 76.6
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_roundra_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -92.0,
+   "trades": 504,
+   "lots_avg": 0.01,
+   "gross": -50.96,
+   "commission": 35.28,
+   "net": -86.24,
+   "max_dd": 86.84,
+   "by_side": {
+    "buy": {
+     "n": 504,
+     "gross": -50.96,
+     "commission": 35.28,
+     "net": -86.24,
+     "win_pct": 76.6
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_roundra_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -59.97,
+   "trades": 283,
+   "lots_avg": 0.01,
+   "gross": -36.6,
+   "commission": 22.64,
+   "net": -59.24,
+   "max_dd": 59.26,
+   "by_side": {
+    "buy": {
+     "n": 283,
+     "gross": -36.6,
+     "commission": 22.64,
+     "net": -59.24,
+     "win_pct": 79.5
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_roundra_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -59.97,
+   "trades": 283,
+   "lots_avg": 0.01,
+   "gross": -36.6,
+   "commission": 14.15,
+   "net": -50.75,
+   "max_dd": 50.8,
+   "by_side": {
+    "buy": {
+     "n": 283,
+     "gross": -36.6,
+     "commission": 14.15,
+     "net": -50.75,
+     "win_pct": 79.5
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_roundra_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -59.97,
+   "trades": 283,
+   "lots_avg": 0.01,
+   "gross": -36.6,
+   "commission": 19.81,
+   "net": -56.41,
+   "max_dd": 56.44,
+   "by_side": {
+    "buy": {
+     "n": 283,
+     "gross": -36.6,
+     "commission": 19.81,
+     "net": -56.41,
+     "win_pct": 79.5
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -78.75,
+   "trades": 464,
+   "lots_avg": 0.01,
+   "gross": -41.38,
+   "commission": 37.12,
+   "net": -78.5,
+   "max_dd": 78.9,
+   "by_side": {
+    "buy": {
+     "n": 464,
+     "gross": -41.38,
+     "commission": 37.12,
+     "net": -78.5,
+     "win_pct": 82.8
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -78.75,
+   "trades": 464,
+   "lots_avg": 0.01,
+   "gross": -41.38,
+   "commission": 23.2,
+   "net": -64.58,
+   "max_dd": 65.58,
+   "by_side": {
+    "buy": {
+     "n": 464,
+     "gross": -41.38,
+     "commission": 23.2,
+     "net": -64.58,
+     "win_pct": 82.8
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -78.75,
+   "trades": 464,
+   "lots_avg": 0.01,
+   "gross": -41.38,
+   "commission": 32.48,
+   "net": -73.86,
+   "max_dd": 74.46,
+   "by_side": {
+    "buy": {
+     "n": 464,
+     "gross": -41.38,
+     "commission": 32.48,
+     "net": -73.86,
+     "win_pct": 82.8
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -42.16,
+   "trades": 272,
+   "lots_avg": 0.01,
+   "gross": -20.09,
+   "commission": 21.76,
+   "net": -41.85,
+   "max_dd": 41.95,
+   "by_side": {
+    "buy": {
+     "n": 272,
+     "gross": -20.09,
+     "commission": 21.76,
+     "net": -41.85,
+     "win_pct": 84.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -42.16,
+   "trades": 272,
+   "lots_avg": 0.01,
+   "gross": -20.09,
+   "commission": 13.6,
+   "net": -33.69,
+   "max_dd": 33.94,
+   "by_side": {
+    "buy": {
+     "n": 272,
+     "gross": -20.09,
+     "commission": 13.6,
+     "net": -33.69,
+     "win_pct": 84.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "8",
+   "mt4_net": -42.16,
+   "trades": 272,
+   "lots_avg": 0.01,
+   "gross": -20.09,
+   "commission": 19.04,
+   "net": -39.13,
+   "max_dd": 39.28,
+   "by_side": {
+    "buy": {
+     "n": 272,
+     "gross": -20.09,
+     "commission": 19.04,
+     "net": -39.13,
+     "win_pct": 84.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b9_wide_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -51.12,
+   "trades": 328,
+   "lots_avg": 0.01,
+   "gross": -24.26,
+   "commission": 26.24,
+   "net": -50.5,
+   "max_dd": 50.52,
+   "by_side": {
+    "buy": {
+     "n": 328,
+     "gross": -24.26,
+     "commission": 26.24,
+     "net": -50.5,
+     "win_pct": 84.8
+    }
+   }
+  },
+  "balance": {
+   "report": "b9_wide_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -51.12,
+   "trades": 328,
+   "lots_avg": 0.01,
+   "gross": -24.26,
+   "commission": 16.4,
+   "net": -40.66,
+   "max_dd": 40.71,
+   "by_side": {
+    "buy": {
+     "n": 328,
+     "gross": -24.26,
+     "commission": 16.4,
+     "net": -40.66,
+     "win_pct": 84.8
+    }
+   }
+  },
+  "under1k": {
+   "report": "b9_wide_2019_s2.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -51.12,
+   "trades": 328,
+   "lots_avg": 0.01,
+   "gross": -24.26,
+   "commission": 22.96,
+   "net": -47.22,
+   "max_dd": 47.25,
+   "by_side": {
+    "buy": {
+     "n": 328,
+     "gross": -24.26,
+     "commission": 22.96,
+     "net": -47.22,
+     "win_pct": 84.8
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b10_round_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 9.22,
+   "trades": 681,
+   "lots_avg": 0.01,
+   "gross": 63.84,
+   "commission": 54.48,
+   "net": 9.36,
+   "max_dd": 68.42,
+   "by_side": {
+    "buy": {
+     "n": 608,
+     "gross": -41.16,
+     "commission": 48.64,
+     "net": -89.8,
+     "win_pct": 87.3
+    },
+    "sell": {
+     "n": 73,
+     "gross": 105.0,
+     "commission": 5.84,
+     "net": 99.16,
+     "win_pct": 74.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b10_round_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 9.22,
+   "trades": 681,
+   "lots_avg": 0.01,
+   "gross": 63.84,
+   "commission": 34.05,
+   "net": 29.79,
+   "max_dd": 53.45,
+   "by_side": {
+    "buy": {
+     "n": 608,
+     "gross": -41.16,
+     "commission": 30.4,
+     "net": -71.56,
+     "win_pct": 87.3
+    },
+    "sell": {
+     "n": 73,
+     "gross": 105.0,
+     "commission": 3.65,
+     "net": 101.35,
+     "win_pct": 74.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b10_round_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 9.22,
+   "trades": 681,
+   "lots_avg": 0.01,
+   "gross": 63.84,
+   "commission": 47.67,
+   "net": 16.17,
+   "max_dd": 63.43,
+   "by_side": {
+    "buy": {
+     "n": 608,
+     "gross": -41.16,
+     "commission": 42.56,
+     "net": -83.72,
+     "win_pct": 87.3
+    },
+    "sell": {
+     "n": 73,
+     "gross": 105.0,
+     "commission": 5.11,
+     "net": 99.89,
+     "win_pct": 74.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b10_round_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 2.01,
+   "trades": 1363,
+   "lots_avg": 0.01,
+   "gross": 117.66,
+   "commission": 109.04,
+   "net": 8.62,
+   "max_dd": 135.14,
+   "by_side": {
+    "buy": {
+     "n": 824,
+     "gross": -17.34,
+     "commission": 65.92,
+     "net": -83.26,
+     "win_pct": 94.4
+    },
+    "sell": {
+     "n": 539,
+     "gross": 135.0,
+     "commission": 43.12,
+     "net": 91.88,
+     "win_pct": 54.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b10_round_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 2.01,
+   "trades": 1363,
+   "lots_avg": 0.01,
+   "gross": 117.66,
+   "commission": 68.15,
+   "net": 49.51,
+   "max_dd": 129.37,
+   "by_side": {
+    "buy": {
+     "n": 824,
+     "gross": -17.34,
+     "commission": 41.2,
+     "net": -58.54,
+     "win_pct": 94.4
+    },
+    "sell": {
+     "n": 539,
+     "gross": 135.0,
+     "commission": 26.95,
+     "net": 108.05,
+     "win_pct": 54.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b10_round_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 2.01,
+   "trades": 1363,
+   "lots_avg": 0.01,
+   "gross": 117.66,
+   "commission": 95.41,
+   "net": 22.25,
+   "max_dd": 133.17,
+   "by_side": {
+    "buy": {
+     "n": 824,
+     "gross": -17.34,
+     "commission": 57.68,
+     "net": -75.02,
+     "win_pct": 94.4
+    },
+    "sell": {
+     "n": 539,
+     "gross": 135.0,
+     "commission": 37.73,
+     "net": 97.27,
+     "win_pct": 54.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b10_roundra_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 15.17,
+   "trades": 673,
+   "lots_avg": 0.01,
+   "gross": 69.25,
+   "commission": 53.84,
+   "net": 15.41,
+   "max_dd": 66.19,
+   "by_side": {
+    "buy": {
+     "n": 600,
+     "gross": -35.75,
+     "commission": 48.0,
+     "net": -83.75,
+     "win_pct": 88.8
+    },
+    "sell": {
+     "n": 73,
+     "gross": 105.0,
+     "commission": 5.84,
+     "net": 99.16,
+     "win_pct": 74.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b10_roundra_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 15.17,
+   "trades": 673,
+   "lots_avg": 0.01,
+   "gross": 69.25,
+   "commission": 33.65,
+   "net": 35.6,
+   "max_dd": 51.49,
+   "by_side": {
+    "buy": {
+     "n": 600,
+     "gross": -35.75,
+     "commission": 30.0,
+     "net": -65.75,
+     "win_pct": 88.8
+    },
+    "sell": {
+     "n": 73,
+     "gross": 105.0,
+     "commission": 3.65,
+     "net": 101.35,
+     "win_pct": 74.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b10_roundra_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 15.17,
+   "trades": 673,
+   "lots_avg": 0.01,
+   "gross": 69.25,
+   "commission": 47.11,
+   "net": 22.14,
+   "max_dd": 61.29,
+   "by_side": {
+    "buy": {
+     "n": 600,
+     "gross": -35.75,
+     "commission": 42.0,
+     "net": -77.75,
+     "win_pct": 88.8
+    },
+    "sell": {
+     "n": 73,
+     "gross": 105.0,
+     "commission": 5.11,
+     "net": 99.89,
+     "win_pct": 74.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b10_roundra_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 12.35,
+   "trades": 1347,
+   "lots_avg": 0.01,
+   "gross": 126.99,
+   "commission": 107.76,
+   "net": 19.23,
+   "max_dd": 132.6,
+   "by_side": {
+    "buy": {
+     "n": 815,
+     "gross": -29.01,
+     "commission": 65.2,
+     "net": -94.21,
+     "win_pct": 94.4
+    },
+    "sell": {
+     "n": 532,
+     "gross": 156.0,
+     "commission": 42.56,
+     "net": 113.44,
+     "win_pct": 54.9
+    }
+   }
+  },
+  "balance": {
+   "report": "b10_roundra_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 12.35,
+   "trades": 1347,
+   "lots_avg": 0.01,
+   "gross": 126.99,
+   "commission": 67.35,
+   "net": 59.64,
+   "max_dd": 127.26,
+   "by_side": {
+    "buy": {
+     "n": 815,
+     "gross": -29.01,
+     "commission": 40.75,
+     "net": -69.76,
+     "win_pct": 94.4
+    },
+    "sell": {
+     "n": 532,
+     "gross": 156.0,
+     "commission": 26.6,
+     "net": 129.4,
+     "win_pct": 54.9
+    }
+   }
+  },
+  "under1k": {
+   "report": "b10_roundra_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 12.35,
+   "trades": 1347,
+   "lots_avg": 0.01,
+   "gross": 126.99,
+   "commission": 94.29,
+   "net": 32.7,
+   "max_dd": 130.82,
+   "by_side": {
+    "buy": {
+     "n": 815,
+     "gross": -29.01,
+     "commission": 57.05,
+     "net": -86.06,
+     "win_pct": 94.4
+    },
+    "sell": {
+     "n": 532,
+     "gross": 156.0,
+     "commission": 37.24,
+     "net": 118.76,
+     "win_pct": 54.9
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b10_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -57.62,
+   "trades": 530,
+   "lots_avg": 0.01,
+   "gross": -15.29,
+   "commission": 42.4,
+   "net": -57.69,
+   "max_dd": 58.24,
+   "by_side": {
+    "buy": {
+     "n": 530,
+     "gross": -15.29,
+     "commission": 42.4,
+     "net": -57.69,
+     "win_pct": 87.4
+    }
+   }
+  },
+  "balance": {
+   "report": "b10_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -57.62,
+   "trades": 530,
+   "lots_avg": 0.01,
+   "gross": -15.29,
+   "commission": 26.5,
+   "net": -41.79,
+   "max_dd": 43.09,
+   "by_side": {
+    "buy": {
+     "n": 530,
+     "gross": -15.29,
+     "commission": 26.5,
+     "net": -41.79,
+     "win_pct": 87.4
+    }
+   }
+  },
+  "under1k": {
+   "report": "b10_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -57.62,
+   "trades": 530,
+   "lots_avg": 0.01,
+   "gross": -15.29,
+   "commission": 37.1,
+   "net": -52.39,
+   "max_dd": 53.19,
+   "by_side": {
+    "buy": {
+     "n": 530,
+     "gross": -15.29,
+     "commission": 37.1,
+     "net": -52.39,
+     "win_pct": 87.4
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b10_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -31.41,
+   "trades": 318,
+   "lots_avg": 0.01,
+   "gross": -5.76,
+   "commission": 25.44,
+   "net": -31.2,
+   "max_dd": 31.37,
+   "by_side": {
+    "buy": {
+     "n": 318,
+     "gross": -5.76,
+     "commission": 25.44,
+     "net": -31.2,
+     "win_pct": 88.7
+    }
+   }
+  },
+  "balance": {
+   "report": "b10_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -31.41,
+   "trades": 318,
+   "lots_avg": 0.01,
+   "gross": -5.76,
+   "commission": 15.9,
+   "net": -21.66,
+   "max_dd": 21.98,
+   "by_side": {
+    "buy": {
+     "n": 318,
+     "gross": -5.76,
+     "commission": 15.9,
+     "net": -21.66,
+     "win_pct": 88.7
+    }
+   }
+  },
+  "under1k": {
+   "report": "b10_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -31.41,
+   "trades": 318,
+   "lots_avg": 0.01,
+   "gross": -5.76,
+   "commission": 22.26,
+   "net": -28.02,
+   "max_dd": 28.24,
+   "by_side": {
+    "buy": {
+     "n": 318,
+     "gross": -5.76,
+     "commission": 22.26,
+     "net": -28.02,
+     "win_pct": 88.7
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b11_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -30.05,
+   "trades": 204,
+   "lots_avg": 0.01,
+   "gross": -12.0,
+   "commission": 16.32,
+   "net": -28.32,
+   "max_dd": 39.84,
+   "by_side": {
+    "buy": {
+     "n": 204,
+     "gross": -12.0,
+     "commission": 16.32,
+     "net": -28.32,
+     "win_pct": 23.5
+    }
+   }
+  },
+  "balance": {
+   "report": "b11_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -30.05,
+   "trades": 204,
+   "lots_avg": 0.01,
+   "gross": -12.0,
+   "commission": 10.2,
+   "net": -22.2,
+   "max_dd": 35.4,
+   "by_side": {
+    "buy": {
+     "n": 204,
+     "gross": -12.0,
+     "commission": 10.2,
+     "net": -22.2,
+     "win_pct": 23.5
+    }
+   }
+  },
+  "under1k": {
+   "report": "b11_wide_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -30.05,
+   "trades": 204,
+   "lots_avg": 0.01,
+   "gross": -12.0,
+   "commission": 14.28,
+   "net": -26.28,
+   "max_dd": 38.36,
+   "by_side": {
+    "buy": {
+     "n": 204,
+     "gross": -12.0,
+     "commission": 14.28,
+     "net": -26.28,
+     "win_pct": 23.5
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b11_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -26.33,
+   "trades": 101,
+   "lots_avg": 0.01,
+   "gross": -14.6,
+   "commission": 8.08,
+   "net": -22.68,
+   "max_dd": 29.84,
+   "by_side": {
+    "buy": {
+     "n": 100,
+     "gross": -11.6,
+     "commission": 8.0,
+     "net": -19.6,
+     "win_pct": 22.0
+    },
+    "sell": {
+     "n": 1,
+     "gross": -3.0,
+     "commission": 0.08,
+     "net": -3.08,
+     "win_pct": 0.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b11_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -26.33,
+   "trades": 101,
+   "lots_avg": 0.01,
+   "gross": -14.6,
+   "commission": 5.05,
+   "net": -19.65,
+   "max_dd": 27.5,
+   "by_side": {
+    "buy": {
+     "n": 100,
+     "gross": -11.6,
+     "commission": 5.0,
+     "net": -16.6,
+     "win_pct": 22.0
+    },
+    "sell": {
+     "n": 1,
+     "gross": -3.0,
+     "commission": 0.05,
+     "net": -3.05,
+     "win_pct": 0.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b11_wide_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -26.33,
+   "trades": 101,
+   "lots_avg": 0.01,
+   "gross": -14.6,
+   "commission": 7.07,
+   "net": -21.67,
+   "max_dd": 29.06,
+   "by_side": {
+    "buy": {
+     "n": 100,
+     "gross": -11.6,
+     "commission": 7.0,
+     "net": -18.6,
+     "win_pct": 22.0
+    },
+    "sell": {
+     "n": 1,
+     "gross": -3.0,
+     "commission": 0.07,
+     "net": -3.07,
+     "win_pct": 0.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b11_wide_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -26.23,
+   "trades": 77,
+   "lots_avg": 0.01,
+   "gross": -17.0,
+   "commission": 6.16,
+   "net": -23.16,
+   "max_dd": 27.2,
+   "by_side": {
+    "buy": {
+     "n": 77,
+     "gross": -17.0,
+     "commission": 6.16,
+     "net": -23.16,
+     "win_pct": 19.5
+    }
+   }
+  },
+  "balance": {
+   "report": "b11_wide_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -26.23,
+   "trades": 77,
+   "lots_avg": 0.01,
+   "gross": -17.0,
+   "commission": 3.85,
+   "net": -20.85,
+   "max_dd": 26.0,
+   "by_side": {
+    "buy": {
+     "n": 77,
+     "gross": -17.0,
+     "commission": 3.85,
+     "net": -20.85,
+     "win_pct": 19.5
+    }
+   }
+  },
+  "under1k": {
+   "report": "b11_wide_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -26.23,
+   "trades": 77,
+   "lots_avg": 0.01,
+   "gross": -17.0,
+   "commission": 5.39,
+   "net": -22.39,
+   "max_dd": 26.8,
+   "by_side": {
+    "buy": {
+     "n": 77,
+     "gross": -17.0,
+     "commission": 5.39,
+     "net": -22.39,
+     "win_pct": 19.5
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_A_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 7.08,
+   "trades": 109,
+   "lots_avg": 0.01,
+   "gross": 15.67,
+   "commission": 8.72,
+   "net": 6.95,
+   "max_dd": 16.21,
+   "by_side": {
+    "buy": {
+     "n": 48,
+     "gross": 10.85,
+     "commission": 3.84,
+     "net": 7.01,
+     "win_pct": 58.3
+    },
+    "sell": {
+     "n": 61,
+     "gross": 4.82,
+     "commission": 4.88,
+     "net": -0.06,
+     "win_pct": 49.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_A_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 7.08,
+   "trades": 109,
+   "lots_avg": 0.01,
+   "gross": 15.67,
+   "commission": 5.45,
+   "net": 10.22,
+   "max_dd": 14.41,
+   "by_side": {
+    "buy": {
+     "n": 48,
+     "gross": 10.85,
+     "commission": 2.4,
+     "net": 8.45,
+     "win_pct": 58.3
+    },
+    "sell": {
+     "n": 61,
+     "gross": 4.82,
+     "commission": 3.05,
+     "net": 1.77,
+     "win_pct": 49.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_A_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 7.08,
+   "trades": 109,
+   "lots_avg": 0.01,
+   "gross": 15.67,
+   "commission": 7.63,
+   "net": 8.04,
+   "max_dd": 15.61,
+   "by_side": {
+    "buy": {
+     "n": 48,
+     "gross": 10.85,
+     "commission": 3.36,
+     "net": 7.49,
+     "win_pct": 58.3
+    },
+    "sell": {
+     "n": 61,
+     "gross": 4.82,
+     "commission": 4.27,
+     "net": 0.55,
+     "win_pct": 49.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_B_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 19.23,
+   "trades": 109,
+   "lots_avg": 0.01,
+   "gross": 27.82,
+   "commission": 8.72,
+   "net": 19.1,
+   "max_dd": 19.54,
+   "by_side": {
+    "buy": {
+     "n": 48,
+     "gross": 14.9,
+     "commission": 3.84,
+     "net": 11.06,
+     "win_pct": 39.6
+    },
+    "sell": {
+     "n": 61,
+     "gross": 12.92,
+     "commission": 4.88,
+     "net": 8.04,
+     "win_pct": 34.4
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_B_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 19.23,
+   "trades": 109,
+   "lots_avg": 0.01,
+   "gross": 27.82,
+   "commission": 5.45,
+   "net": 22.37,
+   "max_dd": 18.13,
+   "by_side": {
+    "buy": {
+     "n": 48,
+     "gross": 14.9,
+     "commission": 2.4,
+     "net": 12.5,
+     "win_pct": 39.6
+    },
+    "sell": {
+     "n": 61,
+     "gross": 12.92,
+     "commission": 3.05,
+     "net": 9.87,
+     "win_pct": 34.4
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_B_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 19.23,
+   "trades": 109,
+   "lots_avg": 0.01,
+   "gross": 27.82,
+   "commission": 7.63,
+   "net": 20.19,
+   "max_dd": 19.07,
+   "by_side": {
+    "buy": {
+     "n": 48,
+     "gross": 14.9,
+     "commission": 3.36,
+     "net": 11.54,
+     "win_pct": 39.6
+    },
+    "sell": {
+     "n": 61,
+     "gross": 12.92,
+     "commission": 4.27,
+     "net": 8.65,
+     "win_pct": 34.4
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_B_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -47.66,
+   "trades": 91,
+   "lots_avg": 0.01,
+   "gross": -40.38,
+   "commission": 7.28,
+   "net": -47.66,
+   "max_dd": 47.66,
+   "by_side": {
+    "buy": {
+     "n": 47,
+     "gross": -21.09,
+     "commission": 3.76,
+     "net": -24.85,
+     "win_pct": 21.3
+    },
+    "sell": {
+     "n": 44,
+     "gross": -19.29,
+     "commission": 3.52,
+     "net": -22.81,
+     "win_pct": 22.7
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_B_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -47.66,
+   "trades": 91,
+   "lots_avg": 0.01,
+   "gross": -40.38,
+   "commission": 4.55,
+   "net": -44.93,
+   "max_dd": 44.93,
+   "by_side": {
+    "buy": {
+     "n": 47,
+     "gross": -21.09,
+     "commission": 2.35,
+     "net": -23.44,
+     "win_pct": 21.3
+    },
+    "sell": {
+     "n": 44,
+     "gross": -19.29,
+     "commission": 2.2,
+     "net": -21.49,
+     "win_pct": 22.7
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_B_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -47.66,
+   "trades": 91,
+   "lots_avg": 0.01,
+   "gross": -40.38,
+   "commission": 6.37,
+   "net": -46.75,
+   "max_dd": 46.75,
+   "by_side": {
+    "buy": {
+     "n": 47,
+     "gross": -21.09,
+     "commission": 3.29,
+     "net": -24.38,
+     "win_pct": 21.3
+    },
+    "sell": {
+     "n": 44,
+     "gross": -19.29,
+     "commission": 3.08,
+     "net": -22.37,
+     "win_pct": 22.7
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_B_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -7.64,
+   "trades": 148,
+   "lots_avg": 0.01,
+   "gross": 4.42,
+   "commission": 11.84,
+   "net": -7.42,
+   "max_dd": 29.35,
+   "by_side": {
+    "buy": {
+     "n": 69,
+     "gross": -3.1,
+     "commission": 5.52,
+     "net": -8.62,
+     "win_pct": 34.8
+    },
+    "sell": {
+     "n": 79,
+     "gross": 7.52,
+     "commission": 6.32,
+     "net": 1.2,
+     "win_pct": 38.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_B_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -7.64,
+   "trades": 148,
+   "lots_avg": 0.01,
+   "gross": 4.42,
+   "commission": 7.4,
+   "net": -2.98,
+   "max_dd": 28.06,
+   "by_side": {
+    "buy": {
+     "n": 69,
+     "gross": -3.1,
+     "commission": 3.45,
+     "net": -6.55,
+     "win_pct": 34.8
+    },
+    "sell": {
+     "n": 79,
+     "gross": 7.52,
+     "commission": 3.95,
+     "net": 3.57,
+     "win_pct": 38.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_B_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -7.64,
+   "trades": 148,
+   "lots_avg": 0.01,
+   "gross": 4.42,
+   "commission": 10.36,
+   "net": -5.94,
+   "max_dd": 28.92,
+   "by_side": {
+    "buy": {
+     "n": 69,
+     "gross": -3.1,
+     "commission": 4.83,
+     "net": -7.93,
+     "win_pct": 34.8
+    },
+    "sell": {
+     "n": 79,
+     "gross": 7.52,
+     "commission": 5.53,
+     "net": 1.99,
+     "win_pct": 38.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_C_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 17.61,
+   "trades": 119,
+   "lots_avg": 0.01,
+   "gross": 26.98,
+   "commission": 9.52,
+   "net": 17.46,
+   "max_dd": 25.38,
+   "by_side": {
+    "buy": {
+     "n": 56,
+     "gross": 6.71,
+     "commission": 4.48,
+     "net": 2.23,
+     "win_pct": 51.8
+    },
+    "sell": {
+     "n": 63,
+     "gross": 20.27,
+     "commission": 5.04,
+     "net": 15.23,
+     "win_pct": 57.1
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_C_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 17.61,
+   "trades": 119,
+   "lots_avg": 0.01,
+   "gross": 26.98,
+   "commission": 5.95,
+   "net": 21.03,
+   "max_dd": 24.51,
+   "by_side": {
+    "buy": {
+     "n": 56,
+     "gross": 6.71,
+     "commission": 2.8,
+     "net": 3.91,
+     "win_pct": 51.8
+    },
+    "sell": {
+     "n": 63,
+     "gross": 20.27,
+     "commission": 3.15,
+     "net": 17.12,
+     "win_pct": 57.1
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_C_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 17.61,
+   "trades": 119,
+   "lots_avg": 0.01,
+   "gross": 26.98,
+   "commission": 8.33,
+   "net": 18.65,
+   "max_dd": 25.09,
+   "by_side": {
+    "buy": {
+     "n": 56,
+     "gross": 6.71,
+     "commission": 3.92,
+     "net": 2.79,
+     "win_pct": 51.8
+    },
+    "sell": {
+     "n": 63,
+     "gross": 20.27,
+     "commission": 4.41,
+     "net": 15.86,
+     "win_pct": 57.1
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_C_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -40.29,
+   "trades": 198,
+   "lots_avg": 0.01,
+   "gross": -24.45,
+   "commission": 15.84,
+   "net": -40.29,
+   "max_dd": 43.05,
+   "by_side": {
+    "buy": {
+     "n": 104,
+     "gross": -22.13,
+     "commission": 8.32,
+     "net": -30.45,
+     "win_pct": 42.3
+    },
+    "sell": {
+     "n": 94,
+     "gross": -2.32,
+     "commission": 7.52,
+     "net": -9.84,
+     "win_pct": 50.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_C_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -40.29,
+   "trades": 198,
+   "lots_avg": 0.01,
+   "gross": -24.45,
+   "commission": 9.9,
+   "net": -34.35,
+   "max_dd": 37.78,
+   "by_side": {
+    "buy": {
+     "n": 104,
+     "gross": -22.13,
+     "commission": 5.2,
+     "net": -27.33,
+     "win_pct": 42.3
+    },
+    "sell": {
+     "n": 94,
+     "gross": -2.32,
+     "commission": 4.7,
+     "net": -7.02,
+     "win_pct": 50.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_C_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -40.29,
+   "trades": 198,
+   "lots_avg": 0.01,
+   "gross": -24.45,
+   "commission": 13.86,
+   "net": -38.31,
+   "max_dd": 41.11,
+   "by_side": {
+    "buy": {
+     "n": 104,
+     "gross": -22.13,
+     "commission": 7.28,
+     "net": -29.41,
+     "win_pct": 42.3
+    },
+    "sell": {
+     "n": 94,
+     "gross": -2.32,
+     "commission": 6.58,
+     "net": -8.9,
+     "win_pct": 50.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_C_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -13.68,
+   "trades": 217,
+   "lots_avg": 0.01,
+   "gross": 3.98,
+   "commission": 17.36,
+   "net": -13.38,
+   "max_dd": 34.9,
+   "by_side": {
+    "buy": {
+     "n": 113,
+     "gross": -23.25,
+     "commission": 9.04,
+     "net": -32.29,
+     "win_pct": 40.7
+    },
+    "sell": {
+     "n": 104,
+     "gross": 27.23,
+     "commission": 8.32,
+     "net": 18.91,
+     "win_pct": 59.6
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_C_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -13.68,
+   "trades": 217,
+   "lots_avg": 0.01,
+   "gross": 3.98,
+   "commission": 10.85,
+   "net": -6.87,
+   "max_dd": 30.55,
+   "by_side": {
+    "buy": {
+     "n": 113,
+     "gross": -23.25,
+     "commission": 5.65,
+     "net": -28.9,
+     "win_pct": 40.7
+    },
+    "sell": {
+     "n": 104,
+     "gross": 27.23,
+     "commission": 5.2,
+     "net": 22.03,
+     "win_pct": 59.6
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_C_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -13.68,
+   "trades": 217,
+   "lots_avg": 0.01,
+   "gross": 3.98,
+   "commission": 15.19,
+   "net": -11.21,
+   "max_dd": 33.24,
+   "by_side": {
+    "buy": {
+     "n": 113,
+     "gross": -23.25,
+     "commission": 7.91,
+     "net": -31.16,
+     "win_pct": 40.7
+    },
+    "sell": {
+     "n": 104,
+     "gross": 27.23,
+     "commission": 7.28,
+     "net": 19.95,
+     "win_pct": 59.6
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_D_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 4.52,
+   "trades": 194,
+   "lots_avg": 0.01,
+   "gross": 19.81,
+   "commission": 15.52,
+   "net": 4.29,
+   "max_dd": 27.46,
+   "by_side": {
+    "buy": {
+     "n": 87,
+     "gross": 0.99,
+     "commission": 6.96,
+     "net": -5.97,
+     "win_pct": 50.6
+    },
+    "sell": {
+     "n": 107,
+     "gross": 18.82,
+     "commission": 8.56,
+     "net": 10.26,
+     "win_pct": 52.3
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_D_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 4.52,
+   "trades": 194,
+   "lots_avg": 0.01,
+   "gross": 19.81,
+   "commission": 9.7,
+   "net": 10.11,
+   "max_dd": 24.31,
+   "by_side": {
+    "buy": {
+     "n": 87,
+     "gross": 0.99,
+     "commission": 4.35,
+     "net": -3.36,
+     "win_pct": 50.6
+    },
+    "sell": {
+     "n": 107,
+     "gross": 18.82,
+     "commission": 5.35,
+     "net": 13.47,
+     "win_pct": 52.3
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_D_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 4.52,
+   "trades": 194,
+   "lots_avg": 0.01,
+   "gross": 19.81,
+   "commission": 13.58,
+   "net": 6.23,
+   "max_dd": 26.41,
+   "by_side": {
+    "buy": {
+     "n": 87,
+     "gross": 0.99,
+     "commission": 6.09,
+     "net": -5.1,
+     "win_pct": 50.6
+    },
+    "sell": {
+     "n": 107,
+     "gross": 18.82,
+     "commission": 7.49,
+     "net": 11.33,
+     "win_pct": 52.3
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracket_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -190.71,
+   "trades": 1058,
+   "lots_avg": 0.01,
+   "gross": -100.08,
+   "commission": 84.64,
+   "net": -184.72,
+   "max_dd": 337.92,
+   "by_side": {
+    "buy": {
+     "n": 776,
+     "gross": -52.08,
+     "commission": 62.08,
+     "net": -114.16,
+     "win_pct": 82.0
+    },
+    "sell": {
+     "n": 282,
+     "gross": -48.0,
+     "commission": 22.56,
+     "net": -70.56,
+     "win_pct": 47.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracket_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -190.71,
+   "trades": 1058,
+   "lots_avg": 0.01,
+   "gross": -100.08,
+   "commission": 52.9,
+   "net": -152.98,
+   "max_dd": 316.53,
+   "by_side": {
+    "buy": {
+     "n": 776,
+     "gross": -52.08,
+     "commission": 38.8,
+     "net": -90.88,
+     "win_pct": 82.0
+    },
+    "sell": {
+     "n": 282,
+     "gross": -48.0,
+     "commission": 14.1,
+     "net": -62.1,
+     "win_pct": 47.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracket_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -190.71,
+   "trades": 1058,
+   "lots_avg": 0.01,
+   "gross": -100.08,
+   "commission": 74.06,
+   "net": -174.14,
+   "max_dd": 330.79,
+   "by_side": {
+    "buy": {
+     "n": 776,
+     "gross": -52.08,
+     "commission": 54.32,
+     "net": -106.4,
+     "win_pct": 82.0
+    },
+    "sell": {
+     "n": 282,
+     "gross": -48.0,
+     "commission": 19.74,
+     "net": -67.74,
+     "win_pct": 47.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracket_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 126.52,
+   "trades": 1780,
+   "lots_avg": 0.01,
+   "gross": 298.33,
+   "commission": 142.4,
+   "net": 155.93,
+   "max_dd": 209.9,
+   "by_side": {
+    "buy": {
+     "n": 1058,
+     "gross": 76.33,
+     "commission": 84.64,
+     "net": -8.31,
+     "win_pct": 86.4
+    },
+    "sell": {
+     "n": 722,
+     "gross": 222.0,
+     "commission": 57.76,
+     "net": 164.24,
+     "win_pct": 55.1
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracket_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 126.52,
+   "trades": 1780,
+   "lots_avg": 0.01,
+   "gross": 298.33,
+   "commission": 89.0,
+   "net": 209.33,
+   "max_dd": 200.69,
+   "by_side": {
+    "buy": {
+     "n": 1058,
+     "gross": 76.33,
+     "commission": 52.9,
+     "net": 23.43,
+     "win_pct": 86.4
+    },
+    "sell": {
+     "n": 722,
+     "gross": 222.0,
+     "commission": 36.1,
+     "net": 185.9,
+     "win_pct": 55.1
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracket_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 126.52,
+   "trades": 1780,
+   "lots_avg": 0.01,
+   "gross": 298.33,
+   "commission": 124.6,
+   "net": 173.73,
+   "max_dd": 206.83,
+   "by_side": {
+    "buy": {
+     "n": 1058,
+     "gross": 76.33,
+     "commission": 74.06,
+     "net": 2.27,
+     "win_pct": 86.4
+    },
+    "sell": {
+     "n": 722,
+     "gross": 222.0,
+     "commission": 50.54,
+     "net": 171.46,
+     "win_pct": 55.1
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracket_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -24.75,
+   "trades": 832,
+   "lots_avg": 0.01,
+   "gross": 54.08,
+   "commission": 66.56,
+   "net": -12.48,
+   "max_dd": 105.69,
+   "by_side": {
+    "buy": {
+     "n": 655,
+     "gross": 12.16,
+     "commission": 52.4,
+     "net": -40.24,
+     "win_pct": 81.7
+    },
+    "sell": {
+     "n": 177,
+     "gross": 41.92,
+     "commission": 14.16,
+     "net": 27.76,
+     "win_pct": 53.7
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracket_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -24.75,
+   "trades": 832,
+   "lots_avg": 0.01,
+   "gross": 54.08,
+   "commission": 41.6,
+   "net": 12.48,
+   "max_dd": 96.82,
+   "by_side": {
+    "buy": {
+     "n": 655,
+     "gross": 12.16,
+     "commission": 32.75,
+     "net": -20.59,
+     "win_pct": 81.7
+    },
+    "sell": {
+     "n": 177,
+     "gross": 41.92,
+     "commission": 8.85,
+     "net": 33.07,
+     "win_pct": 53.7
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracket_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -24.75,
+   "trades": 832,
+   "lots_avg": 0.01,
+   "gross": 54.08,
+   "commission": 58.24,
+   "net": -4.16,
+   "max_dd": 102.68,
+   "by_side": {
+    "buy": {
+     "n": 655,
+     "gross": 12.16,
+     "commission": 45.85,
+     "net": -33.69,
+     "win_pct": 81.7
+    },
+    "sell": {
+     "n": 177,
+     "gross": 41.92,
+     "commission": 12.39,
+     "net": 29.53,
+     "win_pct": 53.7
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracket_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -213.36,
+   "trades": 1467,
+   "lots_avg": 0.01,
+   "gross": -75.88,
+   "commission": 117.36,
+   "net": -193.24,
+   "max_dd": 304.09,
+   "by_side": {
+    "buy": {
+     "n": 813,
+     "gross": -129.91,
+     "commission": 65.04,
+     "net": -194.95,
+     "win_pct": 82.0
+    },
+    "sell": {
+     "n": 654,
+     "gross": 54.03,
+     "commission": 52.32,
+     "net": 1.71,
+     "win_pct": 51.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracket_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -213.36,
+   "trades": 1467,
+   "lots_avg": 0.01,
+   "gross": -75.88,
+   "commission": 73.35,
+   "net": -149.23,
+   "max_dd": 278.5,
+   "by_side": {
+    "buy": {
+     "n": 813,
+     "gross": -129.91,
+     "commission": 40.65,
+     "net": -170.56,
+     "win_pct": 82.0
+    },
+    "sell": {
+     "n": 654,
+     "gross": 54.03,
+     "commission": 32.7,
+     "net": 21.33,
+     "win_pct": 51.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracket_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -213.36,
+   "trades": 1467,
+   "lots_avg": 0.01,
+   "gross": -75.88,
+   "commission": 102.69,
+   "net": -178.57,
+   "max_dd": 295.52,
+   "by_side": {
+    "buy": {
+     "n": 813,
+     "gross": -129.91,
+     "commission": 56.91,
+     "net": -186.82,
+     "win_pct": 82.0
+    },
+    "sell": {
+     "n": 654,
+     "gross": 54.03,
+     "commission": 45.78,
+     "net": 8.25,
+     "win_pct": 51.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracketreg_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 147.06,
+   "trades": 1037,
+   "lots_avg": 0.01,
+   "gross": 238.92,
+   "commission": 82.96,
+   "net": 155.96,
+   "max_dd": 144.05,
+   "by_side": {
+    "buy": {
+     "n": 920,
+     "gross": 109.92,
+     "commission": 73.6,
+     "net": 36.32,
+     "win_pct": 79.9
+    },
+    "sell": {
+     "n": 117,
+     "gross": 129.0,
+     "commission": 9.36,
+     "net": 119.64,
+     "win_pct": 68.4
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracketreg_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 147.06,
+   "trades": 1037,
+   "lots_avg": 0.01,
+   "gross": 238.92,
+   "commission": 51.85,
+   "net": 187.07,
+   "max_dd": 132.89,
+   "by_side": {
+    "buy": {
+     "n": 920,
+     "gross": 109.92,
+     "commission": 46.0,
+     "net": 63.92,
+     "win_pct": 79.9
+    },
+    "sell": {
+     "n": 117,
+     "gross": 129.0,
+     "commission": 5.85,
+     "net": 123.15,
+     "win_pct": 68.4
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracketreg_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 147.06,
+   "trades": 1037,
+   "lots_avg": 0.01,
+   "gross": 238.92,
+   "commission": 72.59,
+   "net": 166.33,
+   "max_dd": 140.33,
+   "by_side": {
+    "buy": {
+     "n": 920,
+     "gross": 109.92,
+     "commission": 64.4,
+     "net": 45.52,
+     "win_pct": 79.9
+    },
+    "sell": {
+     "n": 117,
+     "gross": 129.0,
+     "commission": 8.19,
+     "net": 120.81,
+     "win_pct": 68.4
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracketreg_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 74.21,
+   "trades": 1702,
+   "lots_avg": 0.01,
+   "gross": 226.33,
+   "commission": 136.16,
+   "net": 90.17,
+   "max_dd": 207.76,
+   "by_side": {
+    "buy": {
+     "n": 932,
+     "gross": 40.33,
+     "commission": 74.56,
+     "net": -34.23,
+     "win_pct": 90.7
+    },
+    "sell": {
+     "n": 770,
+     "gross": 186.0,
+     "commission": 61.6,
+     "net": 124.4,
+     "win_pct": 54.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracketreg_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 74.21,
+   "trades": 1702,
+   "lots_avg": 0.01,
+   "gross": 226.33,
+   "commission": 85.1,
+   "net": 141.23,
+   "max_dd": 202.03,
+   "by_side": {
+    "buy": {
+     "n": 932,
+     "gross": 40.33,
+     "commission": 46.6,
+     "net": -6.27,
+     "win_pct": 90.7
+    },
+    "sell": {
+     "n": 770,
+     "gross": 186.0,
+     "commission": 38.5,
+     "net": 147.5,
+     "win_pct": 54.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracketreg_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 74.21,
+   "trades": 1702,
+   "lots_avg": 0.01,
+   "gross": 226.33,
+   "commission": 119.14,
+   "net": 107.19,
+   "max_dd": 205.85,
+   "by_side": {
+    "buy": {
+     "n": 932,
+     "gross": 40.33,
+     "commission": 65.24,
+     "net": -24.91,
+     "win_pct": 90.7
+    },
+    "sell": {
+     "n": 770,
+     "gross": 186.0,
+     "commission": 53.9,
+     "net": 132.1,
+     "win_pct": 54.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracketreg_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 30.93,
+   "trades": 781,
+   "lots_avg": 0.01,
+   "gross": 108.84,
+   "commission": 62.48,
+   "net": 46.36,
+   "max_dd": 91.75,
+   "by_side": {
+    "buy": {
+     "n": 692,
+     "gross": 21.84,
+     "commission": 55.36,
+     "net": -33.52,
+     "win_pct": 80.5
+    },
+    "sell": {
+     "n": 89,
+     "gross": 87.0,
+     "commission": 7.12,
+     "net": 79.88,
+     "win_pct": 66.3
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracketreg_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 30.93,
+   "trades": 781,
+   "lots_avg": 0.01,
+   "gross": 108.84,
+   "commission": 39.05,
+   "net": 69.79,
+   "max_dd": 84.31,
+   "by_side": {
+    "buy": {
+     "n": 692,
+     "gross": 21.84,
+     "commission": 34.6,
+     "net": -12.76,
+     "win_pct": 80.5
+    },
+    "sell": {
+     "n": 89,
+     "gross": 87.0,
+     "commission": 4.45,
+     "net": 82.55,
+     "win_pct": 66.3
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracketreg_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 30.93,
+   "trades": 781,
+   "lots_avg": 0.01,
+   "gross": 108.84,
+   "commission": 54.67,
+   "net": 54.17,
+   "max_dd": 89.27,
+   "by_side": {
+    "buy": {
+     "n": 692,
+     "gross": 21.84,
+     "commission": 48.44,
+     "net": -26.6,
+     "win_pct": 80.5
+    },
+    "sell": {
+     "n": 89,
+     "gross": 87.0,
+     "commission": 6.23,
+     "net": 80.77,
+     "win_pct": 66.3
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_bracketreg_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -95.91,
+   "trades": 1378,
+   "lots_avg": 0.01,
+   "gross": 23.12,
+   "commission": 110.24,
+   "net": -87.12,
+   "max_dd": 292.63,
+   "by_side": {
+    "buy": {
+     "n": 728,
+     "gross": -66.91,
+     "commission": 58.24,
+     "net": -125.15,
+     "win_pct": 87.2
+    },
+    "sell": {
+     "n": 650,
+     "gross": 90.03,
+     "commission": 52.0,
+     "net": 38.03,
+     "win_pct": 52.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_bracketreg_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -95.91,
+   "trades": 1378,
+   "lots_avg": 0.01,
+   "gross": 23.12,
+   "commission": 68.9,
+   "net": -45.78,
+   "max_dd": 265.51,
+   "by_side": {
+    "buy": {
+     "n": 728,
+     "gross": -66.91,
+     "commission": 36.4,
+     "net": -103.31,
+     "win_pct": 87.2
+    },
+    "sell": {
+     "n": 650,
+     "gross": 90.03,
+     "commission": 32.5,
+     "net": 57.53,
+     "win_pct": 52.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_bracketreg_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": -95.91,
+   "trades": 1378,
+   "lots_avg": 0.01,
+   "gross": 23.12,
+   "commission": 96.46,
+   "net": -73.34,
+   "max_dd": 283.59,
+   "by_side": {
+    "buy": {
+     "n": 728,
+     "gross": -66.91,
+     "commission": 50.96,
+     "net": -117.87,
+     "win_pct": 87.2
+    },
+    "sell": {
+     "n": 650,
+     "gross": 90.03,
+     "commission": 45.5,
+     "net": 44.53,
+     "win_pct": 52.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder08_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 76.19,
+   "trades": 1803,
+   "lots_avg": 0.01,
+   "gross": 227.94,
+   "commission": 144.24,
+   "net": 83.7,
+   "max_dd": 313.03,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 49.44,
+     "net": -86.35,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 1185,
+     "gross": 264.85,
+     "commission": 94.8,
+     "net": 170.05,
+     "win_pct": 53.6
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder08_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 76.19,
+   "trades": 1803,
+   "lots_avg": 0.01,
+   "gross": 227.94,
+   "commission": 90.15,
+   "net": 137.79,
+   "max_dd": 280.51,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 30.9,
+     "net": -67.81,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 1185,
+     "gross": 264.85,
+     "commission": 59.25,
+     "net": 205.6,
+     "win_pct": 53.6
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder08_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 76.19,
+   "trades": 1803,
+   "lots_avg": 0.01,
+   "gross": 227.94,
+   "commission": 126.21,
+   "net": 101.73,
+   "max_dd": 302.19,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 43.26,
+     "net": -80.17,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 1185,
+     "gross": 264.85,
+     "commission": 82.95,
+     "net": 181.9,
+     "win_pct": 53.6
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder12_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 104.3,
+   "trades": 754,
+   "lots_avg": 0.01,
+   "gross": 163.92,
+   "commission": 60.32,
+   "net": 103.6,
+   "max_dd": 92.62,
+   "by_side": {
+    "buy": {
+     "n": 559,
+     "gross": -25.08,
+     "commission": 44.72,
+     "net": -69.8,
+     "win_pct": 95.2
+    },
+    "sell": {
+     "n": 195,
+     "gross": 189.0,
+     "commission": 15.6,
+     "net": 173.4,
+     "win_pct": 66.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder12_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 104.3,
+   "trades": 754,
+   "lots_avg": 0.01,
+   "gross": 163.92,
+   "commission": 37.7,
+   "net": 126.22,
+   "max_dd": 78.28,
+   "by_side": {
+    "buy": {
+     "n": 559,
+     "gross": -25.08,
+     "commission": 27.95,
+     "net": -53.03,
+     "win_pct": 95.2
+    },
+    "sell": {
+     "n": 195,
+     "gross": 189.0,
+     "commission": 9.75,
+     "net": 179.25,
+     "win_pct": 66.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder12_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 104.3,
+   "trades": 754,
+   "lots_avg": 0.01,
+   "gross": 163.92,
+   "commission": 52.78,
+   "net": 111.14,
+   "max_dd": 87.84,
+   "by_side": {
+    "buy": {
+     "n": 559,
+     "gross": -25.08,
+     "commission": 39.13,
+     "net": -64.21,
+     "win_pct": 95.2
+    },
+    "sell": {
+     "n": 195,
+     "gross": 189.0,
+     "commission": 13.65,
+     "net": 175.35,
+     "win_pct": 66.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder12_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 95.01,
+   "trades": 1990,
+   "lots_avg": 0.01,
+   "gross": 264.71,
+   "commission": 159.2,
+   "net": 105.51,
+   "max_dd": 359.3,
+   "by_side": {
+    "buy": {
+     "n": 806,
+     "gross": -17.29,
+     "commission": 64.48,
+     "net": -81.77,
+     "win_pct": 95.9
+    },
+    "sell": {
+     "n": 1184,
+     "gross": 282.0,
+     "commission": 94.72,
+     "net": 187.28,
+     "win_pct": 54.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder12_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 95.01,
+   "trades": 1990,
+   "lots_avg": 0.01,
+   "gross": 264.71,
+   "commission": 99.5,
+   "net": 165.21,
+   "max_dd": 350.93,
+   "by_side": {
+    "buy": {
+     "n": 806,
+     "gross": -17.29,
+     "commission": 40.3,
+     "net": -57.59,
+     "win_pct": 95.9
+    },
+    "sell": {
+     "n": 1184,
+     "gross": 282.0,
+     "commission": 59.2,
+     "net": 222.8,
+     "win_pct": 54.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder12_2019.htm",
+   "period": "15 Minutes (M15)  2019.01.02 00:00 - 2019.12.30 23:45    (2019.01.01 - 2019.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 95.01,
+   "trades": 1990,
+   "lots_avg": 0.01,
+   "gross": 264.71,
+   "commission": 139.3,
+   "net": 125.41,
+   "max_dd": 356.51,
+   "by_side": {
+    "buy": {
+     "n": 806,
+     "gross": -17.29,
+     "commission": 56.42,
+     "net": -73.71,
+     "win_pct": 95.9
+    },
+    "sell": {
+     "n": 1184,
+     "gross": 282.0,
+     "commission": 82.88,
+     "net": 199.12,
+     "win_pct": 54.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder12_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 82.69,
+   "trades": 579,
+   "lots_avg": 0.01,
+   "gross": 138.16,
+   "commission": 46.32,
+   "net": 91.84,
+   "max_dd": 70.59,
+   "by_side": {
+    "buy": {
+     "n": 443,
+     "gross": -5.84,
+     "commission": 35.44,
+     "net": -41.28,
+     "win_pct": 96.2
+    },
+    "sell": {
+     "n": 136,
+     "gross": 144.0,
+     "commission": 10.88,
+     "net": 133.12,
+     "win_pct": 67.6
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder12_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 82.69,
+   "trades": 579,
+   "lots_avg": 0.01,
+   "gross": 138.16,
+   "commission": 28.95,
+   "net": 109.21,
+   "max_dd": 62.31,
+   "by_side": {
+    "buy": {
+     "n": 443,
+     "gross": -5.84,
+     "commission": 22.15,
+     "net": -27.99,
+     "win_pct": 96.2
+    },
+    "sell": {
+     "n": 136,
+     "gross": 144.0,
+     "commission": 6.8,
+     "net": 137.2,
+     "win_pct": 67.6
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder12_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 82.69,
+   "trades": 579,
+   "lots_avg": 0.01,
+   "gross": 138.16,
+   "commission": 40.53,
+   "net": 97.63,
+   "max_dd": 67.83,
+   "by_side": {
+    "buy": {
+     "n": 443,
+     "gross": -5.84,
+     "commission": 31.01,
+     "net": -36.85,
+     "win_pct": 96.2
+    },
+    "sell": {
+     "n": 136,
+     "gross": 144.0,
+     "commission": 9.52,
+     "net": 134.48,
+     "win_pct": 67.6
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder12_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 32.0,
+   "trades": 1644,
+   "lots_avg": 0.01,
+   "gross": 170.26,
+   "commission": 131.52,
+   "net": 38.74,
+   "max_dd": 305.99,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 49.44,
+     "net": -86.35,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 1026,
+     "gross": 207.17,
+     "commission": 82.08,
+     "net": 125.09,
+     "win_pct": 53.2
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder12_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 32.0,
+   "trades": 1644,
+   "lots_avg": 0.01,
+   "gross": 170.26,
+   "commission": 82.2,
+   "net": 88.06,
+   "max_dd": 276.11,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 30.9,
+     "net": -67.81,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 1026,
+     "gross": 207.17,
+     "commission": 51.3,
+     "net": 155.87,
+     "win_pct": 53.2
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder12_2021.htm",
+   "period": "15 Minutes (M15)  2021.01.04 00:00 - 2021.12.30 23:45    (2021.01.01 - 2021.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 32.0,
+   "trades": 1644,
+   "lots_avg": 0.01,
+   "gross": 170.26,
+   "commission": 115.08,
+   "net": 55.18,
+   "max_dd": 296.03,
+   "by_side": {
+    "buy": {
+     "n": 618,
+     "gross": -36.91,
+     "commission": 43.26,
+     "net": -80.17,
+     "win_pct": 94.7
+    },
+    "sell": {
+     "n": 1026,
+     "gross": 207.17,
+     "commission": 71.82,
+     "net": 135.35,
+     "win_pct": 53.2
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 121.71,
+   "trades": 762,
+   "lots_avg": 0.01,
+   "gross": 181.92,
+   "commission": 60.96,
+   "net": 120.96,
+   "max_dd": 89.54,
+   "by_side": {
+    "buy": {
+     "n": 559,
+     "gross": -25.08,
+     "commission": 44.72,
+     "net": -69.8,
+     "win_pct": 95.2
+    },
+    "sell": {
+     "n": 203,
+     "gross": 207.0,
+     "commission": 16.24,
+     "net": 190.76,
+     "win_pct": 67.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 121.71,
+   "trades": 762,
+   "lots_avg": 0.01,
+   "gross": 181.92,
+   "commission": 38.1,
+   "net": 143.82,
+   "max_dd": 75.23,
+   "by_side": {
+    "buy": {
+     "n": 559,
+     "gross": -25.08,
+     "commission": 27.95,
+     "net": -53.03,
+     "win_pct": 95.2
+    },
+    "sell": {
+     "n": 203,
+     "gross": 207.0,
+     "commission": 10.15,
+     "net": 196.85,
+     "win_pct": 67.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder_2017.htm",
+   "period": "15 Minutes (M15)  2017.01.23 01:30 - 2017.10.03 12:30    (2017.01.01 - 2017.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 121.71,
+   "trades": 762,
+   "lots_avg": 0.01,
+   "gross": 181.92,
+   "commission": 53.34,
+   "net": 128.58,
+   "max_dd": 84.77,
+   "by_side": {
+    "buy": {
+     "n": 559,
+     "gross": -25.08,
+     "commission": 39.13,
+     "net": -64.21,
+     "win_pct": 95.2
+    },
+    "sell": {
+     "n": 203,
+     "gross": 207.0,
+     "commission": 14.21,
+     "net": 192.79,
+     "win_pct": 67.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "b12_ladder_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 80.12,
+   "trades": 593,
+   "lots_avg": 0.01,
+   "gross": 138.16,
+   "commission": 47.44,
+   "net": 90.72,
+   "max_dd": 86.31,
+   "by_side": {
+    "buy": {
+     "n": 443,
+     "gross": -5.84,
+     "commission": 35.44,
+     "net": -41.28,
+     "win_pct": 96.2
+    },
+    "sell": {
+     "n": 150,
+     "gross": 144.0,
+     "commission": 12.0,
+     "net": 132.0,
+     "win_pct": 66.0
+    }
+   }
+  },
+  "balance": {
+   "report": "b12_ladder_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 80.12,
+   "trades": 593,
+   "lots_avg": 0.01,
+   "gross": 138.16,
+   "commission": 29.65,
+   "net": 108.51,
+   "max_dd": 77.76,
+   "by_side": {
+    "buy": {
+     "n": 443,
+     "gross": -5.84,
+     "commission": 22.15,
+     "net": -27.99,
+     "win_pct": 96.2
+    },
+    "sell": {
+     "n": 150,
+     "gross": 144.0,
+     "commission": 7.5,
+     "net": 136.5,
+     "win_pct": 66.0
+    }
+   }
+  },
+  "under1k": {
+   "report": "b12_ladder_2020.htm",
+   "period": "15 Minutes (M15)  2020.01.02 00:00 - 2020.12.30 23:45    (2020.01.01 - 2020.12.31)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 80.12,
+   "trades": 593,
+   "lots_avg": 0.01,
+   "gross": 138.16,
+   "commission": 41.51,
+   "net": 96.65,
+   "max_dd": 83.46,
+   "by_side": {
+    "buy": {
+     "n": 443,
+     "gross": -5.84,
+     "commission": 31.01,
+     "net": -36.85,
+     "win_pct": 96.2
+    },
+    "sell": {
+     "n": 150,
+     "gross": 144.0,
+     "commission": 10.5,
+     "net": 133.5,
+     "win_pct": 66.0
+    }
+   }
+  }
+ },
+ {
+  "default8": {
+   "report": "legs_2526.htm",
+   "period": "15 Minutes (M15)  2025.09.01 00:00 - 2026.09.24 23:45    (2025.09.01 - 2026.09.25)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 157.89,
+   "trades": 393,
+   "lots_avg": 0.01,
+   "gross": 190.76,
+   "commission": 31.44,
+   "net": 159.32,
+   "max_dd": 108.28,
+   "by_side": {
+    "sell": {
+     "n": 393,
+     "gross": 190.76,
+     "commission": 31.44,
+     "net": 159.32,
+     "win_pct": 57.5
+    }
+   }
+  },
+  "balance": {
+   "report": "legs_2526.htm",
+   "period": "15 Minutes (M15)  2025.09.01 00:00 - 2026.09.24 23:45    (2025.09.01 - 2026.09.25)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 157.89,
+   "trades": 393,
+   "lots_avg": 0.01,
+   "gross": 190.76,
+   "commission": 19.65,
+   "net": 171.11,
+   "max_dd": 102.55,
+   "by_side": {
+    "sell": {
+     "n": 393,
+     "gross": 190.76,
+     "commission": 19.65,
+     "net": 171.11,
+     "win_pct": 57.5
+    }
+   }
+  },
+  "under1k": {
+   "report": "legs_2526.htm",
+   "period": "15 Minutes (M15)  2025.09.01 00:00 - 2026.09.24 23:45    (2025.09.01 - 2026.09.25)",
+   "deposit": 10000.0,
+   "spread": "2",
+   "mt4_net": 157.89,
+   "trades": 393,
+   "lots_avg": 0.01,
+   "gross": 190.76,
+   "commission": 27.51,
+   "net": 163.25,
+   "max_dd": 106.37,
+   "by_side": {
+    "sell": {
+     "n": 393,
+     "gross": 190.76,
+     "commission": 27.51,
+     "net": 163.25,
+     "win_pct": 57.5
+    }
+   }
+  }
+ }
+]
