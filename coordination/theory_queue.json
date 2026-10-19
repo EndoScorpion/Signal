@@ -36,7 +36,7 @@
     "set_overrides": {
       "rules": "Friday only; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
       "stop": "none",
-      "cost": 8e-05
+      "cost": 0.00008
     },
     "symbol": "EURUSD",
     "period": "H1",
@@ -66,7 +66,7 @@
     "set_overrides": {
       "rules": "Friday only, not first Friday of month; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC",
       "stop": "none",
-      "cost": 8e-05
+      "cost": 0.00008
     },
     "symbol": "EURUSD",
     "period": "H1",
@@ -95,7 +95,7 @@
     "set_overrides": {
       "rules": "Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu)",
       "stop": "none",
-      "cost": 8e-05
+      "cost": 0.00008
     },
     "symbol": "EURUSD",
     "period": "H1",
@@ -120,7 +120,7 @@
     "set_overrides": {
       "rules": "21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open",
       "stop": "none",
-      "cost": 8e-05
+      "cost": 0.00008
     },
     "symbol": "EURUSD",
     "period": "H1",
@@ -145,7 +145,7 @@
     "set_overrides": {
       "rules": "10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar",
       "stop": "none",
-      "cost": 8e-05
+      "cost": 0.00008
     },
     "symbol": "EURUSD",
     "period": "H1",
@@ -376,5 +376,131 @@
     "timeout_min": 180,
     "flag_if": "more_wins AND no_dd_increase",
     "cloud_note": "2026-10-19T01:45Z cloud-thread-kxrfun: Strong2010b_claude_b31 .set variants on M1 cannot run in the cloud python engine (no EA logic, no M1 data). Route to LocalThug MT4 tester."
+  },
+  {
+    "id": "adapt_gate_zgate07_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+ZG0.7-Reg: regime OFF + Z-gate ZMax=0.7",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_zgate07_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_wpr60_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+WPR60-Reg: regime OFF + WPR gate WprMax=-60",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_wpr60_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_chop_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+Chop50-Reg: regime OFF + chop gate ChopMax=50",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_chop_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_atrbrk_noreg_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+AtrBkt-Reg: regime OFF + ATR bracket",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_atrbrk_noreg.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_reg200_zgate_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+Reg200+ZG0.8: period=200 + Z-gate",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_reg200_zgate.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
+  },
+  {
+    "id": "adapt_gate_reg500_wpr_001",
+    "status": "needs_local_mt4",
+    "added_by": "cli-local",
+    "added_at": "2026-10-18T23:00:00Z",
+    "description": "MKT-FL-LO-b31+Reg500+WPR55: period=500 + WPR gate",
+    "ea": "Strong2010b_claude_b31",
+    "set_file": "b31_adapt_reg500_wpr.set",
+    "symbol": "EURUSD",
+    "period": "M5",
+    "spread": 3,
+    "years": [
+      2020,
+      2021,
+      2019,
+      2022
+    ],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "WR>50 AND PF>1.2 AND n>30"
   }
 ]
