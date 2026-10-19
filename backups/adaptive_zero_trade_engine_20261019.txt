@@ -1,0 +1,238 @@
+"""
+Adaptive zero-trade emulation for MKT-14-NY-T31s+NOSL (Friday 14:00 short).
+Detects rolling 4-week windows with 0 trades, relaxes day_up threshold one notch.
+IS: TwelveData 2020-2023  |  OOS: FXOpen 2024-2026
+Results in ECN points ($0.10/pt at 0.1 lot).
+"""
+import pandas as pd, numpy as np, sys
+
+COST_PTS = 8.0   # 8 ECN pts per trade (0.00008 / 0.00001)
+TD_FILE  = '/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv'
+FX_FILE  = '/mnt/project-files/data/eurusd_fxopen_h1.csv'
+
+# ── data loader ───────────────────────────────────────────────────────────────
+def load_td(path):
+    df = pd.read_csv(path)
+    df['t'] = pd.to_datetime(df.iloc[:,0])
+    df = df.set_index('t').sort_index()
+    df.columns = [c.lower() for c in df.columns]
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    df['month']= df.index.to_period('M')
+    return df
+
+def load_fx(path):
+    df = pd.read_csv(path)
+    df['t'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+    df = df.set_index('t').sort_index()
+    df.columns = [c.lower() for c in df.columns]
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    df['month']= df.index.to_period('M')
+    return df
+
+def add_indicators(df):
+    tr = np.maximum(df.high-df.low,
+         np.maximum((df.high-df.close.shift()).abs(),
+                    (df.low -df.close.shift()).abs()))
+    df['atr14'] = tr.rolling(14).mean()
+    # prev_close: last close of previous day
+    prev_close = df.groupby('date').close.last().shift(1)
+    df['prev_close'] = df.date.map(prev_close)
+    # day_open: first open of the day
+    day_open = df.groupby('date').open.first()
+    df['day_open'] = df.date.map(day_open)
+    # Indicators computed on bar i-1 (shift 1 to avoid lookahead)
+    df['atr14'] = df.atr14.shift(1)
+    df['ema120'] = df.close.ewm(span=120,adjust=False).mean().shift(1)
+    df['slope120'] = df['ema120'].diff(5)
+    return df
+
+# ── backtest runner ───────────────────────────────────────────────────────────
+def run_baseline(df, day_up_mult=0.5):
+    """T31s: Friday 14:00 SHORT when day_up > mult×ATR14, no stop, exit 21:00"""
+    A = df.atr14.values; HR = df.hour.values; DOW = df.dow.values
+    pc = df.prev_close.values; O = df.open.values
+    C = df.close.values; idx = df.index; N = len(df)
+
+    day_up = O - pc   # open vs prev session close
+
+    mask = (HR==14) & (DOW==4) & (day_up > day_up_mult*A) & ~np.isnan(A)
+    rows = []
+    last_exit = -1
+    for i in np.where(mask)[0]:
+        if i <= last_exit: continue
+        if i+1 >= N: continue
+        ep = O[i]; atr_val = A[i]
+        j = i
+        while True:
+            j += 1
+            if j >= N: break
+            done = (HR[j] == 21) or (j-i >= 24)
+            if done:
+                pnl_price = (ep - C[j])  # short: profit if price falls
+                break
+        else:
+            continue
+        pnl_pts = pnl_price / 0.00001 - COST_PTS
+        last_exit = j
+        rows.append({'t': idx[i], 'year': idx[i].year, 'month': str(idx[i].to_period('M')),
+                     'ep': ep, 'pnl_pts': pnl_pts, 'atr_pts': atr_val/0.00001})
+    return pd.DataFrame(rows)
+
+def run_adaptive(df, base_mult=0.5, relax_mult=0.35, relax2_mult=0.25, window_weeks=4):
+    """
+    Adaptive T31s: same as baseline, but if rolling 4-week window had 0 trades,
+    relax day_up threshold one notch for the next opportunity.
+    Also includes ATR-scaled relaxation (threshold floor = 1.0×ATR14 pts equiv).
+    """
+    A = df.atr14.values; HR = df.hour.values; DOW = df.dow.values
+    pc = df.prev_close.values; O = df.open.values
+    C = df.close.values; idx = df.index; N = len(df)
+
+    day_up = O - pc
+    # All potential entry points (Fri 14:00 with valid ATR)
+    cand = np.where((HR==14) & (DOW==4) & ~np.isnan(A))[0]
+
+    rows = []; last_exit = -1
+    trades_in_window = []  # (trade_time,) — track recent trades
+
+    for ci, i in enumerate(cand):
+        if i <= last_exit: continue
+        if i+1 >= N: continue
+
+        # Count trades in preceding 4-week window (28 calendar days)
+        cutoff = idx[i] - pd.Timedelta(days=window_weeks*7)
+        recent_n = sum(1 for t,_ in trades_in_window if t > cutoff)
+
+        # Determine threshold — only relax when truly 0 trades in window
+        if recent_n == 0:
+            mult = relax_mult    # zero-trade window -> 1st notch (0.35)
+        else:
+            mult = base_mult
+
+        # ATR-scaled floor: don't relax below 1.0×ATR14
+        # (prevents random noise trades)
+        threshold = mult * A[i]
+
+        if day_up[i] <= threshold:
+            continue
+
+        ep = O[i]
+        j = i
+        while True:
+            j += 1
+            if j >= N: break
+            done = (HR[j] == 21) or (j-i >= 24)
+            if done:
+                pnl_price = (ep - C[j])
+                break
+        else:
+            continue
+        pnl_pts = pnl_price / 0.00001 - COST_PTS
+        last_exit = j
+        t = idx[i]
+        trades_in_window.append((t, pnl_pts))
+        # prune old
+        trades_in_window = [(t2,p2) for t2,p2 in trades_in_window
+                            if t2 > t - pd.Timedelta(days=window_weeks*7)]
+        rows.append({'t': t, 'year': t.year, 'month': str(t.to_period('M')),
+                     'ep': ep, 'pnl_pts': pnl_pts, 'atr_pts': A[i]/0.00001,
+                     'mult_used': mult})
+    return pd.DataFrame(rows)
+
+# ── stats ─────────────────────────────────────────────────────────────────────
+def stats(tr, label=''):
+    if tr is None or len(tr)==0:
+        return {'label':label,'n':0,'wr':0,'pf':0,'avg_pts':0,'by_year':{}}
+    p = tr.pnl_pts
+    w = p[p>0].sum(); lo = -p[p<0].sum()
+    pf = round(w/lo,2) if lo>0 else 99.0
+    wr = round(100*(p>0).mean(),1)
+    avg = round(p.mean(),1)
+    yr = {}
+    for y in sorted(tr.year.unique()):
+        q = tr[tr.year==y].pnl_pts
+        pf_y = round(q[q>0].sum()/-q[q<0].sum(),2) if (q<0).any() else 99.0
+        yr[int(y)] = {'n':len(q),'wr':round(100*(q>0).mean(),1),'pf':pf_y,'avg':round(q.mean(),1)}
+    return {'label':label,'n':len(tr),'wr':wr,'pf':pf,'avg_pts':avg,'by_year':yr}
+
+def zero_trade_months(tr, df):
+    """Find months where Fridays existed but 0 trades were taken."""
+    all_fri_months = set(df[(df.hour==14)&(df.dow==4)].month.unique())
+    if len(tr)==0: return sorted(str(m) for m in all_fri_months), len(all_fri_months)
+    traded_months = set(pd.PeriodIndex(tr.t.dt.to_period('M')))
+    zeros = sorted(str(m) for m in (all_fri_months - traded_months))
+    return zeros, len(zeros)
+
+def print_stats(s, tr=None, df=None):
+    print(f"\n{'='*55}")
+    print(f"  {s['label']}")
+    print(f"  n={s['n']}  WR={s['wr']}%  PF={s['pf']}  avg={s['avg_pts']} pts")
+    total_pts = round(s['avg_pts']*s['n'],0) if s['n']>0 else 0
+    print(f"  Total pts: {total_pts} pts")
+    if s['by_year']:
+        for y,d in s['by_year'].items():
+            print(f"    {y}: n={d['n']} WR={d['wr']}% PF={d['pf']} avg={d['avg']} pts")
+    if tr is not None and df is not None:
+        zm, nzm = zero_trade_months(tr, df)
+        print(f"  Zero-trade months: {nzm} → {zm}")
+
+# ── main ──────────────────────────────────────────────────────────────────────
+print("Loading TwelveData (IS 2020-2023)...")
+dfTD = add_indicators(load_td(TD_FILE))
+dfIS = dfTD[(dfTD.year>=2020)&(dfTD.year<=2023)].copy()
+
+print("Loading FXOpen (OOS 2024-2026)...")
+dfFX = add_indicators(load_fx(FX_FILE))
+dfOOS = dfFX[dfFX.year>=2024].copy()
+
+print(f"IS rows: {len(dfIS)}  OOS rows: {len(dfOOS)}")
+
+# ── run ────────────────────────────────────────────────────────────────────────
+print("\n--- Baseline T31s (day_up > 0.5×ATR14) ---")
+tr_is_base  = run_baseline(dfIS,  0.5)
+tr_oos_base = run_baseline(dfOOS, 0.5)
+s_is_b  = stats(tr_is_base,  'IS_baseline')
+s_oos_b = stats(tr_oos_base, 'OOS_baseline')
+print_stats(s_is_b,  tr_is_base,  dfIS)
+print_stats(s_oos_b, tr_oos_base, dfOOS)
+
+print("\n--- Adaptive T31s (relax: 0.5→0.35→0.25×ATR14 after zero-trade 4-wk window) ---")
+tr_is_adp  = run_adaptive(dfIS)
+tr_oos_adp = run_adaptive(dfOOS)
+s_is_a  = stats(tr_is_adp,  'IS_adaptive')
+s_oos_a = stats(tr_oos_adp, 'OOS_adaptive')
+print_stats(s_is_a,  tr_is_adp,  dfIS)
+print_stats(s_oos_a, tr_oos_adp, dfOOS)
+
+# ── delta summary ──────────────────────────────────────────────────────────────
+print("\n\n=== DELTA SUMMARY ===")
+print(f"IS  | n: {s_is_b['n']} -> {s_is_a['n']} (+{s_is_a['n']-s_is_b['n']})"
+      f"  WR: {s_is_b['wr']}% -> {s_is_a['wr']}%"
+      f"  PF: {s_is_b['pf']} -> {s_is_a['pf']}"
+      f"  avg: {s_is_b['avg_pts']} -> {s_is_a['avg_pts']} pts")
+print(f"OOS | n: {s_oos_b['n']} -> {s_oos_a['n']} (+{s_oos_a['n']-s_oos_b['n']})"
+      f"  WR: {s_oos_b['wr']}% -> {s_oos_a['wr']}%"
+      f"  PF: {s_oos_b['pf']} -> {s_oos_a['pf']}"
+      f"  avg: {s_oos_b['avg_pts']} -> {s_oos_a['avg_pts']} pts")
+
+# Adaptive-only trades (added by relaxation)
+if len(tr_is_adp)>0 and 'mult_used' in tr_is_adp.columns:
+    added_is = tr_is_adp[tr_is_adp.mult_used < 0.5]
+    print(f"\nIS relaxed trades: n={len(added_is)}"
+          f"  WR={round(100*(added_is.pnl_pts>0).mean(),1) if len(added_is)>0 else 0}%"
+          f"  avg={round(added_is.pnl_pts.mean(),1) if len(added_is)>0 else 0} pts")
+if len(tr_oos_adp)>0 and 'mult_used' in tr_oos_adp.columns:
+    added_oos = tr_oos_adp[tr_oos_adp.mult_used < 0.5]
+    print(f"OOS relaxed trades: n={len(added_oos)}"
+          f"  WR={round(100*(added_oos.pnl_pts>0).mean(),1) if len(added_oos)>0 else 0}%"
+          f"  avg={round(added_oos.pnl_pts.mean(),1) if len(added_oos)>0 else 0} pts")
+
+print("\nDone.")
