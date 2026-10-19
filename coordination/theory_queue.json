@@ -599,5 +599,29 @@
   "timeframe": "H1",
   "cost": "0.00008/trade",
   "flag_if": "n>30 and PF>1.3"
+ },
+ {
+  "id": "nomem6_014",
+  "name": "MKT-07-10-LO-T84s+LOSSY+SSR+THU",
+  "logic": "Thursday 07:00-09:00 UTC SHORT (first hit) if lossy-overbought divergence (Stoch14 scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND min SSR > -2 (feat_ratios2 exact port). No stop. Exit 21:00.",
+  "cloud_result": "IS FXOpen 24-26 n=21 WR57 PF2.03 +90pts; OOS TD 20-23 n=31 WR55 PF1.82 +68pts",
+  "status": "pending",
+  "symbol": "EURUSD",
+  "timeframe": "H1",
+  "cost": "0.00008/trade",
+  "flag_if": "n>30 and PF>1.3",
+  "priority": 2
+ },
+ {
+  "id": "nomem6_015",
+  "name": "MKT-10-13-LO-T85s+LOSSY+SSR+WED",
+  "logic": "Wednesday 10:00-12:00 UTC SHORT (first hit), same LOSSY divergence + min SSR > -2 gate as nomem6_014. No stop. Exit 21:00.",
+  "cloud_result": "IS n=24 WR79 PF3.07 +167pts; OOS n=41 WR54 PF1.65 +64pts",
+  "status": "pending",
+  "symbol": "EURUSD",
+  "timeframe": "H1",
+  "cost": "0.00008/trade",
+  "flag_if": "n>30 and PF>1.3",
+  "priority": 2
  }
 ]
