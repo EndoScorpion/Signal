@@ -1,7 +1,7 @@
 [
   {
-    "id": "read_run_tester",
+    "id": "find_dc_settings_001",
     "tool": "execute_powershell",
-    "command": "Get-Content 'C:\\Users\\endos\\Desktop\\hst_out\\run_tester.ps1' -Raw; Write-Host '---SETFILES---'; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_work\\Signal\\mt4_tester\\tester\\' -Filter '*.set' | Select-Object -ExpandProperty Name"
+    "command": "$candidates = @('C:\\Users\\endos\\AppData\\Roaming\\desktop-commander\\config.json','C:\\Users\\endos\\AppData\\Roaming\\Desktop Commander\\config.json','C:\\Users\\endos\\.desktop-commander\\settings.json','C:\\Users\\endos\\AppData\\Roaming\\Claude\\claude_desktop_config.json','C:\\Users\\endos\\AppData\\Roaming\\Claude\\settings.json'); foreach ($p in $candidates) { if (Test-Path $p) { Write-Host \"FOUND: $p\"; Get-Content $p -Raw } else { Write-Host \"MISSING: $p\" } }; Write-Host '---DIR---'; Get-ChildItem 'C:\\Users\\endos\\AppData\\Roaming\\desktop-commander' -ErrorAction SilentlyContinue | Select-Object Name,FullName"
   }
 ]
