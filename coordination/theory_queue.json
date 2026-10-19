@@ -683,5 +683,17 @@
     "cloud_result": "IS FXOpen 2024-26 n=66 WR65 PF2.59 avg+76pts yrs 3.1/2.7/1.8; OOS TD 2020-23 n=51 WR71 PF2.38 avg+91 yrs 1.5/1.2/8.9; 3x cost 2.16/2.09. Shares 37 of its signal days with nomem6_016 (LOSSY+z) - NOT an independent leg; n016 stays stronger OOS (3.07). SARA/PRV alone Fri fade IS 2.38 OOS 1.42 (fails OOS). Weekday bias confirmed: Tue/Wed/Thu same rule PF 0.6-1.2 both periods.",
     "cost": 8e-05,
     "flag_if": "PF<1.5 or n<30 or 2022-only profit"
+  },
+  {
+    "id": "nomem6_021",
+    "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI+XNFP",
+    "priority": 1,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
+    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "cost": 8e-05,
+    "flag_if": "PF<1.5 or n<30"
   }
 ]
