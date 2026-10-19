@@ -268,3 +268,71 @@ Gen 4 produced no new OOS PF peak (project-best remains G3-13/G4-7 at 2.67). Var
 | 1 | **G3-13** (= G4-7) | Fri 14:00 SHORT, day_up>0.4×ATR14, xnfp, slope120>0, no stop, exit 21:00 | **2.67** | 122 pts | Project-best OOS PF; no stop = fill-sensitive |
 | 2 | **G4-6** (= G3-11) | Fri 13:00 SHORT, day_up>1.0×ATR14, xnfp, no stop, exit 21:00 | 2.20 | 104 pts | Highest n IS (42); earlier entry timing |
 | 3 | **G4-2** | Fri 14:00 SHORT, day_up>0.4×ATR14, xnfp, slope120>0, RSI14>50, no stop, exit 21:00 | 2.44 | 111 pts | RSI filter adds stability; matched IS/OOS PF |
+
+---
+
+## Gen 5 — MMR Filter Combos (2026-10-19, coordinator relay from nomem6 batch 12)
+
+**Input**: coordinator relayed MMR≥−1.0 survivor from Theory thread (FRI14s+mmr>=-1.0: IS n=44 WR=66% PF=2.25, OOS n=49 WR=71% PF=3.40). Tested 11 combos with best gen3/4 survivors plus ZGate filter.
+
+**MMR definition**: `mmr = min_12bar_close_change / max_12bar_close_change` (ratio of most-negative to most-positive 1-bar close move over last 12 H1 bars). Source: g2a BrFeat (Strong2010b_claude). Shifted 1 bar to prevent lookahead.
+
+### Gen 5 All Results
+
+| label | IS n | IS WR% | IS PF | IS avg pts | OOS n | OOS WR% | OOS PF | OOS avg pts | yr 2020/2021/2022/2023 | status |
+|-------|------|--------|-------|-----------|-------|---------|--------|------------|----------------------|--------|
+| G5-1_G3-13+MMR>=-1.0 | 28 | 67.9 | 2.49 | 78 | 33 | 75.8 | 5.47 | 188 | 2.92/13.33/825.33/1.74 | ⚠IS n<30 |
+| **G5-2_T31s_xnfp+MMR>=-1.0** | **44** | **65.9** | **2.25** | **63** | **48** | **70.8** | **3.21** | **131** | **3.75/2.18/7.01/1.78** | **✓ NEW PROJECT BEST** |
+| G5-3_G3-13+MMR>=-1.0+ATRfloor | 28 | 67.9 | 2.49 | 78 | 33 | 75.8 | 5.47 | 188 | 2.92/13.33/825.33/1.74 | ⚠IS n<30 |
+| G5-4_G3-11+MMR>=-1.0 | 34 | 70.6 | 3.66 | 122 | 42 | 69.0 | 2.15 | 107 | 1.65/5.03/2.49/0.93 | ⚠2023 yr<1.0 |
+| G5-5_G3-13+MMR>=-1.0+RSI>50 | 28 | 67.9 | 2.49 | 78 | 32 | 75.0 | 5.14 | 180 | 2.92/13.33/825.33/0.72 | ⚠IS n<30, 2023 fail |
+| G5-6_G3-13+MMR<-1.0_flip | 4 | 25.0 | 0.27 | -147 | 16 | 50.0 | 0.91 | -13 | 0.51/0.57/1.40/1.81 | fail |
+| G5-7_T31s_xnfp+bull+MMR>=-1.0 | 28 | 67.9 | 2.49 | 78 | 32 | 75.0 | 5.09 | 178 | 2.92/9.95/825.33/1.74 | ⚠IS n<30 |
+| G5-8_G3-13+ZGate>=0.9 | 26 | 73.1 | 5.35 | 116 | 23 | 82.6 | 4.48 | 193 | 2.06/99.00/99.00/9.58 | ⚠IS n<30 |
+| G5-9_G3-13+ZGate>=0.9+MMR>=-1.0 | 24 | 75.0 | 6.30 | 122 | 19 | 89.5 | 7.32 | 238 | 3.09/99.00/99.00/99.00 | ⚠OOS n<20 |
+| G5-10_T31s_xnfp+ZGate>=0.9 | 42 | 69.0 | 3.06 | 77 | 29 | 72.4 | 2.45 | 113 | 2.11/0.83/99.00/1.48 | ⚠2021 yr<1.0 |
+| G5-11_G3-13+MMR+ZGate_maxcombo | 24 | 75.0 | 6.30 | 122 | 19 | 89.5 | 7.32 | 238 | 3.09/99.00/99.00/99.00 | ⚠OOS n<20 |
+
+### Gen 5 Survivors (strict: IS n≥30, OOS n≥20, OOS PF≥1.0, OOS WR≥51%, all 4 OOS years PF≥1.0)
+
+| label | IS n | OOS n | OOS WR% | OOS PF | OOS avg pts | yr 2020/2021/2022/2023 | notes |
+|-------|------|-------|---------|--------|------------|----------------------|-------|
+| **G5-2_T31s_xnfp+MMR>=-1.0** | 44 | 48 | 70.8 | **3.21** | **131** | 3.75/2.18/7.01/1.78 | **NEW PROJECT BEST OOS PF** |
+
+### Gen 5 Near-Misses
+
+| label | why near-miss | OOS PF | OOS avg pts | potential |
+|-------|--------------|--------|------------|-----------|
+| G5-1 (G3-13+MMR) | IS n=28 (2 short of threshold) | 5.47 | 188 | extraordinary — more IS data may confirm |
+| G5-7 (bull+MMR) | IS n=28 | 5.09 | 178 | same cluster as G5-1 |
+| G5-8 (G3-13+ZGate) | IS n=26 | 4.48 | 193 | ZGate is powerful but cuts trades deeply |
+| G5-9/G5-11 (ZGate+MMR) | OOS n=19 | 7.32 | 238 | highest PF seen — watch for FXOpen 2027+ |
+| G5-10 (xnfp+ZGate) | 2021 OOS PF=0.83 | 2.45 | 113 | year consistency issue |
+
+### Gen 5 Key Findings
+
+- **MMR≥−1.0 on the baseline (T31s+xnfp, no bulltrend) is the cleanest new filter**: n stays high (IS 44, OOS 48), all 4 OOS years pass, OOS PF jumps from 1.96 → 3.21.
+- **MMR cut in gen5 interpretation**: MMR≥−1.0 means "recent down moves are not larger than up moves" — market is not in a strong 1-bar downward regime; the Friday pullback bet is cleaner when the micro-structure isn't already selling off.
+- **G5-1 cluster (G3-13+MMR, bull+MMR)**: IS n=28 prevents formal pass but OOS PF=5.47 is extraordinary. These likely have IS n=28 because bulltrend+MMR jointly cut signal count; not enough 2024-2026 data yet. Worth re-testing when more IS data arrives (2027+).
+- **ZGate alone** (z≥0.9, price above 20-SMA by ≥0.9 SD): IS n drops sharply (26-42). This is a high-quality gate but 3-year IS sample has few qualifying Fridays at that z-level.
+- **Space evolution continued**: adding MMR to the no-bulltrend baseline beat the bulltrend line. The two filters (bulltrend and MMR) appear partially substitutable in OOS — MMR is more data-efficient.
+
+## Updated Adaptive Learning Summary — 5 Generations
+
+| Generation | Survivors | Peak OOS PF | Peak avg pts | Key filter added |
+|-----------|-----------|------------|-------------|-----------------|
+| Gen 1 | 3 | 1.96 | 80 pts | xnfp |
+| Gen 2 | 6 | 2.52 | 114 pts | bulltrend (EMA120 slope>0) |
+| Gen 3 | 6 | 2.67 | 122 pts | lower threshold 0.4×ATR |
+| Gen 4 | 5+1 | 2.67 (confirmed) | 122 pts | RSI14>50 adds stability |
+| **Gen 5** | **1** | **3.21** | **131 pts** | **MMR≥−1.0 on xnfp baseline** |
+
+**Total improvement: OOS PF 1.67 → 3.21 (+92%), OOS avg pts 58 → 131 (+126%)** across 5 meaningful generations.
+
+## Updated Top Candidates for MT4 Tick Testing (LocalThug queue)
+
+| Priority | Label | Definition | OOS PF | OOS avg pts | Why queue |
+|----------|-------|------------|--------|------------|----------|
+| 1 | **G5-2** | Fri 14:00 SHORT, day_up>0.5×ATR14, xnfp, MMR≥−1.0, no stop, exit 21:00 | **3.21** | 131 pts | New project-best; MMR gate needs tick-level fill check |
+| 2 | **G3-13** (= G4-7) | Fri 14:00 SHORT, day_up>0.4×ATR14, xnfp, slope120>0, no stop, exit 21:00 | 2.67 | 122 pts | Prior project-best; no-stop is fill-sensitive |
+| 3 | **G4-2** | Fri 14:00 SHORT, day_up>0.4×ATR14, xnfp, slope120>0, RSI14>50, no stop, exit 21:00 | 2.44 | 111 pts | RSI filter adds stability |
