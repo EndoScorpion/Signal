@@ -1,0 +1,96 @@
+==============================================================
+WIN LOGIC — b62 / Strong2010b_claude_b42_mr backtests
+==============================================================
+SURVIVOR RULES (from CLAUDE.md — non-negotiable):
+1. Net of ALL costs: spread + slippage + regulatory fees + commission + swap/financing + taxes
+   Source of truth: cost_model.json (mirrors window.slcCost in app_addons/addon29.html)
+2. n >= 30 trades per period (reject if fewer)
+3. Positive net in >= 2 of 3 periods:
+   - 2015-2019
+   - 2020-2022
+   - 2023-2026
+4. Consistent across periods — not survivor-only (flag Shibui data)
+5. ALL EURUSD EA backtests must use FXOpen ECN EUR/USD 5-digit data
+   Any non-FXOpen test = FLAWED (hard rule)
+
+CURRENT b62 STATUS (as of Oct 2026):
+- ZERO survivors — all net negative after costs
+- Critical defect: tp=7 pts vs SL~290 pts → R:R ~0.024 → losing even at 89% win rate
+- .set files have WRONG parameter names (ZTF/ZPeriod/ZTrigger/HoldBars/UseRegime/RegimePeriod)
+  These don't exist in Strong2010b_claude_b42_mr → all 60 tests ran on EA defaults → INVALID
+- Correct EA params: SellWinFrom, SellWinTo, SessBlockFrom, SessBlockTo, DayBlock, FriHour
+- Zero trades in 2019/2020/2021 — cause unknown (likely FXOpen ECN data gaps or regime filter)
+- SURVIVORS.md committed at ea0a4c4 on branch claudeai/vigilant-hopper-cuvo3n (PR #22)
+
+BEFORE NEXT TEST RUN:
+1. Fix .set files with correct EA parameter names
+2. Fix TP/SL ratio (tp=7 is structurally losing)
+3. Investigate 0-trade years
+4. Run: python3 backtest_costs.py --data data/history --hold 3 --cost cost_model.json
+
+==============================================================
+REPAIR LOGIC — DC Remote + MT4 on LenovoLaptop
+==============================================================
+DC REMOTE RULES:
+1. ALWAYS call list_devices first — device IDs rotate when DC Remote restarts
+   Old ID: 987fd7bd-b22d-4ec8-8de7-2c70c442b6f1 (went offline ~18:00 UTC 19 Oct)
+   Current ID: 24123e3e-6795-430b-abf6-32e186477523 (as of 18:00 UTC 19 Oct)
+2. Parameter is "deviceId" (camelCase) — NOT "device_id"
+3. For complex PowerShell: write a .ps1 file first, then run it
+   Reason: inline heredocs and variable interpolation break in single-line commands
+4. Watcher session (session_01DyMXgM2RA1Uqvs7DWmeiy1) fires hourly
+   It may show CONNECTION_CLOSED even when DC is live (if it has old device ID)
+   Don't panic — verify with list_devices before escalating
+
+MT4 RESTORE SEQUENCE:
+1. list_devices → get current online device ID
+2. Check if terminal.exe running:
+   powershell -Command "Get-Process | Where Name -like terminal | Select Name,Id | Format-Table"
+3. If not running, launch:
+   powershell -Command "Start-Process 'C:\Program Files (x86)\FXOpen EU MT4 Terminal\terminal.exe'"
+   Wait ~7s then check PID
+4. If minimized, restore using show_mt4.ps1:
+   powershell -ExecutionPolicy Bypass -File "C:\Users\endos\Desktop\show_mt4.ps1"
+
+show_mt4.ps1 content (already on desktop):
+   Add-Type @"
+   using System;
+   using System.Runtime.InteropServices;
+   public class W {
+     [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int n);
+     [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+   }
+   "@
+   $p = Get-Process | Where-Object { $_.Name -like "terminal" } | Select-Object -First 1
+   if ($p) {
+       [W]::ShowWindow($p.MainWindowHandle, 9)
+       [W]::SetForegroundWindow($p.MainWindowHandle)
+       Write-Output "MT4 restored: PID $($p.Id)"
+   } else {
+       Write-Output "MT4 not found"
+   }
+
+MT4 LOOP SETTINGS (when re-running backtests):
+- EA: Strong2010b_claude_b42_mr
+- Symbol: EURUSD (FXOpen ECN 5-digit data — MANDATORY)
+- Point size: 3.45pt
+- Currency: USD
+- Deposit range: $500 - $500,000
+- Leverage: 1:500
+- Spread: 2 (fixed)
+- Model: Every tick
+
+LAPTOP HEALTH:
+- RAM at 95% as of 18:10 UTC 19 Oct — monitor before long backtest runs
+- 14 Claude processes + 3 Claude Code processes running simultaneously
+
+==============================================================
+COMMS PROTECTION — device-CLI-cloud link
+==============================================================
+- Cloud session (this: session_01Mq2bMczc5kd2NRjKs2Sxgn) = PRIMARY control
+- Watcher session (session_01DyMXgM2RA1Uqvs7DWmeiy1) = hourly status only
+- DC Remote is the laptop bridge — do not restart unnecessarily (causes device ID rotation)
+- Handoff message format: send_message to watcher with HANDOFF header + UTC timestamp
+- NEVER place orders. No broker write tools. Research and files only.
+
+Last updated: 2026-10-19 18:10 UTC
