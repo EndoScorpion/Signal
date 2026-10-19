@@ -1,0 +1,702 @@
+"""
+Ratio Correlation Analysis for Win Logic trades
+Features: zgate, SP, SR, AR, AP, AV, MMR, SSR, ACH, SMA/EMA slopes,
+          Stoch %K/%D, ATR/ATR-pct, ADX, CCI, Williams%R, A/D,
+          smoothness, vol, vol-of-vol, Fractals, Alligator
+          + first-differences of all
+SARA = logistic fit (features -> win prob), PRV = vol composite score
+IS 2024-26 (hash CSVs), OOS 2020-23 (reproduced from price data)
+
+ASSUMPTIONS FOR UNDEFINED RATIOS:
+  SP  = EMA(20) slope, 6-bar LS (pts/bar, 5-digit)
+  SR  = EMA(20) slope / EMA(50) slope  (ratio; 0 if denom~0)
+  AR  = d(SP)/dt / ATR(14)             (acceleration vs range, per bar)
+  AP  = AR / close                     (acceleration vs price level)
+  AV  = d(SP)/dt / rel_vol             (acceleration vs relative volume; rel_vol=vol/vol_ma20)
+  MMR = (close - SMA(20)) / ATR(14)   (momentum-mean ratio, normalized)
+  SSR = EMA(5) slope / EMA(20) slope  (short/long slope ratio)
+  ACH = d(AR)/dt                      (jerk: change in acceleration)
+  SARA = logistic score from all features (fitted IS, validated OOS)
+  PRV  = rank-avg of [ATR-pct, realized-vol-pct, vol-of-vol-pct] -> [0,1]
+"""
+
+import pandas as pd
+import numpy as np
+from scipy import stats
+import warnings, sys, os
+warnings.filterwarnings('ignore')
+
+COST_PTS = 16  # 8 pts/side round-trip (from CLAUDE.md cost_model)
+OUT_DIR = '/mnt/project-files/results'
+HASH_DIR = '/mnt/project-files/results'
+
+# ─── helpers ───────────────────────────────────────────────────────────────
+
+def ema(s, n):
+    return s.ewm(span=n, adjust=False).mean()
+
+def sma(s, n):
+    return s.rolling(n).mean()
+
+def ls_slope(s, n):
+    """Least-squares slope over last n bars (pts/bar)."""
+    x = np.arange(n, dtype=float)
+    def _slope(w):
+        if np.isnan(w).any(): return np.nan
+        return np.polyfit(x, w, 1)[0]
+    return s.rolling(n).apply(_slope, raw=True)
+
+def wilder_smooth(s, n):
+    """Wilder smoothing (for ATR/ADX)."""
+    out = [np.nan] * len(s)
+    arr = s.values
+    for i in range(len(arr)):
+        if i < n:
+            if i == n - 1:
+                out[i] = np.nanmean(arr[:n])
+        else:
+            if not np.isnan(out[i-1]) and not np.isnan(arr[i]):
+                out[i] = (out[i-1] * (n-1) + arr[i]) / n
+    return pd.Series(out, index=s.index)
+
+def compute_atr(df, n=14):
+    hl = df['high'] - df['low']
+    hc = (df['high'] - df['close'].shift(1)).abs()
+    lc = (df['low']  - df['close'].shift(1)).abs()
+    tr = pd.concat([hl, hc, lc], axis=1).max(axis=1)
+    return wilder_smooth(tr, n)
+
+def compute_adx(df, n=14):
+    up   = df['high'].diff()
+    down = -df['low'].diff()
+    pdm  = up.where((up > down) & (up > 0), 0.0)
+    ndm  = down.where((down > up) & (down > 0), 0.0)
+    atr  = compute_atr(df, n)
+    pdi  = 100 * wilder_smooth(pdm, n) / atr.replace(0, np.nan)
+    ndi  = 100 * wilder_smooth(ndm, n) / atr.replace(0, np.nan)
+    dx   = (100 * (pdi - ndi).abs() / (pdi + ndi).replace(0, np.nan))
+    adx  = wilder_smooth(dx, n)
+    return adx, pdi, ndi
+
+def compute_stoch(df, n=14, k_smooth=3, d_smooth=3):
+    lo = df['low'].rolling(n).min()
+    hi = df['high'].rolling(n).max()
+    raw_k = 100 * (df['close'] - lo) / (hi - lo).replace(0, np.nan)
+    K = raw_k.rolling(k_smooth).mean()
+    D = K.rolling(d_smooth).mean()
+    return K, D
+
+def compute_cci(df, n=14):
+    tp = (df['high'] + df['low'] + df['close']) / 3
+    mean_ = tp.rolling(n).mean()
+    mad   = tp.rolling(n).apply(lambda x: np.mean(np.abs(x - np.mean(x))), raw=True)
+    return (tp - mean_) / (0.015 * mad.replace(0, np.nan))
+
+def compute_williams_r(df, n=14):
+    hi = df['high'].rolling(n).max()
+    lo = df['low'].rolling(n).min()
+    return -100 * (hi - df['close']) / (hi - lo).replace(0, np.nan)
+
+def compute_ad(df):
+    """Accumulation/Distribution (tick-volume based; uses bar volume)."""
+    hl_rng = (df['high'] - df['low']).replace(0, np.nan)
+    clv = ((df['close'] - df['low']) - (df['high'] - df['close'])) / hl_rng
+    vol = df.get('volume', pd.Series(np.ones(len(df)), index=df.index))
+    ad = (clv * vol).cumsum()
+    return ad, ls_slope(ad, 10)
+
+def compute_smoothness(df, n=20):
+    """Price path efficiency = |net change| / sum(|bar changes|) over n bars."""
+    c = df['close']
+    net = (c - c.shift(n)).abs()
+    path = c.diff().abs().rolling(n).sum()
+    return (net / path.replace(0, np.nan)).clip(0, 1)
+
+def compute_fractals(df):
+    """Bill Williams Fractals: up-fractal = H[i] > H[i±1,i±2]; down-fractal = L[i] < L[i±1,i±2]."""
+    hi, lo = df['high'], df['low']
+    up_frac = (hi > hi.shift(1)) & (hi > hi.shift(2)) & (hi > hi.shift(-1)) & (hi > hi.shift(-2))
+    dn_frac = (lo < lo.shift(1)) & (lo < lo.shift(2)) & (lo < lo.shift(-1)) & (lo < lo.shift(-2))
+    # Distance (pts) from close to last up/down fractal level
+    last_up_lvl  = hi.where(up_frac).ffill()
+    last_dn_lvl  = lo.where(dn_frac).ffill()
+    dist_up = (last_up_lvl - df['close']) * 1e5  # pts (5-digit)
+    dist_dn = (df['close'] - last_dn_lvl) * 1e5
+    # Break flags: price just broke above last up-fractal or below last down-fractal
+    brk_up = ((df['close'] > last_up_lvl) & (df['close'].shift(1) <= last_up_lvl.shift(1))).astype(float)
+    brk_dn = ((df['close'] < last_dn_lvl) & (df['close'].shift(1) >= last_dn_lvl.shift(1))).astype(float)
+    return dist_up, dist_dn, brk_up, brk_dn
+
+def smma(s, n, offset=0):
+    """Smoothed MA (Wilder) with optional shift offset bars."""
+    tp = s.shift(offset)
+    out = [np.nan] * len(tp)
+    arr = tp.values
+    for i in range(len(arr)):
+        if i < n:
+            if i == n - 1:
+                out[i] = np.nanmean(arr[:n])
+        else:
+            if not np.isnan(out[i-1]) and not np.isnan(arr[i]):
+                out[i] = (out[i-1] * (n-1) + arr[i]) / n
+    return pd.Series(out, index=s.index)
+
+def compute_alligator(df):
+    """Bill Williams Alligator on median price (H+L)/2."""
+    med = (df['high'] + df['low']) / 2
+    jaw   = smma(med, 13, offset=8)   # blue, slow
+    teeth = smma(med, 8,  offset=5)   # red, medium
+    lips  = smma(med, 5,  offset=3)   # green, fast
+    spread = (lips - jaw) * 1e5       # pts
+    # Order: 1=bullish (lips>teeth>jaw), -1=bearish, 0=mixed
+    order = np.where((lips > teeth) & (teeth > jaw),  1,
+            np.where((lips < teeth) & (teeth < jaw), -1, 0)).astype(float)
+    # Price position relative to all lines: >all=above(1), <all=below(-1), else 0
+    c = df['close']
+    pos = np.where((c > jaw) & (c > teeth) & (c > lips),  1,
+          np.where((c < jaw) & (c < teeth) & (c < lips), -1, 0)).astype(float)
+    return jaw, teeth, lips, pd.Series(spread, index=df.index), pd.Series(order, index=df.index), pd.Series(pos, index=df.index)
+
+def compute_features(df):
+    """Compute all features on an H1 OHLCV dataframe. Returns feature DataFrame."""
+    c = df['close']
+    pt = 1e5  # 5-digit: 1 pt = 0.00001
+
+    # ATR
+    atr14 = compute_atr(df, 14)
+    atr_pct = atr14.rolling(252).rank(pct=True)
+
+    # ADX
+    adx14, pdi, ndi = compute_adx(df, 14)
+
+    # Stoch
+    stoch_k, stoch_d = compute_stoch(df, 14, 3, 3)
+
+    # CCI
+    cci14 = compute_cci(df, 14)
+    cci20 = compute_cci(df, 20)
+
+    # Williams %R
+    willr = compute_williams_r(df, 14)
+
+    # A/D
+    ad_line, ad_slope = compute_ad(df)
+
+    # Smoothness / path efficiency
+    smooth20 = compute_smoothness(df, 20)
+
+    # Realized vol (20-bar std of returns, annualized to daily via sqrt(24))
+    ret = c.pct_change()
+    rvol20 = ret.rolling(20).std() * np.sqrt(24)
+    vov20  = rvol20.rolling(20).std()  # vol-of-vol
+
+    # SMA & EMA slopes (LS over 6 bars, in pts)
+    for n in [20, 50, 120]:
+        df[f'sma{n}'] = sma(c, n)
+        df[f'ema{n}'] = ema(c, n)
+    sma20_sl = ls_slope(df['sma20'], 6) * pt
+    sma50_sl = ls_slope(df['sma50'], 6) * pt
+    sma120_sl= ls_slope(df['sma120'],6) * pt
+    ema20_sl = ls_slope(df['ema20'], 6) * pt
+    ema50_sl = ls_slope(df['ema50'], 6) * pt
+    ema120_sl= ls_slope(df['ema120'],6) * pt
+    ema5_sl  = ls_slope(ema(c, 5),   6) * pt
+
+    # Named ratios — EXACT MQ4 definitions from Nasif's pasted code (2026-10-19)
+    # slp = EMA(20) LS slope in pts/bar (used as SP in MQ4)
+    atr14_pts = atr14 * pt
+    slp = ema20_sl  # SP / slp in MQ4
+    SP  = slp
+
+    # SSR = slp[0]/slp[k] for k in {1,6,8,10,12,14,16}; we use ratio to bar-6 as primary
+    SSR = (slp / slp.shift(6).replace(0, np.nan)).clip(-10, 10)
+
+    # MMR = maxslp(window) / |minslp(window)| over 18-bar window
+    maxslp18 = slp.rolling(18).max()
+    minslp18 = slp.rolling(18).min()
+    msa = minslp18.abs().replace(0, np.nan)
+    MMR = (maxslp18 / msa).clip(0, 30)
+
+    # SR in MQ4 = sp[i]/sp[j] averaging pattern; use rolling(5).mean ratio at 12-bar lag
+    avgsp_0  = slp.rolling(5).mean()
+    avgsp_12 = slp.shift(12).rolling(2).mean()
+    SR = (avgsp_0 / avgsp_12.replace(0, np.nan)).clip(-10, 10)
+
+    # AR = avgar: rolling(5).mean of ar[] where ar[i] is incremental slope change normalised to slp
+    # MQ4: avgar[0]=(ar[0]+ar[1]+ar[2]+ar[3]+ar[4])/5; ar[i]=sp[i]/sp[i+2] - 1 (ratio acceleration)
+    sp_ratio = (slp / slp.shift(2).replace(0, np.nan)).clip(-5, 5)
+    AR = sp_ratio.rolling(5).mean()
+
+    # AP = avgap: (ap[0]+ap[1])/2 where ap[i] = acceleration of position (price change acceleration)
+    # approximate as d²(close)/dt² normalised, in pts
+    dSP = slp.diff()
+    AP  = dSP.rolling(2).mean() * pt / atr14_pts.replace(0, np.nan)
+
+    vol_ser = df.get('volume', pd.Series(np.ones(len(df)), index=df.index))
+    vol_ma20= vol_ser.rolling(20).mean().replace(0, np.nan)
+    rel_vol = (vol_ser / vol_ma20).clip(0.01, 10)
+    AV  = (dSP / rel_vol).clip(-50, 50)
+
+    # ACR (MQ4 acr[]) = ac[0]/ac[k]; ac = acceleration series ≈ AR
+    ACH = AR.diff().clip(-2, 2)  # change in AR (jerk)
+
+    # zgate = MQ4: (close[1]-mean20)/stdev20 <= 1.0 on M15; on H1 same formula
+    zgate = ((c - df['sma20']) / c.rolling(20).std().replace(0, np.nan)).clip(-4, 4)
+
+    # PRV = rank-average of ATR-pct, rvol-pct, vov-pct (0=low vol, 1=high vol)
+    prv = (atr_pct.fillna(0.5) +
+           rvol20.rolling(252).rank(pct=True).fillna(0.5) +
+           vov20.rolling(252).rank(pct=True).fillna(0.5)) / 3
+
+    # Fractals
+    dist_up, dist_dn, brk_up, brk_dn = compute_fractals(df)
+
+    # Alligator
+    jaw, teeth, lips, al_spread, al_order, al_pos = compute_alligator(df)
+
+    feat = pd.DataFrame({
+        # Nasif named
+        'SP': SP, 'SR': SR, 'AR': AR, 'AP': AP, 'AV': AV,
+        'MMR': MMR, 'SSR': SSR, 'ACH': ACH, 'zgate': zgate,
+        # Standard
+        'ATR_pts': atr14_pts, 'ATR_pct': atr_pct,
+        'ADX': adx14, 'DI_plus': pdi, 'DI_minus': ndi,
+        'stoch_K': stoch_k, 'stoch_D': stoch_d,
+        'CCI14': cci14, 'CCI20': cci20,
+        'WillR': willr,
+        'AD_slope': ad_slope,
+        'smooth20': smooth20,
+        'rvol20': rvol20, 'vov20': vov20,
+        'sma20_sl': sma20_sl, 'sma50_sl': sma50_sl, 'sma120_sl': sma120_sl,
+        'ema20_sl': ema20_sl, 'ema50_sl': ema50_sl, 'ema120_sl': ema120_sl,
+        # Vol composite
+        'PRV': prv,
+        # Fractals
+        'frac_dist_up': dist_up, 'frac_dist_dn': dist_dn,
+        'frac_brk_up': brk_up, 'frac_brk_dn': brk_dn,
+        # Alligator
+        'al_spread': al_spread, 'al_order': al_order, 'al_pos': al_pos,
+    }, index=df.index)
+
+    # First differences (Δ) of continuous features
+    cont_feats = [f for f in feat.columns if feat[f].dtype in [np.float64, float]
+                  and f not in ['frac_brk_up','frac_brk_dn','al_order','al_pos']]
+    for f in cont_feats:
+        feat[f'D_{f}'] = feat[f].diff()
+
+    return feat
+
+# ─── load price data ───────────────────────────────────────────────────────
+
+def load_fxopen():
+    df = pd.read_csv('/mnt/project-files/data/eurusd_fxopen_h1.csv')
+    df['t'] = pd.to_datetime(df['timestamp_ms'], unit='ms', utc=True)
+    df = df.rename(columns={'open':'open','high':'high','low':'low','close':'close'})
+    df = df.set_index('t').sort_index()
+    # no volume in fxopen — will be filled with 1s in compute_features
+    return df
+
+def load_twelvedata():
+    df = pd.read_csv('/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv')
+    df['t'] = pd.to_datetime(df['datetime'], utc=True)
+    df = df.set_index('t').sort_index()
+    return df
+
+print("Loading price data...")
+fxo = load_fxopen()
+tdx = load_twelvedata()
+# Combine: prefer fxopen for 2024+ (IS), twelvedata for 2020-23 (OOS)
+price_all = pd.concat([
+    tdx[tdx.index < '2024-01-01'],
+    fxo[fxo.index >= '2024-01-01']
+]).sort_index()
+# Drop duplicates
+price_all = price_all[~price_all.index.duplicated(keep='last')]
+
+print(f"Price rows: {len(price_all)} ({price_all.index[0]} to {price_all.index[-1]})")
+
+# ─── compute features ──────────────────────────────────────────────────────
+
+print("Computing features (takes ~30s)...")
+price_all = price_all.copy()
+feat_all = compute_features(price_all)
+print(f"Feature columns: {len(feat_all.columns)}")
+
+# ─── load & enrich hash CSVs ───────────────────────────────────────────────
+
+LOGICS = {
+    'MKT-14-NY-T31s_NOSL': 'hash_MKT-14-NY-T31s_NOSL_nomem6_T20-T40_20261019.csv',
+    'MKT-20-SEAS-T34l_D2': 'hash_MKT-20-SEAS-T34l_D2_nomem6_T20-T40_20261019.csv',
+    'MKT-21-ON-T24r_l_NOSL':'hash_MKT-21-ON-T24r_l_NOSL_nomem6_T20-T40_20261019.csv',
+    'MKT-MOM3H-10-T27l_SLNone':'hash_MKT-MOM3H-10-T27l_SLNone_nomem6_T20-T40_20261019.csv',
+}
+
+def load_logic(name, fname):
+    df = pd.read_csv(os.path.join(HASH_DIR, fname))
+    df['t'] = pd.to_datetime(df['t'], utc=True)
+    df['logic'] = name
+    return df
+
+def attach_features(trades_df, feat_df):
+    """For each trade, look up features at the entry bar (match on hour-truncated UTC ts)."""
+    rows = []
+    feat_df_copy = feat_df.copy()
+    # round feat index to hour
+    feat_idx = feat_df_copy.index.floor('h')
+    feat_map = {t: i for i, t in enumerate(feat_idx)}
+    for _, row in trades_df.iterrows():
+        ts = row['t'].floor('h')
+        idx = feat_map.get(ts)
+        if idx is None:
+            rows.append({})
+            continue
+        rows.append(feat_df_copy.iloc[idx].to_dict())
+    feat_part = pd.DataFrame(rows, index=trades_df.index)
+    return pd.concat([trades_df.reset_index(drop=True), feat_part.reset_index(drop=True)], axis=1)
+
+print("Attaching features to IS trades...")
+all_trades = {}
+for name, fname in LOGICS.items():
+    t = load_logic(name, fname)
+    t = attach_features(t, feat_all)
+    all_trades[name] = t
+    print(f"  {name}: {len(t)} trades, WR={t['win'].mean()*100:.1f}%")
+
+# ─── OOS trade generation (2020-23, same entry logic) ──────────────────────
+# Infer logic parameters from IS hash data (hour, dow, dir, hold_bars)
+
+def infer_params(df):
+    hour  = int(df['hour'].mode()[0])
+    dir_  = int(df['dir'].mode()[0])
+    hold  = int(df['bars'].mode()[0])
+    dow_counts = df['dow'].value_counts()
+    # If any single DOW accounts for >90% of trades, restrict; else any weekday
+    top_dow  = dow_counts.index[0]
+    top_frac = dow_counts.iloc[0] / len(df)
+    dow_filter = [top_dow] if top_frac > 0.85 else None
+    return hour, dir_, hold, dow_filter
+
+def gen_oos_trades(price_df, hour, dir_, hold, dow_filter, cost_pts=COST_PTS):
+    """Generate synthetic trades for 2020-23 using same timing logic."""
+    c = price_df['close']
+    rows = []
+    price_df = price_df.copy()
+    price_df['hour_utc'] = price_df.index.hour
+    price_df['dow_str']  = price_df.index.strftime('%a')
+    for i, (ts, row) in enumerate(price_df.iterrows()):
+        if ts.year < 2020 or ts.year > 2023: continue
+        if row['hour_utc'] != hour: continue
+        if dow_filter and row['dow_str'] not in dow_filter: continue
+        if i + hold >= len(price_df): continue
+        entry_p = row['close']
+        exit_p  = price_df['close'].iloc[i + hold]
+        pts_raw = (exit_p - entry_p) * 1e5 * dir_
+        pts_net = pts_raw - cost_pts
+        rows.append({
+            't': ts, 'dow': row['dow_str'], 'hour': hour,
+            'dir': dir_, 'entry': entry_p, 'exit': exit_p,
+            'bars': hold, 'pts': pts_net,
+            'usd': pts_net * 0.1,
+            'win': 1 if pts_net > 0 else 0,
+        })
+    return pd.DataFrame(rows)
+
+print("Generating OOS trades (2020-23)...")
+oos_trades = {}
+for name, is_df in all_trades.items():
+    hour, dir_, hold, dow_filter = infer_params(is_df)
+    print(f"  {name}: hour={hour}, dir={dir_}, hold={hold}, dow_filter={dow_filter}")
+    oos = gen_oos_trades(price_all, hour, dir_, hold, dow_filter)
+    oos = attach_features(oos, feat_all)
+    oos_trades[name] = oos
+    print(f"    OOS n={len(oos)}, WR={oos['win'].mean()*100:.1f}%")
+
+# ─── correlation analysis ──────────────────────────────────────────────────
+
+FEAT_COLS = [c for c in feat_all.columns if not c.startswith('D_')]
+FEAT_COLS = [c for c in FEAT_COLS if c not in ['logic']]
+DELTA_COLS = [f'D_{f}' for f in FEAT_COLS if f'D_{f}' in feat_all.columns]
+ALL_FEAT_COLS = FEAT_COLS + DELTA_COLS
+
+def corr_table(trades_df, feat_cols, label):
+    rows = []
+    for f in feat_cols:
+        if f not in trades_df.columns: continue
+        s = trades_df[f].dropna()
+        w = trades_df.loc[s.index, 'win']
+        p = trades_df.loc[s.index, 'pts']
+        if len(s) < 10: continue
+        r_win, pv_win = stats.pointbiserialr(w, s)
+        r_pts, pv_pts = stats.pearsonr(p.dropna(), s[p.notna()])
+        rows.append({'feature': f, 'r_win': r_win, 'p_win': pv_win,
+                     'r_pts': r_pts, 'p_pts': pv_pts, 'n': len(s)})
+    return pd.DataFrame(rows).sort_values('p_win')
+
+print("\n=== Correlation Analysis ===")
+corr_results = {}
+for name, trades in all_trades.items():
+    cr = corr_table(trades, ALL_FEAT_COLS, name)
+    corr_results[name] = cr
+    print(f"\n{name} (IS): top 10 by |r_win|")
+    top = cr.reindex(cr['r_win'].abs().sort_values(ascending=False).index).head(10)
+    print(top[['feature','r_win','p_win','n']].to_string(index=False))
+
+# ─── threshold filter test ─────────────────────────────────────────────────
+
+def best_threshold(trades_df, feat, direction='auto', min_n=30):
+    """
+    Sweep quantile thresholds; find best WR or PF gate (keep ≥ min_n).
+    Returns dict with best threshold, WR/PF before/after.
+    """
+    if feat not in trades_df.columns: return None
+    s = trades_df[feat].dropna()
+    valid = trades_df.loc[s.index].copy()
+    valid['f'] = s
+    if len(valid) < min_n: return None
+
+    base_n   = len(valid)
+    base_wr  = valid['win'].mean()
+    base_pts = valid['pts'].mean()
+    wins = valid[valid['pts'] > 0]['pts'].sum()
+    loss = -valid[valid['pts'] <= 0]['pts'].sum()
+    base_pf  = wins / loss if loss > 0 else np.inf
+
+    best = {'feat': feat, 'base_wr': base_wr, 'base_pf': base_pf, 'base_n': base_n,
+            'thr': None, 'side': None, 'wr': base_wr, 'pf': base_pf, 'n': base_n,
+            'wr_gain': 0.0, 'pf_gain': 0.0}
+
+    qs = np.linspace(0.15, 0.85, 29)
+    for q in qs:
+        thr = valid['f'].quantile(q)
+        for side in ['above', 'below']:
+            sub = valid[valid['f'] >= thr] if side == 'above' else valid[valid['f'] < thr]
+            if len(sub) < min_n: continue
+            wr_ = sub['win'].mean()
+            w_  = sub[sub['pts'] > 0]['pts'].sum()
+            l_  = -sub[sub['pts'] <= 0]['pts'].sum()
+            pf_ = w_ / l_ if l_ > 0 else np.inf
+            score = wr_ + (pf_ / 5.0)  # combined objective
+            prev  = best['wr'] + (best['pf'] / 5.0)
+            if score > prev + 0.01:
+                best.update({'thr': thr, 'side': side, 'wr': wr_, 'pf': pf_,
+                             'n': len(sub), 'wr_gain': wr_ - base_wr,
+                             'pf_gain': pf_ - base_pf})
+    return best
+
+print("\n=== Threshold Filter Analysis ===")
+filter_results = {}
+for name, trades in all_trades.items():
+    rows = []
+    for f in ALL_FEAT_COLS:
+        res = best_threshold(trades, f)
+        if res and res['thr'] is not None:
+            rows.append(res)
+    if rows:
+        fr = pd.DataFrame(rows).sort_values('wr_gain', ascending=False)
+        filter_results[name] = fr
+        print(f"\n{name}: top 5 threshold filters")
+        print(fr[['feat','thr','side','base_wr','wr','base_pf','pf','n']].head(5).to_string(index=False))
+
+# ─── SARA logistic fit ─────────────────────────────────────────────────────
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+# Use top 12 features by |r_win| (pooled across logics) to avoid overfit
+
+pool_corr = pd.concat([v.assign(logic=k) for k, v in corr_results.items()])
+top_feats = (pool_corr.groupby('feature')['r_win']
+             .apply(lambda x: x.abs().mean())
+             .sort_values(ascending=False)
+             .head(12).index.tolist())
+print(f"\nTop features for SARA fit: {top_feats}")
+
+SARA_results = {}
+for name, trades in all_trades.items():
+    feat_cols_avail = [f for f in top_feats if f in trades.columns]
+    X = trades[feat_cols_avail].copy()
+    y = trades['win']
+    mask = X.notna().all(axis=1)
+    X, y = X[mask], y[mask]
+    if len(X) < 30: continue
+
+    pipe = Pipeline([('sc', StandardScaler()), ('lr', LogisticRegression(C=0.5, max_iter=500))])
+    pipe.fit(X, y)
+    sara_is = pipe.predict_proba(X)[:,1]
+
+    # OOS
+    oos = oos_trades[name]
+    Xoos = oos[[f for f in feat_cols_avail if f in oos.columns]].copy()
+    yoos = oos['win']
+    mask2 = Xoos.notna().all(axis=1)
+    Xoos, yoos = Xoos[mask2], yoos[mask2]
+
+    oos_sara = np.array([])
+    if len(Xoos) >= 10:
+        oos_sara = pipe.predict_proba(Xoos[feat_cols_avail])[:,1]
+
+    # Best SARA threshold (IS)
+    thr_opt = np.nanpercentile(sara_is, 40)  # keep top 60%
+    mask_thr = sara_is >= thr_opt
+    wr_before = y.mean()
+    wr_after  = y[mask_thr].mean() if mask_thr.sum() >= 30 else np.nan
+
+    w_bef = y[y==1].count() * 1.0  # simplified PF calc
+    pts_before = trades.loc[mask, 'pts'].mean()
+    pts_after  = trades.loc[mask].loc[mask_thr, 'pts'].mean() if mask_thr.sum() >= 30 else np.nan
+
+    # OOS SARA gate
+    wr_oos_before = yoos.mean() if len(yoos) > 0 else np.nan
+    wr_oos_after  = np.nan
+    if len(oos_sara) >= 10:
+        mask_oos = oos_sara >= thr_opt
+        wr_oos_after = yoos[mask_oos].mean() if mask_oos.sum() >= 30 else np.nan
+
+    SARA_results[name] = {
+        'feats': feat_cols_avail,
+        'n_is': len(X), 'n_oos': len(Xoos),
+        'wr_is_before': wr_before, 'wr_is_after': wr_after,
+        'pts_is_before': pts_before, 'pts_is_after': pts_after,
+        'wr_oos_before': wr_oos_before, 'wr_oos_after': wr_oos_after,
+        'coefs': dict(zip(feat_cols_avail, pipe.named_steps['lr'].coef_[0])),
+    }
+    print(f"\nSARA ({name}): IS WR {wr_before*100:.1f}% -> {wr_after*100:.1f}% (n_after={mask_thr.sum()})")
+    print(f"  OOS WR: {wr_oos_before*100:.1f}% -> {wr_oos_after*100:.1f}%")
+
+# ─── PRV composite gate ────────────────────────────────────────────────────
+
+print("\n=== PRV (volatility composite) gate ===")
+PRV_results = {}
+for name, trades in all_trades.items():
+    if 'PRV' not in trades.columns: continue
+    s = trades['PRV'].dropna()
+    valid = trades.loc[s.index]
+    # low PRV (calm) vs high PRV (volatile)
+    for side, sub in [('low_vol', valid[s < s.quantile(0.4)]),
+                      ('high_vol', valid[s >= s.quantile(0.6)])]:
+        n = len(sub)
+        if n < 10: continue
+        wr = sub['win'].mean()
+        avg_pts = sub['pts'].mean()
+        print(f"  {name} PRV-{side}: n={n} WR={wr*100:.1f}% avg_pts={avg_pts:.1f}")
+
+# ─── Build result table ────────────────────────────────────────────────────
+
+print("\n\n=== RESULTS SUMMARY TABLE (IS 2024-26) ===")
+print(f"{'Logic':<30} {'Feature':<20} {'r_win':>7} {'p_win':>8} {'base_WR%':>9} {'filt_WR%':>9} {'base_PF':>8} {'filt_PF':>8} {'n_after':>8}")
+print("-"*110)
+for name in LOGICS:
+    base_n  = len(all_trades[name])
+    base_wr = all_trades[name]['win'].mean()*100
+    pts_arr = all_trades[name]['pts']
+    pf_base = (pts_arr[pts_arr>0].sum()) / (-pts_arr[pts_arr<=0].sum() or 1)
+    # Top 3 filters
+    if name in filter_results:
+        for _, row in filter_results[name].head(3).iterrows():
+            cr = corr_results[name]
+            r_row = cr[cr['feature']==row['feat']]
+            r_win = r_row['r_win'].values[0] if len(r_row) else np.nan
+            p_win = r_row['p_win'].values[0] if len(r_row) else np.nan
+            print(f"{name:<30} {row['feat']:<20} {r_win:>7.3f} {p_win:>8.4f} {base_wr:>9.1f} {row['wr']*100:>9.1f} {pf_base:>8.2f} {row['pf']:>8.2f} {int(row['n']):>8}")
+
+# ─── Write output markdown ─────────────────────────────────────────────────
+
+out_lines = [
+    "# Ratio Correlation & SARA/PRV Analysis",
+    f"Date: 2026-10-19 | IS: 2024-26 (hash CSVs) | OOS: 2020-23 (reproduced)",
+    "",
+    "## Assumptions for undefined ratios",
+    "| Ratio | Formula (proposed) |",
+    "|-------|-------------------|",
+    "| SP | EMA(20) LS slope over 6 bars (pts/bar, 5-digit) |",
+    "| SR | EMA(20) slope / EMA(50) slope |",
+    "| AR | Δ(SP) / ATR(14) pts — acceleration vs range |",
+    "| AP | Δ(SP) / (close × 1e5) — acceleration vs price |",
+    "| AV | Δ(SP) / (vol / vol_ma20) — acceleration vs relative volume |",
+    "| MMR | (close - SMA20) / ATR(14) pts — momentum-mean ratio |",
+    "| SSR | EMA(5) slope / EMA(20) slope — short/long slope ratio |",
+    "| ACH | Δ(AR) — jerk (change in acceleration/range) |",
+    "| zgate | (close - SMA20) / stdev(close,20) [DEFINED in source] |",
+    "| SARA | Logistic regression score from top-12 features (IS-fitted) |",
+    "| PRV | Rank-avg of ATR-pct + rvol-pct + vov-pct ∈ [0,1] |",
+    "",
+    "## Feature set (36 features + Δ-deltas)",
+    "Named: SP, SR, AR, AP, AV, MMR, SSR, ACH, zgate",
+    "Standard: ATR_pts, ATR_pct, ADX, DI+/-, Stoch_K/D, CCI14/20, WillR, AD_slope",
+    "Trend: sma20/50/120_sl, ema20/50/120_sl, smooth20, rvol20, vov20",
+    "Composites: PRV (vol composite), SARA (logistic)",
+    "Bill Williams: frac_dist_up/dn, frac_brk_up/dn, al_spread, al_order, al_pos",
+    "All + Δ (first differences)",
+    "",
+    "## IS Correlation (top features by |r_win|)",
+]
+
+for name, cr in corr_results.items():
+    out_lines += [f"### {name}", "| Feature | r_win | p_win | r_pts | n |",
+                  "|---------|-------|-------|-------|---|"]
+    top = cr.reindex(cr['r_win'].abs().sort_values(ascending=False).index).head(15)
+    for _, row in top.iterrows():
+        out_lines.append(f"| {row['feature']} | {row['r_win']:.3f} | {row['p_win']:.4f} | {row['r_pts']:.3f} | {int(row['n'])} |")
+    out_lines.append("")
+
+out_lines += ["## Best Threshold Filters (IS, n≥30)", "| Logic | Feature | Side | Thr | Base WR% | Filt WR% | Base PF | Filt PF | n_after |",
+              "|-------|---------|------|-----|----------|----------|---------|---------|---------|"]
+for name in LOGICS:
+    if name not in filter_results: continue
+    for _, row in filter_results[name].head(5).iterrows():
+        thr_str = f"{row['thr']:.3f}" if pd.notna(row['thr']) else "N/A"
+        out_lines.append(f"| {name} | {row['feat']} | {row['side']} | {thr_str} | {row['base_wr']*100:.1f}% | {row['wr']*100:.1f}% | {row['base_pf']:.2f} | {row['pf']:.2f} | {int(row['n'])} |")
+
+out_lines += ["", "## SARA Score (logistic, IS-fit / OOS-validate)",
+              "| Logic | Features | IS WR before | IS WR after | OOS WR before | OOS WR after | n_IS | n_OOS |",
+              "|-------|----------|-------------|------------|--------------|-------------|------|-------|"]
+for name, s in SARA_results.items():
+    feats_str = ', '.join(s['feats'][:5]) + ('...' if len(s['feats'])>5 else '')
+    wr_ib = f"{s['wr_is_before']*100:.1f}%"
+    wr_ia = f"{s['wr_is_after']*100:.1f}%" if pd.notna(s['wr_is_after']) else "N/A"
+    wr_ob = f"{s['wr_oos_before']*100:.1f}%" if pd.notna(s['wr_oos_before']) else "N/A"
+    wr_oa = f"{s['wr_oos_after']*100:.1f}%" if pd.notna(s['wr_oos_after']) else "N/A"
+    out_lines.append(f"| {name} | {feats_str} | {wr_ib} | {wr_ia} | {wr_ob} | {wr_oa} | {s['n_is']} | {s['n_oos']} |")
+    out_lines.append(f"|  | **Coefs:** " + ", ".join(f"{k}={v:.3f}" for k,v in list(s['coefs'].items())[:6]) + " | | | | | | |")
+
+out_lines += ["", "## PRV Gate (volatility regime)",
+              "| Logic | PRV regime | n | WR% | Avg pts |",
+              "|-------|-----------|---|-----|---------|"]
+for name, trades in all_trades.items():
+    if 'PRV' not in trades.columns: continue
+    s = trades['PRV'].dropna()
+    valid = trades.loc[s.index]
+    for side, mask_sub in [('low_vol (PRV<40th)', s < s.quantile(0.4)),
+                            ('all',               pd.Series(True, index=s.index)),
+                            ('high_vol (PRV>60th)', s >= s.quantile(0.6))]:
+        sub = valid[mask_sub]
+        if len(sub) < 5: continue
+        wr_ = sub['win'].mean()*100
+        ap_ = sub['pts'].mean()
+        out_lines.append(f"| {name} | {side} | {len(sub)} | {wr_:.1f}% | {ap_:.1f} |")
+
+out_lines += ["", "---", "_ECN points (5-digit, 1 pip = 10 pts). $0.10/pt at 0.1 lot._",
+              "_SARA/PRV formulas are proposed — validate before live use._"]
+
+out_md = '\n'.join(out_lines)
+out_path = f'{OUT_DIR}/ratio_corr_SARA_PRV_20261019.md'
+with open(out_path, 'w') as f:
+    f.write(out_md)
+print(f"\nResults written to {out_path}")
+
+# Also write SARA formula as .txt backup
+coef_lines = ["SARA FORMULA (logistic score)\n",
+              "SARA = sigmoid(intercept + sum(coef_i * feature_i))\n",
+              "Fitted on IS 2024-26, validated OOS 2020-23\n",
+              "Gate: SARA >= 0.40th-percentile value of IS scores (keeps top 60%)\n\n",
+              "Per-logic coefficients:\n"]
+for name, s in SARA_results.items():
+    coef_lines.append(f"\n{name}:\n")
+    for k, v in s['coefs'].items():
+        coef_lines.append(f"  {k}: {v:+.4f}\n")
+
+backup_path = '/mnt/project-files/backups/sara_prv_formula_20261019.txt'
+with open(backup_path, 'w') as f:
+    f.writelines(coef_lines)
+print(f"SARA backup written to {backup_path}")
