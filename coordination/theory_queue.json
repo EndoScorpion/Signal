@@ -724,24 +724,24 @@
     "id": "nomem6_024",
     "name": "MKT-17-NY-USDCHF-THU+GA",
     "priority": 2,
-    "status": "pending",
+    "status": "withdrawn",
     "symbol": "USDCHF",
     "timeframe": "H1",
     "logic": "Entry as nomem6_016 (Friday 13-16 opens, SELL when prev bar LOSSY AND z>=0.9, no stop). EXIT at the close of the first bar on which LOSSY is no longer true (Stoch%K<=80 or no negative slope/accel or nsc==0), else at 21:00 close. Bar-close only, no intrabar logic. Cost 0.00008.",
     "cloud_result": "IS FXOpen 2024-26 n=45 WR78 PF5.33 dd0.35% (base 2.67/0.53) 3x PF4.01; OOS TD 2020-23 n=44 WR77 PF3.10 dd0.39% (base 3.07/0.61) 3x 2.37. BUT net $ at 0.1 lot: IS 416 vs 406, OOS 273 vs 552 - early exit gives up half the OOS profit. PF/DD tool, not a better exit; 016 stays the base.",
     "cost": 8e-05,
-    "flag_if": "OOS PF < 1.5 or OOS n < 30 -> reject (IS-only candidate)"
+    "flag_if": "WITHDRAWN 18:50Z: failed cloud OOS (EURUSD/EURGBP analogues PF<1.05 on 2020-23). Do not run."
   },
   {
     "id": "nomem6_025",
     "name": "MKT-13-16-NY-EURGBP-WED+GA+Z09",
     "priority": 3,
-    "status": "pending",
+    "status": "withdrawn",
     "symbol": "EURGBP",
     "timeframe": "H1",
     "logic": "Entry as nomem6_016 (Friday 13-16 opens, SELL when prev bar LOSSY AND z>=0.9, no stop). EXIT at the close of the first bar on which LOSSY is no longer true (Stoch%K<=80 or no negative slope/accel or nsc==0), else at 21:00 close. Bar-close only, no intrabar logic. Cost 0.00008.",
     "cloud_result": "IS FXOpen 2024-26 n=45 WR78 PF5.33 dd0.35% (base 2.67/0.53) 3x PF4.01; OOS TD 2020-23 n=44 WR77 PF3.10 dd0.39% (base 3.07/0.61) 3x 2.37. BUT net $ at 0.1 lot: IS 416 vs 406, OOS 273 vs 552 - early exit gives up half the OOS profit. PF/DD tool, not a better exit; 016 stays the base.",
     "cost": 8e-05,
-    "flag_if": "OOS PF < 1.5 or OOS n < 30 -> reject (IS-only candidate)"
+    "flag_if": "WITHDRAWN 18:50Z: failed cloud OOS (EURUSD/EURGBP analogues PF<1.05 on 2020-23). Do not run."
   }
 ]
