@@ -527,5 +527,17 @@
   "cloud_result": "IS n=49 WR65 PF2.01 +46pts; OOS n=64 WR64 PF2.31 +83pts",
   "cost": "0.00008/trade",
   "flag_if": "n>30 and PF>1.5"
+ },
+ {
+  "id": "nomem6_008",
+  "name": "MKT-14-NY-T31s+NOSL+XNFP+SSR",
+  "priority": 1,
+  "status": "pending",
+  "symbol": "EURUSD",
+  "timeframe": "H1",
+  "logic": "As nomem6_005 (Friday 14:00 short, day up >0.5*ATR14, skip first Friday, no stop, exit 21:00) plus Nasif minSSR>-2: for 18 slope slots (H1/H4/D1 x SMA2/5/10 x shift0/1, slope=(SMA-SMA.shift(scale))/point) require min over k in {1,6,8,10,12,14,16} of slp0/slp[k] > -2.",
+  "cloud_result": "IS FXOpen 24-26 n=27 WR67 PF3.32 +67pts; OOS TD 20-23 n=47 WR66 PF2.25 +83pts",
+  "cost": "0.00008/trade",
+  "flag_if": "n>30 and PF>1.5"
  }
 ]
