@@ -700,3 +700,119 @@ backup_path = '/mnt/project-files/backups/sara_prv_formula_20261019.txt'
 with open(backup_path, 'w') as f:
     f.writelines(coef_lines)
 print(f"SARA backup written to {backup_path}")
+
+# ─── Fingerprint gate test (Nasif's MQ4 strong-setup bands) ───────────────────
+# From 5 strong prints + 1 loss print (2026-10-19):
+#   Strong fingerprint intersection: maxsp > 0.8, pnr_max == 0, nsc == 0,
+#     15-period slp positive, stoch_K > 65, avgsp rising
+#   Loss flags: maxsp < 0.8, pnr_max > 5, nsc > 0, 15-period momentum turning
+# Tight bands from commented code: maxap in [1,1.5), mmr[1] in [10,15], ssr[1] in [2,3]
+# We approximate on H1 features:
+#   maxsp  ~ rolling(18).max(SP) * ... here we already have SP; maxsp=max(SP over recent bars)
+#   pnr    ~ pnr not computable without bar-level pac/nac; skip
+#   nsc    ~ stoch_K < 20 (overbought short? sell signal count) — proxy: D_stoch_K < 0 & stoch_K > 80
+#   mmr[1] ~ MMR (already computed as maxslp18/|minslp18|)
+#   ssr[1] ~ SSR (slp[0]/slp[6])
+#   maxap  ~ rolling(18).max(AP.abs())
+
+print("\n\n=== Fingerprint + Loss-Prevention Gate Tests ===")
+
+fingerprint_lines = ["\n## Fingerprint Gate Tests (strong-setup bands from MQ4 prints)\n",
+                     "Reference: 5 strong + 1 loss M15 Beta print blocks (Nasif, 2026-10-19)\n\n"]
+
+def test_gate(trades, col, lo, hi, label, min_n=20):
+    """Test a band gate [lo, hi) on feature col. Returns (n, wr, pf, base_wr, base_pf)."""
+    if col not in trades.columns:
+        return None
+    mask = trades[col].between(lo, hi, inclusive='left') if hi < 1e9 else (trades[col] >= lo)
+    mask &= trades[col].notna()
+    sub = trades[mask]
+    if len(sub) < min_n:
+        return None
+    pts_w = sub.loc[sub['win']==1, 'pts'].sum()
+    pts_l = sub.loc[sub['win']==0, 'pts'].sum()
+    pf = pts_w / (-pts_l) if pts_l < 0 else np.nan
+    base_pts_w = trades.loc[trades['win']==1, 'pts'].sum()
+    base_pts_l = trades.loc[trades['win']==0, 'pts'].sum()
+    base_pf = base_pts_w / (-base_pts_l) if base_pts_l < 0 else np.nan
+    return {'n': len(sub), 'wr': sub['win'].mean(), 'pf': pf,
+            'base_wr': trades['win'].mean(), 'base_pf': base_pf,
+            'wins_lost': ((~mask) & (trades['win']==1)).sum(),
+            'losses_avoided': ((~mask) & (trades['win']==0)).sum()}
+
+# Compute rolling-max features for fingerprint
+for name, trades in all_trades.items():
+    new_feats = {}
+    if 'SP' in trades.columns:
+        # approx maxsp over 18 bars not available per-trade; use SP directly as proxy
+        # better: rolling max in feat_all then attach — already done, SP is current bar
+        new_feats['maxsp_proxy'] = trades['SP']  # best we have without bar-level history
+    if 'MMR' in trades.columns:
+        new_feats['MMR'] = trades['MMR']
+    if 'SSR' in trades.columns:
+        new_feats['SSR'] = trades['SSR']
+    if 'AP' in trades.columns:
+        new_feats['AP_abs'] = trades['AP'].abs()
+    for k, v in new_feats.items():
+        if k not in trades.columns:
+            trades[k] = v
+    all_trades[name] = trades
+
+# Three tight bands + broad fingerprint + loss prevention
+gates = [
+    # (label, feature, lo, hi)
+    ('maxap in [1,1.5)',  'AP_abs', 1.0, 1.5),
+    ('mmr[1] in [10,15]', 'MMR',    10.0, 15.0),
+    ('ssr[1] in [2,3]',   'SSR',    2.0,  3.0),
+    # Broader "strong" fingerprint from intersection
+    ('SP > 5 (slope up)',   'SP',   5.0, 1e9),
+    ('SSR in [0.8,3]',      'SSR',  0.8, 3.0),
+    ('MMR in [2,15]',       'MMR',  2.0, 15.0),
+    # Loss prevention (overbought divergence): stoch high but sp low
+    ('stoch_K > 80',     'stoch_K', 80.0, 1e9),
+]
+
+fp_header = f"\n{'Logic':<32} {'Gate':<28} {'n':>5} {'WR%':>6} {'PF':>6} {'base_WR%':>9} {'base_PF':>8} {'wins_lost':>10} {'loss_avd':>9}\n"
+fp_header += "-"*120 + "\n"
+print(fp_header, end="")
+fingerprint_lines.append(fp_header)
+
+for name, trades in all_trades.items():
+    for lbl, col, lo, hi in gates:
+        r = test_gate(trades, col, lo, hi, lbl)
+        if r is None:
+            continue
+        line = (f"{name:<32} {lbl:<28} {r['n']:>5} {r['wr']*100:>6.1f} "
+                f"{r['pf']:>6.2f} {r['base_wr']*100:>9.1f} {r['base_pf']:>8.2f} "
+                f"{r['wins_lost']:>10} {r['losses_avoided']:>9}\n")
+        print(line, end="")
+        fingerprint_lines.append(line)
+
+# Loss-prevention: flag trades with nsc proxy (overbought divergence: stoch > 80 AND D_stoch_K < 0 AND SP < 0)
+print("\n--- Loss-prevention gate: stoch_K>80 AND D_stoch_K<0 AND SP<0 (overbought fade failing) ---")
+fingerprint_lines.append("\n### Loss-prevention gate: stoch_K>80 AND D_stoch_K<0 AND SP<0\n")
+for name, trades in all_trades.items():
+    cols_needed = ['stoch_K', 'D_stoch_K', 'SP']
+    if not all(c in trades.columns for c in cols_needed):
+        continue
+    loss_flag = (trades['stoch_K'] > 80) & (trades['D_stoch_K'] < 0) & (trades['SP'] < 0)
+    flagged = trades[loss_flag]
+    kept    = trades[~loss_flag]
+    if len(kept) < 20: continue
+    wr_all  = trades['win'].mean()
+    wr_kept = kept['win'].mean()
+    losses_avoided = ((loss_flag) & (trades['win']==0)).sum()
+    wins_lost      = ((loss_flag) & (trades['win']==1)).sum()
+    pts_w = kept.loc[kept['win']==1,'pts'].sum()
+    pts_l = kept.loc[kept['win']==0,'pts'].sum()
+    pf_kept = pts_w / (-pts_l) if pts_l < 0 else np.nan
+    line = (f"  {name}: flag {loss_flag.sum()} trades -> "
+            f"WR {wr_all*100:.1f}% -> {wr_kept*100:.1f}%, PF base->{pf_kept:.2f}, "
+            f"losses_avoided={losses_avoided}, wins_lost={wins_lost}\n")
+    print(line, end="")
+    fingerprint_lines.append(line)
+
+# Append fingerprint section to existing MD
+with open(out_path, 'a') as f:
+    f.writelines(fingerprint_lines)
+print(f"\nFingerprint results appended to {out_path}")
