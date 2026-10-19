@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "_comment": "Cloud writes candidates here. CLI polls and runs each pending entry.",
     "_schema": {
@@ -20,11 +20,29 @@
     }
   },
   {
-    "id": "nomem6_001",
+    "id": "nomem6_004",
     "status": "pending",
+    "priority": 1,
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:50:00Z",
+    "description": "MKT-14-NY-T31s+NOSL: Friday 14:00 UTC SHORT when (close of 13:00 bar - prior-day close) > 0.5*ATR14; no stop; exit at 21:00 UTC open. Cloud python FXOpen 2024-26: n=70 WR=64.3% PF=2.23 avg=+5.7 pips. OOS TwelveData 2020-23: n=89 WR=61.8% PF=1.78. Positive every year 2020-2026. SURVIVOR CANDIDATE - please confirm on MT4 M1/H1 FXOpen.",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {"rules": "Friday only; at 14:00 UTC if close[13:00] - prev_day_close > 0.5*ATR14(H1) then SELL market; no stop; close at 21:00 UTC", "stop": "none", "cost": 0.00008},
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [2020, 2021, 2022, 2023, 2024, 2025, 2026],
+    "commission_pts": 8,
+    "timeout_min": 90,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_001",
+    "status": "skip",
     "added_by": "cloud-thread-kxrfun",
     "added_at": "2026-10-19T00:40:00Z",
-    "description": "MKT-20-SEAS-T34l+D2: Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu). Cloud python: n=143 WR=60.1% PF=1.8 avg=2.64 pips (marginal)",
+    "description": "MKT-20-SEAS-T34l+D2: Wednesday 20:00 UTC LONG, no stop, exit close of 4th bar. SKIPPED: failed OOS 2020-23 (PF 0.84).",
     "ea": "python_rules",
     "set_base": "none",
     "set_overrides": {"rules": "Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu)", "stop": "none", "cost": 0.00008},
