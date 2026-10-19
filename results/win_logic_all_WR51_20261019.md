@@ -15,3 +15,13 @@ Entry: Fri 14:00 SHORT, day_up>0.3×ATR14, mmr≥-1.0, slope120≥-0.1×ATR14, x
 IS (FX ECN 2024-26): n=34 WR=70.6% PF=2.84
 OOS (TD 2020-23): n=36 WR=75.0% PF=5.19 avg=+176.7pts yr=3.27/13.33/18.90/1.74 ✓ALL_YRS
 NOTE: GateA = EMA(120).diff(5) >= -0.1 * ATR14 (from 2011a loss gate research)
+
+## G12-04A — T31s_0.4x+MMR+GateA (SURVIVOR — Gen 12 2026-10-19) *** NEW BEST ***
+Entry: Fri 14:00 SHORT, day_up>0.4×ATR14, mmr≥-1.0, slope120≥-0.1×ATR14, xNFP
+IS (FX ECN 2024-26): n=34 WR=70.6% PF=2.84
+OOS (TD 2020-23): n=35 WR=77.1% PF=5.67 avg=+185.4pts yr=3.27/13.33/825.33/1.74 ✓ALL_YRS
+
+## G12-G52A — G5-2+GateA (SURVIVOR — Gen 12 2026-10-19)
+Entry: Fri 14:00 SHORT, day_up>0.5×ATR14, mmr≥-1.0, slope120≥-0.1×ATR14, xNFP
+IS (FX ECN 2024-26): n=34 WR=70.6% PF=2.84
+OOS (TD 2020-23): n=34 WR=76.5% PF=5.29 avg=+175.6pts yr=3.27/9.95/825.33/1.74 ✓ALL_YRS

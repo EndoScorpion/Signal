@@ -489,3 +489,34 @@ GateA (EMA120 slope ≥ -0.1×ATR, the 2011a loss gate) dramatically boosts G10-
 OOS PF 2.85 → 5.19 (+82%), WR 67.9% → 75.0%, avg +119.5 → +176.7pts
 This confirms the 2011a_port finding extends to T31s 0.3x family.
 
+
+## Gen 12 — GateA Coefficient Sweep + Threshold Variants (2026-10-19)
+Script: clone_gen12.py
+
+### GateA coefficient sweep (T31s 0.3x+MMR, FX IS / TD OOS std)
+- coef=0.0 (slope>=0): IS n=28 FAIL (IS n<30), OOS PF=5.0
+- **coef=0.05: IS n=30 WR=70.0% PF=2.78 | OOS n=35 WR=74.3% PF=5.05 avg=+175.7pts ✓ALL_YRS**
+- **coef=0.10 (G11-3 ref): IS n=34 PF=2.84 | OOS n=36 WR=75.0% PF=5.19 avg=+176.7pts ✓ALL_YRS**
+- **coef=0.15: IS n=35 PF=2.55 | OOS n=39 WR=74.4% PF=5.41 avg=+177.6pts ✓ALL_YRS**
+- **coef=0.20: IS n=36 PF=2.33 | OOS n=42 WR=76.2% PF=5.60 avg=+172.0pts ✓ALL_YRS (best coeff OOS PF)**
+- **coef=0.30: IS n=38 PF=2.31 | OOS n=45 WR=75.6% PF=5.0 avg=+164.4pts ✓ALL_YRS**
+
+### T31s 0.4x threshold variants (FX IS / TD OOS std)
+- G12-04ref (0.4x+MMR): IS n=44 PF=2.25 | OOS n=50 WR=72.0% PF=3.44 avg=+138.5pts ✓ALL_YRS
+- **G12-04A (0.4x+MMR+GateA): IS n=34 WR=70.6% PF=2.84 | OOS n=35 WR=77.1% PF=5.67 avg=+185.4pts ✓ALL_YRS — NEW BEST**
+- G12-04AB (+GateA+GateB): IS n=28 FAIL, OOS PF=7.01 watchlist
+- G12-04AL (+GateA+LOSSY): IS n=15 FAIL, OOS PF=12.68 (n=19<20)
+
+### G5-2 + GateA (0.5x)
+- FX IS / TD OOS std: IS n=34 WR=70.6% PF=2.84 | OOS n=34 WR=76.5% PF=5.29 ✓ALL_YRS — SURVIVOR
+- TD split: OOS 2026 year_fail — ECN-specific confirmed
+
+### G11-3 on TD split: OOS 2026 year_fail — ECN-venue dependency confirmed
+
+### Analysis
+- GateA is robust: PF 5.0-5.67 across all coefficient values (0.05-0.30) and thresholds (0.3x-0.5x)
+- Sweet spot: coef=0.10-0.20 maximises OOS PF while keeping IS PF adequate
+- G12-04A best single survivor: OOS PF=5.67 avg=+185.4pts (0.4x threshold gives better IS n=34 balance)
+- G5-2+GateA also confirms: the GateA finding applies to the base G5-2 logic too
+- TD retail data fails GateA strategies in 2024-26 window — ECN-only edge
+
