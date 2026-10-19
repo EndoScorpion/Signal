@@ -1,0 +1,807 @@
+"""Gen 2 clone engine — builds on T31s survivors from gen 1.
+Survivors: T31s_BASE (OOS PF 1.67), T31s+strong (OOS PF 1.72), T31s+xnfp (OOS PF 1.96)
+Gen 2 tries: combined strong+xnfp, ATR-regime filter, RSI filter, hour variants,
+             cross-pair check proxy, exit 20 vs 21, day_up percentile filter.
+"""
+import pandas as pd, numpy as np, sys, warnings
+warnings.filterwarnings('ignore')
+
+COST = 0.00008
+IS_FILE  = '/mnt/project-files/data/eurusd_fxopen_h1.csv'
+OOS_FILE = '/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv'
+
+def load(path):
+    df = pd.read_csv(path)
+    if 'timestamp_ms' in df.columns:
+        df['t'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+    else:
+        df['t'] = pd.to_datetime(df.iloc[:,0])
+    df = df.set_index('t').sort_index()
+    df.columns = [c.lower() for c in df.columns]
+    for c in ['open','high','low','close']:
+        if c not in df.columns:
+            nums = [x for x in df.columns if df[x].dtype in (float,int)][:4]
+            df[['open','high','low','close']] = df[nums[:4]]
+            break
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    return df
+
+def add_indicators(df):
+    tr = np.maximum(df.high-df.low,
+         np.maximum((df.high-df.close.shift()).abs(),
+                    (df.low -df.close.shift()).abs()))
+    df['atr']    = tr.rolling(14).mean()
+    df['atr_pct']= df.atr.rolling(252).rank(pct=True)
+    d = df.close.diff()
+    g = d.clip(lower=0).ewm(alpha=1/14,adjust=False).mean()
+    l = (-d.clip(upper=0)).ewm(alpha=1/14,adjust=False).mean()
+    df['rsi14']  = 100-100/(1+g/l)
+    df['rsi5']   = 100-100/(1+(d.clip(lower=0).ewm(span=5,adjust=False).mean()/
+                               (-d.clip(upper=0)).ewm(span=5,adjust=False).mean()))
+    df['ema20']  = df.close.ewm(span=20,adjust=False).mean()
+    df['ema120'] = df.close.ewm(span=120,adjust=False).mean()
+    df['slope120']= df.ema120.diff(5)
+    df['mom3']   = df.close - df.close.shift(3)
+    df['rng']    = df.high-df.low
+    # 4-week rolling ATR percentile (additional)
+    df['atr_pct4w'] = df.atr.rolling(28*24).rank(pct=True)
+    for c in ['atr','atr_pct','atr_pct4w','rsi14','rsi5','ema20','ema120',
+              'slope120','mom3','rng']:
+        df[c] = df[c].shift(1)
+    df['pc'] = df.close.shift(1)
+    # daily aggregates
+    day_o = df.groupby('date').open.first()
+    df['day_open'] = df.date.map(day_o)
+    prev_close = df.groupby('date').close.last().shift(1)
+    df['prev_close'] = df.date.map(prev_close)
+    # 4-week rolling day_up percentile (at 14:00 on Fri, how big is today's move)
+    return df
+
+def run(df, mask, direction, stop_mult=None, hold=None, exit_hour=None,
+        entry_offset=0.0, no_overlap=True):
+    O=df.open.values; H=df.high.values; L=df.low.values; C=df.close.values
+    HR=df.hour.values; A=df.atr.values; idx=df.index; N=len(df)
+    rows=[]; last_exit=-1
+    for i in np.where(mask)[0]:
+        if no_overlap and i<=last_exit: continue
+        if i+1>=N: continue
+        dr = int(direction)
+        ep = O[i] + entry_offset*dr
+        atr= A[i]
+        stop = ep - dr*stop_mult*atr if stop_mult else None
+        j=i; pnl=None
+        while True:
+            j+=1
+            if j>=N: break
+            if stop and ((dr>0 and L[j]<=stop) or (dr<0 and H[j]>=stop)):
+                pnl=(stop-ep)*dr; break
+            done = (hold and j-i>=hold) or \
+                   (exit_hour is not None and (HR[j]==exit_hour or j-i>=24))
+            if done: pnl=(C[j]-ep)*dr; break
+        if pnl is None: continue
+        last_exit=j
+        rows.append((idx[i], dr, ep, pnl-COST, j-i, idx[i].year))
+    if not rows: return pd.DataFrame(columns=['t','dir','entry','pnl','bars','year'])
+    return pd.DataFrame(rows, columns=['t','dir','entry','pnl','bars','year'])
+
+def stats(tr, label=''):
+    if tr is None or len(tr)==0:
+        return dict(label=label,n=0,wr=0,pf=0,avg_pts=0)
+    p=tr.pnl; w=p[p>0].sum(); lo=-p[p<0].sum()
+    pf=round(w/lo,2) if lo>0 else 99.0
+    wr=round(100*(p>0).mean(),1)
+    avg_pts=round(p.mean()/0.00001,1)
+    yr={}
+    for y in sorted(tr.year.unique()):
+        q=tr[tr.year==y].pnl
+        yr[y]=round(q[q>0].sum()/-q[q<0].sum(),2) if (q<0).any() else 99.0
+    return dict(label=label,n=len(tr),wr=wr,pf=pf,avg_pts=avg_pts,yr=yr)
+
+print("Loading IS data...")
+dfIS = add_indicators(load(IS_FILE))
+dfIS_2024 = dfIS[dfIS.year>=2024].copy()
+print("Loading OOS data...")
+dfOOS = add_indicators(load(OOS_FILE))
+dfOOS_2020 = dfOOS[(dfOOS.year>=2020)&(dfOOS.year<=2023)].copy()
+
+def test_both(label, fn):
+    ri = fn(dfIS_2024); ro = fn(dfOOS_2020)
+    if ri is None: return None,None
+    mask_i,dir_i,kw_i = ri; mask_o,dir_o,kw_o = ro
+    si = stats(run(dfIS_2024,  mask_i, dir_i, **kw_i), label+"_IS")
+    so = stats(run(dfOOS_2020, mask_o, dir_o, **kw_o), label+"_OOS")
+    return si,so
+
+def _ok(df):
+    return ~np.isnan(df.atr_pct.values)&~np.isnan(df.prev_close.values)
+
+def _fri14(df, thresh=0.5, xnfp=False, strong=False):
+    """Base T31s mask. Returns (mask, -1, kwargs)."""
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    thr = (1.0 if strong else thresh)*A
+    mask = ok & (HR==14) & (DOW==4) & (day_up > thr)
+    if xnfp:
+        # exclude first Friday of month
+        is_first_fri = pd.Series(df.index).apply(lambda t: t.day <= 7).values
+        mask = mask & ~is_first_fri
+    return mask
+
+results = []
+
+# ── Re-confirm gen 1 survivors ────────────────────────────────────────────────
+def T31s_base(df):
+    return _fri14(df), -1, dict(stop_mult=None, exit_hour=21)
+def T31s_strong(df):
+    return _fri14(df, strong=True), -1, dict(stop_mult=None, exit_hour=21)
+def T31s_xnfp(df):
+    return _fri14(df, xnfp=True), -1, dict(stop_mult=None, exit_hour=21)
+
+for lbl,fn in [('T31s_BASE',T31s_base),('T31s+strong',T31s_strong),('T31s+xnfp',T31s_xnfp)]:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl,si,so))
+    print(f"  {lbl}: IS n={si['n'] if si else 0} WR={si['wr'] if si else 0} PF={si['pf'] if si else 0} | OOS n={so['n'] if so else 0} WR={so['wr'] if so else 0} PF={so['pf'] if so else 0}")
+
+print("\n--- GEN 2 CLONES ---")
+
+# ── G2-1: T31s+strong+xnfp (combine both) ────────────────────────────────────
+def G2_1(df):
+    return _fri14(df, strong=True, xnfp=True), -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-2: T31s+xnfp + low ATR regime (atr_pct < 0.5 — not in a high-vol period) ──
+def G2_2(df):
+    mask = _fri14(df, xnfp=True)
+    AP = df.atr_pct.values
+    mask = mask & (AP < 0.5)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-3: T31s+xnfp + medium ATR (atr_pct 0.25-0.75) ─────────────────────────
+def G2_3(df):
+    mask = _fri14(df, xnfp=True)
+    AP = df.atr_pct.values
+    mask = mask & (AP > 0.25) & (AP < 0.75)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-4: T31s+xnfp + high ATR regime (atr_pct > 0.5) ────────────────────────
+def G2_4(df):
+    mask = _fri14(df, xnfp=True)
+    AP = df.atr_pct.values
+    mask = mask & (AP > 0.5)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-5: T31s+xnfp + RSI14 > 50 (market was up when we enter) ───────────────
+def G2_5(df):
+    mask = _fri14(df, xnfp=True)
+    R = df.rsi14.values
+    mask = mask & (R > 50)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-6: T31s+xnfp + RSI14 < 50 ──────────────────────────────────────────────
+def G2_6(df):
+    mask = _fri14(df, xnfp=True)
+    R = df.rsi14.values
+    mask = mask & (R < 50)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-7: T31s+xnfp + RSI5 > 60 (short-term overbought = better fade) ────────
+def G2_7(df):
+    mask = _fri14(df, xnfp=True)
+    R = df.rsi5.values
+    mask = mask & (R > 60)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-8: T31s+xnfp + slope120 < 0 (bearish trend = short bias stronger) ─────
+def G2_8(df):
+    mask = _fri14(df, xnfp=True)
+    S = df.slope120.values
+    mask = mask & (S < 0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-9: T31s+xnfp + slope120 > 0 ────────────────────────────────────────────
+def G2_9(df):
+    mask = _fri14(df, xnfp=True)
+    S = df.slope120.values
+    mask = mask & (S > 0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-10: T31s+xnfp exit 20:00 (one hour earlier) ───────────────────────────
+def G2_10(df):
+    return _fri14(df, xnfp=True), -1, dict(stop_mult=None, exit_hour=20)
+
+# ── G2-11: T31s+xnfp exit 22:00 (one hour later) ─────────────────────────────
+def G2_11(df):
+    return _fri14(df, xnfp=True), -1, dict(stop_mult=None, exit_hour=22)
+
+# ── G2-12: T31s BASE + large threshold 1.5×ATR ───────────────────────────────
+def G2_12(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 1.5*A)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-13: T31s+strong+xnfp + RSI5>60 ────────────────────────────────────────
+def G2_13(df):
+    mask = _fri14(df, strong=True, xnfp=True)
+    R = df.rsi5.values
+    mask = mask & (R > 60)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-14: T31s+xnfp + day_up percentile > 0.5 using rolling 20-week window ──
+# Proxy: day_up > 0.75×ATR (between 0.5 and 1.0 tested before; try 0.75 as new candidate)
+def G2_14(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    is_first_fri = pd.Series(df.index).apply(lambda t: t.day <= 7).values
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 0.75*A) & ~is_first_fri
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-15: T31s+xnfp + add soft stop at 1.5×ATR (wider) ──────────────────────
+def G2_15(df):
+    return _fri14(df, xnfp=True), -1, dict(stop_mult=1.5, exit_hour=21)
+
+# ── G2-16: T31s+xnfp + add soft stop at 1.0×ATR ──────────────────────────────
+def G2_16(df):
+    return _fri14(df, xnfp=True), -1, dict(stop_mult=1.0, exit_hour=21)
+
+# ── G2-17: T31s+strong enter 13:00 (one hour earlier) ─────────────────────────
+def G2_17(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    mask = ok & (HR==13) & (DOW==4) & (day_up > 1.0*A)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-18: T31s+xnfp + mom3 < 0 (3-bar momentum also negative = fade confirmed) ─
+def G2_18(df):
+    mask = _fri14(df, xnfp=True)
+    M = df.mom3.values
+    mask = mask & (M < 0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-19: T31s+xnfp + mom3 > 0 ──────────────────────────────────────────────
+def G2_19(df):
+    mask = _fri14(df, xnfp=True)
+    M = df.mom3.values
+    mask = mask & (M > 0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G2-20: T31s+xnfp + ema120 slope > 0 (fade works on uptrend days too?) ────
+# Already in G2-9; skip duplicate
+
+# ── G2-21: T31s BASE + day_up 0.3-0.7×ATR band (smaller moves) ───────────────
+def G2_21(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 0.3*A) & (day_up < 0.7*A)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+clones_g2 = [
+    ('G2-1_strong+xnfp',   G2_1),
+    ('G2-2_xnfp+lowATR',   G2_2),
+    ('G2-3_xnfp+midATR',   G2_3),
+    ('G2-4_xnfp+highATR',  G2_4),
+    ('G2-5_xnfp+RSI14>50', G2_5),
+    ('G2-6_xnfp+RSI14<50', G2_6),
+    ('G2-7_xnfp+RSI5>60',  G2_7),
+    ('G2-8_xnfp+beartrend',G2_8),
+    ('G2-9_xnfp+bulltrend',G2_9),
+    ('G2-10_xnfp_exit20',  G2_10),
+    ('G2-11_xnfp_exit22',  G2_11),
+    ('G2-12_thresh1.5x',   G2_12),
+    ('G2-13_strong+xnfp+RSI5>60', G2_13),
+    ('G2-14_thresh0.75x+xnfp', G2_14),
+    ('G2-15_xnfp+stop1.5x',  G2_15),
+    ('G2-16_xnfp+stop1.0x',  G2_16),
+    ('G2-17_strong_enter13',  G2_17),
+    ('G2-18_xnfp+mom3<0',     G2_18),
+    ('G2-19_xnfp+mom3>0',     G2_19),
+    ('G2-21_base_smallmove',  G2_21),
+]
+
+for lbl,fn in clones_g2:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl,si,so))
+    tag = "PASS" if (so and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51) else "fail"
+    print(f"  [{tag}] {lbl}: IS n={si['n'] if si else 0} WR={si['wr'] if si else 0}% PF={si['pf'] if si else 0} avg={si['avg_pts'] if si else 0}pts | OOS n={so['n'] if so else 0} WR={so['wr'] if so else 0}% PF={so['pf'] if so else 0} avg={so['avg_pts'] if so else 0}pts")
+
+# Print full summary
+print("\n=== GEN 2 SURVIVORS (n>=30 IS, n>=20 OOS, OOS PF>=1.0, OOS WR>=51%) ===")
+for lbl,si,so in results:
+    if si['n']>=30 and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51:
+        print(f"  SURVIVOR: {lbl} | IS: n={si['n']} WR={si['wr']}% PF={si['pf']} avg={si['avg_pts']}pts | OOS: n={so['n']} WR={so['wr']}% PF={so['pf']} avg={so['avg_pts']}pts | yr={so['yr']}")
+"""Gen 3 clone engine — combines best gen 2 discoveries.
+Best gen 2: G2-9 (xnfp+bulltrend OOS PF 2.52), G2-14 (0.75x+xnfp OOS PF 2.22),
+            G2-1 (strong+xnfp OOS PF 2.19), G2-2 (xnfp+lowATR OOS PF 1.81)
+Gen 3: deeper crosses, alternative exits, slight threshold sweeps on best survivors.
+"""
+import pandas as pd, numpy as np, warnings
+warnings.filterwarnings('ignore')
+
+COST = 0.00008
+IS_FILE  = '/mnt/project-files/data/eurusd_fxopen_h1.csv'
+OOS_FILE = '/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv'
+
+def load(path):
+    df = pd.read_csv(path)
+    if 'timestamp_ms' in df.columns:
+        df['t'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+    else:
+        df['t'] = pd.to_datetime(df.iloc[:,0])
+    df = df.set_index('t').sort_index()
+    df.columns = [c.lower() for c in df.columns]
+    for c in ['open','high','low','close']:
+        if c not in df.columns:
+            nums = [x for x in df.columns if df[x].dtype in (float,int)][:4]
+            df[['open','high','low','close']] = df[nums[:4]]
+            break
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    return df
+
+def add_indicators(df):
+    tr = np.maximum(df.high-df.low,
+         np.maximum((df.high-df.close.shift()).abs(),
+                    (df.low -df.close.shift()).abs()))
+    df['atr']    = tr.rolling(14).mean()
+    df['atr_pct']= df.atr.rolling(252).rank(pct=True)
+    d = df.close.diff()
+    g = d.clip(lower=0).ewm(alpha=1/14,adjust=False).mean()
+    l = (-d.clip(upper=0)).ewm(alpha=1/14,adjust=False).mean()
+    df['rsi14']  = 100-100/(1+g/l)
+    df['rsi5']   = 100-100/(1+(d.clip(lower=0).ewm(span=5,adjust=False).mean()/
+                               (-d.clip(upper=0)).ewm(span=5,adjust=False).mean()))
+    df['ema120'] = df.close.ewm(span=120,adjust=False).mean()
+    df['slope120']= df.ema120.diff(5)
+    df['mom3']   = df.close - df.close.shift(3)
+    for c in ['atr','atr_pct','rsi14','rsi5','ema120','slope120','mom3']:
+        df[c] = df[c].shift(1)
+    df['pc'] = df.close.shift(1)
+    day_o = df.groupby('date').open.first()
+    df['day_open'] = df.date.map(day_o)
+    prev_close = df.groupby('date').close.last().shift(1)
+    df['prev_close'] = df.date.map(prev_close)
+    return df
+
+def run(df, mask, direction, stop_mult=None, hold=None, exit_hour=None,
+        entry_offset=0.0, no_overlap=True):
+    O=df.open.values; H=df.high.values; L=df.low.values; C=df.close.values
+    HR=df.hour.values; A=df.atr.values; idx=df.index; N=len(df)
+    rows=[]; last_exit=-1
+    for i in np.where(mask)[0]:
+        if no_overlap and i<=last_exit: continue
+        if i+1>=N: continue
+        dr = int(direction)
+        ep = O[i] + entry_offset*dr
+        atr= A[i]
+        stop = ep - dr*stop_mult*atr if stop_mult else None
+        j=i; pnl=None
+        while True:
+            j+=1
+            if j>=N: break
+            if stop and ((dr>0 and L[j]<=stop) or (dr<0 and H[j]>=stop)):
+                pnl=(stop-ep)*dr; break
+            done = (hold and j-i>=hold) or \
+                   (exit_hour is not None and (HR[j]==exit_hour or j-i>=24))
+            if done: pnl=(C[j]-ep)*dr; break
+        if pnl is None: continue
+        last_exit=j
+        rows.append((idx[i], dr, ep, pnl-COST, j-i, idx[i].year))
+    if not rows: return pd.DataFrame(columns=['t','dir','entry','pnl','bars','year'])
+    return pd.DataFrame(rows, columns=['t','dir','entry','pnl','bars','year'])
+
+def stats(tr, label=''):
+    if tr is None or len(tr)==0:
+        return dict(label=label,n=0,wr=0,pf=0,avg_pts=0)
+    p=tr.pnl; w=p[p>0].sum(); lo=-p[p<0].sum()
+    pf=round(w/lo,2) if lo>0 else 99.0
+    wr=round(100*(p>0).mean(),1)
+    avg_pts=round(p.mean()/0.00001,1)
+    yr={}
+    for y in sorted(tr.year.unique()):
+        q=tr[tr.year==y].pnl
+        yr[y]=round(q[q>0].sum()/-q[q<0].sum(),2) if (q<0).any() else 99.0
+    return dict(label=label,n=len(tr),wr=wr,pf=pf,avg_pts=avg_pts,yr=yr)
+
+print("Loading data...")
+dfIS  = add_indicators(load(IS_FILE))
+dfIS  = dfIS[dfIS.year>=2024].copy()
+dfOOS = add_indicators(load(OOS_FILE))
+dfOOS = dfOOS[(dfOOS.year>=2020)&(dfOOS.year<=2023)].copy()
+
+def test_both(label, fn):
+    ri=fn(dfIS); ro=fn(dfOOS)
+    if ri is None: return None,None
+    m_i,d_i,k_i=ri; m_o,d_o,k_o=ro
+    si=stats(run(dfIS,  m_i, d_i, **k_i), label+"_IS")
+    so=stats(run(dfOOS, m_o, d_o, **k_o), label+"_OOS")
+    return si,so
+
+def _ok(df):
+    return ~np.isnan(df.atr_pct.values)&~np.isnan(df.prev_close.values)
+
+def _fri_base(df, thresh=0.5, xnfp=True):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    mask = ok & (HR==14) & (DOW==4) & (day_up > thresh*A)
+    if xnfp:
+        is_first_fri = pd.Series(df.index).apply(lambda t: t.day <= 7).values
+        mask = mask & ~is_first_fri
+    return mask
+
+results = []
+
+print("\n--- GEN 3 CLONES ---")
+
+# ── G3-1: G2-9 refined: xnfp + bulltrend + RSI14>50 (triple filter) ──────────
+def G3_1(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values; R=df.rsi14.values
+    mask = mask & (S>0) & (R>50)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-2: xnfp + bulltrend + thresh 0.75x ─────────────────────────────────────
+def G3_2(df):
+    mask = _fri_base(df, thresh=0.75, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-3: xnfp + bulltrend + thresh 1.0x (strong day + uptrend) ───────────────
+def G3_3(df):
+    mask = _fri_base(df, thresh=1.0, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-4: xnfp + bulltrend + RSI5>60 ──────────────────────────────────────────
+def G3_4(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values; R=df.rsi5.values
+    mask = mask & (S>0) & (R>60)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-5: xnfp + bulltrend + lowATR (all three gen2 bests combined) ───────────
+def G3_5(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values; AP=df.atr_pct.values
+    mask = mask & (S>0) & (AP<0.5)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-6: G2-9 + exit 20:00 ────────────────────────────────────────────────────
+def G3_6(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=20)
+
+# ── G3-7: G2-9 + enter 13:00 (earlier, captures more of the NY session move) ──
+def G3_7(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    S=df.slope120.values
+    day_up = O - PC
+    is_first_fri = pd.Series(df.index).apply(lambda t: t.day <= 7).values
+    mask = ok & (HR==13) & (DOW==4) & (day_up > 0.5*A) & ~is_first_fri & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-8: G2-14 (0.75+xnfp) + bulltrend ──────────────────────────────────────
+def G3_8(df):
+    mask = _fri_base(df, thresh=0.75, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+# Note: G3-8 == G3-2 (same logic)
+
+# ── G3-9: strong(1.0x) + xnfp + bulltrend (all-filter combo) ─────────────────
+def G3_9(df):
+    mask = _fri_base(df, thresh=1.0, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+# same as G3-3; skip
+
+# ── G3-10: xnfp + bulltrend + loose stop 2.0×ATR ──────────────────────────────
+def G3_10(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=2.0, exit_hour=21)
+
+# ── G3-11: G2-17 (enter 13:00 strong) + xnfp ─────────────────────────────────
+def G3_11(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    day_up = O - PC
+    is_first_fri = pd.Series(df.index).apply(lambda t: t.day <= 7).values
+    mask = ok & (HR==13) & (DOW==4) & (day_up > 1.0*A) & ~is_first_fri
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-12: G2-9 + ATR floor (day_up > 0.5×ATR AND ATR >= 0.0005) ─────────────
+def G3_12(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values; A=df.atr.values
+    mask = mask & (S>0) & (A>=0.0005)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-13: xnfp + bulltrend, thresh 0.4×ATR (slightly lower threshold) ────────
+def G3_13(df):
+    mask = _fri_base(df, thresh=0.4, xnfp=True)
+    S=df.slope120.values
+    mask = mask & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-14: G2-12 (thresh 1.5x, no xnfp) + bulltrend ─────────────────────────
+def G3_14(df):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    S=df.slope120.values
+    day_up = O - PC
+    mask = ok & (HR==14) & (DOW==4) & (day_up > 1.5*A) & (S>0)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G3-15: G2-9 + RSI14 < 70 (not extremely overbought — leave room) ──────────
+def G3_15(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True)
+    S=df.slope120.values; R=df.rsi14.values
+    mask = mask & (S>0) & (R<70)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+clones_g3 = [
+    ('G3-1_xnfp+bull+RSI14>50', G3_1),
+    ('G3-2_xnfp+bull+0.75x',    G3_2),
+    ('G3-3_xnfp+bull+strong',   G3_3),
+    ('G3-4_xnfp+bull+RSI5>60',  G3_4),
+    ('G3-5_xnfp+bull+lowATR',   G3_5),
+    ('G3-6_xnfp+bull_exit20',   G3_6),
+    ('G3-7_xnfp+bull_enter13',  G3_7),
+    ('G3-10_xnfp+bull+stop2x',  G3_10),
+    ('G3-11_strong_enter13+xnfp', G3_11),
+    ('G3-12_xnfp+bull+ATRfloor',  G3_12),
+    ('G3-13_xnfp+bull+0.4x',    G3_13),
+    ('G3-14_1.5x+bull',         G3_14),
+    ('G3-15_xnfp+bull+RSI<70',  G3_15),
+]
+
+for lbl,fn in clones_g3:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl,si,so))
+    tag = "PASS" if (so and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51) else "fail"
+    yr_str = "/".join(f"{v:.2f}" for v in so['yr'].values()) if so and so['yr'] else "—"
+    print(f"  [{tag}] {lbl}: IS n={si['n'] if si else 0} WR={si['wr'] if si else 0}% PF={si['pf'] if si else 0} avg={si['avg_pts'] if si else 0}pts | OOS n={so['n'] if so else 0} WR={so['wr'] if so else 0}% PF={so['pf'] if so else 0} avg={so['avg_pts'] if so else 0}pts | yr={yr_str}")
+
+print("\n=== GEN 3 SURVIVORS (n>=30 IS, n>=20 OOS, OOS PF>=1.0, OOS WR>=51%, all years>1.0) ===")
+for lbl,si,so in results:
+    if si['n']>=30 and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51:
+        all_yrs = all(v>=1.0 for v in so['yr'].values()) if so['yr'] else False
+        yr_str = "/".join(f"{v:.2f}" for v in so['yr'].values())
+        flag = " ✓ALL_YRS" if all_yrs else " ⚠year_fail"
+        print(f"  {lbl}: IS n={si['n']} WR={si['wr']}% PF={si['pf']} avg={si['avg_pts']}pts | OOS n={so['n']} WR={so['wr']}% PF={so['pf']} avg={so['avg_pts']}pts | yr={yr_str}{flag}")
+"""Gen 4 — combine best gen 3 survivors. Key combos to test:
+- G3-11 + bulltrend (enter13+strong+xnfp+slope>0)
+- G3-13 + RSI14>50 (0.4x+xnfp+bull+RSI)
+- G3-13 + RSI5>60
+- G3-11 + ATR floor
+- Per-year breakdown on best survivors for final table
+"""
+import pandas as pd, numpy as np, warnings
+warnings.filterwarnings('ignore')
+
+COST = 0.00008
+IS_FILE  = '/mnt/project-files/data/eurusd_fxopen_h1.csv'
+OOS_FILE = '/mnt/project-files/data/eurusd_twelvedata_h1_2020_2026.csv'
+
+def load(path):
+    df = pd.read_csv(path)
+    if 'timestamp_ms' in df.columns:
+        df['t'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+    else:
+        df['t'] = pd.to_datetime(df.iloc[:,0])
+    df = df.set_index('t').sort_index()
+    df.columns = [c.lower() for c in df.columns]
+    for c in ['open','high','low','close']:
+        if c not in df.columns:
+            nums = [x for x in df.columns if df[x].dtype in (float,int)][:4]
+            df[['open','high','low','close']] = df[nums[:4]]
+            break
+    df = df[['open','high','low','close']].copy()
+    df['hour'] = df.index.hour
+    df['dow']  = df.index.dayofweek
+    df['date'] = df.index.date
+    df['year'] = df.index.year
+    return df
+
+def add_indicators(df):
+    tr = np.maximum(df.high-df.low,
+         np.maximum((df.high-df.close.shift()).abs(),
+                    (df.low -df.close.shift()).abs()))
+    df['atr']    = tr.rolling(14).mean()
+    df['atr_pct']= df.atr.rolling(252).rank(pct=True)
+    d = df.close.diff()
+    g = d.clip(lower=0).ewm(alpha=1/14,adjust=False).mean()
+    l = (-d.clip(upper=0)).ewm(alpha=1/14,adjust=False).mean()
+    df['rsi14']  = 100-100/(1+g/l)
+    df['rsi5']   = 100-100/(1+(d.clip(lower=0).ewm(span=5,adjust=False).mean()/
+                               (-d.clip(upper=0)).ewm(span=5,adjust=False).mean()))
+    df['ema120'] = df.close.ewm(span=120,adjust=False).mean()
+    df['slope120']= df.ema120.diff(5)
+    for c in ['atr','atr_pct','rsi14','rsi5','ema120','slope120']:
+        df[c] = df[c].shift(1)
+    df['pc'] = df.close.shift(1)
+    prev_close = df.groupby('date').close.last().shift(1)
+    df['prev_close'] = df.date.map(prev_close)
+    return df
+
+def run(df, mask, direction, stop_mult=None, hold=None, exit_hour=None,
+        entry_offset=0.0, no_overlap=True):
+    O=df.open.values; H=df.high.values; L=df.low.values; C=df.close.values
+    HR=df.hour.values; A=df.atr.values; idx=df.index; N=len(df)
+    rows=[]; last_exit=-1
+    for i in np.where(mask)[0]:
+        if no_overlap and i<=last_exit: continue
+        if i+1>=N: continue
+        dr = int(direction)
+        ep = O[i] + entry_offset*dr
+        atr= A[i]
+        stop = ep - dr*stop_mult*atr if stop_mult else None
+        j=i; pnl=None
+        while True:
+            j+=1
+            if j>=N: break
+            if stop and ((dr>0 and L[j]<=stop) or (dr<0 and H[j]>=stop)):
+                pnl=(stop-ep)*dr; break
+            done = (hold and j-i>=hold) or \
+                   (exit_hour is not None and (HR[j]==exit_hour or j-i>=24))
+            if done: pnl=(C[j]-ep)*dr; break
+        if pnl is None: continue
+        last_exit=j
+        rows.append((idx[i], dr, ep, pnl-COST, j-i, idx[i].year))
+    if not rows: return pd.DataFrame(columns=['t','dir','entry','pnl','bars','year'])
+    return pd.DataFrame(rows, columns=['t','dir','entry','pnl','bars','year'])
+
+def stats(tr, label=''):
+    if tr is None or len(tr)==0:
+        return dict(label=label,n=0,wr=0,pf=0,avg_pts=0,yr={})
+    p=tr.pnl; w=p[p>0].sum(); lo=-p[p<0].sum()
+    pf=round(w/lo,2) if lo>0 else 99.0
+    wr=round(100*(p>0).mean(),1)
+    avg_pts=round(p.mean()/0.00001,1)
+    yr={}
+    for y in sorted(tr.year.unique()):
+        q=tr[tr.year==y].pnl
+        yr[y]=round(q[q>0].sum()/-q[q<0].sum(),2) if (q<0).any() else 99.0
+    return dict(label=label,n=len(tr),wr=wr,pf=pf,avg_pts=avg_pts,yr=yr)
+
+print("Loading data...")
+dfIS  = add_indicators(load(IS_FILE))
+dfIS  = dfIS[dfIS.year>=2024].copy()
+dfOOS = add_indicators(load(OOS_FILE))
+dfOOS = dfOOS[(dfOOS.year>=2020)&(dfOOS.year<=2023)].copy()
+
+def test_both(label, fn):
+    ri=fn(dfIS); ro=fn(dfOOS)
+    if ri is None: return None,None
+    m_i,d_i,k_i=ri; m_o,d_o,k_o=ro
+    si=stats(run(dfIS,  m_i, d_i, **k_i), label+"_IS")
+    so=stats(run(dfOOS, m_o, d_o, **k_o), label+"_OOS")
+    return si,so
+
+def _ok(df):
+    return ~np.isnan(df.atr_pct.values)&~np.isnan(df.prev_close.values)
+
+def _fri_base(df, thresh, hour=14, xnfp=True, bulltrend=False):
+    ok=_ok(df); HR=df.hour.values; DOW=df.dow.values
+    A=df.atr.values; PC=df.prev_close.values; O=df.open.values
+    S=df.slope120.values
+    day_up = O - PC
+    mask = ok & (HR==hour) & (DOW==4) & (day_up > thresh*A)
+    if xnfp:
+        is_first_fri = pd.Series(df.index).apply(lambda t: t.day <= 7).values
+        mask = mask & ~is_first_fri
+    if bulltrend:
+        mask = mask & (S>0)
+    return mask
+
+results = []
+
+print("\n--- GEN 4 CLONES ---")
+
+# ── G4-1: G3-11 + bulltrend (enter13+strong+xnfp+bull) ───────────────────────
+def G4_1(df):
+    mask = _fri_base(df, thresh=1.0, hour=13, xnfp=True, bulltrend=True)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-2: G3-13 + RSI14>50 (0.4x+xnfp+bull+RSI) ─────────────────────────────
+def G4_2(df):
+    mask = _fri_base(df, thresh=0.4, xnfp=True, bulltrend=True)
+    R = df.rsi14.values
+    mask = mask & (R>50)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-3: G3-13 + RSI5>60 ─────────────────────────────────────────────────────
+def G4_3(df):
+    mask = _fri_base(df, thresh=0.4, xnfp=True, bulltrend=True)
+    R = df.rsi5.values
+    mask = mask & (R>60)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-4: G3-1 refined: 0.4x+bull+RSI14>50 (lower thresh vs G3-1) ────────────
+def G4_4(df):
+    mask = _fri_base(df, thresh=0.4, xnfp=True, bulltrend=True)
+    R = df.rsi14.values
+    mask = mask & (R>50) & (R<70)   # 50-70 band
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-5: G3-13 exit20 (0.4x+xnfp+bull, earlier exit) ────────────────────────
+def G4_5(df):
+    mask = _fri_base(df, thresh=0.4, xnfp=True, bulltrend=True)
+    return mask, -1, dict(stop_mult=None, exit_hour=20)
+
+# ── G4-6: G3-11 baseline only (re-confirm: enter13 strong xnfp NO bulltrend) ──
+def G4_6(df):
+    mask = _fri_base(df, thresh=1.0, hour=13, xnfp=True, bulltrend=False)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-7: G3-13 + ATR floor 0.0005 ───────────────────────────────────────────
+def G4_7(df):
+    mask = _fri_base(df, thresh=0.4, xnfp=True, bulltrend=True)
+    A = df.atr.values
+    mask = mask & (A>=0.0005)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-8: enter13 + 0.75x + xnfp + bull ──────────────────────────────────────
+def G4_8(df):
+    mask = _fri_base(df, thresh=0.75, hour=13, xnfp=True, bulltrend=True)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-9: enter13 + 0.4x + xnfp + bull ───────────────────────────────────────
+def G4_9(df):
+    mask = _fri_base(df, thresh=0.4, hour=13, xnfp=True, bulltrend=True)
+    return mask, -1, dict(stop_mult=None, exit_hour=21)
+
+# ── G4-10: G3-1 (0.5+bull+RSI14>50) exit20 ───────────────────────────────────
+def G4_10(df):
+    mask = _fri_base(df, thresh=0.5, xnfp=True, bulltrend=True)
+    R = df.rsi14.values
+    mask = mask & (R>50)
+    return mask, -1, dict(stop_mult=None, exit_hour=20)
+
+clones_g4 = [
+    ('G4-1_enter13+strong+xnfp+bull', G4_1),
+    ('G4-2_0.4x+xnfp+bull+RSI14>50',  G4_2),
+    ('G4-3_0.4x+xnfp+bull+RSI5>60',   G4_3),
+    ('G4-4_0.4x+xnfp+bull+RSI50-70',  G4_4),
+    ('G4-5_0.4x+xnfp+bull_exit20',    G4_5),
+    ('G4-6_enter13+strong+xnfp_nobull',G4_6),
+    ('G4-7_0.4x+xnfp+bull+ATRfloor',  G4_7),
+    ('G4-8_enter13+0.75+xnfp+bull',   G4_8),
+    ('G4-9_enter13+0.4+xnfp+bull',    G4_9),
+    ('G4-10_0.5+bull+RSI>50_exit20',  G4_10),
+]
+
+for lbl,fn in clones_g4:
+    si,so = test_both(lbl, fn)
+    if si: results.append((lbl,si,so))
+    all_yrs = all(v>=1.0 for v in so['yr'].values()) if so and so['yr'] else False
+    tag = "PASS" if (so and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51 and all_yrs) else "fail"
+    yr_str = "/".join(f"{v:.2f}" for v in so['yr'].values()) if so and so['yr'] else "—"
+    print(f"  [{tag}] {lbl}: IS n={si['n'] if si else 0} WR={si['wr'] if si else 0}% PF={si['pf'] if si else 0} avg={si['avg_pts'] if si else 0}pts | OOS n={so['n'] if so else 0} WR={so['wr'] if so else 0}% PF={so['pf'] if so else 0} avg={so['avg_pts'] if so else 0}pts | yr={yr_str}")
+
+print("\n=== GEN 4 SURVIVORS (n>=30 IS, n>=20 OOS, OOS PF>=1.0, OOS WR>=51%, all years>=1.0) ===")
+for lbl,si,so in results:
+    if si['n']>=30 and so['n']>=20 and so['pf']>=1.0 and so['wr']>=51:
+        all_yrs = all(v>=1.0 for v in so['yr'].values()) if so['yr'] else False
+        yr_str = "/".join(f"{v:.2f}" for v in so['yr'].values())
+        flag = " ✓ALL_YRS" if all_yrs else " ⚠year_fail"
+        print(f"  {lbl}: IS n={si['n']} WR={si['wr']}% PF={si['pf']} avg={si['avg_pts']}pts | OOS n={so['n']} WR={so['wr']}% PF={so['pf']} avg={so['avg_pts']}pts | yr={yr_str}{flag}")
