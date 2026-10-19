@@ -3,5 +3,10 @@
     "id": "trim_ram_001",
     "tool": "execute_powershell",
     "command": "$before = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB, 1); Write-Host \"FREE_BEFORE: $before GB\"; & 'C:\\Users\\endos\\Desktop\\hst_out\\trim_ram.ps1'; Start-Sleep 3; $after = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB, 1); Write-Host \"FREE_AFTER: $after GB\""
+  },
+  {
+    "id": "discover_tester_001",
+    "tool": "execute_powershell",
+    "command": "Write-Host '=== run_tester.ps1 ==='; Get-Content 'C:\\Users\\endos\\Desktop\\hst_out\\run_tester.ps1' -Raw; Write-Host '=== SET FILES ==='; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_work\\Signal\\mt4_tester\\tester\\' -Filter '*.set' -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_work\\mt4_clone\\' -ErrorAction SilentlyContinue | Select-Object Name | Head 20; Write-Host '=== MT4_TESTER DIR ==='; Get-ChildItem 'C:\\Users\\endos\\Desktop\\hst_out\\' -ErrorAction SilentlyContinue | Select-Object Name"
   }
 ]
