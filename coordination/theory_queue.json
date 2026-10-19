@@ -629,7 +629,7 @@
   "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI",
   "priority": 1,
   "logic": "Friday 13:00-16:00 UTC SHORT (first hit per day) if lossy-overbought divergence (Stoch14 scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND z-score (close-SMA20)/SD20 >= 0.9 on previous bar. No stop. Exit 21:00 Friday.",
-  "cloud_result": "IS FXOpen 24-26 n=45 WR67 PF2.67 +81pts (3x cost 2.25); OOS TD 20-23 n=44 WR70 PF3.07 +112pts all yrs>1.6 (3x cost 2.67)",
+  "cloud_result": "IS FXOpen 24-26 n=45 WR67 PF2.67 +81pts (3x cost 2.25); OOS TD 20-23 n=44 WR70 PF3.07 +112pts all yrs>1.6 (3x cost 2.67); cross-pair FXOpen 24-26: GBPUSD PF1.50 n42, USDCHF 1.87 n40, EURGBP 1.62 n35 (same sign on all EUR/GBP/CHF pairs)",
   "status": "pending",
   "symbol": "EURUSD",
   "timeframe": "H1",
@@ -653,12 +653,12 @@
   "name": "MKT-13-16-NY-T86s+LOSSY+Z09+FRI+TRAIL08",
   "priority": 1,
   "logic": "Same entry as nomem6_016 (Friday 13:00-16:00 UTC SHORT first hit, lossy-overbought divergence AND z-score >= 0.9). Exit 21:00 Friday close, PLUS trailing stop: once price is 0.5*ATR14 in favour, trail a stop 0.8*ATR14 behind the best price (H1 low). No hard initial stop. Tick-level MT4 run needed: cloud emulation checks the trail on H1 high/low touch.",
-  "cloud_result": "IS FXOpen 24-26 n=49 WR69 PF4.34 +81pts (3x cost 3.30); OOS TD 20-23 n=45 WR64 PF5.65 +79pts (3x 3.86); DD -0.36/-0.38%. Fixed exit 21 without trail: 2.67 / 3.07",
+  "cloud_result": "IS FXOpen 24-26 n=49 WR69 PF4.34 +81pts (3x cost 3.30); OOS TD 20-23 n=45 WR64 PF5.65 +79pts (3x 3.86); DD -0.36/-0.38%. Fixed exit 21 without trail: 2.67 / 3.07; bar-close-only trail emulation: IS 2.88 / OOS 2.55 (below untrailed base) -> MT4 tick run decides",
   "status": "pending",
   "symbol": "EURUSD",
   "timeframe": "H1",
   "cost": "0.00008/trade",
-  "flag_if": "n>30 and PF>1.3"
+  "flag_if": "n>30 and PF>1.3 AND tick-run PF >= nomem6_016 PF; cloud lift is intrabar-touch dependent (bar-close emulation OOS 2.55 < untrailed 3.07)"
  },
  {
   "id": "nomem6_019",
