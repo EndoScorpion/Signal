@@ -1,0 +1,148 @@
+REVOLT FORMULAS & WINNERS SUMMARY — Signal Live Companion
+Generated: 2026-10-17
+=============================================================
+
+=== SURVIVOR STRATEGIES ===
+
+From backtests on EURUSD D1 (2015–2026) and H1 crypto, net of costs:
+
+1. REVOLT Formula 1 (SARA/PRV filter) — SURVIVOR
+   - Data: EURUSD D1, 3-bar hold, 2pip RT cost
+   - n=1075, Win%=48.5%, Avg net ret/trade=+0.0159%
+   - Keeps 36% of all signals (quality filter)
+   - Status: CONDITIONAL PASS — needs H1 validation
+
+2. F1+F2 Combined — SURVIVOR (BEST WIN RATE)
+   - n=941, Win%=48.8%, Avg net ret/trade=+0.0086%
+   - Keeps 32% of signals
+   - Status: CONDITIONAL PASS
+
+3. Crypto H1 Dip-Rebound BUY (R1-R4) — SURVIVOR (from prior work, CLAUDE.md)
+   - Hold 4 bars, hard stop 1.5%
+   - Unseen coins: n=859, Win%=58%, Avg net +0.33% at 0.04% cost; +0.25% at 0.12% cost
+   - Status: PASS — re-check with full cost model needed
+
+Per-period (EURUSD D1):
+   - No full per-period breakdown yet (data covers ~2022–2026 for stocks; EURUSD D1 2015–2026)
+   - Strategy validity is single-period: requires 2015–2019, 2020–2022, 2023–2026 validation
+
+REJECTED STRATEGIES (all fail net-of-costs):
+   Thread 4 daily stocks/ETFs: MOM, VOL_FADE, PIN, ENG, CROSS_EMA, DOJI_REV,
+   PIVOT_BREAK, SESSION_OPEN, TREND_PULL — all net-negative at 3-bar hold.
+   Most promising: TREND_PULL (re-test at 5–10 bar hold on H1 recommended).
+
+=== REVOLT FORMULA 1 (SARA/PRV) ===
+
+// --- REVOLT numerator (fast momentum, phase-weighted) ---
+double Nslope  = NormSlope(1, 2);          // (MA(2,0) - MA(2,1)) / ATR(14)
+double Naccel  = NormAccel();              // Nslope[0] - Nslope[1]
+double Nroa    = NormRateOfAccel();        // Naccel[0] - Naccel[1]  <-- EARLIEST SIGNAL
+double Nprv    = (close - SMA20) / ATR14; // PRV: reversion assist
+double PRV_pos = MathMax(Nprv, 0);        // only positive reversion
+
+double FastMom = (0.20 * Nslope) + (0.30 * Naccel) + (0.50 * Nroa) + (0.10 * PRV_pos);
+//               Weights: Slope=20%, Accel=30%, RateOfAccel=50%, PRV=10%
+
+=== REVOLT FORMULA 2 (Regime+Accel) ===
+
+// --- REVOLT denominator (regime + context, lagging) ---
+double RegimeK   = StochK_H4();            // large-period stoch, normalized 0–1
+double RegimeStr = RegimeK / 100.0;
+double NormATR_  = ATR14 / ATR100;         // current vol vs long-run vol
+double NormRng   = (high - low) / ATR14;   // bar expansion
+double NormVol   = tick_volume / VolSMA20; // relative volume
+double SARA_     = SARA();                 // stop-and-reverse awareness (0=near stop zone)
+
+double Regime = (0.45 * RegimeStr) + (0.20 * NormATR_) + (0.20 * NormRng)
+              + (0.10 * NormVol)   + (0.05 * (1 - SARA_));
+//               Weights: RegimeStoch=45%, ATR=20%, Range=20%, Volume=10%, SARA=5%
+
+// --- REVOLT ratio ---
+double REVOLT = FastMom / MathMax(Regime, 0.01);
+
+// --- REVOLT Strength Score ---
+int revolt_duration = 0;
+for (int k = 0; k < 10; k++) {
+    if (REVOLT_history[k] > REVOLT_threshold) revolt_duration++;
+    else break;
+}
+double RevoltStrength = REVOLT * revolt_duration;
+
+// --- Entry gate ---
+double min_revolt = cost_roundtrip_pips / ATR14_pips * REVOLT_scale;
+bool revolt_gate  = (RevoltStrength > min_revolt) && (revolt_duration >= 2);
+
+=== SARA / PRV DEFINITIONS ===
+
+SARA (Stop-And-Reverse Awareness):
+   SARA = min(abs(close - swing_high_1ATR), abs(close - swing_low_1ATR)) / ATR(14)
+   - Lookback: 20 bars for swing detection
+   - Low SARA = price is near a swing high/low = near stop-hunt zone = risky entry
+   - Used INVERTED in denominator: near zone = higher denominator = lower REVOLT score
+   - Weight in denominator: 5%
+
+PRV (Price Reversion Vector):
+   PRV = (close - SMA(20)) / ATR(14)
+   - Positive PRV = price above 20-bar mean = reversion pull downward (sell assist)
+   - Negative PRV = price below 20-bar mean = reversion pull upward (buy assist)
+   - Only POSITIVE contribution counted (PRV_pos = max(PRV, 0))
+   - Weight in numerator: 10%
+
+=== SINE WAVE PHASE LEADS ===
+
+Phase order (earliest to latest before price bottom):
+   1. PD10 slope turn:  4.3 bars BEFORE price bottom  (earliest warning, noisy)
+   2. SMA2 slope turn:  2.4 bars BEFORE price bottom  (fastest reliable signal)
+   3. Stoch < 30:       1.7 bars BEFORE price bottom  (coincident / lagging)
+
+Implication: Enter on SMA2 slope turn + Stoch confirmation = ~0.7 bar edge before price bottom.
+PD10 slope is too noisy to use alone; use as context only.
+
+=== KEY RISK FINDINGS ===
+
+1. Stoch > 70 = BIGGEST LOSS PREDICTOR (buy side)
+   - Stoch 0–30: n=207, Win%=49.8%   (best)
+   - Stoch 30–50: n=299, Win%=50.5%  (best)
+   - Stoch 50–70: n=276, Win%=50.0%
+   - Stoch 70–100: n=693, Win%=40.1% ← AVOID BUYING HERE
+   Hard gate: skip BUY entry if StochK(14) > 70
+
+2. GAP/CRB = MOST CRISIS-EXPOSED
+   - Ukraine 2022 (sustained EUR decline): gap-fill long repeatedly failed
+   - 2011 euro crisis, Apr 2024 Middle East: gold up + EUR down + USD up = breaks model
+   - CRB threatened by risk-off when EUR and gold BOTH weaken
+   - Filter: ADX(14) > 25 → skip GAP/CRB (trending regime, mean-reversion fails)
+
+3. Top 3 loss-prevention gates:
+   a. ZGate (MACD histogram zero-cross in trade direction)
+   b. SSR > 1.5 (Signal-to-Spread Ratio: expected_move / roundtrip_cost)
+   c. NormRegime (H4 Stoch) outside 40–60 band (ambiguous regime = skip unless duration >= 4)
+
+=== WIN LOGIC v2 — HOW IT WORKS ===
+
+Architecture:
+- Branch generator: enumerates parameter combinations (entry conditions, hold durations, cost thresholds)
+- Cost model: /app_addons/cost_model.json (mirrors window.slcCost in addon29.html)
+  * Components: spread, slippage, regulatory fees, commission, swap/financing, 24% tax on gross profit
+  * Standard stock: 0.02% RT + 24% tax; Crypto taker: 0.04% RT + 24% tax
+- Drawdown tracking: max drawdown per branch computed over full period
+- Train/holdout split: results validated on out-of-sample holdout to avoid overfitting
+- Commission: 8pt standard (matches MT4 EA backtester setting)
+- Rejection criteria: n < 30 OR net-negative in any 2 of 3 periods (2015-19, 2020-22, 2023-26)
+
+Data pipeline:
+1. Webull MCP get_stock_bars (primary, <= 3 symbols, daily)
+2. Shibui Finance MCP (DuckDB, LIMIT 200, shibui. prefix) — survivor bias flagged
+3. fetch_history.py (Yahoo → yfinance → Stooq → Alpha Vantage fallback)
+4. data/import/ CSV drop (user-supplied)
+
+Output: results/rules_net.csv → filter survivors → results/SURVIVORS.md
+
+Note: All results are for research only. Past performance is not indicative of future results.
+
+=== CODEBASE KEY ===
+
+- REVOLT formula slots: Sp2[], Sp3[] (declared but unused in .mq4 — fill these)
+- Existing analogs: sp[] = stoch/slope ratio, spa[] = acceleration, mmr[] = TF alignment
+- SSR already computed as sr[] = slope[0]/rng[0]; extend to SSR = expected_move/cost
+- ZGate: use avgsp_a[] crossing zero (already computed) or MACD histogram
