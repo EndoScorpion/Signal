@@ -751,8 +751,8 @@
     "status": "pending",
     "symbol": "EURUSD",
     "timeframe": "H1",
-    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
-    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "logic": "Stack A, two runs on EURUSD H1 logic, Model 1 M15, -TimeoutMin 180, 2020-2026 per year. Legs (spec results/SURVIVORS_nomem6_20261019.md): G11-3 = Fri 14:00 SELL if day move since 00:00 > 0.3xATR14 AND MMR>=-1 AND Gate A (EMA120 5-bar slope >= -0.1xATR14), skip first Friday of month, exit 21:00. Mon17x22 = Mon 17:00 BUY if day move < -0.3xATR14 AND EMA120 slope <= +0.1xATR14, exit 22:00. T82 = Mon 15:00-16:00 BUY when prev bar LOSSY-long (st0<20 AND (maxslp3>0 OR maxac3>0) AND npc>0) AND minssr>-2, exit 21:00, one trade/day. n016 = Fri 13:00-16:00 SELL when prev bar LOSSY AND z>=0.9, exit 21:00, one trade/day. No stops, 0.1 lot, cost 0.00008. Run 1 = all four legs. Run 2 = same without Mon17x22.",
+    "cloud_result": "Cloud $ at 0.1 lot: full IS 2024-26 n=164 WR62 PF2.76 net 1090 maxDD 100; OOS 2020-23 n=182 WR66 PF2.54 net 1989 maxDD 122. Without Mon17x22: IS n=107 PF2.85 net 836 DD 88; OOS n=115 PF3.17 net 1540 DD 89.",
     "cost": 8e-05,
     "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
   },
@@ -763,8 +763,8 @@
     "status": "pending",
     "symbol": "EURUSD",
     "timeframe": "H1",
-    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
-    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "logic": "Stack A full (exactly nomem6_026 run 1) plus one EA rule: when any stack trade CLOSES with a net loss, allow no new entries for the rest of that server day (reset at 00:00). Model 1 M15, -TimeoutMin 180, 2020-2026 per year. Report how many entries the rule blocked.",
+    "cloud_result": "Cloud could not test this fairly (all exits 21:00-22:00, cloud variant was lookahead: IS PF3.16 DD58, OOS PF2.96 DD97). Expect few or zero blocked entries; compare to nomem6_026 run 1.",
     "cost": 8e-05,
     "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
   },
@@ -775,8 +775,8 @@
     "status": "pending",
     "symbol": "EURUSD",
     "timeframe": "H1",
-    "logic": "Same as nomem6_016 (Friday 13:00-16:00 opens, SELL when prev bar LOSSY AND z>=0.9, no stop, exit 21:00 close, one trade/day) but SKIP the first Friday of each month (day of month <= 7, NFP Friday). Cost 0.00008.",
-    "cloud_result": "IS FXOpen 2024-26 n=33 WR70 PF3.11 avg+82pts yrs 1.6/7.1/4.1; OOS TD 2020-23 n=37 WR70 PF4.12 avg+138 yrs 4.2/3.2/14.6; 3x cost 2.57/3.55. First-Friday-only slice: IS PF2.04 n12, OOS 0.75 n7 (the drag). Preferred form of the Friday LOSSY+z leg; replaces 016 in stack A if MT4 confirms.",
+    "logic": "E7 Asia-London fade with hard stop: EURUSD, Wed/Thu only, at 07:00 if Asia session 00:00-07:00 move up >= 0.25xATR14(H1) AND EMA120 slope<0 AND ADX14<30 AND ATR14 percentile<75 AND ATR14>=50 pts: SELL at 07:00, hard stop +0.80xATR14 above entry, exit 21:00 close. 0.1 lot, cost 0.00008. Needs ticks for the stop: Model 1 M1, -TimeoutMin 180, 2020-2026 per year.",
+    "cloud_result": "Cloud (bar-close stop approximation) FXOpen OOS 2024-26 n=32 PF6.29; v2.3 in results/eurusd_asia_london FINAL. Flag if MT4 PF<2 or stop-outs >40% of trades.",
     "cost": 8e-05,
     "flag_if": "flag if MT4 PF differs from cloud by >30% or maxDD >2x cloud"
   }
