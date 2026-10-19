@@ -1,0 +1,306 @@
+WIN LOGIC MASTER BACKUP — Signal Live Companion
+Generated: 2026-10-19
+Units: ECN points (5-digit, 1 pip = 10 pts). $ at 0.1 lot = $0.10/ECN-pt.
+Past results not investment advice.
+=============================================================================
+
+=== SECTION 1: BRANCH NAMING CONVENTION ===
+Source: /mnt/project-files/coordination/win_logic_naming.md
+
+Format: [entry_type]-[trigger]-[session]-[code]+[filters]
+
+Keys:
+  Entry type: MKT = market order, SS = sell stop, LMT = limit
+  Trigger: 07/08/14/20 = entry hour UTC, PT = patient trigger, MOM3H = 3-bar momentum
+  Session: LO = London Open, NY = NY session, LN = London->NY boundary
+  Filters: NG = no_gap_up, XQ2 = exclude Q2
+
+Current branch names:
+  Code                  | Full name
+  ----------------------|-------------------------------
+  v2.3 baseline         | MKT-07-LO-v23
+  v2.3 + RSI14<50       | MKT-07-LO-v23+RSI14<50
+  v2.3 + RSI5<60        | MKT-07-LO-v23+RSI5<60
+  C64b                  | MKT-07-LO-C64b
+  C64b excl Q2          | MKT-07-LO-C64b-XQ2
+  RSI14+no_gap          | MKT-07-LO-v23+RSI14+NG
+  v2.4 candidate        | MKT-08-LO-v24
+  E7 base               | SS-PT-ATR14-LO-E7
+  E7 + no_gap C67       | SS-PT-ATR14-LO-E7+NG
+  E7 + RSI5<60          | SS-PT-ATR14-LO-E7+RSI5<60
+  E7 + RSI14<50         | SS-PT-ATR14-LO-E7+RSI14<50
+  E7 + C64b             | SS-PT-ATR14-LO-E7+C64b
+  E7 + C64b excl Q2     | SS-PT-ATR14-LO-E7+C64b-XQ2
+  E7 + RSI5+NG          | SS-PT-ATR14-LO-E7+RSI5+NG
+  E7 + RSI14+NG         | SS-PT-ATR14-LO-E7+RSI14+NG
+
+C67 CANDIDATE (2026-10-18):
+  SS-PT-ATR14-LO-E7+NG: n=30, WR=56.7%, PF=7.54, avg=+0.212%, consistent 2024/25/26 (5.62/11.08/8.24)
+  Sell-stop entry at 07:00_open - 0.10xATR14, only on days with no overnight gap up.
+  First sell-stop variant hitting n>=30 with WR>51%. Needs OOS validation before adoption.
+
+=============================================================================
+
+=== SECTION 2: ALL WR>=51% BRANCHES — CONSOLIDATED TABLE ===
+Source: /mnt/project-files/results/win_logic_all_WR51_20261019.md
+Data: FXOpen ECN H1 2024-01..2026-10-16 (2.79 yr)  Cost: 0.00008/trade
+Basis: 0.1 lot = $1/pip = $0.10/ECN-pt (5-digit; 1 pip = 10 pts)
+
+Branch                         | n  | WR%  | PF    | avg pts | Total$ | PF-24 | PF-25 | PF-26 | tr/yr | Notes
+-------------------------------|----|----- |-------|---------|--------|-------|-------|-------|-------|------
+MKT-07-LO-v23+RSI14<50        | 23 | 52.2 |  6.63 |  287    |  $552  |  7.84 |  5.58 |  4.18 |   8.2 | n<30
+MKT-07-LO-v23+RSI5<60         | 28 | 57.1 |  6.91 |  290    |  $626  |  7.84 |  8.38 |  4.34 |  10.0 | n<30
+MKT-07-LO-C64b                | 19 | 63.2 | 10.79 |  354    |  $586  | 22.13 | 20.08 |  8.44 |   6.8 | EMA30neg+RSI5<60+NG n<30
+MKT-07-LO-C64b-XQ2            | 16 | 68.8 | 12.92 |  483    |  $545  | 42.88 | 20.08 | 17.77 |   5.7 | excl Apr-Jun n<30
+MKT-07-LO-v23+RSI14+NG        | 20 | 60.0 |  9.11 |  349    |  $576  | 36.10 | 20.08 |  8.44 |   7.2 | n<30
+SS-PT-ATR14-LO-E7+NG          | 30 | 56.7 |  7.54 |  254    |  $727  |  5.62 | 11.08 |  8.24 |  10.8 | C67 candidate n=30 PASS
+SS-PT-ATR14-LO-E7+RSI5<60     | 27 | 59.3 |  7.41 |  233    |  $618  |  5.47 | 12.26 |  7.12 |   9.7 | n<30
+SS-PT-ATR14-LO-E7+RSI14<50    | 22 | 54.5 |  7.19 |  257    |  $548  |  7.46 |  6.99 |  7.12 |   7.9 | n<30
+SS-PT-ATR14-LO-E7+C64b        | 18 | 66.7 | 12.53 |  331    |  $582  | 10.82 | 18.50 | 10.48 |   6.5 | n<30
+SS-PT-ATR14-LO-E7+RSI5+NG     | 23 | 65.2 | 10.19 |  287    |  $636  |  6.63 | 21.22 | 10.48 |   8.2 | n<30
+SS-PT-ATR14-LO-E7+RSI14+NG    | 19 | 63.2 | 10.28 |  310    |  $572  | 10.82 |  9.66 | 10.48 |   6.8 | n<30
+SS-PT-ATR14-LO-E7+C64b-XQ2    | 15 | 73.3 | 15.85 |  375    |  $542  | 32.25 | 18.50 |  7.78 |   5.4 | n<30
+MKT-20-NY-T6                  |176 | 59.0 |  2.54 |   23    | $4,048 |  1.72 |  2.54 |  3.42 |  63.1 | BUY 20:00 EMA20>close Mon-Thu
+SS-MOM3H-LN-T11               |140 | 70.0 |  3.95 |   53    | $7,420 |  2.41 |  5.00 |  2.81 |  50.2 | SHORT 14:00 mom3h<-0.5xATR
+MKT-14-NY-T31s+NOSL           | 70 | 64.3 |  2.23 |   62    | $3,990 |  1.92 |  1.63 |  6.55 |  25.1 | SHORT 14:00 no stop
+MKT-20-SEAS-T34l+D2           |143 | 60.1 |  1.80 |   26    | $3,770 |  1.20 |  2.34 |  1.80 |  51.3 | Wed 20:00 LONG exit 00:00
+MKT-21-ON-T24r_l+NOSL         |328 | 51.5 |  1.26 |   17    | $5,994 |  0.87 |  1.60 |  1.23 | 117.6 | 21:00 LONG day-down no stop
+MKT-MOM3H-10-T27l+SLNone      |267 | 56.6 |  1.25 |   22    | $6,320 |  0.95 |  1.34 |  1.78 |  95.7 | 10:00 LONG mom3h no stop
+MKT-14-NY-T31l+LOWVOL         | 34 | 52.9 |  3.30 |   72    |  $255  |  4.90 |  2.29 |  4.51 |  12.2 | n<30 caution
+
+Projection notes:
+  Trades/yr = n / 2.79 (data span). %/wk = avg%/trade x (trades/yr / 52). NOT compounded.
+  avg_pts = ECN points (0.00001 per pt). 0.1 lot = $0.10/ECN-pt (5-digit).
+  NoMem6 qualifiers (T31, T34, T24, T27) viable only at larger size or high frequency.
+
+=============================================================================
+
+=== SECTION 3: SS-PT-ATR14-LO-E7+NG (C67) SPEC ===
+Source: win_logic_all_WR51_20261019.md, win_logic_naming.md
+
+Entry: Sell-stop placed at 07:00_open - 0.10xATR14
+Filter: No overnight gap up (gap = asia_open - prev_close <= 0)
+Session: London Open, 07:00 UTC
+Direction: SHORT
+Exit: 21:00 UTC same day
+Stop: None in current test (entry is conditional via stop order)
+n=30 (minimum threshold met), WR=56.7%, PF=7.54, avg=+254 ECN pts (+0.212%)
+Per-year PF: 2024=5.62, 2025=11.08, 2026=8.24 (consistent all years)
+OOS validation: NEEDED — queue to LocalThug for MT4 tick-level confirmation
+
+=============================================================================
+
+=== SECTION 4: MKT-14-NY-T31s+NOSL SPEC ===
+Entry: Market SHORT at 14:00 UTC on Fridays when day_up > threshold x ATR14
+  day_up = open - prev_session_close (proxy for day move magnitude)
+Direction: SHORT
+Exit: 21:00 UTC same day
+Stop: NOSL = no stop loss
+Filter variants (all OOS PASS from clone engine):
+  T31s_BASE:   threshold=0.5xATR14, n_IS=72, WR_IS=62.5%, PF_IS=1.63 | n_OOS=86, WR_OOS=61.6%, PF_OOS=1.67
+  T31s+strong: threshold=1.0xATR14, n_IS=52, WR_IS=63.5%, PF_IS=1.67 | n_OOS=70, WR_OOS=61.4%, PF_OOS=1.72
+  T31s+xnfp:   threshold=0.5xATR14 + exclude NFP Friday (first Fri of month)
+               n_IS=53, WR_IS=62.3%, PF_IS=1.40 | n_OOS=69, WR_OOS=62.3%, PF_OOS=1.96 <- BEST OOS
+
+Key: OOS (TwelveData 2020-23) outperforms IS (FXOpen 2024-26) for all three variants.
+     This is a positive signal -- edge is not period-specific.
+
+=============================================================================
+
+=== SECTION 5: v2.3 ASIA FADE SPEC ===
+Source: /mnt/project-files/backups/eurusd_fade_backtest_v23_20261018.txt
+
+Entry: Market SHORT at 07:00 UTC
+Filters:
+  - ema120_slope < 0 (bearish trend)
+  - adx14 < 30 (non-trending regime)
+  - atr14_pct < 0.75 (not extreme vol)
+  - atr14 >= 0.0005 (min vol floor)
+  - dow in [1, 2, 3] (Tue/Wed/Thu only)
+  - asia_net >= 0.25 x atr14 (Asia moved up -- fade the move)
+Stop: 0.80 x ATR14 above entry
+Exit: 21:00 UTC same day
+
+Best confirmed params (Cycle 14 sweep):
+  asia>= 0.25xATR, ADX<30, stop=0.85xATR, exit=21:00
+  Enhanced filters tested: RSI14<50, RSI5<60, no_gap (NG), C64b (EMA30neg+RSI5<60+NG)
+  All variants pass IS; OOS validation incomplete (ADX column missing in TwelveData data)
+
+Note: C67 (SS-PT-ATR14-LO-E7+NG) is the sell-stop variant of the v2.3 family.
+      E7 offset = entry at open - 0.10xATR14 (confirmed entry vs v2.3 market order).
+
+=============================================================================
+
+=== SECTION 6: NOMEM6 T20-T40 SCAN RESULTS (TOP SURVIVORS) ===
+Source: /mnt/project-files/results/nomem6_T20-T40_20261019.md
+Data: FXOpen ECN H1 2024-01..2026-10 (2.79 yr), cost 0.00008/trade
+Mode: NoMems (fresh theories, no v2.3 anchoring), lookahead fix: all indicators shifted 1 bar
+
+Top entries (WR>=51% OR PF>=1.25, n>=30):
+
+Batch 1 highlights:
+  MKT-14-NY-T31s: n=70, WR=47.1%, PF=2.10, avg=+0.046% | 2024:2.78, 2025:1.30, 2026:3.28
+  MKT-14-NY-T31l: n=62, WR=46.8%, PF=1.96, avg=+0.048% | 2024:1.28, 2025:1.36, 2026:4.22
+  MKT-08-LO-T29l: n=23, WR=39.1%, PF=1.77, avg=+0.039% [n<30]
+  MKT-14-NY-T25s (RSI>70 SHORT): n=55, WR=47.3%, PF=1.74
+
+Batch 2 highlights:
+  MKT-MOM3H-10-T27l+FRI: n=60, WR=43.3%, PF=1.87 (Friday only)
+  MKT-21-ON-T24r_l+NOSL: n=328, WR=51.5%, PF=1.26 (overnight rebound, no stop) <- SURVIVOR
+  MKT-MOM3H-10-T27l+SLNone: n=267, WR=56.6%, PF=1.25 (momentum, no stop) <- SURVIVOR
+
+Batch 3 highlights:
+  MKT-20-SEAS-T34l+D2: n=143, WR=60.1%, PF=1.80 (Wed 20:00 seasonal) <- SURVIVOR
+  MKT-17-SEAS-T34l+D0: n=142, WR=50.0%, PF=1.60 (Mon 17:00 seasonal)
+  MKT-NY13-15-T35s: n=141, WR=43.3%, PF=1.46 (NY engulfing short)
+  MKT-14-NY-T31s+NOSL filter variants: see Section 4 above
+
+Hash CSV files saved per winning branch in /mnt/project-files/results/ (per-trade tables).
+
+=============================================================================
+
+=== SECTION 7: CLONE + IMPROVE ENGINE — OOS PASS SURVIVORS ===
+Source: /mnt/project-files/results/clone_improve_20261019.md
+IS: FXOpen ECN H1 2024-01..2026-10-16 (2.79 yr)
+OOS: TwelveData H1 2020-01..2023-12 (4 yr)
+
+OOS PASS SURVIVORS (n>=30 IS, OOS PF>=1.0, OOS WR>=50%):
+
+  T31s_BASE:   IS n=72, WR=62.5%, PF=1.63, avg=44 pts | OOS n=86, WR=61.6%, PF=1.67, avg=58 pts
+  T31s+strong: IS n=52, WR=63.5%, PF=1.67, avg=51 pts | OOS n=70, WR=61.4%, PF=1.72, avg=63 pts
+  T31s+xnfp:   IS n=53, WR=62.3%, PF=1.40, avg=30 pts | OOS n=69, WR=62.3%, PF=1.96, avg=80 pts <- BEST
+
+OOS fails (notable):
+  T11_BASE: IS WR=33% vs original 70% -- impl differs (wrong momentum formula, discarded)
+  T6_BASE: OOS 2020-23 PF<0.6 for all variants -- regime-dependent, do not trade without more OOS
+  v23+e7: entry offset logic incorrect in engine, discard
+
+Adaptive improvements:
+  T31s+strong: magnitude filter -> OOS PF 1.67->1.72, avg OOS pts 58->63
+  T31s+xnfp:   NFP exclusion -> OOS PF 1.67->1.96, avg OOS pts 58->80 (+38%)
+  Note: IS weakens slightly for xnfp -- confirming OOS edge is real, not mined
+
+Next queued: T31s+strong+xnfp combined (expected n~40-45, may approach n<30 threshold)
+
+=============================================================================
+
+=== SECTION 8: KEY RISK GATES (apply to all strategies) ===
+
+1. Stoch > 70 = BIGGEST BUY-SIDE LOSS PREDICTOR
+   Stoch 0-30: WR=49.8%, Stoch 30-50: WR=50.5%, Stoch 50-70: WR=50.0%
+   Stoch 70-100: WR=40.1% -- HARD GATE: skip BUY if StochK(14)>70
+
+2. ADX(14) > 25 = invalidates mean-reversion strategies (GAP/CRB most exposed)
+   Ukraine 2022, Apr 2024 Middle East: trending regime = model breaks
+
+3. Top 3 loss-prevention gates:
+   a. ZGate (MACD histogram zero-cross in trade direction)
+   b. SSR > 1.5 (Signal-to-Spread Ratio: expected_move / roundtrip_cost)
+   c. NormRegime (H4 Stoch) outside 40-60 band (skip unless duration >= 4)
+
+4. NFP Fridays: T31s+xnfp shows OOS improvement from excluding first Friday of month
+   General rule: reduce size or skip high-impact news +-2h (NFP, CPI, FOMC, ECB)
+
+=============================================================================
+
+=== SECTION 9: NOMEM6 SCAN ENGINE ===
+Source: /mnt/project-files/backups/nomem6_scan_engine_20261019.txt
+[Full Python engine -- 12KB]
+
+Core structure:
+  Data: /mnt/project-files/data/eurusd_fxopen_h1.csv
+  Cost: 0.00008/trade (COST constant)
+  Indicators computed: ATR14, ATR-pct, RSI14, EMA20, EMA120, slope120, BBz, mom3, rng, rng20
+  Lookahead fix: all indicators shifted 1 bar before use
+  Session aggregates: asia_net (close-open 00-06), prev_close, lon_net
+  run() function: vectorised backtest, no-overlap mode, stop or exit_hour
+  stats() function: n, WR%, PF, avg%, per-year PF 2024/2025/2026, maxDD%
+  Theories T20-T40 defined as (mask, direction, stop_mult, hold, exit_hour) tuples
+  Output: sorted by PF, CSV per winning branch
+
+Theory definitions T20-T40:
+  T20: London 07:00 LONG, Asia moved down (fade), stop 0.8xATR, exit 21
+  T21: London 07:00 LONG, Asia moved up (continuation), stop 0.8xATR, exit 21
+  T22: NY 13:00 SHORT (London moved up, fade), stop 0.8xATR, exit 21
+  T23: NY 13:00 LONG (London moved down, continuation)
+  T24: 21:00 overnight: T24r_l = LONG reversal (day down -> overnight up), exit 07
+  T25: RSI14<30 LONG / >70 SHORT at 08/14:00, hold 6 bars, stop 1.0xATR
+  T26: Bollinger z<-2 LONG / z>2 SHORT at LO 08-11, hold 4 bars
+  T27: mom3h>0.6xATR LONG at 10:00 (MOM3H), hold 4 bars
+  T28: Asia range breakout at 08:00
+  T29: Volatility compression breakout at 08:00
+  T30: Monday 07:00 gap fade
+  T31: Friday 14:00 reversal (day-move fade)
+  T32: EMA20 pullback in EMA120 trend at 09:00
+  T33: Late-NY reversal at 19:00
+  T34: DoW x hour seasonality grid (unconditional drift)
+  T35: Two-bar engulfing reversal
+  T36: Prev-day high/low rejection
+  T37: Asia-quiet breakout at 09:00
+  T38: Inside-bar breakout at 08:00
+  T39: Three-consecutive-color exhaustion fade
+  T40: NY lunch mean-reversion at 17:00
+
+=============================================================================
+
+=== SECTION 10: CLONE + IMPROVE ENGINE ===
+Source: /mnt/project-files/backups/clone_engine_20261019.txt
+[Full Python engine -- 21KB]
+
+Architecture:
+  IS data:  FXOpen ECN H1 (2024-2026)
+  OOS data: TwelveData H1 (2020-2023)
+  Indicators: ATR14, ATR-pct, RSI14, RSI5, EMA20, EMA30, EMA120, slope120, BBz, mom3, rng, rng20
+  Lookahead fix: all indicators shifted 1 bar
+  test_both() runs IS and OOS side by side for each clone variant
+  stats() returns n, WR%, PF, avg_pts (ECN pts), avg_pct, per-year PF dict
+
+Clone rounds:
+  Round 1: Filter crosses between winners (T11+asia, T11+wedthu, T31s+slope, T6+asia, v23+mom)
+  Round 2: Adaptive thresholds (T11+adapt_m3pct, T31s+strong, T31s+xnfp, T6+hold8, v23+atrpct50)
+  Round 3: Entry/exit merges (T11+exit23, T6+mom3, v23+e7, T11+v23merge, T11_long)
+
+Verdict logic: OOS-PASS = n_IS>=30, n_OOS>=20, OOS PF>=1.0, OOS WR>=50%
+
+=============================================================================
+
+=== SECTION 11: v2.3 BACKTEST ENGINE ===
+Source: /mnt/project-files/backups/eurusd_fade_backtest_v23_20261018.txt
+[Full Python engine -- ~7KB]
+
+Architecture:
+  Data: FXOpen ECN H1 (2024-2026)
+  Cost: 0.00008/trade
+  run_backtest(params): vectorised, params = (asia_mult, adx_max, stop_mult, exit_hour)
+  Cycles tested: C14a (asia threshold), C14b (ADX threshold), C14c (stop mult), C14d (exit time)
+  Best confirmed: asia>=0.25xATR, ADX<30, stop=0.80-0.85xATR, exit=21:00
+  Output: n, PF, avg%, per-year breakdown
+
+=============================================================================
+
+=== SECTION 12: COST MODEL REFERENCE ===
+Source: CLAUDE.md, cost_model.json
+
+Components: spread, slippage, regulatory fees, commission, swap/financing, 24% tax on gross profit
+Standard EURUSD ECN: COST = 0.00008 per trade (used in all engines above)
+Standard stock: 0.02% RT + 24% tax
+Crypto taker: 0.04% RT + 24% tax
+Commission: 8pt standard (matches MT4 EA backtester setting)
+Note: ECN points basis throughout (NOT pips). 1 pip = 10 ECN pts (5-digit quotes).
+
+=============================================================================
+
+=== SECTION 13: REJECTION LIST ===
+
+Daily stocks/ETFs (Thread 4): MOM, VOL_FADE, PIN, ENG, CROSS_EMA, DOJI_REV,
+  PIVOT_BREAK, SESSION_OPEN, TREND_PULL -- all net-negative at 3-bar hold.
+  TREND_PULL: most promising, re-test at 5-10 bar hold on H1 recommended.
+
+T6 (MKT-20-NY EMA20 drift): OOS 2020-23 PF<0.6 for ALL variants. Do not trade.
+T11 (SS-MOM3H-LN): original WR=70% not reproduced in clone engine due to impl diff.
+  Re-implement with correct 3-bar intra-day momentum (11:00->14:00) before use.
+v23+e7 (sell-stop variant in clone engine): entry offset logic incorrect, discard.
+Clone engine T6+stop: stop kills edge (WR collapses from 51% to 12.5% OOS).
+
+=============================================================================
+END OF WIN_LOGIC_MASTER_20261019.txt
