@@ -18,5 +18,56 @@
       "timeout_min": 180,
       "flag_if": "more_trades OR better_pf_no_dd_increase"
     }
+  },
+  {
+    "id": "nomem6_001",
+    "status": "pending",
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:40:00Z",
+    "description": "MKT-20-SEAS-T34l+D2: Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu). Cloud python: n=143 WR=60.1% PF=1.8 avg=2.64 pips (marginal)",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {"rules": "Wednesday 20:00 UTC LONG, no filter, no stop, exit close of 4th bar (00:00 Thu)", "stop": "none", "cost": 0.00008},
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [2024, 2025, 2026],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_002",
+    "status": "pending",
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:40:00Z",
+    "description": "MKT-21-ON-T24r_l+NOSL: 21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open. Cloud python: n=328 WR=51.5% PF=1.26 avg=1.83 pips (marginal)",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {"rules": "21:00 UTC LONG when day move (prev close vs prior-day close) < -0.5*ATR14, no stop, exit 07:00 open", "stop": "none", "cost": 0.00008},
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [2024, 2025, 2026],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "n>50 OR PF>1.3"
+  },
+  {
+    "id": "nomem6_003",
+    "status": "pending",
+    "added_by": "cloud-thread-kxrfun",
+    "added_at": "2026-10-19T00:40:00Z",
+    "description": "MKT-MOM3H-10-T27l+SLNone: 10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar. Cloud python: n=267 WR=56.6% PF=1.25 avg=2.37 pips (marginal)",
+    "ea": "python_rules",
+    "set_base": "none",
+    "set_overrides": {"rules": "10:00 UTC LONG when close[9]-close[6] > 0.6*ATR14, no stop, exit close of 4th bar", "stop": "none", "cost": 0.00008},
+    "symbol": "EURUSD",
+    "period": "H1",
+    "spread": 3,
+    "years": [2024, 2025, 2026],
+    "commission_pts": 8,
+    "timeout_min": 60,
+    "flag_if": "n>50 OR PF>1.3"
   }
 ]
