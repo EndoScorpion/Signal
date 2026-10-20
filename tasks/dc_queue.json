@@ -1,14 +1,5 @@
 [
   {
-    "id": "restart_cmdpoller_001",
-    "tool": "execute_powershell",
-    "args": {
-      "command": "Stop-ScheduledTask -TaskName 'CloudCmdPollerGH' -EA SilentlyContinue; Start-Sleep 2; Start-ScheduledTask -TaskName 'CloudCmdPollerGH' -EA SilentlyContinue; Write-Host 'CloudCmdPollerGH restarted'"
-    },
-    "status": "claimed",
-    "claimed_at": "2026-10-20T00:30:43.465Z"
-  },
-  {
     "id": "verify_relay_002",
     "tool": "execute_powershell",
     "args": {
