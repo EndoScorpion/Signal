@@ -1,0 +1,43 @@
+[
+  {
+    "_comment": "Ablation runs for Stack A Legs 2/3/4. Each leg = two runs: (A) baseline = time+direction only, no Win Logic filters; (B) full = all filters ON. Compare n/WR/PF to measure each filter's contribution. Run AFTER nomem6_026/027/028/029/018. Model 1 M15, -TimeoutMin 180, 2020-2026 per year, cost 0.00008, 0.1 lot.",
+    "added_by": "cloud-thread-relay-20261020",
+    "added_at": "2026-10-20T22:13:06Z"
+  },
+  {
+    "id": "nomem6_030",
+    "name": "ABLATION-LEG2-MON17x22",
+    "priority": 4,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "ABLATION for Stack A Leg 2 (Mon 17:00 LONG). Run A (baseline): Monday 17:00 UTC BUY at market every week, no filter, no stop, exit 22:00 Monday close, 0.1 lot. Run B (filtered): same but only if day move (prev close vs prior-day close) < -0.3*ATR14 AND EMA120 5-bar slope <= +0.1*ATR14. Both runs 2020-2026 per year. Report n, WR%, PF, net $ for each run. WL filter contribution = (PF_filtered - PF_baseline). Model 1 M15, -TimeoutMin 180.",
+    "cloud_result": "Filtered (nomem6_011): IS n=57 WR56 PF2.53 +40pts; OOS n=68 WR62 PF1.77 +60pts. Baseline unknown - ablation needed.",
+    "cost": 8e-05,
+    "flag_if": "baseline PF > filtered PF (filters hurt); or PF_filtered < 1.3"
+  },
+  {
+    "id": "nomem6_031",
+    "name": "ABLATION-LEG3-MON15-LOSSY-SSR",
+    "priority": 4,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "ABLATION for Stack A Leg 3 (Mon 15:00-16:00 LOSSY long). Run A (baseline): Monday first bar open in 15:00-16:00 UTC, BUY at market every week, no filter, no stop, exit 21:00 Monday close, 0.1 lot, one trade/day. Run B (filtered): same but only when prev bar shows mirrored lossy divergence (Stoch(14) scale1 < 20 AND (max SMA2 slope slots 12-18 > 0 OR max accel > 0) AND count(slope>0)>0) AND min SSR > -2. Both runs 2020-2026 per year. Report n, WR%, PF, net $ for each. WL contribution = (PF_filtered - PF_baseline). Model 1 M15, -TimeoutMin 180.",
+    "cloud_result": "Filtered (nomem6_012/T82): IS n=28 WR57 PF3.56 +50pts; OOS n=35 WR60 PF2.21 +90pts. Baseline unknown - ablation needed.",
+    "cost": 8e-05,
+    "flag_if": "baseline PF > filtered PF (filters hurt); or filtered PF < 1.3 OOS"
+  },
+  {
+    "id": "nomem6_032",
+    "name": "ABLATION-LEG4-FRI13-LOSSY-Z09",
+    "priority": 4,
+    "status": "pending",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "ABLATION for Stack A Leg 4 (Fri 13:00-16:00 LOSSY+z SHORT). Run A (baseline): Friday first bar open in 13:00-16:00 UTC, SELL at market every week, no filter, no stop, exit 21:00 Friday close, 0.1 lot, one trade/day. Run B (filtered): same but only when prev bar LOSSY (Stoch(14) scale1 > 80 AND (min SMA2 slope slots 12-18 < 0 OR min accel < 0) AND count(slope<0)>0) AND z-score (close-SMA20)/SD20 >= 0.9. Both runs 2020-2026 per year. Report n, WR%, PF, net $ for each. WL contribution = (PF_filtered - PF_baseline). Model 1 M15, -TimeoutMin 180.",
+    "cloud_result": "Filtered (nomem6_016/n021): IS n=45 WR67 PF2.67; OOS n=44 WR70 PF3.07. Baseline unknown - ablation needed.",
+    "cost": 8e-05,
+    "flag_if": "baseline PF > filtered PF; or filtered PF < 1.3 OOS"
+  }
+]
