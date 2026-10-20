@@ -134,6 +134,16 @@
         "ts": "2026-10-20T22:00:55Z",
         "source": "project_chat",
         "from": "Nasif",
-        "note": "DISASTER RECOVERY BACKUP — laptop may die. Push all local changes (Signal + MQL4) to git NOW. Vague commit messages only, no strategy detail."
+        "note": "DISASTER RECOVERY BACKUP \u2014 laptop may die. Push all local changes (Signal + MQL4) to git NOW. Vague commit messages only, no strategy detail."
+    },
+    {
+        "id": "vague_challenge_20261020T2204",
+        "command": "echo 'cloud-coord challenge 22:04Z'; $r = 'relay/cmd_results/vague_challenge_20261020T2204.txt'; New-Item -ItemType Directory -Force -Path (Split-Path $r) | Out-Null; 'local_ack ok' | Set-Content $r; git add $r; git commit -m 'local ack'; git push origin relay; Write-Host 'vague ack pushed'",
+        "shell": "ps",
+        "status": "pending",
+        "ts": "2026-10-20T22:04:12Z",
+        "source": "coordinator",
+        "from": "CloudCoordinator",
+        "note": "BIDIR TEST: LocalThug must write a vague ack to relay/cmd_results/vague_challenge_20261020T2204.txt and push. Cloud will detect it to confirm 2-way relay."
     }
 ]
