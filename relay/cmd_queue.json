@@ -4,5 +4,6 @@
   {"id":"check_dcremote_id_002","command":"$f = 'C:\\tools\\start_dcremote.ps1'; if (Test-Path $f) { $c = Get-Content $f -Raw; if ($c -match '987fd7bd') { $c2 = $c -replace '987fd7bd[^\"\' ]*','24123e3e-6795-430b-abf6-32e186477523'; Set-Content $f $c2 -NoNewline; Write-Host 'device ID patched' } else { Write-Host 'device ID ok' } } else { Write-Host 'file not found' }","shell":"ps","status":"pending","ts":"2026-10-20T00:06:02Z"},
   {"id":"verify_001","command":"$p = Get-Process node -EA SilentlyContinue | Where-Object {(Get-WmiObject Win32_Process -Filter \"ProcessId=$($_.Id)\" -EA SilentlyContinue).CommandLine -match 'server.js'}; $t = Get-ScheduledTask DcCloneServer,CloudCmdPollerGH -EA SilentlyContinue | Select-Object TaskName,State; Write-Host ('DC Clone: '+(if ($p) {'RUNNING PID '+$p.Id} else {'DEAD'})); $t | ForEach-Object {Write-Host ($_.TaskName+' '+$_.State)}","shell":"ps","status":"pending","ts":"2026-10-20T00:06:03Z"},
   {"id":"test_comms_001","cmd":"echo 2-way comms test from cloud coordinator","command":"echo '2-way comms test from cloud coordinator'","shell":"ps","status":"pending","ts":"2026-10-20T00:44:18Z"},
-  {"id":"test_comms_002","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T00:59:30Z"}
+  {"id":"test_comms_002","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T00:59:30Z"},
+  {"id":"test_comms_004","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:08:45Z"}
 ]
