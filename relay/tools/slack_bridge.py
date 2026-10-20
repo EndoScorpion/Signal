@@ -84,6 +84,11 @@ def main():
                     print(f"[{ts()}] Trigger '{cfg['trigger_keyword']}' detected: firing Claude webhook")
                     fire_claude_webhook(cfg["claude_webhook_url"], text)
                     post_slack(cfg["slack_outbound_webhook"], f"Claude Code triggered by: {text[:100]}")
+                cli_kw = cfg.get("cli_keyword", "!cli")
+                if text.strip().startswith(cli_kw):
+                    cmd = text.strip()[len(cli_kw):].strip()
+                    print(f"[{ts()}] !cli detected: {cmd} (TODO: push to relay cmd_queue)")
+                    post_slack(cfg["slack_outbound_webhook"], f"⏳ CLI command queued: `{cmd}`")
                 last_ts = max(last_ts, msg_ts)
         except Exception as e:
             print(f"[{ts()}] loop error: {e}")
