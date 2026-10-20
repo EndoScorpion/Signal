@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(powershell -NoProfile -File C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\ram_trim.ps1; Remove-Item C:\\\\Users\\\\endos\\\\Signal\\\\evolve.stop -ErrorAction SilentlyContinue; Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-WindowStyle','Hidden','-File','C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\evolve.ps1','-MaxPasses','6','-MaxHours','14','-PerPass','25'; Start-Sleep 3; Get-Content C:\\\\Users\\\\endos\\\\Signal\\\\data\\\\evolve_log.txt -Tail 1)",
+      "Read(//c/Users/endos/Desktop/mt4_tester2/MQL4/Experts/**)",
+      "Bash(cp MR_RegimeSwitch_b57.mq4 MR_RegimeSwitch_b58.mq4)",
+      "Bash(sed -i 's/MagicNumber    = 5350057/MagicNumber    = 5350058/; s/\"b57\",MagicNumber/\"b58\",MagicNumber/; s/MR_RegimeSwitch_b57.mq4 - b56 plus z-reversion exit, ATR stops, hour mask, autocorrelation and absorption gates, default off/MR_RegimeSwitch_b58.mq4 - b57 plus breakeven, fast stop, loss cooldown, turn confirmation and volatility-scaled size, default off/' MR_RegimeSwitch_b58.mq4)",
+      "Bash(cp MR_RegimeSwitch_b58.mq4 MR_RegimeSwitch_b59.mq4)",
+      "Bash(sed -i 's/MagicNumber    = 5350058/MagicNumber    = 5350059/; s/\"b58\",MagicNumber/\"b59\",MagicNumber/; s/MR_RegimeSwitch_b58.mq4 - b57 plus breakeven, fast stop, loss cooldown, turn confirmation and volatility-scaled size, default off/MR_RegimeSwitch_b59.mq4 - b58 plus split entries \\(partial take profit\\) and drawdown hedge \\(opposite order with stop and limit\\), default off/' MR_RegimeSwitch_b59.mq4)",
+      "Bash(cp MR_RegimeSwitch_b60.mq4 MR_RegimeSwitch_b61.mq4)",
+      "Bash(sed -i 's/MagicNumber    = 5350060/MagicNumber    = 5350061/; s/\"b60\",MagicNumber/\"b61\",MagicNumber/; s/MR_RegimeSwitch_b60.mq4/MR_RegimeSwitch_b61.mq4/' MR_RegimeSwitch_b61.mq4)",
+      "Bash(cp MR_RegimeSwitch_b61.mq4 MR_RegimeSwitch_b62.mq4)",
+      "Bash(sed -i 's/MagicNumber    = 5350061/MagicNumber    = 5350062/; s/\"b61\",MagicNumber/\"b62\",MagicNumber/; s/MR_RegimeSwitch_b61.mq4/MR_RegimeSwitch_b62.mq4/' MR_RegimeSwitch_b62.mq4)",
+      "Bash(grep -n \"if\\(t<0\\){ Print\\(\\\\\"OrderSend err \\\\\",GetLastError\\(\\)\\); } }\\\\|^int OnInit\\\\|TimeExit\\(\\); TrailStops\\(\\); ManageHedge\\(\\);\\\\|extern double OuHalfMax\" MR_RegimeSwitch_b62.mq4)",
+      "Bash(powershell -NoProfile -File C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\ram_gate.ps1)",
+      "PowerShell(powershell -NoProfile -File C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\ram_gate.ps1)"
+    ]
+  }
+}

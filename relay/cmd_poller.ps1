@@ -45,7 +45,7 @@ while ($true) {
                     $proc = Start-Process "cmd.exe" -ArgumentList "/c $($item.command)" `
                         -RedirectStandardOutput "$env:TEMP\co_$($item.id).txt" `
                         -RedirectStandardError  "$env:TEMP\ce_$($item.id).txt" `
-                        -Wait -PassThru -NoNewWindow
+                        -Wait -PassThru -NoNewWindow -WindowStyle Hidden
                     $exitCode = $proc.ExitCode
                     if (Test-Path "$env:TEMP\co_$($item.id).txt") { $stdout = Get-Content "$env:TEMP\co_$($item.id).txt" -Raw; Remove-Item "$env:TEMP\co_$($item.id).txt" -Force }
                     if (Test-Path "$env:TEMP\ce_$($item.id).txt") { $stderr = Get-Content "$env:TEMP\ce_$($item.id).txt" -Raw; Remove-Item "$env:TEMP\ce_$($item.id).txt" -Force }

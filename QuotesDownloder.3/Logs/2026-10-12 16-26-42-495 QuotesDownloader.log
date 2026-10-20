@@ -1,0 +1,19 @@
+2026-10-12 16:26:42.502 [1] [INFO] Client QuoteStore 3.3
+2026-10-12 16:26:42.504 [1] [INFO] ConnectPort : 5042
+2026-10-12 16:26:42.504 [1] [INFO] ConnectionType : SecureSocket
+2026-10-12 16:26:42.504 [1] [INFO] ServerCertificateName : CN=*.soft-fx.com
+2026-10-12 16:26:42.504 [1] [INFO] ConnectMaxCount : -1
+2026-10-12 16:26:42.504 [1] [INFO] ReconnectMaxCount : -1
+2026-10-12 16:26:42.504 [1] [INFO] ConnectInterval : 10000
+2026-10-12 16:26:42.504 [1] [INFO] ReconnectInterval : 10000
+2026-10-12 16:26:42.504 [1] [INFO] HeartbeatInterval : 30000
+2026-10-12 16:26:42.504 [1] [INFO] SendBufferSize : 20971520
+2026-10-12 16:26:42.504 [1] [INFO] OptimizationType : Latency
+2026-10-12 16:26:42.504 [1] [INFO] Log.Directory : Logs
+2026-10-12 16:26:42.504 [1] [INFO] Log.Events : False
+2026-10-12 16:26:42.504 [1] [INFO] Log.States : False
+2026-10-12 16:26:42.504 [1] [INFO] Log.Messages : False
+2026-10-12 16:26:42.535 [4] [INFO] Connecting to ttlive.fxopen.com:5042
+2026-10-12 16:26:43.140 [4] [INFO] Connected with 10.1.2.3:60170
+2026-10-12 16:26:43.270 [10] [INFO] Protocol Version: MajorVersion=3 MinorVersion=3
+2026-10-12 16:26:43.270 [10] [INFO] ServerSessionGuid : a38a835b-e123-4075-95d1-aa28f14854bb

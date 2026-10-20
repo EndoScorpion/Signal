@@ -5,126 +5,64 @@
                           "value":  [
                                         {
                                             "value":  [
-
+                                                          "@{value=System.Object[]; Count=12}",
+                                                          "@{id=test_comms_009; stdout=relay_alive_check; stderr=; exit_code=0; completed_at=2026-10-19T22:34:43.5902373-04:00}"
                                                       ],
-                                            "Count":  0
+                                            "Count":  2
                                         },
                                         {
-                                            "id":  "dcclone_repoint_002",
+                                            "id":  "cc_test_001",
                                             "stdout":  "",
-                                            "stderr":  "Cannot process argument transformation on parameter \u0027MultipleInstances\u0027. Cannot convert value \"StopExisting\" to type \"Microsoft.PowerShell.Cmdletization.GeneratedTypes.ScheduledTask.MultipleInstancesEnum\". Error: \"Unable to match the identifier name StopExisting to a valid enumerator name. Specify one of the following enumerator names and try again:\r\nParallel, Queue, IgnoreNew\"",
+                                            "stderr":  "At line:1 char:30\r\n+ echo COORDINATOR_TO_CLI_TEST \u0026\u0026 date\r\n+                              ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.",
                                             "exit_code":  1,
-                                            "completed_at":  "2026-10-19T22:09:05.5000321-04:00"
+                                            "completed_at":  "2026-10-20T05:34:47.2443612-04:00"
                                         },
                                         {
-                                            "id":  "cmdpoller_repoint_001",
+                                            "id":  "chat_20261020T042532",
+                                            "stdout":  "relay_test_from_thread",
+                                            "stderr":  "",
+                                            "exit_code":  0,
+                                            "completed_at":  "2026-10-20T05:34:47.2857005-04:00"
+                                        },
+                                        {
+                                            "id":  "git_test_001",
                                             "stdout":  "",
-                                            "stderr":  "Cannot process argument transformation on parameter \u0027MultipleInstances\u0027. Cannot convert value \"StopExisting\" to type \"Microsoft.PowerShell.Cmdletization.GeneratedTypes.ScheduledTask.MultipleInstancesEnum\". Error: \"Unable to match the identifier name StopExisting to a valid enumerator name. Specify one of the following enumerator names and try again:\r\nParallel, Queue, IgnoreNew\"",
+                                            "stderr":  "At line:1 char:20\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                    ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.\r\n\r\nAt line:1 char:31\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                               ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.",
                                             "exit_code":  1,
-                                            "completed_at":  "2026-10-19T22:09:05.5139087-04:00"
+                                            "completed_at":  "2026-10-20T05:34:47.2877163-04:00"
                                         },
                                         {
-                                            "id":  "check_dcremote_id_002",
-                                            "stdout":  "",
-                                            "stderr":  "At line:1 char:143\r\n+ ... if ($c -match \u0027987fd7bd\u0027) { $c2 = $c -replace \u0027987fd7bd[^\"\u0027 ]*\u0027,\u00272412 ...\r\n+                                                                 ~\nUnexpected token \u0027]\u0027 in expression or statement.\r\n\r\nAt line:1 char:321\r\n+ ...  { Write-Host \u0027device ID ok\u0027 } } else { Write-Host \u0027file not found\u0027 }\r\n+                                                                       ~~~\nThe string is missing the terminator: \u0027.\r\n\r\nAt line:1 char:109\r\n+ ... h $f) { $c = Get-Content $f -Raw; if ($c -match \u0027987fd7bd\u0027) { $c2 = $ ...\r\n+                                                                 ~\nMissing closing \u0027}\u0027 in statement block or type definition.\r\n\r\nAt line:1 char:55\r\n+ $f = \u0027C:\\tools\\start_dcremote.ps1\u0027; if (Test-Path $f) { $c = Get-Cont ...\r\n+                                                       ~\nMissing closing \u0027}\u0027 in statement block or type definition.",
-                                            "exit_code":  1,
-                                            "completed_at":  "2026-10-19T22:09:05.5256861-04:00"
-                                        },
-                                        {
-                                            "id":  "verify_001",
-                                            "stdout":  "",
-                                            "stderr":  "The term \u0027if\u0027 is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.",
-                                            "exit_code":  1,
-                                            "completed_at":  "2026-10-19T22:09:07.8641406-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_001",
-                                            "stdout":  "2-way comms test from cloud coordinator",
+                                            "id":  "83cef254",
+                                            "stdout":  "hi from LocalThug via GitHub relay",
                                             "stderr":  "",
                                             "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8743236-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_002",
-                                            "stdout":  "relay_test_ok",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8743236-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_004",
-                                            "stdout":  "relay_test_ok",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8798727-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_005",
-                                            "stdout":  "relay_test_ok",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8841207-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_006",
-                                            "stdout":  "relay_test_ok",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8841207-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_007",
-                                            "stdout":  "relay_test_ok",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8900398-04:00"
-                                        },
-                                        {
-                                            "id":  "test_comms_008",
-                                            "stdout":  "relay_test_ok",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-19T22:09:07.8940439-04:00"
+                                            "completed_at":  "2026-10-20T05:34:47.3135423-04:00"
                                         }
                                     ],
-                          "Count":  12
+                          "Count":  5
                       },
                       {
-                          "id":  "test_comms_009",
-                          "stdout":  "relay_alive_check",
+                          "id":  "mt4_forex_approved_20261020",
+                          "stdout":  "MT4 forex tests approved by Nasif 2026-10-20T14:19Z. Run pending theory_queue entries in priority order: nomem6_026 (STACKA-FULL, M15 Model1), nomem6_029 (STACKA-MON17-HALFLOT, M15), nomem6_028 (E7-ASIA, M1 ticks), nomem6_027 (STACKA-DAYSTOP, M15), nomem6_018 (TRAIL08, M1 ticks). All years 2020-2026, cost=0.00008, 0.1 lot (except 029 Mon17 leg=0.05). Results to relay/cmd_results/. Flag if MT4 PF vs cloud differs \u003e30% or maxDD \u003e2x.",
                           "stderr":  "",
                           "exit_code":  0,
-                          "completed_at":  "2026-10-19T22:34:43.5902373-04:00"
+                          "completed_at":  "2026-10-20T10:21:33.1105211-04:00"
                       }
                   ],
         "Count":  2
     },
     {
-        "id":  "cc_test_001",
+        "id":  "dr_backup_20261020T2200",
         "stdout":  "",
-        "stderr":  "At line:1 char:30\r\n+ echo COORDINATOR_TO_CLI_TEST \u0026\u0026 date\r\n+                              ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.",
-        "exit_code":  1,
-        "completed_at":  "2026-10-20T05:34:47.2443612-04:00"
-    },
-    {
-        "id":  "chat_20261020T042532",
-        "stdout":  "relay_test_from_thread",
         "stderr":  "",
         "exit_code":  0,
-        "completed_at":  "2026-10-20T05:34:47.2857005-04:00"
+        "completed_at":  "2026-10-20T19:19:36.2065212-04:00"
     },
     {
-        "id":  "git_test_001",
-        "stdout":  "",
-        "stderr":  "At line:1 char:20\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                    ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.\r\n\r\nAt line:1 char:31\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                               ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.",
-        "exit_code":  1,
-        "completed_at":  "2026-10-20T05:34:47.2877163-04:00"
-    },
-    {
-        "id":  "83cef254",
-        "stdout":  "hi from LocalThug via GitHub relay",
+        "id":  "vague_challenge_20261020T2204",
+        "stdout":  "cloud-coord challenge 22:04Z",
         "stderr":  "",
         "exit_code":  0,
-        "completed_at":  "2026-10-20T05:34:47.3135423-04:00"
+        "completed_at":  "2026-10-20T19:19:36.5051059-04:00"
     }
 ]
