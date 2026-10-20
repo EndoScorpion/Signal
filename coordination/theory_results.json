@@ -1,0 +1,11 @@
+{
+  "processed_at": "2026-10-20T22:07Z",
+  "processed_by": "cloud-clone-listener",
+  "source_data": "eurusd_twelvedata_h1_2020_2026.csv",
+  "items": [
+    {"id": "nomem6_004", "result": "REJECT", "n": 152, "wr_pct": 38.2, "pf": 0.51, "avg_pts": -5.7, "note": "neg net costs all periods IS+OOS"},
+    {"id": "nomem6_005", "result": "REJECT", "n": 123, "wr_pct": 43.1, "pf": 0.64, "avg_pts": -4.1, "note": "OOS WR 33% PF 0.27"},
+    {"id": "nomem6_002", "result": "REJECT", "n": 663, "wr_pct": 37.6, "pf": 0.56, "avg_pts": -8.2, "note": "neg net costs"}
+  ],
+  "note": "Cost model: 8 ECN pts round-trip. All 3 rules fail net of costs on TwelveData 2020-2026. Prior descriptions showed positive results - may be data source or logic discrepancy."
+}
