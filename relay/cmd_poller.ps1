@@ -17,7 +17,7 @@ Write-Log "Poller started (GitHub relay, 5s loop)"
 while ($true) {
     try {
         # Pull latest from relay branch
-        $pull = & git -C $RepoDir pull origin relay --rebase 2>&1
+        $pull = & git -C $RepoDir pull origin relay --rebase --autostash 2>&1
         if ($LASTEXITCODE -ne 0) {
             Write-Log "git pull failed: $pull"
             Start-Sleep -Seconds 5; continue
