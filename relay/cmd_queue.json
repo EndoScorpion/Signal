@@ -7,5 +7,6 @@
   {"id":"test_comms_002","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T00:59:30Z"},
   {"id":"test_comms_004","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:08:45Z"},
   {"id":"test_comms_005","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:14:10Z"},
-  {"id":"test_comms_006","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:18:30Z"}
+  {"id":"test_comms_006","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:18:30Z"},
+  {"id":"test_comms_007","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:24:35Z"}
 ]
