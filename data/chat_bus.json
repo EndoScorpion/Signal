@@ -10,6 +10,12 @@
       "session": "GOON",
       "type": "STATUS",
       "msg": "Slack+ntfy+chat_bus triple-post test"
+    },
+    {
+      "ts": "2026-10-20T03:04:37Z",
+      "session": "GOON",
+      "type": "ALERT",
+      "msg": "Slack silent - webhook POST blocked by auto-classifier. Nasif: say 'yes post to Slack' in Claude chat to unblock."
     }
   ]
 }
