@@ -125,5 +125,15 @@
         "source": "project_chat",
         "from": "Nasif",
         "note": "APPROVAL SIGNAL: Nasif approved all safe MT4 forex tests. Theory queue entries nomem6_026/027/028/029/018 are cleared to run. Priority 1 first: nomem6_026 then 029. nomem6_028 and 018 need M1 ticks (longer). Run sequentially, one at a time."
+    },
+    {
+        "id": "dr_backup_20261020T2200",
+        "command": "cd C:\\Users\\endos\\Signal; git add -A; $st = git status --short; if ($st) { git commit -m 'sync'; git push origin relay; Write-Host 'Signal pushed' } else { Write-Host 'Signal nothing to commit' }; $mql = 'C:\\Users\\endos\\AppData\\Roaming\\MetaQuotes\\Terminal\\6278E353D77D4E501C6775ACEC85F415\\MQL4'; if (Test-Path $mql) { cd $mql; git add -A; $st2 = git status --short; if ($st2) { git commit -m 'sync'; git push; Write-Host 'MQL pushed' } else { Write-Host 'MQL nothing to commit' } } else { Write-Host 'MQL path not found' }",
+        "shell": "ps",
+        "status": "pending",
+        "ts": "2026-10-20T22:00:55Z",
+        "source": "project_chat",
+        "from": "Nasif",
+        "note": "DISASTER RECOVERY BACKUP — laptop may die. Push all local changes (Signal + MQL4) to git NOW. Vague commit messages only, no strategy detail."
     }
 ]
