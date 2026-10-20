@@ -4,6 +4,12 @@
       "ts": "2026-10-20T03:00:49Z",
       "session": "GOON",
       "msg": "GOON online. chat_bus.json live. 2-way comms confirmed."
+    },
+    {
+      "ts": "2026-10-20T03:01:48Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Slack+ntfy+chat_bus triple-post test"
     }
   ]
 }
