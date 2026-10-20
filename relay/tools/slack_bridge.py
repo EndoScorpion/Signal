@@ -9,9 +9,13 @@ from datetime import datetime, timezone
 
 def load_config():
     cfg = {}
-    cfg_file = "/mnt/project-files/config/slack_config.json"
-    if os.path.exists(cfg_file):
-        with open(cfg_file) as f:
+    local_cfg_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "slack_config.json")
+    mnt_cfg_file = "/mnt/project-files/config/slack_config.json"
+    if os.path.exists(local_cfg_file):
+        with open(local_cfg_file) as f:
+            cfg = json.load(f)
+    elif os.path.exists(mnt_cfg_file):
+        with open(mnt_cfg_file) as f:
             cfg = json.load(f)
     return {
         "bot_token": os.environ.get("SLACK_BOT_TOKEN", cfg.get("bot_token", "")),
@@ -63,7 +67,7 @@ def ts():
 def main():
     cfg = load_config()
     if not cfg["bot_token"] or not cfg["channel_id"]:
-        print(f"[{ts()}] ERROR: bot_token and channel_id required. Set env vars or create /mnt/project-files/config/slack_config.json")
+        print(f"[{ts()}] ERROR: bot_token and channel_id required. Set env vars, create slack_config.json next to this script, or create /mnt/project-files/config/slack_config.json")
         return
     print(f"[{ts()}] Slack bridge started. Watching channel {cfg['channel_id']} for '{cfg['trigger_keyword']}'")
     last_ts = str(time.time())
