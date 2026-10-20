@@ -2,7 +2,7 @@
 # Cloud Claude pushes cmd_queue.json to EndoScorpion/Signal relay branch via GitHub API
 # This script: git pull, execute pending, git push results, repeat every 5s
 
-$RepoDir     = "C:\Users\endos\Desktop\hst_work\Signal"
+$RepoDir     = "C:\Users\endos\Signal"
 $QueueFile   = "$RepoDir\relay\cmd_queue.json"
 $ResultsFile = "$RepoDir\relay\cmd_results.json"
 $LogFile     = "C:\Users\endos\Desktop\hst_out\cmd_poller.log"
