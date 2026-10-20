@@ -4,3 +4,5 @@ __pycache__/
 # ntfy topic secret — never commit
 data/ntfy_topic.txt
 **/ntfy_topic.txt
+relay/tools/slack_config.json
+config/slack_config.json

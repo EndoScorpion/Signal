@@ -1,0 +1,7 @@
+{
+  "bot_token": "xoxb-YOUR-SLACK-BOT-TOKEN",
+  "channel_id": "C_YOUR_CHANNEL_ID",
+  "trigger_keyword": "!claude",
+  "claude_webhook_url": "https://api.anthropic.com/integrations/v1/code/webhook-triggers/YOUR-TRIGGER-ID/fire",
+  "slack_outbound_webhook": "https://hooks.slack.com/services/T.../B.../..."
+}
