@@ -5,5 +5,6 @@
   {"id":"verify_001","command":"$p = Get-Process node -EA SilentlyContinue | Where-Object {(Get-WmiObject Win32_Process -Filter \"ProcessId=$($_.Id)\" -EA SilentlyContinue).CommandLine -match 'server.js'}; $t = Get-ScheduledTask DcCloneServer,CloudCmdPollerGH -EA SilentlyContinue | Select-Object TaskName,State; Write-Host ('DC Clone: '+(if ($p) {'RUNNING PID '+$p.Id} else {'DEAD'})); $t | ForEach-Object {Write-Host ($_.TaskName+' '+$_.State)}","shell":"ps","status":"pending","ts":"2026-10-20T00:06:03Z"},
   {"id":"test_comms_001","cmd":"echo 2-way comms test from cloud coordinator","command":"echo '2-way comms test from cloud coordinator'","shell":"ps","status":"pending","ts":"2026-10-20T00:44:18Z"},
   {"id":"test_comms_002","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T00:59:30Z"},
-  {"id":"test_comms_004","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:08:45Z"}
+  {"id":"test_comms_004","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:08:45Z"},
+  {"id":"test_comms_005","command":"echo relay_test_ok","shell":"ps","status":"pending","ts":"2026-10-20T01:14:10Z"}
 ]
