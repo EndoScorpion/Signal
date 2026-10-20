@@ -1,3 +1,4 @@
+// Copyright 2026 Nasif Hossain | endoscorpion@gmail.com | All rights reserved.
 //objective: improve odds. 
 
 // old 2011a 524 98.28%
