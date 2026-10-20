@@ -1,28 +1,28 @@
 ﻿[
     {
         "id":  "dcclone_repoint_002",
-        "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) -MultipleInstances StopExisting -Hidden; $principal = New-ScheduledTaskPrincipal -UserId 'ENDOSCORPION\\endos' -LogonType Interactive -RunLevel Highest; $action = New-ScheduledTaskAction -Execute 'C:\\Program Files\\nodejs\\node.exe' -Argument '\"C:\\Users\\endos\\Signal\\relay\\dc_clone\\server.js\"' -WorkingDirectory 'C:\\Users\\endos\\Signal\\relay\\dc_clone'; Unregister-ScheduledTask -TaskName 'DcCloneServer' -Confirm:$false -EA SilentlyContinue; Register-ScheduledTask -TaskName 'DcCloneServer' -Action $action -Principal $principal -Settings $s -Force | Out-Null; Write-Host 'DcCloneServer repointed to git checkout'",
+        "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) -MultipleInstances StopExisting -Hidden; $principal = New-ScheduledTaskPrincipal -UserId \u0027ENDOSCORPION\\endos\u0027 -LogonType Interactive -RunLevel Highest; $action = New-ScheduledTaskAction -Execute \u0027C:\\Program Files\\nodejs\\node.exe\u0027 -Argument \u0027\"C:\\Users\\endos\\Signal\\relay\\dc_clone\\server.js\"\u0027 -WorkingDirectory \u0027C:\\Users\\endos\\Signal\\relay\\dc_clone\u0027; Unregister-ScheduledTask -TaskName \u0027DcCloneServer\u0027 -Confirm:$false -EA SilentlyContinue; Register-ScheduledTask -TaskName \u0027DcCloneServer\u0027 -Action $action -Principal $principal -Settings $s -Force | Out-Null; Write-Host \u0027DcCloneServer repointed to git checkout\u0027",
         "shell":  "ps",
         "status":  "done",
         "ts":  "2026-10-20T00:06:00Z"
     },
     {
         "id":  "cmdpoller_repoint_001",
-        "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 4) -MultipleInstances StopExisting -Hidden; $a2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-NonInteractive -WindowStyle Hidden -File C:\\Users\\endos\\Signal\\relay\\cmd_poller.ps1'; $t2 = Get-ScheduledTask -TaskName 'CloudCmdPollerGH' -EA SilentlyContinue; if ($t2) { Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $a2 -Trigger $t2.Triggers -Settings $s -RunLevel Highest -Force | Out-Null; Write-Host 'CloudCmdPollerGH repointed' } else { Write-Host 'CloudCmdPollerGH not found' }",
+        "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 4) -MultipleInstances StopExisting -Hidden; $a2 = New-ScheduledTaskAction -Execute \u0027powershell.exe\u0027 -Argument \u0027-NonInteractive -WindowStyle Hidden -File C:\\Users\\endos\\Signal\\relay\\cmd_poller.ps1\u0027; $t2 = Get-ScheduledTask -TaskName \u0027CloudCmdPollerGH\u0027 -EA SilentlyContinue; if ($t2) { Register-ScheduledTask -TaskName \u0027CloudCmdPollerGH\u0027 -Action $a2 -Trigger $t2.Triggers -Settings $s -RunLevel Highest -Force | Out-Null; Write-Host \u0027CloudCmdPollerGH repointed\u0027 } else { Write-Host \u0027CloudCmdPollerGH not found\u0027 }",
         "shell":  "ps",
         "status":  "done",
         "ts":  "2026-10-20T00:06:01Z"
     },
     {
         "id":  "check_dcremote_id_002",
-        "command":  "$f = 'C:\\tools\\start_dcremote.ps1'; if (Test-Path $f) { $c = Get-Content $f -Raw; if ($c -match '987fd7bd') { $c2 = $c -replace '987fd7bd[^\"']*','24123e3e-6795-430b-abf6-32e186477523'; Set-Content $f $c2 -NoNewline; Write-Host 'device ID patched' } else { Write-Host 'device ID ok' } } else { Write-Host 'file not found' }",
+        "command":  "$f = \u0027C:\\tools\\start_dcremote.ps1\u0027; if (Test-Path $f) { $c = Get-Content $f -Raw; if ($c -match \u0027987fd7bd\u0027) { $c2 = $c -replace \u0027987fd7bd[^\"\u0027]*\u0027,\u002724123e3e-6795-430b-abf6-32e186477523\u0027; Set-Content $f $c2 -NoNewline; Write-Host \u0027device ID patched\u0027 } else { Write-Host \u0027device ID ok\u0027 } } else { Write-Host \u0027file not found\u0027 }",
         "shell":  "ps",
         "status":  "done",
         "ts":  "2026-10-20T00:06:02Z"
     },
     {
         "id":  "verify_001",
-        "command":  "$p = Get-Process node -EA SilentlyContinue | Where-Object {(Get-WmiObject Win32_Process -Filter \"ProcessId=$($_.Id)\" -EA SilentlyContinue).CommandLine -match 'server.js'}; $t = Get-ScheduledTask DcCloneServer,CloudCmdPollerGH -EA SilentlyContinue | Select-Object TaskName,State; Write-Host ('DC Clone: '+(if ($p) {'RUNNING PID '+$p.Id} else {'DEAD'})); $t | ForEach-Object {Write-Host ($_.TaskName+' '+$_.State)}",
+        "command":  "$p = Get-Process node -EA SilentlyContinue | Where-Object {(Get-WmiObject Win32_Process -Filter \"ProcessId=$($_.Id)\" -EA SilentlyContinue).CommandLine -match \u0027server.js\u0027}; $t = Get-ScheduledTask DcCloneServer,CloudCmdPollerGH -EA SilentlyContinue | Select-Object TaskName,State; Write-Host (\u0027DC Clone: \u0027+(if ($p) {\u0027RUNNING PID \u0027+$p.Id} else {\u0027DEAD\u0027})); $t | ForEach-Object {Write-Host ($_.TaskName+\u0027 \u0027+$_.State)}",
         "shell":  "ps",
         "status":  "done",
         "ts":  "2026-10-20T00:06:03Z"
@@ -30,7 +30,7 @@
     {
         "id":  "test_comms_001",
         "cmd":  "echo 2-way comms test from cloud coordinator",
-        "command":  "echo '2-way comms test from cloud coordinator'",
+        "command":  "echo \u00272-way comms test from cloud coordinator\u0027",
         "shell":  "ps",
         "status":  "done",
         "ts":  "2026-10-20T00:44:18Z"
@@ -78,10 +78,10 @@
         "ts":  "2026-10-20T01:42:40Z"
     },
     {
-        "id": "test_comms_009",
-        "command": "echo relay_alive_check",
-        "shell": "ps",
-        "status": "pending",
-        "ts": "2026-10-20T02:28:00Z"
+        "id":  "test_comms_009",
+        "command":  "echo relay_alive_check",
+        "shell":  "ps",
+        "status":  "done",
+        "ts":  "2026-10-20T02:28:00Z"
     }
 ]
