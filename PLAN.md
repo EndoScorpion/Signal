@@ -1,3 +1,4 @@
+<!-- Copyright 2026 Nasif Hossain | endoscorpion@gmail.com | All rights reserved. -->
 # Plan for the agent
 1. Build universe.txt from the app (Settings: slcMD lists) or ask the user to paste symbols.
 2. Fetch history in chunks of 3, resumable. Log failures to results/fetch_log.txt, auto-fallback per symbol.

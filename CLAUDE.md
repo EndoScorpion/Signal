@@ -1,3 +1,4 @@
+<!-- Copyright 2026 Nasif Hossain | endoscorpion@gmail.com | All rights reserved. -->
 # Signal Live Companion v0.01d (build 039) - Claude Code handoff
 
 GOAL: use autonomous agent + planning mode to (1) pull sandbox/real daily history for every symbol, (2) re-test all win rules NET OF COSTS, (3) feed the surviving rules back into the HTML app.
