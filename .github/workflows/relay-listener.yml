@@ -1,0 +1,129 @@
+name: relay-listener
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Process pending commands
+        id: process
+        run: |
+          QUEUE="coordination/theory_queue.json"
+          RESULTS="coordination/theory_results.json"
+
+          if [ ! -f "$QUEUE" ]; then
+            echo "no queue file, no-op"
+            echo "changed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Count pending items
+          PENDING=$(python3 -c "
+import json, sys
+with open('$QUEUE') as f:
+    q = json.load(f)
+items = q if isinstance(q, list) else q.get('items', [])
+pending = [x for x in items if x.get('status') == 'pending']
+print(len(pending))
+" 2>/dev/null || echo "0")
+
+          if [ "$PENDING" = "0" ]; then
+            echo "no pending items, no-op"
+            echo "changed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "found $PENDING pending items"
+
+          # Process: for each pending item, mark processed and log result
+          python3 - <<'PYEOF'
+import json, datetime, os
+
+queue_path = 'coordination/theory_queue.json'
+results_path = 'coordination/theory_results.json'
+
+with open(queue_path) as f:
+    q = json.load(f)
+
+items = q if isinstance(q, list) else q.get('items', [])
+pending = [x for x in items if x.get('status') == 'pending']
+
+# Load or init results
+try:
+    with open(results_path) as f:
+        results = json.load(f)
+except Exception:
+    results = []
+
+now = datetime.datetime.utcnow().isoformat() + 'Z'
+
+for item in pending:
+    cmd = item.get('cmd', item.get('command', ''))
+    item_id = item.get('id', '')
+
+    # Only safe read-only or backtest commands
+    safe_prefixes = ('run_backtest', 'log', 'status', 'report', 'check', 'read')
+    is_safe = any(str(cmd).startswith(p) for p in safe_prefixes)
+
+    result_entry = {
+        'id': item_id,
+        'cmd': cmd,
+        'processed_at': now,
+        'runner': 'github-actions',
+    }
+
+    if is_safe:
+        # Check if data is available for backtests
+        data_dir = 'data/history'
+        has_data = os.path.isdir(data_dir) and bool(os.listdir(data_dir))
+        if cmd.startswith('run_backtest') and not has_data:
+            result_entry['status'] = 'no-op'
+            result_entry['reason'] = 'no history data in data/history/'
+        else:
+            result_entry['status'] = 'processed'
+    else:
+        result_entry['status'] = 'skipped'
+        result_entry['reason'] = 'command not in safe list'
+
+    results.append(result_entry)
+    item['status'] = 'done'
+    item['processed_at'] = now
+
+# Write back
+if isinstance(q, list):
+    updated_q = items
+else:
+    q['items'] = items
+    updated_q = q
+
+with open(queue_path, 'w') as f:
+    json.dump(updated_q, f, indent=2)
+
+with open(results_path, 'w') as f:
+    json.dump(results, f, indent=2)
+
+print(f'processed {len(pending)} items')
+PYEOF
+
+          echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit results
+        if: steps.process.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add coordination/theory_queue.json coordination/theory_results.json
+          git diff --cached --quiet || git commit -m "relay: process queue [skip ci]"
+          git push
