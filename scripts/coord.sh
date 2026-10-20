@@ -13,6 +13,12 @@
 #   SLACK_WEBHOOK  Slack incoming webhook URL (optional, enables Slack posting)
 #   COORD_BUS      path to chat_bus.json (default: auto-detect from script location)
 
+# Load .env if present (auto-export for subprocesses)
+SCRIPT_DIR_ENV="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "${SCRIPT_DIR_ENV}/../.env" ]]; then
+  set -a; source "${SCRIPT_DIR_ENV}/../.env"; set +a
+fi
+
 TOPIC="${COORD_TOPIC:-signal-coord}"
 AGENT="${COORD_AGENT:-$(hostname -s 2>/dev/null || echo CLI)}"
 TYPE="${1:-INFO}"

@@ -6,7 +6,7 @@ Usage:
   python3 scripts/coord_post.py --read --last 20
   python3 scripts/coord_post.py --read --since 2026-10-20T02:00:00Z
 """
-import json, argparse, sys, os
+import json, argparse, sys, os, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -30,7 +30,6 @@ def post(msg, session, msg_type="INFO"):
 
     # ntfy
     try:
-        import urllib.request
         topic = os.environ.get("COORD_TOPIC", "signal-coord")
         req = urllib.request.Request(
             f"https://ntfy.sh/{topic}",
@@ -47,8 +46,7 @@ def post(msg, session, msg_type="INFO"):
     webhook = os.environ.get("SLACK_WEBHOOK", "")
     if webhook:
         try:
-            import json as _json
-            payload = _json.dumps({"text": f"*[{session}]* `{msg_type}` {msg}"}).encode()
+            payload = json.dumps({"text": f"*[{session}]* `{msg_type}` {msg}"}).encode()
             req = urllib.request.Request(webhook, data=payload,
                 headers={"Content-Type": "application/json"}, method="POST")
             urllib.request.urlopen(req, timeout=5)
