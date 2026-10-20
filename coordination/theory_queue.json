@@ -791,5 +791,19 @@
     "cloud_result": "Cloud from cached trades: IS 2024-26 PF 2.80 net $963 maxDD $94 (equal lots 2.76/$1090/$100); OOS 2020-23 PF 2.76 net $1765 maxDD $92 (equal 2.54/$1989/$122).",
     "cost": 8e-05,
     "flag_if": "flag if MT4 PF or maxDD worse than the equal-lot run (nomem6_026 run 1)"
+  },
+  {
+    "id": "nomem6_033",
+    "name": "STACKC-ALLIGATOR-JAW-FILTER",
+    "priority": 3,
+    "status": "pending",
+    "added_by": "cloud-relay-thread",
+    "added_at": "2026-10-20T22:25:00Z",
+    "symbol": "EURUSD",
+    "timeframe": "H1",
+    "logic": "Stack C (Stack A + skip first Friday NFP on n021 leg) with one added condition on ALL 4 legs: Alligator jaw direction filter. Jaw = Bill Williams Alligator jaw line = 13-period SMMA (smoothed MA) of bar midpoints, shifted forward 8 bars (i.e. use the value 8 bars in the future relative to each bar, or equivalently the value of Alligator jaw that will plot at the current bar = SMMA13 calculated 8 bars ago). Direction rule: LONG legs (Mon17x22, T82) require Close > Jaw at entry bar. SHORT legs (G11-3, n021) require Close < Jaw at entry bar. All other logic identical to Stack C: G11-3 = Fri 14:00 SELL if day move > 0.3xATR14 AND MMR>=-1 AND Gate A, skip first Friday, exit 21:00; Mon17x22 = Mon 17:00 BUY if day move < -0.3xATR14 AND EMA120 slope <= +0.1xATR14, exit 22:00; T82 = Mon 15:00-16:00 BUY when prev bar LOSSY-long AND minssr>-2, exit 21:00; n021 = Fri 13:00-16:00 SELL when prev bar LOSSY AND z>=0.9 AND NOT first Friday, exit 21:00. No stops, 0.1 lot, cost 0.00008. Model 1 M15, -TimeoutMin 180, 2020-2026 per year IS+OOS.",
+    "stack_c_baseline": "Stack C IS PF 2.97 DD $76 / OOS PF 2.94 DD $92 (from memory)",
+    "cost": 8e-05,
+    "flag_if": "MT4 PF differs from Stack C baseline (nomem6_026+XNFP) by >30%; or maxDD >2x baseline; or jaw filter reduces n below 30 per leg; or any single leg n<15"
   }
-]
+]
