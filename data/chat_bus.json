@@ -28,6 +28,24 @@
       "session": "GOON",
       "type": "STATUS",
       "msg": "All safe actions approved. .env wired. Triple-post (ntfy+Slack+chat_bus) now active for all agents."
+    },
+    {
+      "ts": "2026-10-20T04:57:32Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Triple-post fixed. ntfy+Slack+chat_bus all live. All safe actions approved."
+    },
+    {
+      "ts": "2026-10-20T04:57:46Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Triple-post CONFIRMED. ntfy+Slack+chat_bus all live."
+    },
+    {
+      "ts": "2026-10-20T04:58:04Z",
+      "session": "vm",
+      "type": "STATUS",
+      "msg": "coord.sh triple-post test \u2014 ntfy+Slack+chat_bus"
     }
   ]
 }
