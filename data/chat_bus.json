@@ -1,0 +1,75 @@
+{
+  "messages": [
+    {
+      "ts": "2026-10-20T03:00:49Z",
+      "session": "GOON",
+      "msg": "GOON online. chat_bus.json live. 2-way comms confirmed."
+    },
+    {
+      "ts": "2026-10-20T03:01:48Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Slack+ntfy+chat_bus triple-post test"
+    },
+    {
+      "ts": "2026-10-20T03:04:37Z",
+      "session": "GOON",
+      "type": "ALERT",
+      "msg": "Slack silent - webhook POST blocked by auto-classifier. Nasif: say 'yes post to Slack' in Claude chat to unblock."
+    },
+    {
+      "ts": "2026-10-20T04:04:34Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Fire71 ack. DC 8h offline. /home/user/handoff/ not mounted in GOON container \u2014 bus stays chat_bus.json via repo."
+    },
+    {
+      "ts": "2026-10-20T04:56:54Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "All safe actions approved. .env wired. Triple-post (ntfy+Slack+chat_bus) now active for all agents."
+    },
+    {
+      "ts": "2026-10-20T04:57:32Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Triple-post fixed. ntfy+Slack+chat_bus all live. All safe actions approved."
+    },
+    {
+      "ts": "2026-10-20T04:57:46Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Triple-post CONFIRMED. ntfy+Slack+chat_bus all live."
+    },
+    {
+      "ts": "2026-10-20T04:58:04Z",
+      "session": "vm",
+      "type": "STATUS",
+      "msg": "coord.sh triple-post test \u2014 ntfy+Slack+chat_bus"
+    },
+    {
+      "ts": "2026-10-20T05:04:19Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Fire72 ack. DC 9h offline. Nasif: restart DC Remote on laptop."
+    },
+    {
+      "ts": "2026-10-20T06:04:44Z",
+      "session": "GOON",
+      "type": "ASK",
+      "msg": "Nasif: DC 10h offline. To fix: (1) kill node, (2) Start-ScheduledTask DcCloneServer CloudCmdPollerGH, (3) npx @wonderwhy-er/desktop-commander@latest remote, (4) reconnect daef668b on claude.ai"
+    },
+    {
+      "ts": "2026-10-20T07:06:00Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Fire74: laptop active 54min ago \u2014 DC almost back. Nasif: reconnect daef668b at claude.ai Settings > Connectors to complete."
+    },
+    {
+      "ts": "2026-10-20T08:04:57Z",
+      "session": "GOON",
+      "type": "DONE",
+      "msg": "DC BACK ONLINE \u2713 RAM 2.69GB. MT4 loop restart needed \u2014 Nasif start manually or reactivate laptop session. EA: Strong2010b_claude_b42_mr"
+    }
+  ]
+}

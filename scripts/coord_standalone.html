@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Signal Coord</title>
+<meta name="theme-color" content="#161b22">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Signal Coord">
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Signal%20Coord%22,%22short_name%22:%22SigCoord%22,%22start_url%22:%22.%2Fcoord_standalone.html%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d1117%22,%22theme_color%22:%22%23161b22%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2096%2096'%3E%3Crect%20width%3D'96'%20height%3D'96'%20rx%3D'18'%20fill%3D'%23161b22'%2F%3E%3Ccircle%20cx%3D'48'%20cy%3D'48'%20r%3D'28'%20fill%3D'none'%20stroke%3D'%2358a6ff'%20stroke-width%3D'5'%2F%3E%3Ccircle%20cx%3D'48'%20cy%3D'48'%20r%3D'8'%20fill%3D'%2358a6ff'%2F%3E%3C%2Fsvg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2096%2096'%3E%3Crect%20width%3D'96'%20height%3D'96'%20rx%3D'18'%20fill%3D'%23161b22'%2F%3E%3Ccircle%20cx%3D'48'%20cy%3D'48'%20r%3D'28'%20fill%3D'none'%20stroke%3D'%2358a6ff'%20stroke-width%3D'5'%2F%3E%3Ccircle%20cx%3D'48'%20cy%3D'48'%20r%3D'8'%20fill%3D'%2358a6ff'%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+:root {
+  --bg:    #0d1117; --bg2: #161b22; --bg3: #21262d;
+  --bdr:   #30363d; --fg: #e6edf3;  --fg2: #8b949e;
+  --acc:   #58a6ff; --grn: #3fb950; --yel: #d29922;
+  --red:   #f85149; --pur: #bc8cff; --org: #ffa657;
+  --mono:  'JetBrains Mono', monospace;
+  --ui:    system-ui, -apple-system, sans-serif;
+  --r: 6px;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--ui); font-size: 14px; line-height: 1.5;
+  display: flex; flex-direction: column; overflow: hidden;
+  padding-left:  max(16px, env(safe-area-inset-left,   0px));
+  padding-right: max(16px, env(safe-area-inset-right,  0px));
+  padding-block: 0;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--bg2);
+}
+.hdr {
+  position: sticky; top: env(safe-area-inset-top, 0px);
+  background: var(--bg2); border-bottom: 1px solid var(--bdr);
+  padding: 9px 0; display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0; z-index: 10;
+}
+.dot { width:9px; height:9px; border-radius:50%; background:var(--red); flex-shrink:0; transition:background .4s; }
+.dot.on { background:var(--grn); }
+.chan { font-family:var(--mono); font-size:13px; font-weight:600; color:var(--acc); flex-shrink:0; }
+.topic-inp {
+  flex:1; min-width:0; background:var(--bg3); border:1px solid var(--bdr);
+  color:var(--fg); font-family:var(--mono); font-size:11px;
+  padding:4px 8px; border-radius:var(--r);
+}
+.topic-inp:focus { outline:none; border-color:var(--acc); }
+.btn-ico {
+  background:var(--bg3); border:1px solid var(--bdr); color:var(--fg2);
+  font-size:15px; padding:4px 9px; border-radius:var(--r); cursor:pointer; flex-shrink:0; line-height:1;
+}
+.feed {
+  flex:1; overflow-y:auto; padding:6px 0 4px;
+  display:flex; flex-direction:column; gap:1px;
+}
+.empty {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; color:var(--fg2); font-family:var(--mono);
+  font-size:12px; gap:6px; pointer-events:none;
+}
+.sep {
+  text-align:center; font-family:var(--mono); font-size:10px; color:var(--fg2);
+  padding:6px 0; display:flex; align-items:center; gap:8px;
+}
+.sep::before,.sep::after { content:""; flex:1; height:1px; background:var(--bdr); }
+.msg {
+  display:grid; grid-template-columns:78px auto 1fr; gap:6px;
+  align-items:baseline; padding:3px 0; font-size:13px;
+}
+.msg-t { font-family:var(--mono); font-size:10px; color:var(--fg2); font-variant-numeric:tabular-nums; white-space:nowrap; padding-top:1px; }
+.msg-a { font-family:var(--mono); font-size:10px; font-weight:700; white-space:nowrap; padding:1px 6px; border-radius:3px; letter-spacing:.02em; }
+.msg-b { color:var(--fg); word-break:break-word; min-width:0; }
+.badge { display:inline-block; font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.04em; padding:1px 5px; border-radius:3px; margin-right:5px; vertical-align:1px; }
+.a-signal{background:#1a3a5c;color:#58a6ff} .a-thug{background:#3a1a1a;color:#f85149}
+.a-goon{background:#1a3a1a;color:#3fb950}   .a-safe{background:#2a1a3a;color:#bc8cff}
+.a-watcher{background:#3a2a1a;color:#ffa657} .a-nasif{background:#3a3a1a;color:#d29922}
+.a-other{background:var(--bg3);color:var(--fg2)}
+.t-ALERT{background:#3a1a1a;color:#f85149} .t-STATUS{background:#1a2a3a;color:#58a6ff}
+.t-DONE{background:#1a3a1a;color:#3fb950}  .t-ASK{background:#3a3a1a;color:#d29922}
+.t-INFO{background:var(--bg3);color:var(--fg2)}
+.compose {
+  background:var(--bg2); border-top:1px solid var(--bdr);
+  padding:9px 0; padding-bottom:max(9px, env(safe-area-inset-bottom, 0px));
+  flex-shrink:0; display:flex; flex-direction:column; gap:7px;
+}
+.row { display:flex; gap:6px; align-items:center; }
+select {
+  background:var(--bg3); border:1px solid var(--bdr); color:var(--fg);
+  font-family:var(--mono); font-size:11px; padding:6px 7px; border-radius:var(--r); cursor:pointer;
+}
+textarea {
+  flex:1; min-width:0; background:var(--bg3); border:1px solid var(--bdr);
+  color:var(--fg); font-family:var(--ui); font-size:13px;
+  padding:7px 10px; border-radius:var(--r); resize:none; min-height:36px; max-height:80px; line-height:1.4;
+}
+textarea:focus { outline:none; border-color:var(--acc); }
+.btn-send {
+  background:var(--acc); border:1px solid var(--acc); color:#0d1117;
+  font-family:var(--mono); font-size:12px; font-weight:700;
+  padding:7px 14px; border-radius:var(--r); cursor:pointer; flex-shrink:0; white-space:nowrap;
+}
+.btn-send:active { opacity:.8; }
+.curl { background:var(--bg3); border:1px solid var(--bdr); border-radius:var(--r); padding:7px 10px; font-family:var(--mono); font-size:10px; color:var(--fg2); word-break:break-all; display:none; }
+.curl.show { display:block; }
+.curl-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.curl-label { font-size:10px; color:var(--yel); font-weight:600; }
+.curl-copy { background:none; border:none; color:var(--acc); font-family:var(--mono); font-size:10px; cursor:pointer; padding:0; }
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="dot" id="dot"></div>
+  <span class="chan">#</span>
+  <input class="topic-inp" id="topicInp" value="signal-coord" placeholder="ntfy topic" spellcheck="false">
+  <button class="btn-ico" onclick="reconnect()" title="Reconnect">⟳</button>
+</div>
+<div class="feed" id="feed">
+  <div class="empty" id="empty">
+    <div>◉</div>
+    <div id="emptyTxt">connecting…</div>
+  </div>
+</div>
+<div class="compose">
+  <div class="row">
+    <select id="agentSel">
+      <option>signal-d0</option><option>THUG</option><option>SAFE-RUN</option>
+      <option>GOON</option><option>MQL-WTR</option><option>Nasif</option><option>OTHER</option>
+    </select>
+    <select id="typeSel">
+      <option>STATUS</option><option>ALERT</option><option>DONE</option>
+      <option>ASK</option><option>INFO</option>
+    </select>
+  </div>
+  <div class="row">
+    <textarea id="msgInp" placeholder="Message…" rows="1"></textarea>
+    <button class="btn-send" onclick="send()">Send</button>
+  </div>
+  <div class="curl" id="curlBox">
+    <div class="curl-hdr">
+      <span class="curl-label">▸ CLI / curl fallback</span>
+      <button class="curl-copy" onclick="copyCurl()">copy</button>
+    </div>
+    <code id="curlCmd"></code>
+  </div>
+</div>
+<script>
+const BASE='https://ntfy.sh';
+let topic='signal-coord',es=null,count=0,lastDate='';
+const feed=document.getElementById('feed'),dot=document.getElementById('dot'),
+      empty=document.getElementById('empty'),emptyTxt=document.getElementById('emptyTxt'),
+      curlBox=document.getElementById('curlBox'),curlCmd=document.getElementById('curlCmd');
+const TYPES=['ALERT','STATUS','DONE','ASK','INFO'];
+function agentCls(a){const n=a.toLowerCase();if(n.includes('signal'))return'a-signal';if(n.includes('thug'))return'a-thug';if(n.includes('goon'))return'a-goon';if(n.includes('safe'))return'a-safe';if(n.includes('mql')||n.includes('watcher'))return'a-watcher';if(n.includes('nasif'))return'a-nasif';return'a-other';}
+function fmtTime(ts){const d=new Date(ts*1000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+' UTC';}
+function fmtDate(ts){return new Date(ts*1000).toUTCString().slice(0,16);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function parse(title,body,time){let agent='OTHER',type='INFO',text=body||title||'';if(title){const m=title.match(/^\[([^\]]+)\]\s*\[([^\]]+)\]\s*(.*)/s);if(m){agent=m[1];type=TYPES.includes(m[2].toUpperCase())?m[2].toUpperCase():'INFO';text=(m[3]+(body&&body!==title?'\n'+body:'')).trim();}else{agent=title;text=body||'';}}return{agent,type,text,time};}
+function addMsg(m){count++;if(count===1&&empty.parentNode===feed)feed.removeChild(empty);const ds=fmtDate(m.time);if(ds!==lastDate){lastDate=ds;const s=document.createElement('div');s.className='sep';s.textContent=ds;feed.appendChild(s);}const div=document.createElement('div');div.className='msg';div.innerHTML=`<span class="msg-t">${fmtTime(m.time)}</span><span class="msg-a ${agentCls(m.agent)}">${esc(m.agent)}</span><span class="msg-b"><span class="badge t-${m.type}">${m.type}</span>${esc(m.text)}</span>`;feed.appendChild(div);feed.scrollTop=feed.scrollHeight;}
+function connect(){topic=(document.getElementById('topicInp').value||'signal-coord').trim();if(es){es.close();es=null;}dot.className='dot';emptyTxt.textContent='connecting…';try{es=new EventSource(`${BASE}/${topic}/sse`);es.onopen=()=>{dot.className='dot on';if(!count)emptyTxt.textContent='connected — no messages yet';};es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event==='message')addMsg(parse(d.title,d.message,d.time));}catch{}};es.onerror=()=>{dot.className='dot';if(!count)emptyTxt.textContent='offline — tap ⟳ to retry';};}catch{dot.className='dot';emptyTxt.textContent='SSE unavailable — use curl ↓';}}
+function reconnect(){count=0;lastDate='';while(feed.firstChild)feed.removeChild(feed.firstChild);feed.appendChild(empty);connect();}
+async function send(){const agent=document.getElementById('agentSel').value,type=document.getElementById('typeSel').value,text=document.getElementById('msgInp').value.trim();if(!text)return;const title=`[${agent}] [${type}] ${text.slice(0,60)}`;const cmd=`curl -H "Title: ${title}" -d "${text.replace(/"/g,'\\"')}" ${BASE}/${topic}`;curlCmd.textContent=cmd;curlBox.classList.add('show');try{const r=await fetch(`${BASE}/${topic}`,{method:'POST',headers:{'Title':title,'Content-Type':'text/plain'},body:text});if(r.ok)document.getElementById('msgInp').value='';}catch{}}
+function copyCurl(){const t=curlCmd.textContent;if(navigator.clipboard){navigator.clipboard.writeText(t).catch(()=>sel(curlCmd));}else sel(curlCmd);}
+function sel(el){const r=document.createRange();r.selectNodeContents(el);const s=window.getSelection();s.removeAllRanges();s.addRange(r);}
+document.getElementById('msgInp').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px';});
+document.getElementById('msgInp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+try{const s=localStorage.getItem('sc-topic');if(s)document.getElementById('topicInp').value=s;}catch{}
+document.getElementById('topicInp').addEventListener('change',()=>{try{localStorage.setItem('sc-topic',document.getElementById('topicInp').value);}catch{}});
+connect();
+// Register SW for PWA offline shell
+if('serviceWorker' in navigator){const sw=`self.addEventListener('fetch',e=>{if(e.request.url.includes('ntfy.sh'))return;e.respondWith(fetch(e.request).catch(()=>new Response('',{status:503})));});`;const blob=new Blob([sw],{type:'application/javascript'});navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});}
+</script>
+</body>
+</html>
