@@ -1,0 +1,60 @@
+name: auto-archive
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout relay branch
+        uses: actions/checkout@v4
+        with:
+          ref: relay
+          fetch-depth: 0
+
+      - name: Check repo size
+        id: size_check
+        run: |
+          SIZE_KB=$(du -sk . | cut -f1)
+          SIZE_MB=$((SIZE_KB / 1024))
+          echo "repo_mb=$SIZE_MB" >> $GITHUB_OUTPUT
+          FREE_PCT=$(df . | awk 'NR==2 {gsub(/%/,""); print 100-$5}')
+          echo "free_pct=$FREE_PCT" >> $GITHUB_OUTPUT
+
+      - name: Archive coordination and results
+        run: |
+          DATE=$(date +%Y%m%d)
+          ARCHIVE_BRANCH="backup/archive-${DATE}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$ARCHIVE_BRANCH"
+
+          # Move old cycle notes (>30 days) — preserve Win Logic files
+          mkdir -p archive/results archive/coordination
+          find results/ -maxdepth 1 -name "*.md" -mtime +30 -exec mv {} archive/results/ \; 2>/dev/null || true
+          find coordination/ -maxdepth 1 -name "*.json" -mtime +30 -exec mv {} archive/coordination/ \; 2>/dev/null || true
+
+          git add -A
+          git diff --staged --quiet || git commit -m "archive ${DATE}"
+          git push origin "$ARCHIVE_BRANCH"
+          echo "ARCHIVE_BRANCH=$ARCHIVE_BRANCH" >> $GITHUB_ENV
+
+      - name: Create 2nd clone if space is good
+        if: ${{ fromJSON(steps.size_check.outputs.free_pct) > 50 && fromJSON(steps.size_check.outputs.repo_mb) < 500 }}
+        run: |
+          DATE=$(date +%Y%m%d)
+          CLONE2="backup/clone2-${DATE}"
+          git checkout -b "$CLONE2"
+          git push origin "$CLONE2"
+          echo "CLONE2=$CLONE2" >> $GITHUB_ENV
+
+      - name: Summary
+        run: |
+          echo "archive=$ARCHIVE_BRANCH"
+          echo "clone2=${CLONE2:-skipped}"
