@@ -1,0 +1,13 @@
+[
+  {
+    "id": "fix_hidden_windows_20261020T2257",
+    "status": "pending",
+    "added_by": "cloud-relay-thread",
+    "added_at": "2026-10-20T22:57:00Z",
+    "priority": 1,
+    "description": "Fix black popup terminal windows. Re-register all scheduled tasks and poller scripts to run with WindowStyle Hidden.",
+    "shell": "ps",
+    "command": "# Re-register DC Watchdog with WindowStyle Hidden\n$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\Signal\\scripts\\dc_watchdog.ps1'\n$trigger1 = New-ScheduledTaskTrigger -AtLogOn\n$trigger2 = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date)\nUnregister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\nWrite-Host 'Cloud_DC_Watchdog re-registered hidden'\n\n# Re-register CloudCmdPollerGH with WindowStyle Hidden\n$pollerPath = 'C:\\Users\\endos\\Signal\\scripts\\CloudCmdPollerGH.ps1'\nif (Test-Path $pollerPath) {\n  $action2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument \"-WindowStyle Hidden -NonInteractive -File $pollerPath\"\n  $trigger3 = New-ScheduledTaskTrigger -AtLogOn\n  Unregister-ScheduledTask -TaskName 'CloudCmdPollerGH' -Confirm:$false -ErrorAction SilentlyContinue\n  Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $action2 -Trigger $trigger3 -RunLevel Highest -Force\n  Write-Host 'CloudCmdPollerGH re-registered hidden'\n} else { Write-Host 'CloudCmdPollerGH script not found at expected path' }\n\n# Kill any existing visible powershell popup windows (leave the hidden ones)\nGet-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { Write-Host \"Closing PID $($_.Id)\"; $_.CloseMainWindow() | Out-Null }\nWrite-Host 'done'",
+    "note": "Nasif reports black popup windows. Re-register watchdog + poller scheduled tasks with -WindowStyle Hidden. Also closes any existing visible PS windows."
+  }
+]
