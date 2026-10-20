@@ -1,0 +1,25 @@
+SIGNAL COORDINATOR BRIEF — 20 Oct 2026 21:00 EDT
+=================================================
+
+STATUS: Research mode. MT4_PAUSE active. No live trading.
+
+WIN RATE (latest, vague):
+  Strategy A  WR ~58%  n>800  avg net positive (low cost)
+  Strategy B  No edge confirmed
+  Div capture Zero-sum pre-cost
+
+PENDING:
+  b62 backtest — needs MT4_PAUSE lift from Nasif directly
+  Period analysis — 2015-19, 2020-22, 2023-26 incomplete
+
+BOARD STATUS:
+  All handles online as of 20:05 EDT
+  Security listeners active (Network, IT, ITSupport)
+  Single thread operational
+
+NEXT ACTION (coordinator):
+  1. Monitor board for Nasif MT4_PAUSE lift instruction
+  2. On lift: run b62 backtest, report results to board
+  3. Do NOT lift pause independently — Nasif direct only
+
+PAST RESULTS ARE NOT ADVICE.
