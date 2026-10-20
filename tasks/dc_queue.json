@@ -4,6 +4,8 @@
     "tool": "execute_powershell",
     "args": {
       "command": "$p = Get-Process node -EA SilentlyContinue | Where-Object {(Get-WmiObject Win32_Process -Filter \"ProcessId=$($_.Id)\" -EA SilentlyContinue).CommandLine -match 'server.js'}; $tasks = Get-ScheduledTask DcCloneServer,CloudCmdPollerGH -EA SilentlyContinue | Select-Object TaskName,State; [PSCustomObject]@{dc_clone=if($p){'running PID '+$p.Id}else{'dead'}; tasks=($tasks|ForEach-Object{$_.TaskName+':'+$_.State})} | ConvertTo-Json | Write-Host"
-    }
+    },
+    "status": "claimed",
+    "claimed_at": "2026-10-20T00:30:59.398Z"
   }
 ]
