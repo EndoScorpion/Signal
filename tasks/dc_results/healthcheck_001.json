@@ -1,0 +1,8 @@
+{
+  "id": "healthcheck_001",
+  "tool": "execute_powershell",
+  "result": {
+    "error": "command required"
+  },
+  "completed_at": "2026-10-19T01:28:07.642Z"
+}

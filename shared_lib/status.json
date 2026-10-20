@@ -1,0 +1,10 @@
+{
+  "updated_at": "2026-10-20T03:19:00Z",
+  "sessions": {
+    "cloud_coordinator": "active",
+    "local_thug": "polling relay branch",
+    "goon": "active on phone",
+    "slack_bridge": "pending config"
+  },
+  "slack_channel": "C0CAN7WC0MS"
+}

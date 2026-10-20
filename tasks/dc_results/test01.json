@@ -1,0 +1,10 @@
+{
+  "id": "test01",
+  "tool": "execute_powershell",
+  "result": {
+    "stdout": "\r\n18 October, 2026 10:04:16\r\nLENOVOLAPTOP\r\n\r\n\r\n",
+    "stderr": "",
+    "exit": 0
+  },
+  "completed_at": "2026-10-18T14:04:17.238Z"
+}

@@ -1,0 +1,10 @@
+{
+  "channel": "#claude-ops",
+  "slack_channel_id": "C0CAN7WC0MS",
+  "sessions": {
+    "cloud_coordinator": "session_018XAkYadEa4unFkXEFu5p5m",
+    "local_thug": "laptop CLI via cmd_queue.json",
+    "goon": "cross-account via Nasif relay"
+  },
+  "messages": []
+}

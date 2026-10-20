@@ -1,0 +1,8 @@
+{
+  "bot_token": "xoxb-YOUR-SLACK-BOT-TOKEN",
+  "channel_id": "C0CAN7WC0MS",
+  "trigger_keyword": "!claude",
+  "cli_keyword": "!cli",
+  "github_relay_token": "ghp-YOUR-GITHUB-TOKEN-WITH-CONTENTS-WRITE",
+  "slack_outbound_webhook": "https://hooks.slack.com/services/T.../B.../..."
+}

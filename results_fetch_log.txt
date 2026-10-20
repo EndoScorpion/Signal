@@ -1,0 +1,10 @@
+SPY yahoo 3772
+QQQ yahoo 3772
+ULTY yahoo 661
+AAPL yahoo 3772
+MSFT yahoo 3772
+JPM yahoo 3772
+KO yahoo 3772
+XOM yahoo 3772
+GLD yahoo 3772
+SLV yahoo 3772

@@ -1,0 +1,56 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal Status</title>
+<style>
+:root{--bg:#000;--fg:#33ff66;--mut:#1fa045;--ok:#39ff14;--bad:#ff3b3b;--warn:#ffb000;--card:#000;--bd:#0d4d1f}
+body{margin:0;background:var(--bg);color:var(--fg);font:12px/1.35 Consolas,"Courier New",monospace;text-shadow:0 0 3px rgba(57,255,20,.35)}
+header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--bd);-webkit-app-region:drag}
+h1{font-size:13px;margin:0}.mut{color:var(--mut)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+section{margin:6px 8px;padding:6px 8px;background:var(--card);border:1px solid var(--bd);border-radius:6px}
+h2{font-size:11px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+table{width:100%;border-collapse:collapse}td,th{padding:2px 4px;text-align:left;white-space:nowrap}th{color:var(--mut);font-weight:500}
+.bar{height:5px;background:var(--bd);border-radius:3px}.bar i{display:block;height:5px;border-radius:3px;background:var(--ok)}
+.big{font-size:20px;font-weight:600;color:var(--ok)}.row{display:flex;gap:14px}
+#log div{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style></head><body>
+<header><h1>Signal status</h1><span id="src" class="mut"></span></header>
+<section><h2>Self-improvement</h2><div class="row"><div><div class="big" id="gen">-</div><span class="mut">generation</span></div>
+<div><div class="big" id="best">-</div><span class="mut">best win % (net)</span></div><div><div class="big" id="done">-</div><span class="mut">items done</span></div></div></section>
+<section><h2>Win rate by candidate</h2><table id="cand"></table></section>
+<section><h2>MT4 queue</h2><table id="mt4"></table></section>
+<section><h2>Agents</h2><table id="agents"></table></section>
+<section><h2>Log</h2><div id="log"></div></section>
+<script>
+// Data arrives as board_data.js (window.BOARD = {...}) written by the launcher; last good copy is cached for offline use.
+var KEY='signal_dash_board';
+function esc(s){return String(s==null?'-':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+function ago(t){if(!t)return'-';var s=(Date.now()-Date.parse(t))/1000;return s<90?Math.round(s)+'s':s<5400?Math.round(s/60)+'m':Math.round(s/3600)+'h'}
+function num(v){return typeof v=='number'?v:parseFloat(v)}
+function cands(b){ // candidates[] if present, else items whose result carries a win rate
+  var c=b.candidates||[];(b.items||[]).forEach(function(it){var r=it.result;if(r&&typeof r=='object'&&r.win!=null)c.push({name:it.title||it.id,win:r.win,net:r.net,n:r.n,gen:r.gen})});
+  return c.map(function(x){var w=num(x.win);return{name:x.name||x.id,win:w<=1?w*100:w,net:x.net,n:x.n,gen:x.gen}}).sort(function(a,b){return b.win-a.win})}
+function render(b,src){
+  var c=cands(b),gen=b.generation!=null?b.generation:c.reduce(function(m,x){return Math.max(m,num(x.gen)||0)},0);
+  document.getElementById('gen').textContent=gen||'-';
+  document.getElementById('best').textContent=c.length?c[0].win.toFixed(1):'-';
+  var it=b.items||[];document.getElementById('done').textContent=it.filter(function(i){return i.status=='done'}).length+'/'+it.length;
+  document.getElementById('cand').innerHTML=c.length?'<tr><th>candidate</th><th>win%</th><th></th><th>net%/tr</th><th>n</th></tr>'+c.slice(0,12).map(function(x){
+    return'<tr><td>'+esc(x.name)+'</td><td>'+x.win.toFixed(1)+'</td><td style="width:30%"><div class="bar"><i style="width:'+Math.min(100,x.win)+'%;background:'+(x.win>=50?'var(--ok)':'var(--bad)')+'"></i></div></td><td>'+esc(x.net)+'</td><td>'+esc(x.n)+'</td></tr>'}).join(''):'<tr><td class="mut">no results yet</td></tr>';
+  var q=(b.mt4||{}).queue||[];
+  document.getElementById('mt4').innerHTML=q.length?'<tr><th>id</th><th>status</th><th>EA</th><th>sym</th><th>tf</th></tr>'+q.slice(-8).map(function(j){
+    var col=j.status=='running'?'var(--warn)':j.status=='done'?'var(--ok)':j.status=='failed'?'var(--bad)':'var(--mut)';
+    return'<tr><td>'+esc(j.id)+'</td><td><span class="dot" style="background:'+col+'"></span>'+esc(j.status)+'</td><td>'+esc(j.ea)+'</td><td>'+esc(j.symbol)+'</td><td>'+esc(j.tf)+'</td></tr>'}).join(''):'<tr><td class="mut">queue empty</td></tr>';
+  var ag=b.agents||{},names=Object.keys(ag);
+  document.getElementById('agents').innerHTML=names.length?names.map(function(n){var s=(Date.now()-Date.parse(ag[n].last_seen))/1000,on=s<600;
+    var own=it.filter(function(i){return i.owner==n&&i.status!='done'}).map(function(i){return i.id}).join(',');
+    return'<tr><td><span class="dot" style="background:'+(on?'var(--ok)':'var(--mut)')+'"></span>'+esc(n)+'</td><td>'+ago(ag[n].last_seen)+'</td><td class="mut">'+esc(own||'idle')+'</td></tr>'}).join(''):'<tr><td class="mut">no agents</td></tr>';
+  document.getElementById('log').innerHTML=(b.log||[]).slice(-6).reverse().map(function(l){return'<div>'+ago(l.t)+' '+esc(l.agent)+': '+esc(l.msg)+'</div>'}).join('');
+  document.getElementById('src').textContent=src+' · rev '+(b.rev||0)+' · '+ago(b.updated);
+}
+function load(){
+  var s=document.createElement('script');s.src='board_data.js?'+Date.now();
+  s.onload=function(){s.remove();if(window.BOARD){try{localStorage.setItem(KEY,JSON.stringify(window.BOARD))}catch(e){}render(window.BOARD,'live')}};
+  s.onerror=function(){s.remove();var c=null;try{c=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(c)render(c,'offline cache');else document.getElementById('src').textContent='no data'};
+  document.head.appendChild(s);
+}
+load();setInterval(load,15000);
+</script></body></html>

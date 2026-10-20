@@ -1,0 +1,10 @@
+{
+  "id": "restart_cmdpoller_001",
+  "tool": "execute_powershell",
+  "result": {
+    "stdout": "CloudCmdPollerGH restarted\n",
+    "stderr": "",
+    "exit": 0
+  },
+  "completed_at": "2026-10-20T00:30:47.403Z"
+}
