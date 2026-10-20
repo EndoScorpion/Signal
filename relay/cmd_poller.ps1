@@ -75,7 +75,7 @@ while ($true) {
         # Push results back
         & git -C $RepoDir add relay/cmd_queue.json relay/cmd_results.json
         & git -C $RepoDir commit -m "relay: results $(Get-Date -Format 'HH:mm:ss')" 2>&1 | Out-Null
-        $push = & git -C $RepoDir push origin relay 2>&1
+        $push = & git -C $RepoDir push origin HEAD:relay 2>&1
         if ($LASTEXITCODE -ne 0) { Write-Log "git push failed: $push" }
 
     } catch {
