@@ -1,3 +1,4 @@
+// Copyright 2026 Nasif Hossain | endoscorpion@gmail.com | All rights reserved.
 // +------------------------------------------------------------------+
 // |                                         PatternRecognition.mq4   |
 // |                                 Copyright © 2021, Nasif Hossain   |
@@ -263,11 +264,6 @@ void OnTick()
        rvc 1  rpc 2  (strong)
     */
 
-    // =========================================================================
-    // WARNING COUNTER (w[]) — converts strict filters into soft warning scores.
-    // w[0] accumulates penalty points; used later for logging rather than hard
-    // rejection, allowing more granular analysis of borderline setups.
-    // =========================================================================
     int w[50]; ArrayInitialize(w, 0);
 
     if (  (a2[2] >= a80[0] || a2[2] > a5[0]) && (a2[1] > a10[0] || a10[1] >= a80[0])) { w[0]++; w[1]++; }
@@ -283,10 +279,8 @@ void OnTick()
     if (a15[0] < 12)                                                                    { w[0]++; w[1]++; }
     if (a80[5] > 7 || a80[4] > 0)                                                       { w[0]++; w[1]++; }
 
-    // Require at least one rising valley AND one rising peak — the core pattern.
     if (rvc > 0 && rpc > 0) { Print("rvc ", rvc, " rpc ", rpc); } else { return; }
 
-    // Detailed logging for all count arrays across M1/M5/M15
     Print("m1  slp a2[0] ", a2[0],  " a5[0] ", a5[0],  " a10[0] ", a10[0],  " a15[0] ", a15[0],
           " st b20[0] ", b20[0], " ", b20[1], " b50[0] ", b50[0], " ", b50[1],
           " a50[0] ", a50[0], " ", a50[1], " a80[0] ", a80[0], " ", a80[1]);
@@ -298,17 +292,10 @@ void OnTick()
           " a50[4] ", a50[4], " ", a50[5], " a80[4] ", a80[4], " ", a80[5]);
     if (w[0] > 0) { Print("w[0] ", w[0], " ", w[1]); }
 
-
-    // =========================================================================
-    // STOCH < 20 CONFIRMATION — M15 oversold check before proceeding
-    // Requires M15(10,3,3) stochastic to have been below 20 on the last closed bar.
-    // Followed by ATR & volume caps to ensure the move isn't already exhausted.
-    // =========================================================================
     ArrayInitialize(st, 0);
     st[0] = r(iStochastic(s, 15, 10, 3, 3, 0, 0, MODE_MAIN, 1));
     if (st[0] >= 20) { return; }
 
-    // ATR caps: M1 < 50 pips, M5 < 260 pips, M15 < 760 pips
     double atr[50]; ArrayInitialize(atr, 0);
     atr[0] = iATR(s, 1, 2, 1) / p;
     int rvf = 1;
@@ -321,7 +308,6 @@ void OnTick()
         if (atr[2] >= 760) { return; }
     }
 
-    // Volume caps: M1 tick-vol < 200, M5 < 1350, M15 < 3850
     long volm[50]; ArrayInitialize(volm, 0);
     volm[0] = iVolume(s, 1,  1);
     volm[1] = iVolume(s, 5,  1);
@@ -333,12 +319,6 @@ void OnTick()
         if (volm[0] >= 3850) { return; }
     }
 
-    // =========================================================================
-    // SLOPE/STOCH RATIO (sp[]) & ACCELERATION (spa[])
-    // sp  = stoch / slope ratio per timeframe+period combination
-    // spa = change in sp between current and previous bar (momentum acceleration)
-    // avgsp / avgsp_a = cross-timeframe averages used in final filter sets
-    // =========================================================================
     ArrayInitialize(slp, 0);
     double ma_ = iMA(s, 1, 2, 0, MODE_SMA, PRICE_CLOSE, 0);
     double ma1  = iMA(s, 1, 2, 0, MODE_SMA, PRICE_CLOSE, 1);
@@ -348,7 +328,6 @@ void OnTick()
     double spa[50], avgsp_a[50];
     ArrayInitialize(sp, 0); ArrayInitialize(spa, 0); ArrayInitialize(avgsp_a, 0);
 
-    // M1 ratios across periods 2, 5, 10
     st[0] = St(1,2,0,0); slp[0] = Slp(1,2,0,0); if (st[0]>1 && av(slp[0])>1) { sp[0] = r(st[0]/slp[0]); }
     st[1] = St(1,2,1,0); slp[1] = Slp(1,2,1,0); if (st[1]>1 && av(slp[1])>1) { sp[1] = r(st[1]/slp[1]); spa[0] = sp[0]-sp[1]; }
     st[0] = St(1,5,0,0); slp[0] = Slp(1,5,0,0); if (st[0]>1 && av(slp[0])>1) { sp[2] = r(st[0]/slp[0]); }
@@ -357,7 +336,6 @@ void OnTick()
     st[1] = St(1,10,1,0); slp[1] = Slp(1,10,1,0); if (st[1]>1 && av(slp[1])>1) { sp[5] = r(st[1]/slp[1]); spa[2] = sp[4]-sp[5]; }
     avgsp_a[0] = r((spa[0]+spa[1]+spa[2])/3);
 
-    // M5 ratios across periods 2, 5, 10
     st[0] = St(5,2,0,0); slp[0] = Slp(5,2,0,0); if (st[0]>1 && av(slp[0])>1) { sp[6]  = r(st[0]/slp[0]); }
     st[1] = St(5,2,1,0); slp[1] = Slp(5,2,1,0); if (st[1]>1 && av(slp[1])>1) { sp[7]  = r(st[1]/slp[1]); spa[3] = sp[6]-sp[7]; }
     st[0] = St(5,5,0,0); slp[0] = Slp(5,5,0,0); if (st[0]>1 && av(slp[0])>1) { sp[8]  = r(st[0]/slp[0]); }
@@ -366,7 +344,6 @@ void OnTick()
     st[1] = St(5,10,1,0); slp[1] = Slp(5,10,1,0); if (st[1]>1 && av(slp[1])>1) { sp[11] = r(st[1]/slp[1]); spa[5] = sp[10]-sp[11]; }
     avgsp_a[1] = r((spa[3]+spa[4]+spa[5])/3);
 
-    // M15 ratios across periods 2, 5, 10
     st[0] = St(15,2,0,0); slp[0] = Slp(15,2,0,0); if (st[0]>1 && av(slp[0]>1)) { sp[12] = r(st[0]/slp[0]); }
     st[1] = St(15,2,1,0); slp[1] = Slp(15,2,1,0); if (st[1]>1 && av(slp[1])>1) { sp[13] = r(st[1]/slp[1]); spa[6] = sp[12]-sp[13]; }
     st[0] = St(15,5,0,0); slp[0] = Slp(15,5,0,0); if (st[0]>1 && av(slp[0])>1) { sp[14] = r(st[0]/slp[0]); }
@@ -376,25 +353,17 @@ void OnTick()
     avgsp_a[2] = r((spa[6]+spa[7]+spa[8])/3);
     avgsp_a[3] = r((avgsp_a[0]+avgsp_a[1]+avgsp_a[2])/3);
 
-    // Cross-timeframe sp statistics: min, max, average per timeframe group
     double minsp[50], maxsp[50], avgsp[50];
     ArrayInitialize(minsp, 0); ArrayInitialize(maxsp, 0); ArrayInitialize(avgsp, 0);
     minsp[0] = sp[ArrayMinimum(sp, 18, 0)];  maxsp[0] = sp[ArrayMaximum(sp, 18, 0)];
-    minsp[1] = sp[ArrayMinimum(sp,  5, 0)];  maxsp[1] = sp[ArrayMaximum(sp,  5, 0)];   // M1 group
-    minsp[2] = sp[ArrayMinimum(sp, 11, 6)];  maxsp[2] = sp[ArrayMaximum(sp, 11, 6)];   // M5 group
-    minsp[3] = sp[ArrayMinimum(sp, 18,12)];  maxsp[3] = sp[ArrayMaximum(sp, 18,12)];   // M15 group
-    avgsp[0] = r((sp[0]+sp[1]+sp[2]+sp[3]+sp[4]+sp[5])/6);   // M1 avg
-    avgsp[1] = r((sp[6]+sp[7]+sp[8]+sp[9]+sp[10]+sp[11])/6); // M5 avg
-    avgsp[2] = r((sp[12]+sp[13]+sp[14]+sp[15]+sp[16]+sp[17])/6); // M15 avg
-    avgsp[3] = r((avgsp[0]+avgsp[1]+avgsp[2])/3);             // grand average
+    minsp[1] = sp[ArrayMinimum(sp,  5, 0)];  maxsp[1] = sp[ArrayMaximum(sp,  5, 0)];
+    minsp[2] = sp[ArrayMinimum(sp, 11, 6)];  maxsp[2] = sp[ArrayMaximum(sp, 11, 6)];
+    minsp[3] = sp[ArrayMinimum(sp, 18,12)];  maxsp[3] = sp[ArrayMaximum(sp, 18,12)];
+    avgsp[0] = r((sp[0]+sp[1]+sp[2]+sp[3]+sp[4]+sp[5])/6);
+    avgsp[1] = r((sp[6]+sp[7]+sp[8]+sp[9]+sp[10]+sp[11])/6);
+    avgsp[2] = r((sp[12]+sp[13]+sp[14]+sp[15]+sp[16]+sp[17])/6);
+    avgsp[3] = r((avgsp[0]+avgsp[1]+avgsp[2])/3);
 
-    // =========================================================================
-    // ACCELERATION-OVER-BASE (aob[]) RATIO FILTERS
-    // aob compares the acceleration (spa) magnitude to the absolute sp values.
-    // A high ratio means the move is accelerating well relative to its size —
-    // suggesting momentum build-up rather than a fading trend.
-    // Several filter sets (FS1–FS5) were tested; preserved below as reference.
-    // =========================================================================
     double aob[50], spamax[50], cmax[50], spamin[50], minaob[50], maxaob[50], avgaob[50];
     ArrayInitialize(aob, 0); ArrayInitialize(spamax, 0); ArrayInitialize(spamin, 0);
     ArrayInitialize(cmax, 0); ArrayInitialize(avgaob, 0);
@@ -418,45 +387,16 @@ void OnTick()
     maxaob[0] = aob[ArrayMaximum(aob, WHOLE_ARRAY, 0)];
     avgaob[0] = (aob[0]+aob[1]+aob[2]+aob[3]+aob[4]) / 5;
 
-    /* Filter Set 1 (commented — earlier threshold experiment)
-    if (sp[6] < 1 || maxsp[1] < 10 || maxsp[0] < 10 || minsp[0] <= -2.5
-        || sp[10] > sp[1] || avgsp[1] < 0.3 || avgsp[2] < -0.1 || avgsp[0] < 7) { return; } */
-
-    /* Filter Set 2 (commented — n2b 91 96.70% Aug-Sep 2011)
-    if (maxsp[1] < 1 || sp[12] > 2.11 || minsp[0] <= -2.25
-        || avgsp_a[0] < 0.01 || avgsp_a[1] < 0.01 || avgsp_a[2] < 0.01) { return; } */
-
-    /* Filter Set 3 (commented)
-    if (aob[0] < 1.45 || aob[1] < 1.101) {
-        if (sp[0] < 0.9 || sp[6] < 0.9 || sp[12] < 0.9
-            || avgsp_a[0] < 0.5 || avgsp_a[1] < 0.5 || avgsp_a[2] < 0.5 || avgsp_a[3] < 0.1) { return; }
-        if (minsp[0] <= -3.1) { return; }
-    }
-    if (aob[0] < 0.4) { return; } */
-
-    /* Filter Set 4 (commented)
-    if (avgsp[3] < 2.4 || avgsp[3] >= 2.5 || aob[1] < 1.3 || aob[1] >= 2) { return; }
-    if (minaob[0] < 0.01 && maxsp[0] >= 15 && aob[2] < 0.01) { return; } */
-
-    /* FS5 Oct 2011 (commented)
-    if (avgaob[0] < 1 || avgaob[0] > 2 || avgsp[3] < 1 || avgsp[3] > 2 || avgsp[0] < 0.1) { return; } */
-
     double df[50]; ArrayInitialize(df, 0);
     df[0] = r(spamax[0] - maxaob[0]);
 
     if (spamax[0] > 1 && maxsp[3] > 1) { df[1] = r(spamax[0] / maxsp[3]); } else { df[1] = 0; }
 
-    // Active filter: avgaob in [1, 3] and sp[1] >= 1 — 2011b: 876 trades 97.37%
     if (avgaob[0] < 1 || avgaob[0] > 3 || sp[1] < 1) { return; }
 
-    // Loss date filters derived from backtesting specific losing trades
     if (minsp[3] <= -7  && minsp[0] <= -17) { return; }
-    if (spa[2] < 0 && spamin[0] <= -1 && avgsp[2] < 0.5 && spa[3] < 1) { return; } // 2011b 775 98.06%
+    if (spa[2] < 0 && spamin[0] <= -1 && avgsp[2] < 0.5 && spa[3] < 1) { return; }
 
-    // =========================================================================
-    // ADDITIONAL WARNING SCORES  (secondary w[] penalty flags)
-    // Loose signals that don't hard-reject but inflate w[0] for post-analysis.
-    // =========================================================================
     if (sp[2] < 1)                                         { w[0]++; w[5]++; }
     if (spamin[0] <= -20)                                  { w[0]++; w[6]++; }
     if (spa[6] < 3 && spa[8] < 1)                         { w[0]++; w[7]++; }
@@ -466,13 +406,11 @@ void OnTick()
     if (sp[11] < 0)                                        { w[0]++; w[11]++; }
     if (avgsp[0] < 0)                                      { w[0]++; w[12]++; }
 
-    // Max-to-min ratio: measures spread between best and worst sp readings
     double mmr[50]; ArrayInitialize(mmr, 0);
     if (maxsp[0] > 1 && av(minsp[0]) > 1) { mmr[0] = r(maxsp[0] / av(minsp[0])); }
 
     if (avgsp[2] < -1 || avgsp[2] > 1 || avgsp_a[0] < 3 || avgsp_a[0] > 4) { w[0]++; w[10]++; }
 
-    // Nested acceleration gate: at least one spa combination must be in a tight window
     if (spa[6] < 1 || spa[6] > 2 || spa[0] < 7 || spa[0] > 8) {
         if (spa[1] < 3 || spa[1] > 4) {
             if (spa[3] < 6 || spa[3] > 7) {
@@ -484,9 +422,8 @@ void OnTick()
             }
         }
     }
-    if (spa[0] < spa[1]) { return; } // acceleration must be strongest on current bar
+    if (spa[0] < spa[1]) { return; }
 
-    // Final detailed logging block before any order placement
     Print("  OOO m1 sp[0] ", sp[0], " ", sp[1], " ", sp[2],
           " sp[3] ", sp[3], " ", sp[4], " ", sp[5],
           " spa[0] ", spa[0], " ", spa[1], " ", spa[2],
@@ -515,17 +452,12 @@ void OnTick()
           " df[0] ", df[0], " ", df[1], " mmr[0] ", mmr[0]);
     if (w[0] > 0) { Print("w[0] ", w[0], " ", w[1], " ", w[2], " w[3] ", w[3], " ", w[4]); }
 
-    // =========================================================================
-    // DYNAMIC STOCH-PERIOD SEARCH
-    // Cycles M1 stoch periods 2–10 to find the shortest period currently < 20
-    // (oversold at fine granularity), then computes slope and sp for that period.
-    // =========================================================================
     ArrayInitialize(slp, 0);
 
     int b20tf = 1, b20pd = 2, b20sh = 1;
     for (a = 2; a <= 10; a++) {
         st[a] = St(b20tf, a, 1, a);
-        if (st[a] < 20) { b20pd = a; break; } // find shortest oversold period
+        if (st[a] < 20) { b20pd = a; break; }
     }
     slp[0]     = Slp(b20tf, b20pd, 0, 0);   if (slp[0] < 5) { return; }
     slp[b20pd] = Slp(b20tf, b20pd, b20sh, b20pd);
@@ -540,28 +472,23 @@ void OnTick()
 // |  HELPER FUNCTIONS                                                 |
 // +------------------------------------------------------------------+
 
-// St: returns the %K value of iStochastic rounded to 4 decimal places.
 double St(int tf, int pd, int sh, int i) {
     double ST = r(iStochastic(s, tf, pd, 3, 3, 0, 0, MODE_MAIN, sh));
     return(ST);
 }
 
-// Slp: returns the SMA slope in pips (current bar minus previous bar of same period).
 double Slp(int tf, int pd, int sh, int i) {
     double SLP = r((ma(tf, pd, sh, i) - ma(tf, pd, sh+1, i+1)) / p);
     return(SLP);
 }
 
-// ma: thin wrapper around iMA for a simple moving average on close.
 double ma(int tf, int pd, int sh, int i) {
     double Ma = iMA(s, tf, pd, 0, MODE_SMA, PRICE_CLOSE, sh);
     return(Ma);
 }
 
-// r: rounds a value to 4 decimal places (reduces floating-point noise in prints/ratios).
 double r(double val) { double R = MathRound(val * 10000) / 10000; return(R); }
 
-// av: absolute value helper.
 double av(double val) { double AV = MathAbs(val); return(AV); }
 
 // M1.pd2.sh0 — Stochastic Position, slope, acceleration, rate-of-acceleration, range, volume, height
