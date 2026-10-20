@@ -1,1 +1,85 @@
-[]
+﻿[
+    {
+        "value":  [
+
+                  ],
+        "Count":  0
+    },
+    {
+        "id":  "dcclone_repoint_002",
+        "stdout":  "",
+        "stderr":  "Cannot process argument transformation on parameter \u0027MultipleInstances\u0027. Cannot convert value \"StopExisting\" to type \"Microsoft.PowerShell.Cmdletization.GeneratedTypes.ScheduledTask.MultipleInstancesEnum\". Error: \"Unable to match the identifier name StopExisting to a valid enumerator name. Specify one of the following enumerator names and try again:\r\nParallel, Queue, IgnoreNew\"",
+        "exit_code":  1,
+        "completed_at":  "2026-10-19T22:09:05.5000321-04:00"
+    },
+    {
+        "id":  "cmdpoller_repoint_001",
+        "stdout":  "",
+        "stderr":  "Cannot process argument transformation on parameter \u0027MultipleInstances\u0027. Cannot convert value \"StopExisting\" to type \"Microsoft.PowerShell.Cmdletization.GeneratedTypes.ScheduledTask.MultipleInstancesEnum\". Error: \"Unable to match the identifier name StopExisting to a valid enumerator name. Specify one of the following enumerator names and try again:\r\nParallel, Queue, IgnoreNew\"",
+        "exit_code":  1,
+        "completed_at":  "2026-10-19T22:09:05.5139087-04:00"
+    },
+    {
+        "id":  "check_dcremote_id_002",
+        "stdout":  "",
+        "stderr":  "At line:1 char:143\r\n+ ... if ($c -match \u0027987fd7bd\u0027) { $c2 = $c -replace \u0027987fd7bd[^\"\u0027 ]*\u0027,\u00272412 ...\r\n+                                                                 ~\nUnexpected token \u0027]\u0027 in expression or statement.\r\n\r\nAt line:1 char:321\r\n+ ...  { Write-Host \u0027device ID ok\u0027 } } else { Write-Host \u0027file not found\u0027 }\r\n+                                                                       ~~~\nThe string is missing the terminator: \u0027.\r\n\r\nAt line:1 char:109\r\n+ ... h $f) { $c = Get-Content $f -Raw; if ($c -match \u0027987fd7bd\u0027) { $c2 = $ ...\r\n+                                                                 ~\nMissing closing \u0027}\u0027 in statement block or type definition.\r\n\r\nAt line:1 char:55\r\n+ $f = \u0027C:\\tools\\start_dcremote.ps1\u0027; if (Test-Path $f) { $c = Get-Cont ...\r\n+                                                       ~\nMissing closing \u0027}\u0027 in statement block or type definition.",
+        "exit_code":  1,
+        "completed_at":  "2026-10-19T22:09:05.5256861-04:00"
+    },
+    {
+        "id":  "verify_001",
+        "stdout":  "",
+        "stderr":  "The term \u0027if\u0027 is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.",
+        "exit_code":  1,
+        "completed_at":  "2026-10-19T22:09:07.8641406-04:00"
+    },
+    {
+        "id":  "test_comms_001",
+        "stdout":  "2-way comms test from cloud coordinator",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8743236-04:00"
+    },
+    {
+        "id":  "test_comms_002",
+        "stdout":  "relay_test_ok",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8743236-04:00"
+    },
+    {
+        "id":  "test_comms_004",
+        "stdout":  "relay_test_ok",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8798727-04:00"
+    },
+    {
+        "id":  "test_comms_005",
+        "stdout":  "relay_test_ok",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8841207-04:00"
+    },
+    {
+        "id":  "test_comms_006",
+        "stdout":  "relay_test_ok",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8841207-04:00"
+    },
+    {
+        "id":  "test_comms_007",
+        "stdout":  "relay_test_ok",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8900398-04:00"
+    },
+    {
+        "id":  "test_comms_008",
+        "stdout":  "relay_test_ok",
+        "stderr":  "",
+        "exit_code":  0,
+        "completed_at":  "2026-10-19T22:09:07.8940439-04:00"
+    }
+]
