@@ -16,6 +16,12 @@
       "session": "GOON",
       "type": "ALERT",
       "msg": "Slack silent - webhook POST blocked by auto-classifier. Nasif: say 'yes post to Slack' in Claude chat to unblock."
+    },
+    {
+      "ts": "2026-10-20T04:04:34Z",
+      "session": "GOON",
+      "type": "STATUS",
+      "msg": "Fire71 ack. DC 8h offline. /home/user/handoff/ not mounted in GOON container \u2014 bus stays chat_bus.json via repo."
     }
   ]
 }
