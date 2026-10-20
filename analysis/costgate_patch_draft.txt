@@ -1,0 +1,94 @@
+CostGateOK Fix Draft — DO NOT APPLY until Job 1 (2021 M1 OOS) exits 0
+=======================================================================
+Prepared: 20 Oct 2026
+Status: HOLD — OOS gate BLOCKING
+
+## BUG DESCRIPTION
+
+Current code (Strong2010b_claude.mq4, CostGateOK):
+
+    double rr = (double)tp_pts / MathMax(total_cost, 1.0);
+    if (rr < InpMinRR) return false;
+
+With tp=300, total_cost=10 (spread 2pt + commission 8pt):
+    rr = 300 / 10 = 30.0  -->  always >= InpMinRR (1.5)  --> gate is a NO-OP
+
+This means the gate NEVER blocks an order based on R:R. It only blocks
+if tp_pts <= total_cost (i.e. TP would be eaten entirely by cost), which
+almost never happens at tp=300.
+
+## CORRECT FORMULA
+
+Net R:R should be: (tp - cost) / (sl + cost)
+  - Numerator: what you actually win after paying cost on the win side
+  - Denominator: what you actually lose including cost on the loss side
+
+Fixed code:
+
+    if (sl_pts > 0 && InpMinRR > 0.0) {
+        double rr = ((double)tp_pts - total_cost) / MathMax((double)sl_pts + total_cost, 1.0);
+        if (rr < InpMinRR) return false;
+    }
+
+## TP MINIMUM REQUIRED
+
+With sl=290pt, total_cost=10pt, InpMinRR=1.5:
+    TP_min = InpMinRR * (sl + cost) + cost
+           = 1.5 * (290 + 10) + 10
+           = 1.5 * 300 + 10
+           = 460 pt
+
+Knowledge base says >= 458pt (slight rounding diff — use 460 to be safe).
+
+Current InpTPRange=300, InpTPTrend=360 are BOTH below this minimum.
+After fix, orders with these TPs will always be blocked by CostGateOK.
+
+## INPUT CHANGES NEEDED (after OOS pass)
+
+    input int InpTPRange  = 460;   // was 300 -- net R:R 1.5 at sl=290, cost=10
+    input int InpTPTrend  = 540;   // was 360 -- net R:R ~1.76, gives more room in trend
+    input int InpSLRange  = 290;   // unchanged
+    input int InpSLTrend  = 290;   // unchanged
+
+## EXACT PATCH (context diff style)
+
+In CostGateOK(), replace:
+
+    if (sl_pts > 0 && InpMinRR > 0.0) {
+        double rr = (double)tp_pts / MathMax(total_cost, 1.0);
+        if (rr < InpMinRR) return false;
+    }
+
+With:
+
+    if (sl_pts > 0 && InpMinRR > 0.0) {
+        double rr = ((double)tp_pts - total_cost) / MathMax((double)sl_pts + total_cost, 1.0);
+        if (rr < InpMinRR) return false;
+    }
+
+And at the top of the file, update inputs:
+    input int InpTPTrend  = 540;   // was 360
+    input int InpTPRange  = 460;   // was 300
+
+## VERIFICATION MATH
+
+After fix with tp=460, sl=290, cost=10:
+    rr = (460 - 10) / (290 + 10) = 450 / 300 = 1.50  --> exactly passes InpMinRR=1.5
+
+After fix with tp=300, sl=290, cost=10:
+    rr = (300 - 10) / (290 + 10) = 290 / 300 = 0.967  --> blocked (correct)
+
+## BACKTEST IMPACT (expected)
+
+The gate was not doing its job. After applying:
+- Trade count will DROP (borderline entries filtered out)
+- Win rate should RISE slightly (worst R:R entries removed)
+- Net PF may rise or fall depending on whether filtered entries were winners
+- OOS result is the only valid test — re-run 2021 M1 OOS after applying fix
+
+## CONDITION TO APPLY
+
+1. Job 1 (2021 M1 OOS, b20legs_g1a) must exit 0 (PF >= 1.10, DD < 5%)
+2. Then apply this patch to Strong2010b_claude.mq4
+3. Re-run 2021 M1 OOS with patched EA to confirm gate effect
+4. Only proceed to Job 3+ if patched OOS still passes
