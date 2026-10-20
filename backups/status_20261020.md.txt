@@ -1,0 +1,14 @@
+# Daily status — 2026-10-20
+
+| Item | State | Source |
+|---|---|---|
+| MT4_PAUSE | In place (not lifted) | project rule |
+| b62 | Not run; needs Nasif's direct go-ahead | project rule |
+| Blocking OOS gate (2021 M1, PF ≥ 1.10, DD < 5% @ 8pt) | Not passed | data/stats_8pt_2021_*.md |
+| b20legs_g1a 2021 OOS @8pt | 568 tr, 52.5% win, PF 1.05, +$38.56, DD 1.7%, p=0.428 | data/stats_8pt_2021_g1a.md |
+| g2a 2021 OOS @8pt | 328 tr, 47.9% win, PF 0.87, −$68.24, DD 1.1%, p=0.698 | data/stats_8pt_2021_g2a.md |
+| Jobs 2–4 (CostGateOK/TP, g2a features, Thursday filter) | HOLD until a variant passes the gate | HUB_STATE.md |
+| HUB_STATE.md ## RESULTS | Stale (still says PENDING; last update 2026-10-12) | HUB_STATE.md |
+| Paper bot (crypto C1) | Last ledger row 2026-10-11; AVAX still open | results/paper_daily_ledger.csv |
+
+Next: decide on next OOS candidate (g2b–g2d need compiling) or stand down; refresh HUB_STATE RESULTS; check paper bot has run since 10-11.

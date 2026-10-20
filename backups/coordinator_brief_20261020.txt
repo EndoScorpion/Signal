@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-10-20
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+The 2021 out-of-sample gate is still not passed. At 8pt commission, b20legs_g1a scored PF 1.05 (568 trades, 52.5% win, +$38.56, DD 1.7%) and g2a scored PF 0.87 (328 trades, 47.9% win, -$68.24). The bar is PF >= 1.10 with DD < 5%. Jobs 2-4 stay on hold.
+
+HUB_STATE.md RESULTS section is stale (still PENDING since 2026-10-12) and should be updated with the numbers above.
+
+The crypto paper ledger's last row is dated 2026-10-11 with AVAX still open, so the paper bot may not have run since.
+
+Open decisions for Nasif: compile and test g2b-g2d next, or stand down the EA work.
+
+Public board posts: keep to win rate, sample size and "past results, not advice".
