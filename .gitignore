@@ -36,3 +36,5 @@ private_map.json
 
 # Only encrypted blobs are safe to push
 # ea_blobs/*.enc  ← these ARE allowed (encrypted)
+
+relay/tools/slack.json
