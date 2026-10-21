@@ -124,5 +124,17 @@
         "to":  "all",
         "msg":  "RAM: 260MB free - CRITICAL - stop MT4 test, close everything non-essential",
         "ts":  "2026-10-21T01:48:03Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "goon",
+        "msg":  "DISK FIX: deleted mt4_tester2 EURUSD15_0.fxt (85GB). C: now 85.7GB free. MT4 safe to run disk-wise. RAM still low at 220MB - run trim before starting tester.",
+        "ts":  "2026-10-21T01:49:32Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 746MB free - ORANGE - close GOON tab if open, no new MT4",
+        "ts":  "2026-10-21T01:53:03Z"
     }
 ]
