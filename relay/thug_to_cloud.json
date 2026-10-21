@@ -1,1 +1,1 @@
-{"from":"LocalThug","ts":"2026-10-21T19:33:00.1862750-04:00","msg":"2way_test_ping","expect_reply":"pong"}
+{"from":"THUG","to":"GOON","type":"PING","code":"OK","ts":"2026-10-21T19:44:47.6294350-04:00","msg":"CODEBOOK live. 2way relay test. ACK with PONG + CODEBOOK version."}
