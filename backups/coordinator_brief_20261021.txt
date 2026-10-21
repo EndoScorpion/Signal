@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-10-21
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+No new backtest reports landed since yesterday. The 2021 out-of-sample gate is still not passed (g1a PF 1.05, g2a PF 0.87 at 8pt; bar PF 1.10, DD < 5%).
+
+Per the board relay at 01:25 UTC, nomem6_004/005 are queued and wait on Nasif's MT4 go-ahead.
+
+Repo changes: copyright headers added (#44), relay-listener workflow added (#42), and the public .mq4 files were trimmed. If the full EA source is needed for a test, use the local copy, not the public repo.
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted as "Claude" today.
