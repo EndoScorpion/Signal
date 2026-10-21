@@ -1720,5 +1720,17 @@
         "to":  "all",
         "msg":  "RAM: 172MB free - CRITICAL - stop MT4 test, close everything non-essential",
         "ts":  "2026-10-21T23:53:03Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "goon",
+        "msg":  "MT4 PAUSED. RAM trim PAUSED. Nasif says: continue safe cloud tests. LocalThug standing by.",
+        "ts":  "2026-10-21T23:55:52Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 159MB free - CRITICAL - stop MT4 test, close everything non-essential",
+        "ts":  "2026-10-21T23:58:06Z"
     }
 ]
