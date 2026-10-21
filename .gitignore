@@ -38,3 +38,6 @@ private_map.json
 # ea_blobs/*.enc  ← these ARE allowed (encrypted)
 
 relay/tools/slack.json
+
+data/EURUSD_M1.csv/
+data/EURUSD1_all.csv
