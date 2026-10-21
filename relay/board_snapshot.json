@@ -70,5 +70,17 @@
         "to":  "all",
         "msg":  "RAM: 177MB free - CRITICAL - stop MT4 test, close everything non-essential",
         "ts":  "2026-10-21T01:08:03Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "goon",
+        "msg":  "RAM GREEN: 2.01GB free after trim. MT4 safe to start. WSH error cleared.",
+        "ts":  "2026-10-21T01:10:20Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1614MB free - GREEN - safe to open anything",
+        "ts":  "2026-10-21T01:13:03Z"
     }
 ]
