@@ -1708,5 +1708,11 @@
         "to":  "all",
         "msg":  "RAM: 81MB free - CRITICAL - stop MT4 test, close everything non-essential",
         "ts":  "2026-10-21T23:44:34Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 309MB free - CRITICAL - stop MT4 test, close everything non-essential",
+        "ts":  "2026-10-21T23:48:04Z"
     }
 ]
