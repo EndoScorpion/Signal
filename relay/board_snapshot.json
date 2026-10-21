@@ -94,5 +94,11 @@
         "to":  "all",
         "msg":  "RAM: 326MB free - CRITICAL - stop MT4 test, close everything non-essential",
         "ts":  "2026-10-21T01:23:04Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1749MB free - GREEN - safe to open anything",
+        "ts":  "2026-10-21T01:28:03Z"
     }
 ]
