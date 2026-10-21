@@ -1,0 +1,29 @@
+{
+  "id": "autostart_v2",
+  "ts": "2026-10-21T01:26:00Z",
+  "from": "CloudCoord",
+  "priority": "high",
+  "steps": [
+    {
+      "cmd": "powershell",
+      "args": "-ExecutionPolicy Bypass -File relay\\watchdog_task_scheduler_setup.ps1",
+      "desc": "Configure watchdog: 30s delay + retry 3x + every 15 min"
+    },
+    {
+      "cmd": "copy",
+      "args": "relay\\watchdog_keepalive.ps1 %USERPROFILE%\\watchdog_keepalive.ps1",
+      "desc": "Deploy v2 watchdog script"
+    },
+    {
+      "cmd": "copy",
+      "args": "relay\\autostart_dc_remote.bat \"%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\autostart_dc_remote.bat\"",
+      "desc": "Add DC Remote to Startup folder (hidden window)"
+    },
+    {
+      "cmd": "powercfg",
+      "args": "/change standby-timeout-ac 0",
+      "desc": "Confirm no-sleep"
+    }
+  ],
+  "note": "Autostart DC Remote + keepalive watchdog. Apply all steps in order."
+}
