@@ -136,5 +136,11 @@
         "to":  "all",
         "msg":  "RAM: 746MB free - ORANGE - close GOON tab if open, no new MT4",
         "ts":  "2026-10-21T01:53:03Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 229MB free - CRITICAL - stop MT4 test, close everything non-essential",
+        "ts":  "2026-10-21T01:58:03Z"
     }
 ]
