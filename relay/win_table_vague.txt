@@ -1,43 +1,26 @@
-﻿# Win Table (vague) — updated 2026-10-20
-# Labels only. Params/names hidden. Decode: private_map.enc (local only)
-# ─────────────────────────────────────────────────────────────────────────
-#
-# LABEL    GEN   STATUS    GATE-COMBO              8-PERIOD    SP5    NOTES
-# ───────────────────────────────────────────────────────────────────────
-  zero      g0   BASE      —                       ref         ref    baseline, all scores vs this
-  charlie   g0   PROVEN    gate-A                  better 3/4  3/4    first gate; solid, not best
-  bravo     g0   PROVEN*   gate-B                  better 7/8  pend   strong; sp5+neighbours pending
-  alpha     g1   PROVEN    gate-A + gate-B         better 7/8  4/4+   ← CURRENT BEST; combo > each alone
-#
-# ── CANDIDATES (offline only, not MT4-verified) ──────────────────────
-# b4x series — vol/ao gates
-  cand-vol       CAND      vol-gate H4              +$NNN 9/9nb  —     top priority for next MT4 run
-  cand-vol-mp    CAND      vol-gate + mp-range       +$NNN 7/9   —     slight edge over vol alone offline
-  cand-vol-z     CAND      vol-gate + mp-z           +$NNN 9/9   —     9/9 but no gain vs vol alone
-  cand-ao-chop   CAND      ao-gate + chop            +$NNN 6/9   —     weaker neighbour stability
-#
-# G4 series — er/dr combos
-  cand-G4-1      CAND      er + dr                   +$NNN  —    —
-  cand-G4-2      CAND      er-alt + dr-alt            +$NNN  —    —
-  cand-G4-3      CAND      G4-1 + no-friday           +$NNN  —    —    ⚠ calendar fit risk
-  cand-G4-4      CAND      er + vol-regime            +$NNN  —    —
-#
-# MP series — market-profile combos
-  cand-mp1       CAND      mp-frac + er              +$NNN  —    —
-  cand-mp2       CAND      mp-z + er                 +$NNN  —    —
-  cand-mp6       CAND      mp-er-H1                  +$NNN  —    —
-  cand-fd        CAND      fd + ah-rate               +$NNN  —    —
-#
-# ── QUEUED (adaptive of alpha, untested) ─────────────────────────────
-  adaptive-a     QUEUED    gate-A relaxed             —      —    —    M15 Model=1 ready
-  adaptive-b     QUEUED    gate-A relaxed+            —      —    —    M15 Model=1 ready
-  adaptive-c     QUEUED    regime-period              —      —    —    M15 Model=1 ready
-  adaptive-d     QUEUED    regime-period+             —      —    —    M15 Model=1 ready
-#
-# ── TEST RULES ───────────────────────────────────────────────────────
-# WIN: beat zero in 6/8 periods, positive where zero is, neighbours stable, sp5+sp8 ok
-# Order: cand-vol → cand-vol-mp → adaptive-a/b → G4 series
-# TF: M15 Model=1 only (M1 every-tick = 88 GB disk fill)
-# UseSellRegime=0 = kills sells entirely, never use
-# RAM: min 1.0 GB to start, stop under 400 MB
-# Commission: 8 pts/trade (label any deviation)
+﻿WINNERS REGISTRY (2026-10-11). Base for all: vX_thu (8-period +45,664). Preset .set files load in the tester's Expert properties > Load.
+Status: PROVEN = beat vX in MT4 multi-period | CAND = offline only, not yet MT4-tested.
+branch                  parent  EA    status   inputs (.set file)                          results
+alpha/bravo/charlie          vX     vX  PROVEN   [param] [param]15 [param]20 [param]1.0          8-period +57,788 vs +45,664; spread 5 better 3/4
+alpha/bravo/charlie     vX     vX  PROVEN*  [param] [param]Period5 Max1.0 8-period +61,897, better 7/8 (*spread 5 + neighbours pending)
+cand-X  vX/33  vX  CAND     Fd(100,1.30)+AHRate(50,0.025)               offline 2025-26 $507 (288/219)
+cand-X    vX     vX  CAND     MpFrac M15/150/10.4 + ER 100/0.08           offline $497 (233/263)
+cand-X         vX     vX  CAND     MpZ H1/75/1.04 + ER 100/0.08                offline $464 (251/213)
+cand-X           vX     vX  CAND     MpEr H1/25/0.16                             offline $427 (183/244)
+Rule: add MT4 per-period results here as each test finishes (2017/2019/2020/2021, sp2 + sp5). Promote CAND -> PROVEN only if it beats vX in 6/8.
+branches.txt = switcher library (vX). Holds PROVEN branches only.
+Every test is logged in TEST_LOG.txt (same folder): one row each, append only.
+vX = vX + SlopeTable.mqh (UseSlopeTable, off): M1 SMA2/5/10 average slope per hour / weekday / ER regime, dumps MQL4\Files\slope_table.csv. Logging only.
+cand-X            vX     vX   CAND     UseBbwGate H4/8 <=2.68                      offline 2025-26 $588 (297/291), 9/9 neighbours
+cand-X      vX     vX   CAND     Bbw H4/8 + MpRange H1/150/1.26              offline $597 (334/263), 7/9
+cand-X        vX     vX   CAND     Bbw H4/8 + MpZ H1/75/1.04                   offline $579 (293/286), 9/9 (no gain over bbw alone)
+cand-X        vX     vX   CAND     UseAoGate M5 44/300 <=5.03 + chop M5/350    offline $558 (276/282), 6/9
+vX = vX + WinGates_vX.mqh (UseBbwGate, UseAoGate; off). make_vX.py. Not compiled. Excludes vX/vX changes.
+vX = vX + WinGates_vX.mqh (UseVolRegimeGate: H1 ATR14/ATR200 <= 0.99; off). make_vX.py. Not compiled. (Numbered vX but built on vX, so it has every gate.)
+cand-X          vX  CAND  ER 150/0.074 + daily range 30/0.93                 offline $461 (239/222) 263 sells
+cand-X       vX  CAND  ER 100/0.064 + daily range 10/0.82                 offline $468 (252/216) 206 sells
+cand-X    vX  CAND  G4-1 + UseNoFriday (calendar part = fit risk)        offline $487 (259/228) 239 sells
+cand-X   vX   CAND  ER 150/0.074 + VolRegime H1 14/200 <= 0.99          offline $462 (221/241) 210 sells
+alpha/bravo/charlie vX   vX   PROVEN   [param] [param]15 [param]20 [param]1.0 + [param] [param]Period5 Max1.0   @8pt: 8-period +75,254 vs +48,429, better 7/8; sp5 4/4 positive, 3/4 better  <- CURRENT BEST
+alpha/bravo/charlie      status update: PROVEN (sp5 2019 +17.8k|2021 +14.4k|2022 +6.8k|2526 +10.1k @8pt vs vX 13.1k/13.9k/8.7k/3.1k; neighbours 0.8/0.9 stable)
+GEN2 mutations (g2b_*, corrected vX_thu base): none beat parent; old g2_* runs INVALID (sets missing vX_thu base).
