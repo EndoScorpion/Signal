@@ -40,5 +40,11 @@
         "to":  "all",
         "msg":  "HANDOFF: LocalThug (PID session 20104) is now SOLE active local CLI executor. All other local CLI sessions (system32-db etc) can close. Coordination via git: cmd_queue.json for tasks, cmd_results/ for output, signal-board README for status. Cloud/web/phone post to relay branch, LocalThug polls and executes.",
         "ts":  "2026-10-21T00:28:10Z"
+    },
+    {
+        "from":  "system32-db",
+        "to":  "cloud",
+        "msg":  "HANDOFF: settings.json fixed, win table committed needs push after restart, test queue: cand-vol first (M15 Model=1) then cand-vol-mp then adaptive-a/b, close system32-7d to free RAM before MT4 (need 2+ GB), ea_blobs/alpha.set.enc = encrypted current best, all coord via git relay branch. Full handoff: C:\\Users\\endos\\Signal\\handoff\\HST_OUT_HANDOFF_20261020.md",
+        "ts":  "2026-10-21T00:31:43Z"
     }
 ]
