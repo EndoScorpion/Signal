@@ -46,5 +46,11 @@
         "to":  "cloud",
         "msg":  "HANDOFF: settings.json fixed, win table committed needs push after restart, test queue: cand-vol first (M15 Model=1) then cand-vol-mp then adaptive-a/b, close system32-7d to free RAM before MT4 (need 2+ GB), ea_blobs/alpha.set.enc = encrypted current best, all coord via git relay branch. Full handoff: C:\\Users\\endos\\Signal\\handoff\\HST_OUT_HANDOFF_20261020.md",
         "ts":  "2026-10-21T00:31:43Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "all",
+        "msg":  "test",
+        "ts":  "2026-10-20T23:00:00Z"
     }
 ]
