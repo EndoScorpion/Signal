@@ -7,8 +7,8 @@
     "priority": 1,
     "description": "Fix black popup terminal windows. Re-register all scheduled tasks and poller scripts to run with WindowStyle Hidden.",
     "shell": "ps",
-    "command": "# Re-register DC Watchdog with WindowStyle Hidden\n$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\Signal\\scripts\\dc_watchdog.ps1'\n$trigger1 = New-ScheduledTaskTrigger -AtLogOn\n$trigger2 = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date)\nUnregister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\nWrite-Host 'Cloud_DC_Watchdog re-registered hidden'\n\n# Re-register CloudCmdPollerGH with WindowStyle Hidden\n$pollerPath = 'C:\\Users\\endos\\Signal\\scripts\\CloudCmdPollerGH.ps1'\nif (Test-Path $pollerPath) {\n  $action2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument \"-WindowStyle Hidden -NonInteractive -File $pollerPath\"\n  $trigger3 = New-ScheduledTaskTrigger -AtLogOn\n  Unregister-ScheduledTask -TaskName 'CloudCmdPollerGH' -Confirm:$false -ErrorAction SilentlyContinue\n  Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $action2 -Trigger $trigger3 -RunLevel Highest -Force\n  Write-Host 'CloudCmdPollerGH re-registered hidden'\n} else { Write-Host 'CloudCmdPollerGH script not found at expected path' }\n\n# Kill any existing visible powershell popup windows (leave the hidden ones)\nGet-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { Write-Host \"Closing PID $($_.Id)\"; $_.CloseMainWindow() | Out-Null }\nWrite-Host 'done'",
-    "note": "Nasif reports black popup windows."
+    "command": "$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\Signal\\scripts\\dc_watchdog.ps1'\n$trigger1 = New-ScheduledTaskTrigger -AtLogOn\n$trigger2 = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date)\nUnregister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\n$pollerPath = 'C:\\Users\\endos\\Signal\\scripts\\CloudCmdPollerGH.ps1'\nif (Test-Path $pollerPath) {\n  $action2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument \"-WindowStyle Hidden -NonInteractive -File $pollerPath\"\n  $trigger3 = New-ScheduledTaskTrigger -AtLogOn\n  Unregister-ScheduledTask -TaskName 'CloudCmdPollerGH' -Confirm:$false -ErrorAction SilentlyContinue\n  Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $action2 -Trigger $trigger3 -RunLevel Highest -Force\n}\nGet-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { $_.CloseMainWindow() | Out-Null }\nWrite-Host 'done'",
+    "note": "Re-register watchdog + poller with -WindowStyle Hidden."
   },
   {
     "id": "fix_hidden_windows2_20261020T2319",
@@ -16,10 +16,10 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-20T23:19:00Z",
     "priority": 1,
-    "description": "MCP popups still showing. Report visible console window titles, then relaunch DC Remote + DC Clone via hidden VBS launchers.",
+    "description": "MCP popups still showing. Report visible console window titles, relaunch DC Remote + DC Clone via hidden VBS.",
     "shell": "ps",
     "command": "$visible = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -ne '' } | Select-Object Id,ProcessName,MainWindowTitle\n$r = 'relay/cmd_results/popup_report_20261020T2319.txt'\nNew-Item -ItemType Directory -Force -Path (Split-Path $r) | Out-Null\n$visible | Format-Table -AutoSize | Out-String | Set-Content $r\n$vbsPath = 'C:\\Users\\endos\\Signal\\scripts\\run_hidden.vbs'\n@'\nDim objShell, cmd\ncmd = WScript.Arguments(0)\nSet objShell = CreateObject(\"WScript.Shell\")\nobjShell.Run cmd, 0, False\n'@ | Set-Content $vbsPath\nforeach ($pn in @('node','cmd')) { Get-Process $pn -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { $_.CloseMainWindow() | Out-Null } }\n$dcRemoteCmd = 'cmd /c npx @wonderwhy-er/desktop-commander@latest remote'\n$act = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument \"$vbsPath \"\"$dcRemoteCmd\"\"\"\n$trg = New-ScheduledTaskTrigger -AtLogOn\nUnregister-ScheduledTask -TaskName 'DcRemoteServer' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'DcRemoteServer' -Action $act -Trigger $trg -RunLevel Highest -Force\nStart-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue\ngit -C C:\\Users\\endos\\Signal add $r; git -C C:\\Users\\endos\\Signal commit -m 'popup report'; git -C C:\\Users\\endos\\Signal push origin relay",
-    "note": "Still seeing popups. VBS hidden launcher + popup title report."
+    "note": "VBS hidden launcher + popup title report."
   },
   {
     "id": "ping_echo_20261020T234431",
@@ -29,7 +29,7 @@
     "priority": 1,
     "description": "2-way comms test echo. Append ping reply to coordination/thug_replies.json and push.",
     "shell": "ps",
-    "command": "$token = 'PING_20261020T234431_A7K2'\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$reply = @{ echo = $token; replied_at = $ts; from = 'laptop-cli' } | ConvertTo-Json -Compress\n$f = 'coordination/thug_replies.json'\nif (Test-Path $f) { $arr = Get-Content $f | ConvertFrom-Json; $arr += ($reply | ConvertFrom-Json) } else { $arr = @($reply | ConvertFrom-Json) }\n$arr | ConvertTo-Json -Depth 3 | Set-Content $f\ngit -C C:\\Users\\endos\\Signal add $f\ngit -C C:\\Users\\endos\\Signal commit -m \"2-way echo: $token at $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host \"echo pushed: $token\"",
+    "command": "$token = 'PING_20261020T234431_A7K2'\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$reply = @{ echo = $token; replied_at = $ts; from = 'laptop-cli' } | ConvertTo-Json -Compress\n$f = 'coordination/thug_replies.json'\nif (Test-Path $f) { $arr = Get-Content $f | ConvertFrom-Json; $arr += ($reply | ConvertFrom-Json) } else { $arr = @($reply | ConvertFrom-Json) }\n$arr | ConvertTo-Json -Depth 3 | Set-Content $f\ngit -C C:\\Users\\endos\\Signal add $f\ngit -C C:\\Users\\endos\\Signal commit -m \"2-way echo: $token at $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay",
     "note": "2-way comms test token PING_20261020T234431_A7K2."
   },
   {
@@ -39,9 +39,21 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-21T00:13:16Z",
     "priority": 1,
-    "description": "Nasif closed desktop Claude app. Kill idle/background claude.exe processes (renderer, utility, crashpad children). Keep cowork-svc.exe and active Claude Code CLI sessions (PIDs 19176, 10072, 19152).",
+    "description": "Kill idle/background claude.exe processes. Keep cowork-svc and active Claude Code CLI PIDs 19176, 10072, 19152.",
     "shell": "ps",
-    "command": "$keepPids = @(19176, 10072, 19152)\n$killed = @()\nGet-Process -Name 'claude' -ErrorAction SilentlyContinue | Where-Object {\n  $_.MainWindowHandle -eq 0 -and $_.Id -notin $keepPids\n} | ForEach-Object {\n  Write-Host \"Killing claude PID $($_.Id) ($($_.Description))\"\n  Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue\n  $killed += $_.Id\n}\nWrite-Host \"Trimmed $($killed.Count) idle claude.exe processes: $($killed -join ', ')\"\n# Report remaining\n$rem = Get-Process -Name 'claude' -ErrorAction SilentlyContinue | Select-Object Id,CPU,WorkingSet\nWrite-Host \"Remaining claude processes: $($rem.Count)\"; $rem | Format-Table",
-    "note": "Nasif closed desktop Claude app; trim idle background claude.exe children. Keep cowork-svc and active Claude Code CLI PIDs 19176/10072/19152."
+    "command": "$keepPids = @(19176, 10072, 19152)\n$killed = @()\nGet-Process -Name 'claude' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -eq 0 -and $_.Id -notin $keepPids } | ForEach-Object {\n  Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue\n  $killed += $_.Id\n}\nWrite-Host \"Trimmed $($killed.Count) idle claude.exe: $($killed -join ', ')\"\n$rem = Get-Process -Name 'claude' -ErrorAction SilentlyContinue | Select-Object Id,CPU,WorkingSet\nWrite-Host \"Remaining: $($rem.Count)\"; $rem | Format-Table",
+    "note": "Nasif closed desktop Claude app; trim idle background children."
+  },
+  {
+    "id": "suspend_copilot_20261021T001527",
+    "status": "pending",
+    "cmd_type": "vscode_extension",
+    "added_by": "cloud-relay-thread",
+    "added_at": "2026-10-21T00:15:27Z",
+    "priority": 1,
+    "description": "Nasif wants GitHub Copilot paused/suspended. Disable the extension via VS Code CLI if VS Code is running; skip if closed.",
+    "shell": "ps",
+    "command": "$vscode = Get-Process -Name 'Code' -ErrorAction SilentlyContinue\nif ($vscode) {\n  $codePath = (Get-Command code -ErrorAction SilentlyContinue)?.Source\n  if (-not $codePath) { $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\" }\n  & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n  & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n  Write-Host 'Copilot extension disabled (takes effect on next VS Code window)'\n} else {\n  Write-Host 'VS Code not running — skipping (extension will be disabled on next open)'\n  $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\"\n  if (Test-Path $codePath) {\n    & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n    & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n    Write-Host 'Disabled via CLI even though VS Code window was not open'\n  }\n}\nWrite-Host 'done'",
+    "note": "Nasif says pause/suspend Copilot. Disable GitHub.copilot + GitHub.copilot-chat extensions via code CLI. Safe — reversible with --enable-extension."
   }
 ]
