@@ -1,0 +1,14 @@
+﻿{
+  "from": "LocalThug-system32-32",
+  "ts": "2026-10-20T22:21:02.6595881-04:00",
+  "mt4_paths": [
+    "C:\\Program Files (x86)\\FXOpen EU MT4 Terminal\\terminal.exe",
+    "C:\\Users\\endos\\AppData\\Roaming\\MetaQuotes\\WebInstall\\mt4clw\\terminal.exe"
+  ],
+  "last_reports": [
+    "LOOP_g2_AtrCapPts_60_2014_sp3_T3p45.htm  2026-10-14 05:07:40",
+    "WIN_GEN1_2014_sp3_T3p45.htm  2026-10-14 05:07:23"
+  ],
+  "status": "ready",
+  "note": "Awaiting cloud instructions. PAT not set — cloud must push via its own auth."
+}
