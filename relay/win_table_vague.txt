@@ -1,20 +1,43 @@
-# Win Table (vague) — 2026-10-20
-# Scores normalized, labels substituted, params hidden
-
-PROVEN (MT4 verified):
-  charlie  vX   PROVEN   [params]   8-period +NNNN vs +NNNN; spread-5 3/4
-  bravo    vX   PROVEN*  [params]   8-period +NNNN, better 7/8
-  alpha    vX   PROVEN   [params]   8-period +NNNN vs +NNNN, better 7/8; sp5 4/4  <- CURRENT BEST
-
-CANDIDATES (offline only):
-  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN), 9/9 neighbours
-  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN), 7/9
-  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN)
-  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN)
-  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN)
-
-QUEUED (adaptive, untested):
-  adaptive-a  ZMax relaxed     QUEUED  M15 Model=1
-  adaptive-b  ZMax relaxed+    QUEUED  M15 Model=1
-  adaptive-c  regime-period    QUEUED  M15 Model=1
-  adaptive-d  regime-period+   QUEUED  M15 Model=1
+﻿# Win Table (vague) — updated 2026-10-20
+# Labels only. Params/names hidden. Decode: private_map.enc (local only)
+# ─────────────────────────────────────────────────────────────────────────
+#
+# LABEL    GEN   STATUS    GATE-COMBO              8-PERIOD    SP5    NOTES
+# ───────────────────────────────────────────────────────────────────────
+  zero      g0   BASE      —                       ref         ref    baseline, all scores vs this
+  charlie   g0   PROVEN    gate-A                  better 3/4  3/4    first gate; solid, not best
+  bravo     g0   PROVEN*   gate-B                  better 7/8  pend   strong; sp5+neighbours pending
+  alpha     g1   PROVEN    gate-A + gate-B         better 7/8  4/4+   ← CURRENT BEST; combo > each alone
+#
+# ── CANDIDATES (offline only, not MT4-verified) ──────────────────────
+# b4x series — vol/ao gates
+  cand-vol       CAND      vol-gate H4              +$NNN 9/9nb  —     top priority for next MT4 run
+  cand-vol-mp    CAND      vol-gate + mp-range       +$NNN 7/9   —     slight edge over vol alone offline
+  cand-vol-z     CAND      vol-gate + mp-z           +$NNN 9/9   —     9/9 but no gain vs vol alone
+  cand-ao-chop   CAND      ao-gate + chop            +$NNN 6/9   —     weaker neighbour stability
+#
+# G4 series — er/dr combos
+  cand-G4-1      CAND      er + dr                   +$NNN  —    —
+  cand-G4-2      CAND      er-alt + dr-alt            +$NNN  —    —
+  cand-G4-3      CAND      G4-1 + no-friday           +$NNN  —    —    ⚠ calendar fit risk
+  cand-G4-4      CAND      er + vol-regime            +$NNN  —    —
+#
+# MP series — market-profile combos
+  cand-mp1       CAND      mp-frac + er              +$NNN  —    —
+  cand-mp2       CAND      mp-z + er                 +$NNN  —    —
+  cand-mp6       CAND      mp-er-H1                  +$NNN  —    —
+  cand-fd        CAND      fd + ah-rate               +$NNN  —    —
+#
+# ── QUEUED (adaptive of alpha, untested) ─────────────────────────────
+  adaptive-a     QUEUED    gate-A relaxed             —      —    —    M15 Model=1 ready
+  adaptive-b     QUEUED    gate-A relaxed+            —      —    —    M15 Model=1 ready
+  adaptive-c     QUEUED    regime-period              —      —    —    M15 Model=1 ready
+  adaptive-d     QUEUED    regime-period+             —      —    —    M15 Model=1 ready
+#
+# ── TEST RULES ───────────────────────────────────────────────────────
+# WIN: beat zero in 6/8 periods, positive where zero is, neighbours stable, sp5+sp8 ok
+# Order: cand-vol → cand-vol-mp → adaptive-a/b → G4 series
+# TF: M15 Model=1 only (M1 every-tick = 88 GB disk fill)
+# UseSellRegime=0 = kills sells entirely, never use
+# RAM: min 1.0 GB to start, stop under 400 MB
+# Commission: 8 pts/trade (label any deviation)
