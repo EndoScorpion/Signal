@@ -1,3 +1,4 @@
 ﻿2026-10-20 12:00 UTC  HAWKISH-USD-TREND  notify=NO  (tech_watch.py missing; FF calendar JS-only; no alert threshold met)
 2026-10-20 00:00 | HAWKISH-USD-TREND | notify=no | RAM=1610MB | tech_watch.py missing | calendar missing
 2026-10-20 16:14:04 skipped: low resources (1129 MB)
+2026-10-20 21:14 skipped: low resources (266 MB)
