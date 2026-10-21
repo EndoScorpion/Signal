@@ -1684,5 +1684,11 @@
         "to":  "all",
         "msg":  "RAM: 895MB free - ORANGE - close GOON tab if open, no new MT4",
         "ts":  "2026-10-21T23:23:02Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 615MB free - ORANGE - close GOON tab if open, no new MT4",
+        "ts":  "2026-10-21T23:28:02Z"
     }
 ]
