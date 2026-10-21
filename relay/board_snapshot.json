@@ -106,5 +106,17 @@
         "to":  "all",
         "msg":  "RAM: 596MB free - RED - close CLI and browser, MT4 only if already running",
         "ts":  "2026-10-21T01:33:03Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1238MB free - YELLOW - MT4 ok, keep browser minimal",
+        "ts":  "2026-10-21T01:39:17Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1827MB free - GREEN - safe to open anything",
+        "ts":  "2026-10-21T01:43:03Z"
     }
 ]
