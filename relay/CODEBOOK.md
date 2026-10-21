@@ -60,6 +60,39 @@
 - `cmd_results.json` — DONE/FAIL results
 - `CODEBOOK.md` — this file
 
+## Test Result Terms
+| Code | Meaning |
+|------|---------|
+| PF | Profit Factor |
+| DD | Max Drawdown |
+| NP | Net Profit |
+| NT | Number of Trades |
+| SP3 | Spread 3 points |
+| SP5 | Spread 5 points |
+| SP8 | Spread 8 points |
+| IS | In-sample period |
+| OOS | Out-of-sample period |
+| PASS | Beats base in majority of 8 periods |
+| SOFT | Better than base but not confirmed |
+| SKIP | Worse than base, discard |
+| LOG | Entry in TEST_LOG.txt |
+| REG | Entry in WINNERS_REGISTRY.txt |
+| b22 | Base EA (b22_thu) |
+| ZGATE | Z-gate filter (ZMax param) |
+| DR | Daily Range filter |
+| G1/G2/G4 | Generation 1/2/4 EA variants |
+
+## Comms Shorthand
+| Code | Meaning |
+|------|---------|
+| ACK | Acknowledged |
+| NAK | Not acknowledged / rejected |
+| FWD | Forwarding to BOSS |
+| ETA | Estimated time |
+| TBD | To be decided by BOSS |
+| NFA | No further action |
+| OTP | One-time ping |
+
 ## Example Message
 ```json
 {"from":"THUG","to":"GOON","type":"REPORT","code":"OK","ts":"2026-10-21T00:00:00Z","msg":"WIN_GEN1 passed OOS 2021"}
