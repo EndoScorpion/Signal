@@ -1,0 +1,20 @@
+# Win Table (vague) — 2026-10-20
+# Scores normalized, labels substituted, params hidden
+
+PROVEN (MT4 verified):
+  charlie  vX   PROVEN   [params]   8-period +NNNN vs +NNNN; spread-5 3/4
+  bravo    vX   PROVEN*  [params]   8-period +NNNN, better 7/8
+  alpha    vX   PROVEN   [params]   8-period +NNNN vs +NNNN, better 7/8; sp5 4/4  <- CURRENT BEST
+
+CANDIDATES (offline only):
+  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN), 9/9 neighbours
+  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN), 7/9
+  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN)
+  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN)
+  cand-X   vX   CAND     [params]   offline ~$NNN (NNN/NNN)
+
+QUEUED (adaptive, untested):
+  adaptive-a  ZMax relaxed     QUEUED  M15 Model=1
+  adaptive-b  ZMax relaxed+    QUEUED  M15 Model=1
+  adaptive-c  regime-period    QUEUED  M15 Model=1
+  adaptive-d  regime-period+   QUEUED  M15 Model=1

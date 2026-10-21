@@ -6,3 +6,33 @@ data/ntfy_topic.txt
 **/ntfy_topic.txt
 relay/tools/slack_config.json
 config/slack_config.json
+
+# ── Private library protection ──────────────────────────────
+# Raw EA sources — never push plaintext
+*.mq4
+*.mq5
+*.ex4
+*.ex5
+
+# Raw set files — never push plaintext
+*.set
+
+# Raw reports
+*.htm
+*.html
+
+# Keys and plaintext maps — local only
+.mapkey
+private_map.json
+*.pem
+*.key
+
+# History data — too large, local only
+*.hst
+*.fxt
+
+# Raw backtest reports
+*.xml
+
+# Only encrypted blobs are safe to push
+# ea_blobs/*.enc  ← these ARE allowed (encrypted)
