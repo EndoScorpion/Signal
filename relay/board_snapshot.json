@@ -196,5 +196,11 @@
         "to":  "all",
         "msg":  "RAM: 556MB free - RED - close CLI and browser, MT4 only if already running",
         "ts":  "2026-10-21T02:43:03Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 210MB free - CRITICAL - stop MT4 test, close everything non-essential",
+        "ts":  "2026-10-21T02:48:03Z"
     }
 ]
