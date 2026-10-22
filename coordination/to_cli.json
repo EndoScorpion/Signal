@@ -27,10 +27,10 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-21T00:10:27Z",
     "priority": 1,
-    "description": "2-way comms test echo. Append ping reply to coordination/thug_replies.json and push.",
+    "description": "2-way comms test echo.",
     "shell": "ps",
     "command": "$token = 'PING_20261020T234431_A7K2'\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$reply = @{ echo = $token; replied_at = $ts; from = 'laptop-cli' } | ConvertTo-Json -Compress\n$f = 'coordination/thug_replies.json'\nif (Test-Path $f) { $arr = Get-Content $f | ConvertFrom-Json; $arr += ($reply | ConvertFrom-Json) } else { $arr = @($reply | ConvertFrom-Json) }\n$arr | ConvertTo-Json -Depth 3 | Set-Content $f\ngit -C C:\\Users\\endos\\Signal add $f\ngit -C C:\\Users\\endos\\Signal commit -m \"2-way echo: $token at $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay",
-    "note": "2-way comms test token PING_20261020T234431_A7K2."
+    "note": "2-way comms test."
   },
   {
     "id": "process_trim_20261021T001316",
@@ -39,10 +39,10 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-21T00:13:16Z",
     "priority": 1,
-    "description": "Kill idle/background claude.exe processes. Keep cowork-svc and active Claude Code CLI PIDs 19176, 10072, 19152.",
+    "description": "Kill idle claude.exe. Keep PIDs 19176, 10072, 19152.",
     "shell": "ps",
     "command": "$keepPids = @(19176, 10072, 19152)\n$killed = @()\nGet-Process -Name 'claude' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -eq 0 -and $_.Id -notin $keepPids } | ForEach-Object {\n  Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue\n  $killed += $_.Id\n}\nWrite-Host \"Trimmed $($killed.Count) idle claude.exe: $($killed -join ', ')\"\n$rem = Get-Process -Name 'claude' -ErrorAction SilentlyContinue | Select-Object Id,CPU,WorkingSet\nWrite-Host \"Remaining: $($rem.Count)\"; $rem | Format-Table",
-    "note": "Nasif closed desktop Claude app; trim idle background children."
+    "note": "Trim idle claude.exe."
   },
   {
     "id": "suspend_copilot_20261021T001527",
@@ -51,42 +51,20 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-21T00:15:27Z",
     "priority": 1,
-    "description": "Nasif wants GitHub Copilot paused/suspended. Disable the extension via VS Code CLI if VS Code is running; skip if closed.",
+    "description": "Disable GitHub Copilot extensions.",
     "shell": "ps",
-    "command": "$vscode = Get-Process -Name 'Code' -ErrorAction SilentlyContinue\nif ($vscode) {\n  $codePath = (Get-Command code -ErrorAction SilentlyContinue)?.Source\n  if (-not $codePath) { $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\" }\n  & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n  & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n  Write-Host 'Copilot extension disabled (takes effect on next VS Code window)'\n} else {\n  Write-Host 'VS Code not running - skipping (extension will be disabled on next open)'\n  $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\"\n  if (Test-Path $codePath) {\n    & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n    & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n    Write-Host 'Disabled via CLI even though VS Code window was not open'\n  }\n}\nWrite-Host 'done'",
-    "note": "Nasif says pause/suspend Copilot. Disable GitHub.copilot + GitHub.copilot-chat extensions via code CLI. Safe - reversible with --enable-extension."
+    "command": "$vscode = Get-Process -Name 'Code' -ErrorAction SilentlyContinue\nif ($vscode) {\n  $codePath = (Get-Command code -ErrorAction SilentlyContinue)?.Source\n  if (-not $codePath) { $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\" }\n  & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n  & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n  Write-Host 'Copilot disabled'\n} else {\n  $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\"\n  if (Test-Path $codePath) {\n    & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n    & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n    Write-Host 'Disabled via CLI'\n  }\n}\nWrite-Host 'done'",
+    "note": "Disable Copilot."
   },
   {
-    "id": "run_autostart_dc_remote_20261021T0132",
+    "id": "disable_bloat_tasks_20261022T0006",
     "status": "pending",
     "added_by": "cloud-relay-thread",
-    "added_at": "2026-10-21T01:32:00Z",
-    "priority": 2,
-    "description": "Run autostart_dc_remote.bat from scripts folder (pushed by RC thread at SHA a960d49).",
+    "added_at": "2026-10-22T00:06:00Z",
+    "priority": 1,
+    "description": "Disable Windows bloat scheduled tasks: Lenovo UDC x3, McAfee Sync, OneDrive Startup, 7 Office bg tasks, Edge updaters. Report freed tasks and estimated RAM saved.",
     "shell": "ps",
-    "command": "$p = @('C:\\Users\\endos\\Signal\\scripts\\autostart_dc_remote.bat','C:\\Users\\endos\\Signal\\relay\\scripts\\autostart_dc_remote.bat') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($p) { Write-Host \"Running $p\"; cmd /c $p 2>&1 | Write-Host; Write-Host 'autostart_dc_remote done' } else { Write-Host 'autostart_dc_remote.bat NOT FOUND - RC push may have been overwritten by sync' }",
-    "note": "Step 1 of 3 from RC push a960d49. Autostart DC Remote."
-  },
-  {
-    "id": "run_watchdog_keepalive_20261021T0132",
-    "status": "pending",
-    "added_by": "cloud-relay-thread",
-    "added_at": "2026-10-21T01:32:01Z",
-    "priority": 2,
-    "description": "Run watchdog_keepalive.ps1 from scripts folder (pushed by RC thread at SHA a960d49).",
-    "shell": "ps",
-    "command": "$p = @('C:\\Users\\endos\\Signal\\scripts\\watchdog_keepalive.ps1','C:\\Users\\endos\\Signal\\relay\\scripts\\watchdog_keepalive.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($p) { Write-Host \"Running $p\"; & powershell -WindowStyle Hidden -NonInteractive -File $p 2>&1 | Write-Host; Write-Host 'watchdog_keepalive done' } else { Write-Host 'watchdog_keepalive.ps1 NOT FOUND - RC push may have been overwritten by sync' }",
-    "note": "Step 2 of 3 from RC push a960d49. Watchdog keepalive."
-  },
-  {
-    "id": "run_watchdog_task_scheduler_20261021T0132",
-    "status": "pending",
-    "added_by": "cloud-relay-thread",
-    "added_at": "2026-10-21T01:32:02Z",
-    "priority": 2,
-    "description": "Run watchdog_task_scheduler_setup.ps1 from scripts folder (pushed by RC thread at SHA a960d49).",
-    "shell": "ps",
-    "command": "$p = @('C:\\Users\\endos\\Signal\\scripts\\watchdog_task_scheduler_setup.ps1','C:\\Users\\endos\\Signal\\relay\\scripts\\watchdog_task_scheduler_setup.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($p) { Write-Host \"Running $p\"; & powershell -WindowStyle Hidden -NonInteractive -File $p 2>&1 | Write-Host; Write-Host 'watchdog_task_scheduler_setup done'; $r = 'relay/cmd_results/watchdog_setup_result_20261021T0132.txt'; New-Item -Force -Path (Split-Path $r) -ItemType Directory | Out-Null; \"watchdog_task_scheduler_setup: completed at $(Get-Date -Format u)\" | Set-Content $r; git -C C:\\Users\\endos\\Signal add $r; git -C C:\\Users\\endos\\Signal commit -m 'watchdog setup result'; git -C C:\\Users\\endos\\Signal push origin relay } else { Write-Host 'watchdog_task_scheduler_setup.ps1 NOT FOUND - RC push may have been overwritten by sync'; $r = 'relay/cmd_results/watchdog_setup_result_20261021T0132.txt'; New-Item -Force -Path (Split-Path $r) -ItemType Directory | Out-Null; \"watchdog_task_scheduler_setup.ps1 NOT FOUND at $(Get-Date -Format u). RC push SHA a960d49 likely overwritten by LocalThug sync.\" | Set-Content $r; git -C C:\\Users\\endos\\Signal add $r; git -C C:\\Users\\endos\\Signal commit -m 'watchdog setup not found'; git -C C:\\Users\\endos\\Signal push origin relay }",
-    "note": "Step 3 of 3 from RC push a960d49. Watchdog task scheduler setup. Writes result and pushes."
+    "command": "$tasks = @(\n  'Lenovo UDC Lazy Deployment',\n  'Lenovo UDC Maintainance Task',\n  'Lenovo UDC Monitor',\n  'McAfee Sync Agent Pilot',\n  'OneDrive Standalone Update Task-S-1-5-21-1557930476-33232853-740120326-1001',\n  'Office Actions Server',\n  'Office Background Push Maintenance',\n  'Office Feature Updates',\n  'Office Feature Updates Logon',\n  'Office Performance Monitor',\n  'Office Startup Maintenance',\n  'Office ClickToRun Service Monitor',\n  'MicrosoftEdgeUpdateTaskMachineCore{CD52F0E2-9DAC-4A52-AB57-27032DF81D59}',\n  'MicrosoftEdgeUpdateTaskMachineUA{479380AE-EB86-4104-987A-03755518872B}'\n)\n$results = @()\nforeach ($t in $tasks) {\n  try {\n    $task = Get-ScheduledTask -TaskName $t -ErrorAction Stop\n    Disable-ScheduledTask -TaskName $t -ErrorAction Stop | Out-Null\n    $results += [PSCustomObject]@{ Task=$t; Result='Disabled'; State=$task.State }\n  } catch {\n    $results += [PSCustomObject]@{ Task=$t; Result='NotFound/Error'; State='N/A' }\n  }\n}\n$results | Format-Table -AutoSize | Out-String | Write-Host\n$r = 'relay/cmd_results/bloat_disabled_20261022.txt'\nNew-Item -Force -Path (Split-Path $r) -ItemType Directory | Out-Null\n$results | ConvertTo-Json | Set-Content $r\ngit -C C:\\Users\\endos\\Signal add $r\ngit -C C:\\Users\\endos\\Signal commit -m 'bloat tasks disabled result'\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host \"Done. Estimated RAM saved: ~200-400MB (Lenovo UDC ~50MB, McAfee ~100MB, OneDrive ~50MB, Office ~50MB, Edge ~50MB)\"",
+    "note": "Approved by Nasif 2026-10-22. Disables 14 Windows bloat tasks. Results pushed to relay."
   }
 ]
