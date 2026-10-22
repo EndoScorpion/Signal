@@ -785,3 +785,7 @@
 2026-10-22 05:58:18 NEW from=ram-check to=all msg=RAM: 1513MB free - GREEN - safe to start MT4
 2026-10-22 06:06:35 NEW from=ram-check to=all msg=RAM: 1824MB free - GREEN - safe to start MT4 | FXT cleaned 0MB -> C: now 18.4GB free
 2026-10-22 06:08:48 NEW from=ram-check to=all msg=RAM: 2131MB free - GREEN - safe to start MT4 | FXT cleaned 0MB -> C: now 18.4GB free
+2026-10-22 06:13:17 NEW from=ram-check to=all msg=RAM: 1907MB free - GREEN - safe to start MT4 | FXT cleaned 0MB -> C: now 16.6GB free
+2026-10-22 06:18:18 NEW from=ram-check to=all msg=RAM: 1199MB free - YELLOW - trim RAM before MT4 | FXT cleaned 0MB -> C: now 14.8GB free
+2026-10-22 06:25:16 board_watcher started
+2026-10-22 06:25:18 watching C:\Users\endos\board.json
