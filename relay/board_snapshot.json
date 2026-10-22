@@ -1972,5 +1972,17 @@
         "to":  "all",
         "msg":  "RAM: 1810MB free - GREEN - safe to start MT4",
         "ts":  "2026-10-22T03:54:03Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 2200MB free - GREEN - safe to start MT4 | FXT cleaned 390.1MB -\u003e C: now 18GB free",
+        "ts":  "2026-10-22T03:58:29Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1200MB free - ORANGE - close browser tabs, run trim | FXT cleaned 0MB -\u003e C: now 18GB free",
+        "ts":  "2026-10-22T03:59:19Z"
     }
 ]
