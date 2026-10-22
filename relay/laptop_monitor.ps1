@@ -1,4 +1,4 @@
-# laptop_monitor.ps1 — auto snapshot + relay commit
+# laptop_monitor.ps1 — auto snapshot + relay commit + stuck-FXT cleanup
 # Runs every 10 min via Task Scheduler. No popups, no visible windows.
 
 $ErrorActionPreference = "SilentlyContinue"
@@ -28,7 +28,7 @@ $mt4Pid     = if ($mt4) { $mt4.Id } else { $null }
 $top5 = Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 5 |
         ForEach-Object { @{ name=$_.Name; mb=[math]::Round($_.WorkingSet64/1MB) } }
 
-# Visible popup windows (non-empty title, not taskbar/shell)
+# Visible popup windows
 $popups = @()
 try {
     Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
@@ -53,18 +53,37 @@ foreach ($fp in $fxtPaths) {
 $fxtAlertGB = [math]::Round($fxtTotalMB / 1024, 2)
 $fxtAlert   = ($fxtTotalMB -gt 5120)
 
+# --- stuck-FXT cleanup: .fxt not modified >2h AND MT4 not running ---
+$stuckDeleted = 0
+if (-not $mt4Running) {
+    $cutoffStuck = (Get-Date).AddHours(-2)
+    foreach ($fp in $fxtPaths) {
+        if (-not (Test-Path $fp)) { continue }
+        Get-ChildItem $fp -Recurse -Filter "*.fxt" -ErrorAction SilentlyContinue |
+            Where-Object { $_.LastWriteTime -lt $cutoffStuck } |
+            ForEach-Object {
+                Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue
+                $stuckDeleted++
+            }
+    }
+    if ($stuckDeleted -gt 0) {
+        Add-Content "$repoPath\relay\fxt_cleanup.log" "$(Get-Date -Format u) STUCK-FXT deleted=$stuckDeleted"
+    }
+}
+
 $snapshot = @{
-    ts              = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
-    ram_free_mb     = $ramFreeMB
-    ram_used_mb     = $ramUsedMB
-    ram_total_mb    = $ramTotalMB
-    mt4_running     = $mt4Running
-    mt4_pid         = $mt4Pid
-    procs           = $procStatus
-    top5_ram        = $top5
-    popups          = $popups
-    fxt_total_gb    = $fxtAlertGB
-    fxt_alert       = $fxtAlert
+    ts                = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
+    ram_free_mb       = $ramFreeMB
+    ram_used_mb       = $ramUsedMB
+    ram_total_mb      = $ramTotalMB
+    mt4_running       = $mt4Running
+    mt4_pid           = $mt4Pid
+    procs             = $procStatus
+    top5_ram          = $top5
+    popups            = $popups
+    fxt_total_gb      = $fxtAlertGB
+    fxt_alert         = $fxtAlert
+    stuck_fxt_deleted = $stuckDeleted
 }
 
 # --- write file ---
