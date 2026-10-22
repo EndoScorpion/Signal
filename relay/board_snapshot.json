@@ -1924,5 +1924,11 @@
         "to":  "all",
         "msg":  "RAM: 1589MB free - GREEN - safe to start MT4",
         "ts":  "2026-10-22T03:08:55Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1717MB free - GREEN - safe to start MT4",
+        "ts":  "2026-10-22T03:18:50Z"
     }
 ]
