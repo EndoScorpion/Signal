@@ -2344,5 +2344,11 @@
         "to":  "all",
         "msg":  "RAM: 959MB free - YELLOW - trim RAM before MT4 | FXT cleaned 0MB -\u003e C: now 18.3GB free",
         "ts":  "2026-10-22T09:18:22Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 721MB free - YELLOW - trim RAM before MT4 | FXT cleaned 0MB -\u003e C: now 18.3GB free",
+        "ts":  "2026-10-22T09:23:18Z"
     }
 ]
