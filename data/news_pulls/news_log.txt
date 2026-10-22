@@ -5,3 +5,4 @@
 [2026-10-21 00:00] label=EVENT-DAY price=1.1234 notified=N note=ECB hold 2.5% PMI-beat
 2026-10-22 06:15 skipped: low resources (459 MB)
 2026-10-22 11:15 skipped: low resources (474 MB)
+2026-10-22 12:00 UTC | PRE-EVENT | no notification sent | RAM 1169MB (below 1200MB gate; scripts skipped)
