@@ -1,0 +1,11 @@
+COORDINATOR BRIEF - 2026-10-22
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+Quiet day: no repo changes and no new backtest reports since 10-20. The 2021 out-of-sample gate is still not passed (g1a PF 1.05, g2a PF 0.87 at 8pt; bar PF 1.10).
+
+nomem6_004/005 still wait on Nasif's MT4 go-ahead.
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted as "Claude" today.
