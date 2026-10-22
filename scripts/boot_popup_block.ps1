@@ -1,25 +1,71 @@
-# boot_popup_block.ps1 - runs at startup, watches for titleless flash windows and closes them
+# boot_popup_block.ps1 - WMI event-driven popup killer, catches windows the instant they appear
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 public class WinAPI {
     [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
     [DllImport("user32.dll")] public static extern int GetWindowTextLength(IntPtr hWnd);
-    [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+    public static extern int GetWindowText(IntPtr hWnd, StringBuilder buf, int max);
+    [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr w, IntPtr l);
+    [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmd);
     public const uint WM_CLOSE = 0x0010;
+    public const int SW_MINIMIZE = 6;
 }
 "@
-$closed = 0
-$end = (Get-Date).AddMinutes(5)  # watch for 5 min after boot
-while ((Get-Date) -lt $end) {
-    Get-Process -Name "powershell","cmd" -ErrorAction SilentlyContinue | Where-Object {
-        $_.MainWindowHandle -ne [IntPtr]::Zero -and
-        [WinAPI]::GetWindowTextLength($_.MainWindowHandle) -eq 0 -and
-        [WinAPI]::IsWindowVisible($_.MainWindowHandle)
-    } | ForEach-Object {
-        [WinAPI]::PostMessage($_.MainWindowHandle, [WinAPI]::WM_CLOSE, [IntPtr]::Zero, [IntPtr]::Zero) | Out-Null
-        $closed++
-    }
-    Start-Sleep -Milliseconds 500
+
+$logPath = "C:\Users\endos\Signal\logs\popup_block.log"
+# Window titles that are SAFE - never touch these
+$keepPattern = 'Claude|hub|signal|MT4|MetaEditor|terminal|Administrator|TA Fix|Copilot|Stellaris|stellaris|Windows PowerShell|steam|Steam'
+# Window titles that should be KILLED (transient task output)
+$killPattern  = '^$|^\s*$|^RESULT$|^result$|^Select$'
+
+function Check-And-Kill {
+    Get-Process -Name "powershell","cmd","wscript","cscript" -ErrorAction SilentlyContinue |
+        Where-Object { $_.MainWindowHandle -ne [IntPtr]::Zero } |
+        ForEach-Object {
+            $hwnd = $_.MainWindowHandle
+            if (-not [WinAPI]::IsWindowVisible($hwnd)) { return }
+            $len = [WinAPI]::GetWindowTextLength($hwnd)
+            $title = ""
+            if ($len -gt 0) {
+                $sb = New-Object System.Text.StringBuilder ($len + 2)
+                [WinAPI]::GetWindowText($hwnd, $sb, $sb.Capacity) | Out-Null
+                $title = $sb.ToString().Trim()
+            }
+            $safe = $title -match $keepPattern
+            $kill = $title -match $killPattern
+            if ($kill -and -not $safe) {
+                [WinAPI]::PostMessage($hwnd, [WinAPI]::WM_CLOSE, [IntPtr]::Zero, [IntPtr]::Zero) | Out-Null
+                "$(Get-Date -Format 'HH:mm:ss') KILLED PID=$($_.Id) title='$title'" | Add-Content $logPath
+            } elseif (-not $safe -and $len -eq 0) {
+                # Titleless visible window - kill it
+                [WinAPI]::PostMessage($hwnd, [WinAPI]::WM_CLOSE, [IntPtr]::Zero, [IntPtr]::Zero) | Out-Null
+                "$(Get-Date -Format 'HH:mm:ss') KILLED-NOTITLE PID=$($_.Id)" | Add-Content $logPath
+            }
+        }
 }
-"$(Get-Date -Format o) Popup blocker finished. Closed $closed windows." | Out-File "C:\Users\endos\Signal\logs\popup_block.log" -Append
+
+"$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') popup_block started (WMI+poll)" | Add-Content $logPath
+
+# WMI event: fire when a new powershell.exe or cmd.exe process starts
+$query = "SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_Process' AND (TargetInstance.Name='powershell.exe' OR TargetInstance.Name='cmd.exe' OR TargetInstance.Name='wscript.exe')"
+$watcher = New-Object System.Management.ManagementEventWatcher $query
+$watcher.Options.Timeout = [System.TimeSpan]::FromSeconds(2)
+
+while ($true) {
+    try {
+        $e = $watcher.WaitForNextEvent()
+        # New process spawned - wait briefly for its window to appear, then kill if unwanted
+        Start-Sleep -Milliseconds 300
+        Check-And-Kill
+    } catch [System.Management.ManagementException] {
+        # Timeout - do a regular poll pass anyway
+        Check-And-Kill
+    } catch {
+        "$(Get-Date -Format 'HH:mm:ss') ERR: $_" | Add-Content $logPath
+        Start-Sleep -Seconds 2
+    }
+}
