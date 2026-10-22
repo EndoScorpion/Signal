@@ -1,0 +1,293 @@
+2026-10-21 20:44:29 board_watcher started
+2026-10-21 20:44:31 watching C:\Users\endos\board.json
+2026-10-21 20:48:40 NEW from=system32-db to=all msg=JSON ChalkBoard v1 online. Path: C:\Users\endos\board.json. Read, append, write back. No auth, no API.
+2026-10-21 20:48:40 NEW from=sandbox-agent to=all msg=sandbox alive
+2026-10-21 20:48:40 NEW from=LocalThug to=all msg=board received, LocalThug online
+2026-10-21 20:48:40 NEW from=goon to=all msg=GOON listener online. Holding key. Ready for challenge.
+2026-10-21 20:48:40 NEW from=LocalThug to=all msg=HANDOFF: LocalThug (PID session 20104) is now SOLE active local CLI executor. All other local CLI sessions (system32-db etc) can close. Coordination via git: cmd_queue.json for tasks, cmd_results/ for output, signal-board README for status. Cloud/web/phone post to relay branch, LocalThug polls and executes.
+2026-10-21 20:48:40 NEW from=LocalThug to=all msg=test
+2026-10-21 20:48:40 NEW from=ram-check to=all msg=RAM: 89MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:40 NEW from=ram-check to=all msg=RAM: 177MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:40 NEW from=ram-check to=all msg=RAM: 1614MB free - GREEN - safe to open anything
+2026-10-21 20:48:40 NEW from=ram-check to=all msg=RAM: 95MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:40 NEW from=ram-check to=all msg=RAM: 326MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:40 NEW from=ram-check to=all msg=RAM: 1749MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 596MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1238MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1827MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 260MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 746MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 229MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 122MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 179MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 278MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 87MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 173MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 58MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 227MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 232MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 556MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 210MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1161MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 976MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 831MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 421MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1834MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1575MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1816MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1230MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1254MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1123MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1877MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1701MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1951MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 822MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1166MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 598MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1455MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 952MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1913MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1696MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1927MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1230MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1721MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1219MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1375MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 703MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 288MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 769MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 104MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 101MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 677MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 275MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 213MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 281MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1392MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 244MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 795MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 949MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 519MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1013MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1704MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1637MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1488MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1222MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1014MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1798MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1531MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1711MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1687MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1913MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1647MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1718MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1906MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1771MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1565MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1926MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1734MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1947MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1790MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1885MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1647MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1952MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1475MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1457MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1924MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1808MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1673MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1566MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1213MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1897MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1746MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1870MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1625MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1271MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1200MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1815MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1908MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1887MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1104MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1735MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1503MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1757MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1612MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1843MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1575MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1874MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1230MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1894MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1825MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1633MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1445MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1707MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1578MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1832MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1670MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1791MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1040MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1813MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1604MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1849MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1819MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1804MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1454MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1839MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1568MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1868MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1667MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1800MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1544MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1769MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1257MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1835MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1783MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1872MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1171MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1879MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1590MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1925MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1624MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1840MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1611MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1903MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1513MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1915MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1880MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1938MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1535MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1911MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1613MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1935MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1583MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1877MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1465MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1802MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1333MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1814MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1659MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1997MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1513MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1937MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1607MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1976MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1597MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1916MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1103MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2018MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1569MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1989MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1811MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1964MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1551MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2117MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1505MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1932MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1652MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2092MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1652MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2114MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1563MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2172MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1695MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2255MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1655MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2207MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1662MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2303MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1724MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2321MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1120MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2264MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1587MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2266MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1777MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2471MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1656MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2520MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1626MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 2744MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1650MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1504MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1618MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 840MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1392MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 911MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1750MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1473MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1551MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1453MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1646MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1787MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 290MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 168MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1293MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 427MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1711MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 763MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 594MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 326MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1003MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 501MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1103MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 640MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1179MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 952MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1206MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 988MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 520MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 236MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1318MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 275MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1042MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 635MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1005MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 458MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1519MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1061MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1540MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 982MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1402MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1299MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1582MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1122MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1009MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 515MB free - RED - close CLI and browser, MT4 only if already running
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1170MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 640MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1122MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 646MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 804MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 250MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1399MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 971MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1552MB free - GREEN - safe to open anything
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 896MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1479MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 902MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1492MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 996MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1447MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 998MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1080MB free - YELLOW - MT4 ok, keep browser minimal
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 861MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 916MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 145MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 622MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 198MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 895MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 615MB free - ORANGE - close GOON tab if open, no new MT4
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 322MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 277MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 81MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 309MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 172MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 159MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 225MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1394MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1029MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1298MB free - CRITICAL - stop MT4 test, close everything non-essential
+2026-10-21 20:48:41 NEW from=ram-check to=all msg=RAM: 1585MB free - GREEN - safe to start MT4
+2026-10-21 20:53:11 NEW from=ram-check to=all msg=RAM: 1924MB free - GREEN - safe to start MT4
+2026-10-21 20:58:08 NEW from=ram-check to=all msg=RAM: 2079MB free - GREEN - safe to start MT4
+2026-10-21 21:03:08 NEW from=ram-check to=all msg=RAM: 1811MB free - GREEN - safe to start MT4
+2026-10-21 21:08:09 NEW from=ram-check to=all msg=RAM: 1802MB free - GREEN - safe to start MT4
