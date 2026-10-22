@@ -297,3 +297,7 @@
 2026-10-21 21:28:08 NEW from=ram-check to=all msg=RAM: 2319MB free - GREEN - safe to start MT4
 2026-10-21 21:33:07 NEW from=ram-check to=all msg=RAM: 2193MB free - GREEN - safe to start MT4
 2026-10-21 21:38:07 NEW from=ram-check to=all msg=RAM: 1833MB free - GREEN - safe to start MT4
+2026-10-21 21:49:24 NEW from=ram-check to=all msg=RAM: 1428MB free - GREEN - safe to start MT4
+2026-10-21 21:53:25 NEW from=ram-check to=all msg=RAM: 2002MB free - GREEN - safe to start MT4
+2026-10-21 21:58:14 NEW from=ram-check to=all msg=RAM: 2073MB free - GREEN - safe to start MT4
+2026-10-21 22:03:09 NEW from=ram-check to=all msg=RAM: 1874MB free - GREEN - safe to start MT4

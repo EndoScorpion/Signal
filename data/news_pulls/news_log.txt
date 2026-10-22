@@ -2,3 +2,4 @@
 2026-10-20 00:00 | HAWKISH-USD-TREND | notify=no | RAM=1610MB | tech_watch.py missing | calendar missing
 2026-10-20 16:14:04 skipped: low resources (1129 MB)
 2026-10-20 21:14 skipped: low resources (266 MB)
+[2026-10-21 00:00] label=EVENT-DAY price=1.1234 notified=N note=ECB hold 2.5% PMI-beat

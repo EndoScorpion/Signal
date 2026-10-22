@@ -13,7 +13,9 @@
       "Bash(sed -i 's/MagicNumber    = 5350061/MagicNumber    = 5350062/; s/\"b61\",MagicNumber/\"b62\",MagicNumber/; s/MR_RegimeSwitch_b61.mq4/MR_RegimeSwitch_b62.mq4/' MR_RegimeSwitch_b62.mq4)",
       "Bash(grep -n \"if\\(t<0\\){ Print\\(\\\\\"OrderSend err \\\\\",GetLastError\\(\\)\\); } }\\\\|^int OnInit\\\\|TimeExit\\(\\); TrailStops\\(\\); ManageHedge\\(\\);\\\\|extern double OuHalfMax\" MR_RegimeSwitch_b62.mq4)",
       "Bash(powershell -NoProfile -File C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\ram_gate.ps1)",
-      "PowerShell(powershell -NoProfile -File C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\ram_gate.ps1)"
+      "PowerShell(powershell -NoProfile -File C:\\\\Users\\\\endos\\\\Signal\\\\scripts\\\\ram_gate.ps1)",
+      "mcp__ab840343-e984-4996-b46c-637fb027961d__firecrawl_search",
+      "Skill(update-config)"
     ]
   }
 }
