@@ -2050,5 +2050,11 @@
         "to":  "all",
         "msg":  "RAM: 1045MB free - GREEN - safe to start MT4 | FXT cleaned 0MB -\u003e C: now 18GB free",
         "ts":  "2026-10-22T05:03:31Z"
+    },
+    {
+        "from":  "ram-check",
+        "to":  "all",
+        "msg":  "RAM: 1040MB free - YELLOW - trim RAM before MT4 | FXT cleaned 0MB -\u003e C: now 18GB free",
+        "ts":  "2026-10-22T05:08:27Z"
     }
 ]
