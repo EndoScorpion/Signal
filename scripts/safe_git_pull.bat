@@ -2,26 +2,23 @@
 REM safe_git_pull.bat
 REM (Admin cmd required) - right-click cmd.exe, Run as Administrator
 REM Stops poller, kills git.exe, removes index.lock, resets to relay, restarts poller.
+REM Also used by RelayAutoSync scheduled task (silent background run).
 
-echo [1/5] Stopping CloudCmdPollerGH...
 schtasks /End /TN "CloudCmdPollerGH" 2>nul
-timeout /t 2 /nobreak >nul
-
-echo [2/5] Killing any running git.exe...
 taskkill /F /IM git.exe 2>nul
-timeout /t 1 /nobreak >nul
-
-echo [3/5] Removing index.lock if present...
+timeout /t 2 /nobreak >nul
 del /F "C:\Users\endos\Signal\.git\index.lock" 2>nul
 
-echo [4/5] Fetching + resetting to origin/relay...
 cd /d C:\Users\endos\Signal
 git fetch origin relay
 git reset --hard origin/relay
 
-echo [5/5] Restarting CloudCmdPollerGH...
 schtasks /Run /TN "CloudCmdPollerGH" 2>nul
 
-echo.
-echo Done. Relay branch synced, poller restarted.
-pause
+REM When run manually, pause to show output.
+REM When run by scheduler (no interactive window), this is a no-op.
+if "%1"=="/manual" (
+    echo.
+    echo Done. Relay synced, poller restarted.
+    pause
+)
