@@ -1,0 +1,59 @@
+{
+ "candidates": {
+  "th_g2_AtrCapPts_90_hours_00-03": {
+   "flag": "GREEN",
+   "pts_cheap": 4464,
+   "pts_mid": 3930,
+   "pts_real": 3212,
+   "trades": 192,
+   "cost_real": 7.7,
+   "break_even": 18.6
+  },
+  "th_g2_AtrCapPts_90_hours_00-03_m1": {
+   "flag": "RED",
+   "pts_cheap": -4063,
+   "pts_mid": -6400,
+   "pts_real": -10323,
+   "trades": 864,
+   "cost_real": 7.6,
+   "break_even": 0.8
+  },
+  "th_g2_AtrCapPts_90_hours_00-03_m1_m1": {
+   "flag": "RED",
+   "pts_cheap": 5863,
+   "pts_mid": 1778,
+   "pts_real": -3412,
+   "trades": 1567,
+   "cost_real": 7.5,
+   "break_even": 6.0
+  },
+  "th_g2_AtrCapPts_90_hours_00-03_m1_m2": {
+   "flag": "GREEN",
+   "pts_cheap": 4464,
+   "pts_mid": 3930,
+   "pts_real": 3212,
+   "trades": 192,
+   "cost_real": 7.7,
+   "break_even": 18.6
+  },
+  "th_g2_AtrCapPts_90_hours_00-03_m2": {
+   "flag": "RED",
+   "pts_cheap": -672,
+   "pts_mid": -1218,
+   "pts_real": -1218,
+   "trades": 11,
+   "cost_real": 7.8,
+   "break_even": -1.9
+  },
+  "rt_g2_AtrCapPts_120": {
+   "flag": "YELLOW",
+   "pts_cheap": 1912,
+   "pts_mid": 1372,
+   "pts_real": 321,
+   "trades": 263,
+   "cost_real": 7.7,
+   "break_even": 8.5
+  }
+ },
+ "leader": "th_g2_AtrCapPts_90_hours_00-03"
+}
