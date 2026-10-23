@@ -66,7 +66,7 @@ while ($true) {
     try {
         $e = $watcher.WaitForNextEvent()
         # New process spawned - wait briefly for its window to appear, then kill if unwanted
-        Start-Sleep -Milliseconds 100
+        Start-Sleep -Milliseconds 50
         Check-And-Kill
         Start-Sleep -Milliseconds 300
         Check-And-Kill
@@ -78,6 +78,7 @@ while ($true) {
         Start-Sleep -Seconds 2
     }
 }
+
 
 
 
