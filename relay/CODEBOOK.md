@@ -1,4 +1,4 @@
-# VAGUE CODEBOOK v1
+# VAGUE CODEBOOK v2
 # Shared across all sessions via relay branch. Auto-synced. Do not rename this file.
 # Pull relay branch to get latest version before reading or writing relay messages.
 
@@ -54,11 +54,12 @@
 
 ## File Conventions
 - `thug_to_cloud.json` â€” THUG â†’ GOON messages
-- `cloud_to_thug.json` â€” GOON â†’ THUG messages  
+- `cloud_to_thug.json` â€” GOON â†’ THUG messages
 - `thug_status.json` â€” THUG current status
 - `cmd_queue.json` â€” queued EXEC commands
 - `cmd_results.json` â€” DONE/FAIL results
 - `CODEBOOK.md` â€” this file
+- `GIT_ACCESS.md` â€” how any agent bootstraps git access
 
 ## Test Result Terms
 | Code | Meaning |
@@ -100,8 +101,8 @@
 
 ## Branch Name Map (internal logic, vague externally)
 | Branch Name | Internal Purpose |
-|-------------|-----------------|
-| relay_push | Active relay — THUG reads cmd_queue, posts results |
+|-------------|------------------|
+| relay_push | Active relay â€” THUG reads cmd_queue, posts results |
 | agent-sync | Sync channel for subagent state |
 | main | Stable base, protected |
 | ClaudeAI/* | Auto-named cloud session branches (disposable) |
@@ -111,8 +112,8 @@
 | Field | Meaning |
 |-------|---------|
 | PASS | Beats base in majority (5+) of 8 periods |
-| SOFT | Beats base in 4/8, marginal — needs BOSS review |
-| SKIP | Fails majority — discard |
+| SOFT | Beats base in 4/8, marginal â€” needs BOSS review |
+| SKIP | Fails majority â€” discard |
 | pf | Profit Factor |
 | dd | Max Drawdown % |
 | np | Net Profit USD |
@@ -121,52 +122,54 @@
 | periods_pass | How many of 8 periods beat base |
 | set | .set filename tested |
 
-## Slope/Shift Filter Test (new 2026-10-23)
+## NSSM Hidden Services (new 2026-10-23)
+NSSM = Non-Sucking Service Manager. Runs scripts as Windows services in Session 0 (no visible window, no popup).
+
+| Service Name | What It Does |
+|--------------|--------------|
+| CliRelayPoll | Local poller: watches relay_push on GitHub every ~30s, executes commands from cmd_queue.json, posts results back. Runs hidden as NSSM service. |
+| CloudCmdPollerGH | Cloud command poller: polls GitHub relay branch for new commands from cloud agents (GOON/CLONE), routes to local execution. Runs hidden as NSSM service. |
+
+Checking status:
+```powershell
+Get-Service CliRelayPoll | Select Status
+Get-Service CloudCmdPollerGH | Select Status
+```
+Starting:
+```powershell
+Start-Service CliRelayPoll
+Start-Service CloudCmdPollerGH
+```
+"Running (NSSM service, invisible)" = working correctly. No window = correct.
+
+## Slope/Shift Filter Test (2026-10-23)
 EA concept: detect big recent move N candles back, use technical stats AT that candle as entry filter.
 
 | Term | Meaning |
 |------|---------|
 | SHIFT | Lookback offset in candles (e.g. SHIFT=7 = look 7 M1 bars back) |
-| SLOPE | Price change per bar over a window (pips/bar) |
+| SLOPE | Price change per bar over a window (pts/bar) |
 | BIGMOVE | Trigger: a move exceeding SlopeThreshold within ShiftWindow |
 | SNAPSTAT | Technical snapshot at the SHIFT candle (RSI, ATR, MA at that time) |
 | SHIFTWIN | Window size to scan for BIGMOVE (e.g. 5-10 candles) |
 | SLOPEMIN | Minimum slope to qualify as BIGMOVE |
 | WITH | Trade in direction of BIGMOVE |
 | AGAINST | Trade against direction of BIGMOVE (mean reversion) |
+| slope-ev-001 | Named test: slope filter + event memory combined, first run, ShiftWin=10 SlopeMin=5 |
 
-Test queue entry format:
-```json
-{
-  "type": "slope-filter-test",
-  "ShiftWin": 10,
-  "SlopeMin": 5.0,
-  "SnapStat": ["RSI","ATR","MA_slope"],
-  "Mode": "WITH",
-  "note": "if big drop 5-10 M1 bars ago, check stats at that candle before entry"
-}
-```
-
-### Shift Filter — Dynamic Timeframe/Period Selection
-The shift, timeframe, and analysis period are all variable — chosen to best capture the event:
-- TF: timeframe of the big move (M1/M5/M15/H1) — match to move speed
+### Shift Filter â€” Dynamic Timeframe/Period Selection
+- TF: timeframe of the big move (M1/M5/M15/H1) â€” match to move speed
 - SHIFT: how many bars back the event started
-- PERIOD: how many bars the move lasted (duration of the event)
+- PERIOD: how many bars the move lasted
 - SNAPSTAT taken at bar[SHIFT] on TF
-- Filter logic: only trade if SNAPSTAT at SHIFT meets threshold AND current bar aligns
+- Filter: only trade if SNAPSTAT at SHIFT meets threshold AND current bar aligns
 
-Example: "big drop happened 7 M5 bars ago, lasted 3 bars, RSI was 72 at start — now fading, go SHORT"
-Parameters: TF=M5, SHIFT=7, PERIOD=3, SNAPSTAT_RSI>70, Mode=AGAINST
-
-This means the EA looks BACK in history to re-read what the indicators said AT the event start,
-then uses that historical context to decide the current entry. Not just current bar indicators.
-
-### Event Memory / Directional Suppression
-Track recent big events and use them to suppress opposing entries:
+## Event Memory / Directional Suppression
+Track recent big events and use them to suppress opposing entries.
 
 | Term | Meaning |
 |------|---------|
-| EVLOG | Event log — rolling buffer of BIGMOVE events with TF/SHIFT/direction/size |
+| EVLOG | Event log â€” rolling buffer of BIGMOVE events with TF/SHIFT/direction/size |
 | COOLDOWN | Bars after a BIGMOVE during which opposing trades are blocked |
 | BUYSUP | Buy suppression active (recent big drop = harder to go long) |
 | SELLSUP | Sell suppression active (recent big rise = harder to go short) |
@@ -174,16 +177,13 @@ Track recent big events and use them to suppress opposing entries:
 | EVSTRENGTH | Magnitude of the event (bigger drop = longer/stronger suppression) |
 
 Logic:
-- Big DROP N bars ago ? BUYSUP active for COOLDOWN bars, strength scales with drop size
-- Big RISE N bars ago ? SELLSUP active for COOLDOWN bars
+- Big DROP N bars ago â†’ BUYSUP active for COOLDOWN bars, strength scales with drop size
+- Big RISE N bars ago â†’ SELLSUP active for COOLDOWN bars
 - Multiple events accumulate (compound suppression)
 - Events tracked per TF independently
 
-This creates a directional memory: the EA "remembers" recent shocks
-and adjusts entry bias accordingly, not just using current bar state.
-
 ---
-## SLOW PUPIL GUIDE — Plain English Decoder
+## SLOW PUPIL GUIDE â€” Plain English Decoder
 # If you receive a vague instruction and don't understand it, look it up here first.
 # All examples use real cypher terms. Read left=vague, right=what it actually means.
 
@@ -196,7 +196,7 @@ and adjusts entry bias accordingly, not just using current bar state.
 | "permitted" | BOSS has authorized this specific action. You may proceed. Does NOT mean all actions are allowed. |
 | "cloud test permitted" | GOON/cloud agent may run git/relay read-write tests on relay_push branch. |
 | "minimized safe" | Both: run hidden AND verify safe conditions first. |
-| "prevent recurrence" | Don't just fix it now — add a permanent guard so it can't happen again. |
+| "prevent recurrence" | Don't just fix it now â€” add a permanent guard so it can't happen again. |
 | "cause" | Find the ROOT cause, not just symptoms. Check logs, task scheduler, processes. |
 | "coordinate with cloud" | Post a message to relay/cmd_queue.json on relay_push AND board.json. GOON will pick it up. |
 | "pass it on" | Post to board.json AND push to relay_push so all agents get it. |
@@ -205,13 +205,21 @@ and adjusts entry bias accordingly, not just using current bar state.
 | "test ASAP" | Add to cmd_queue.json on relay_push with priority:"high". THUG will run it next. |
 | "factor that in" | Update CODEBOOK.md + AGENT_ONBOARDING.md with the new concept. Apply to all future analysis. |
 | "slow pupils" | New or confused agents. Write in plain English + cypher side by side. |
+| "NSSM service" | Background Windows service with no visible window. See NSSM section above. |
+| "CliRelayPoll" | The local poller service that checks GitHub for commands every ~30s. |
+| "CloudCmdPollerGH" | The cloud command poller service. If Stopped, start it (Start-Service CloudCmdPollerGH). |
+| "slope-ev-001" | The first named test combining slope filter + event memory (BUYSUP/SELLSUP/COOLDOWN/EVLOG). |
+| "EVLOG active" | Recent big-move events are stored in memory; they are suppressing some trade directions. |
+| "BUYSUP" | Buying is suppressed right now because a recent big DROP is in the event log. |
+| "SELLSUP" | Selling is suppressed right now because a recent big RISE is in the event log. |
+| "COOLDOWN" | The number of bars a suppression lasts after a BIGMOVE event. |
 
 ### Win Logic Rules (always apply to ALL analysis)
 1. PASS = beats BASE (b22_thu) in 5+ of 8 periods: 2011,2012,2017,2019,2020,2021,2022,2025-26
 2. Must be positive where BASE is positive
-3. Neighbours must be stable (vary params ±1 step, still PASS)
+3. Neighbours must be stable (vary params Â±1 step, still PASS)
 4. Test at SP5 and SP8 after initial PASS at SP3
-5. NEW (2026-10-23): Apply EVLOG/BUYSUP/SELLSUP analysis — did big recent moves affect results?
+5. Apply EVLOG/BUYSUP/SELLSUP analysis â€” did big recent moves affect results?
    - If WIN period had a BIGMOVE event, check if BUYSUP/SELLSUP was active during losses
    - Report EVSTRENGTH and COOLDOWN that best explains the result pattern
 
@@ -219,12 +227,12 @@ and adjusts entry bias accordingly, not just using current bar state.
 ```
 Step 1: git pull origin relay_push
 Step 2: append to relay/cmd_results.json:
-  { "id":"<job-id>", "from":"CLONE", "verdict":"PASS/SOFT/SKIP",
-    "pf":X, "dd":X, "np":X, "nt":X, "sp":8, "periods_pass":6,
-    "buysup_active": true/false, "evstrength": 0-10,
-    "ts":"<now>" }
+ { "id":"<id>", "from":"CLONE", "verdict":"PASS/SOFT/SKIP",
+   "pf":X, "dd":X, "np":X, "nt":X, "sp":8, "periods_pass":6,
+   "buysup_active": true/false, "evstrength": 0-10,
+   "ts":"<iso>" }
 Step 3: git add relay/cmd_results.json
-Step 4: git commit -m "report: <job-id> PASS sp8 pf1.4"
+Step 4: git commit -m "report: <id> PASS sp8 pf1.4"
 Step 5: git push origin relay_push
 Step 6: post same summary to board.json
 ```
