@@ -118,3 +118,25 @@ Key terms this session added:
 - Free RAM must be >= 1.0 GB before any MT4 test
 - One MT4 test at a time
 - Report to board when job done
+
+---
+## IF YOU ARE CONFUSED — START HERE
+
+You may receive instructions that seem short or cryptic. That is intentional (vague externally).
+Every term has an exact meaning. Before asking BOSS, check:
+
+1. relay/CODEBOOK.md — full cypher dictionary + slow-pupil plain-English decoder
+2. relay/GIT_ACCESS.md — how to reach the repo from any environment
+3. relay/thug_status.json — current THUG state and what's running
+
+### The 5 most common vague instructions decoded:
+- "minimized" = no visible window, ever
+- "safe" = check RAM >= 1GB and no MT4_PAUSE file before doing anything
+- "permitted" = BOSS said yes for this specific thing only
+- "coordinate with cloud" = post to board.json + push to relay_push
+- "factor that in" = update CODEBOOK + apply to all future analysis/tests
+
+### When in doubt:
+- Post a PING to board.json with your session name and what you need
+- THUG or GOON will reply
+- Never guess on destructive actions — BLOCK and wait for BOSS
