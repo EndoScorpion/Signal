@@ -41,7 +41,7 @@ function Check-And-Kill {
                 $title = $sb.ToString().Trim()
             }
             $safe = $title -match $keepPattern
-            $kill = $title -match $killPattern
+            $kill = ($title -match $killPattern) -or ($title -match "^[A-Za-z]:\\\\.*\\.exe$")
             if ($safe) { return }
             if ($kill -or $len -eq 0) {
                 # Empty/transient title - kill it
@@ -78,6 +78,7 @@ while ($true) {
         Start-Sleep -Seconds 2
     }
 }
+
 
 
 
