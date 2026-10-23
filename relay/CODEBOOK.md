@@ -97,3 +97,26 @@
 ```json
 {"from":"THUG","to":"GOON","type":"REPORT","code":"OK","ts":"2026-10-21T00:00:00Z","msg":"WIN_GEN1 passed OOS 2021"}
 ```
+
+## Branch Name Map (internal logic, vague externally)
+| Branch Name | Internal Purpose |
+|-------------|-----------------|
+| relay_push | Active relay — THUG reads cmd_queue, posts results |
+| agent-sync | Sync channel for subagent state |
+| main | Stable base, protected |
+| ClaudeAI/* | Auto-named cloud session branches (disposable) |
+| exp/* | Experiment branches for EA variants |
+
+## Win Rate Result Codes (bot posting format)
+| Field | Meaning |
+|-------|---------|
+| PASS | Beats base in majority (5+) of 8 periods |
+| SOFT | Beats base in 4/8, marginal — needs BOSS review |
+| SKIP | Fails majority — discard |
+| pf | Profit Factor |
+| dd | Max Drawdown % |
+| np | Net Profit USD |
+| nt | Number of Trades |
+| sp | Spread tested (3/5/8 pts) |
+| periods_pass | How many of 8 periods beat base |
+| set | .set filename tested |
