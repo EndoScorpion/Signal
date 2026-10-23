@@ -160,3 +160,24 @@ Parameters: TF=M5, SHIFT=7, PERIOD=3, SNAPSTAT_RSI>70, Mode=AGAINST
 
 This means the EA looks BACK in history to re-read what the indicators said AT the event start,
 then uses that historical context to decide the current entry. Not just current bar indicators.
+
+### Event Memory / Directional Suppression
+Track recent big events and use them to suppress opposing entries:
+
+| Term | Meaning |
+|------|---------|
+| EVLOG | Event log — rolling buffer of BIGMOVE events with TF/SHIFT/direction/size |
+| COOLDOWN | Bars after a BIGMOVE during which opposing trades are blocked |
+| BUYSUP | Buy suppression active (recent big drop = harder to go long) |
+| SELLSUP | Sell suppression active (recent big rise = harder to go short) |
+| EVDECAY | Event influence fades over time (decays after COOLDOWN bars) |
+| EVSTRENGTH | Magnitude of the event (bigger drop = longer/stronger suppression) |
+
+Logic:
+- Big DROP N bars ago ? BUYSUP active for COOLDOWN bars, strength scales with drop size
+- Big RISE N bars ago ? SELLSUP active for COOLDOWN bars
+- Multiple events accumulate (compound suppression)
+- Events tracked per TF independently
+
+This creates a directional memory: the EA "remembers" recent shocks
+and adjusts entry bias accordingly, not just using current bar state.
