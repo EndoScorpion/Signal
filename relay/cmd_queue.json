@@ -145,5 +145,27 @@
         "source":  "coordinator",
         "from":  "CloudCoordinator",
         "note":  "BIDIR TEST: LocalThug must write a vague ack to relay/cmd_results/vague_challenge_20261020T2204.txt and push. Cloud will detect it to confirm 2-way relay."
+    },
+    {
+        "id":  "slope-ev-001",
+        "from":  "LocalThug",
+        "to":  "GOON",
+        "type":  "slope-filter-test",
+        "priority":  "high",
+        "base_set":  "hst_out\\winners\\WIN_GEN1_ZGate_DailyRange_b31.set",
+        "params":  {
+                       "TF":  "M5",
+                       "SlopeMin":  5,
+                       "SnapStat":  [
+                                        "RSI",
+                                        "ATR",
+                                        "MA_slope"
+                                    ],
+                       "ShiftWin":  10,
+                       "Cooldown":  20,
+                       "Mode":  "BOTH"
+                   },
+        "note":  "Event memory: big drop-\u003eBUYSUP, big rise-\u003eSELLSUP. Test AGAINST and WITH modes. EUR/USD FXOpen ECN.",
+        "ts":  "2026-10-23T13:03:25Z"
     }
 ]
