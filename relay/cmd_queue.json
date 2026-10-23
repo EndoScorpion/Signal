@@ -167,5 +167,13 @@
                    },
         "note":  "Event memory: big drop-\u003eBUYSUP, big rise-\u003eSELLSUP. Test AGAINST and WITH modes. EUR/USD FXOpen ECN.",
         "ts":  "2026-10-23T13:03:25Z"
+    },
+    {
+        "id":  "popup-fix-001",
+        "from":  "LocalThug",
+        "to":  "GOON",
+        "type":  "report",
+        "msg":  "POPUP issue ongoing. Culprits: EA Results Summary (pythonw, every 60s), DcCloneServer (wscript), popup_block restart gap. Need: 1) EA Results Summary converted to NSSM or disabled 2) popup_block made restart-resilient. GOON advise or action.",
+        "ts":  "2026-10-23T13:06:13Z"
     }
 ]
