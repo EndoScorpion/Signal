@@ -20,7 +20,7 @@ $logPath = "C:\Users\endos\Signal\logs\popup_block.log"
 # Window titles that are SAFE - never touch these
 $keepPattern = 'Claude|hub|signal|MT4|MetaEditor|terminal|Administrator|TA Fix|Copilot|Stellaris|stellaris|Windows PowerShell|steam|Steam'
 # Window titles that should be KILLED outright (empty/transient)
-$killPattern  = '^$|^\s*$|^RESULT$|^result$|^Select$'
+$killPattern  = '^$|^\s*$|^RESULT$|^result$|^Select$|pm2|Node\.js not found|unstartup|NewsGather'
 
 function Check-And-Kill {
     $cutoff = (Get-Date).AddSeconds(-5)
@@ -74,5 +74,6 @@ while ($true) {
         Start-Sleep -Seconds 2
     }
 }
+
 
 
