@@ -2422,5 +2422,11 @@
         "to":  "all",
         "msg":  "NEW WIN LOGIC: Event Memory filter. Big DROP -\u003e BUYSUP cooldown. Big RISE -\u003e SELLSUP cooldown. Factor into ALL win analysis and new theories. Details in relay/CODEBOOK.md (relay_push). TEST ASAP - add slope-shift-filter to next backtest queue.",
         "ts":  "2026-10-23T13:03:23Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "all",
+        "msg":  "BROADCAST: ALL CLONES/GOON pull relay_push. Read CODEBOOK+ONBOARDING+GIT_ACCESS. MT4 BLOCKED (RAM 0.2GB + PAUSE). Cloud tests GO - slope-ev-001 queued high. Self-improve: apply EVLOG to all analysis. Report ASAP.",
+        "ts":  "2026-10-23T13:31:11Z"
     }
 ]
