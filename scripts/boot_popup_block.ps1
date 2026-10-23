@@ -1,4 +1,8 @@
-﻿# boot_popup_block.ps1 - WMI event-driven popup killer, catches windows the instant they appear
+﻿# already running guard
+$already = Get-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -eq '' } | Where-Object { (Get-WmiObject Win32_Process -Filter "ProcessId=$($_.Id)").CommandLine -match 'boot_popup_block' }
+if ($already.Count -gt 1) { exit }
+
+# boot_popup_block.ps1 - WMI event-driven popup killer, catches windows the instant they appear
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -20,11 +24,11 @@ $logPath = "C:\Users\endos\Signal\logs\popup_block.log"
 # Window titles that are SAFE - never touch these
 $keepPattern = 'Claude|hub|signal|MT4|MetaEditor|terminal|Administrator|TA Fix|Copilot|Stellaris|stellaris|Windows PowerShell|steam|Steam'
 # Window titles that should be KILLED outright (empty/transient)
-$killPattern  = '^$|^\s*$|^RESULT$|^result$|^Select$|pm2|Node\.js not found|unstartup|NewsGather'
+$killPattern  = '^$|^\s*$|^RESULT$|^result$|^Select$|pm2|Node\.js not found|unstartup|NewsGather|\\\\WindowsPowerShell\\\\|wscript\.exe|conhost\.exe'
 
 function Check-And-Kill {
     $cutoff = (Get-Date).AddSeconds(-5)
-    Get-Process -Name "powershell","cmd","wscript","cscript" -ErrorAction SilentlyContinue |
+    Get-Process -Name "powershell","cmd","wscript","cscript","conhost" -ErrorAction SilentlyContinue |
         Where-Object { $_.MainWindowHandle -ne [IntPtr]::Zero -and $_.StartTime -gt $cutoff } |
         ForEach-Object {
             $hwnd = $_.MainWindowHandle
@@ -74,6 +78,9 @@ while ($true) {
         Start-Sleep -Seconds 2
     }
 }
+
+
+
 
 
 
