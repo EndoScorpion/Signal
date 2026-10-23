@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-10-23
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+No new backtest reports since 10-20. The 2021 out-of-sample gate is still not passed (g1a PF 1.05, g2a PF 0.87 at 8pt; bar PF 1.10).
+
+nomem6_004/005 still wait on Nasif's MT4 go-ahead.
+
+Changes: CLAUDE.md gained an agent comms bootstrap section. Board shows CloudCoord live and a LocalThug PID-audit task (DC Remote offline at 17:10Z).
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted today.
