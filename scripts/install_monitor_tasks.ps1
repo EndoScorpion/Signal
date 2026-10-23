@@ -1,11 +1,11 @@
-# install_monitor_tasks.ps1 — run as Admin, silent, no popups
+# install_monitor_tasks.ps1 — run as Admin
 # Installs: 1) every-10-min RAM/process snapshot -> relay/laptop_status.json
 #           2) weekly FXT history cleanup
-# Run via: wscript.exe scripts\run_hidden.vbs "powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File scripts\install_monitor_tasks.ps1"
 
 $ErrorActionPreference = 'SilentlyContinue'
 $repoRoot = 'C:\Users\endos\Signal'
-$scriptsDir = "$repoRoot\scripts"
+$scriptsDir = 'C:\Users\endos\Signal\scripts'
+if (-not (Test-Path $scriptsDir)) { New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null }
 $logLines = @()
 $logLines += "install_monitor_tasks.ps1 started $(Get-Date -Format 'o')"
 
@@ -33,9 +33,10 @@ git push origin relay
 Set-Content -Path $snapshotScript -Value $snapshotContent
 $logLines += "Created: $snapshotScript"
 
-# Register snapshot task (every 10 min, hidden)
+# Register snapshot task (every 10 min, hidden via VBS)
+$vbs = "$scriptsDir\run_hidden.vbs"
 $action = New-ScheduledTaskAction -Execute 'wscript.exe' `
-    -Argument "`"$scriptsDir\run_hidden.vbs`" `"powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File `"$snapshotScript`"`""
+    -Argument "`"$vbs`" `"powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File `"$snapshotScript`"`""
 $trigger = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 10) -Once -At (Get-Date)
 $settings = New-ScheduledTaskSettingsSet -Hidden -ExecutionTimeLimit (New-TimeSpan -Minutes 2) -MultipleInstances IgnoreNew
 try {
@@ -49,7 +50,6 @@ try {
 # === TASK 2: Weekly FXT history cleanup ===
 $fxtScript = "$scriptsDir\fxt_cleanup.ps1"
 $fxtContent = @'
-# FXT cleanup: delete .fxt files older than 90 days from MT4 history folders
 $fxtDirs = @(
     'C:\Program Files (x86)\FXOpen MT4\history',
     'C:\Program Files\FXOpen MT4\history',
@@ -66,7 +66,7 @@ $logLines += "Created: $fxtScript"
 
 # Register weekly FXT cleanup (Sunday 03:00, hidden)
 $fxtAction = New-ScheduledTaskAction -Execute 'wscript.exe' `
-    -Argument "`"$scriptsDir\run_hidden.vbs`" `"powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File `"$fxtScript`"`""
+    -Argument "`"$vbs`" `"powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File `"$fxtScript`"`""
 $fxtTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At '03:00'
 $fxtSettings = New-ScheduledTaskSettingsSet -Hidden -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -MultipleInstances IgnoreNew
 try {
@@ -77,15 +77,19 @@ try {
     $logLines += "Failed FXTWeeklyCleanup: $($_.Exception.Message)"
 }
 
-# Start snapshot task immediately
+# Fire snapshot immediately
 Start-ScheduledTask -TaskName 'LaptopMonitorSnapshot' -ErrorAction SilentlyContinue
 $logLines += 'Started LaptopMonitorSnapshot immediately'
 
-# Write outbox
+# Write outbox + push
 $outbox = "$repoRoot\relay\outbox_to_cloud.md"
-$report = "# LocalThug Outbox - MONITOR TASKS INSTALLED`n## $(Get-Date -Format 'o')`n`n$($logLines | ForEach-Object { "- $_" } | Out-String)"
+$report = "# LocalThug Outbox - MONITOR TASKS INSTALLED`n## $(Get-Date -Format 'o')`n`n" + ($logLines | ForEach-Object { "- $_" } | Out-String)
 Set-Content -Path $outbox -Value $report
 Set-Location $repoRoot
-git add relay/outbox_to_cloud.md relay/laptop_status.json scripts/laptop_snapshot.ps1 scripts/fxt_cleanup.ps1
+git add relay/outbox_to_cloud.md relay/laptop_status.json
 git commit -m "relay: monitor tasks installed $(Get-Date -Format 'yyyyMMddTHHmmss')"
 git push origin relay
+
+Write-Host ''
+Write-Host 'Done. Press Enter to close.'
+Read-Host
