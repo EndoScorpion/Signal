@@ -1,0 +1,123 @@
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+At C:\Users\endos\Desktop\hst_out\watchdog_pollers.ps1:19 char:44
++ if ($svc2 -and $svc2.Status -ne 'Running') {
++                                            ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+[2026-10-23 10:40:25] Watchdog started
+[2026-10-23 10:40:25] DcCloneServer not running (Paused) - starting
+[2026-10-23 10:40:37] Watchdog started
+[2026-10-23 10:40:37] DcCloneServer not running (Paused) - starting

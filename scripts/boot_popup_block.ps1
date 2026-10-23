@@ -42,6 +42,8 @@ function Check-And-Kill {
             }
             $safe = $title -match $keepPattern
             $kill = ($title -match $killPattern) -or ($title -match "^[A-Za-z]:\\\\.*\\.exe$")
+            $rawPath = $title -match "^[A-Za-z]:\\\\.*\\\\.*\.exe$"
+            if ($rawPath) { $kill = $true }
             if ($safe) { return }
             if ($kill -or $len -eq 0) {
                 # Empty/transient title - kill it
@@ -66,9 +68,9 @@ while ($true) {
     try {
         $e = $watcher.WaitForNextEvent()
         # New process spawned - wait briefly for its window to appear, then kill if unwanted
-        Start-Sleep -Milliseconds 50
+        Start-Sleep -Milliseconds 30
         Check-And-Kill
-        Start-Sleep -Milliseconds 300
+        Start-Sleep -Milliseconds 150
         Check-And-Kill
     } catch [System.Management.ManagementException] {
         # Timeout - do a regular poll pass anyway
@@ -78,6 +80,7 @@ while ($true) {
         Start-Sleep -Seconds 2
     }
 }
+
 
 
 
