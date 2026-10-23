@@ -181,3 +181,57 @@ Logic:
 
 This creates a directional memory: the EA "remembers" recent shocks
 and adjusts entry bias accordingly, not just using current bar state.
+
+---
+## SLOW PUPIL GUIDE — Plain English Decoder
+# If you receive a vague instruction and don't understand it, look it up here first.
+# All examples use real cypher terms. Read left=vague, right=what it actually means.
+
+### Common Instructions Decoded
+
+| You received | What BOSS/THUG actually means |
+|---|---|
+| "minimized" | Run with NO visible window. Use -WindowStyle Hidden or wscript/VBS wrapper. Never show a console. |
+| "safe" | Check: no MT4_PAUSE file, RAM >= 1GB, no MT4 tester running. Only then proceed. |
+| "permitted" | BOSS has authorized this specific action. You may proceed. Does NOT mean all actions are allowed. |
+| "cloud test permitted" | GOON/cloud agent may run git/relay read-write tests on relay_push branch. |
+| "minimized safe" | Both: run hidden AND verify safe conditions first. |
+| "prevent recurrence" | Don't just fix it now — add a permanent guard so it can't happen again. |
+| "cause" | Find the ROOT cause, not just symptoms. Check logs, task scheduler, processes. |
+| "coordinate with cloud" | Post a message to relay/cmd_queue.json on relay_push AND board.json. GOON will pick it up. |
+| "pass it on" | Post to board.json AND push to relay_push so all agents get it. |
+| "vague updates" | Short status-only posts. No full logs. Use cypher codes (OK/BUSY/DONE etc). |
+| "expand dict" | Add new terms to CODEBOOK.md and push to relay_push. |
+| "test ASAP" | Add to cmd_queue.json on relay_push with priority:"high". THUG will run it next. |
+| "factor that in" | Update CODEBOOK.md + AGENT_ONBOARDING.md with the new concept. Apply to all future analysis. |
+| "slow pupils" | New or confused agents. Write in plain English + cypher side by side. |
+
+### Win Logic Rules (always apply to ALL analysis)
+1. PASS = beats BASE (b22_thu) in 5+ of 8 periods: 2011,2012,2017,2019,2020,2021,2022,2025-26
+2. Must be positive where BASE is positive
+3. Neighbours must be stable (vary params ±1 step, still PASS)
+4. Test at SP5 and SP8 after initial PASS at SP3
+5. NEW (2026-10-23): Apply EVLOG/BUYSUP/SELLSUP analysis — did big recent moves affect results?
+   - If WIN period had a BIGMOVE event, check if BUYSUP/SELLSUP was active during losses
+   - Report EVSTRENGTH and COOLDOWN that best explains the result pattern
+
+### How Any Agent Posts a Result
+```
+Step 1: git pull origin relay_push
+Step 2: append to relay/cmd_results.json:
+  { "id":"<job-id>", "from":"CLONE", "verdict":"PASS/SOFT/SKIP",
+    "pf":X, "dd":X, "np":X, "nt":X, "sp":8, "periods_pass":6,
+    "buysup_active": true/false, "evstrength": 0-10,
+    "ts":"<now>" }
+Step 3: git add relay/cmd_results.json
+Step 4: git commit -m "report: <job-id> PASS sp8 pf1.4"
+Step 5: git push origin relay_push
+Step 6: post same summary to board.json
+```
+
+### DC/RC Safe Minimized (for new agents)
+- DC = DesktopCommander MCP server (npx @wonderwhy-er/desktop-commander)
+- RC = Remote Control (TightVNC or DC remote session)
+- "DC safe minimized" = DC must run as NSSM service (Session 0, no desktop, no popup)
+- "RC safe minimized" = RC watchdog tasks must use wscript/VBS wrapper, no visible window
+- Never start DC/RC in a way that creates a visible console window
