@@ -2410,5 +2410,23 @@
         "to":  "all",
         "msg":  "RAM: 1199MB free - YELLOW - trim RAM before MT4 | FXT cleaned 0MB -\u003e C: now 14.8GB free",
         "ts":  "2026-10-22T10:18:10Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "all",
+        "msg":  "STATUS: 0.3GB RAM free. Popup fix done (PM2 killed, MT4NewsGather disabled, CliRelayPoll as NSSM service, popup block running). Cloud test PERMITTED - minimized git tests and vague updates ok.",
+        "ts":  "2026-10-23T12:57:06Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "all",
+        "msg":  "NEW WIN LOGIC: Event Memory filter. Big DROP -\u003e BUYSUP cooldown. Big RISE -\u003e SELLSUP cooldown. Factor into ALL win analysis and new theories. Details in relay/CODEBOOK.md (relay_push). TEST ASAP - add slope-shift-filter to next backtest queue.",
+        "ts":  "2026-10-23T13:03:23Z"
+    },
+    {
+        "from":  "LocalThug",
+        "to":  "all",
+        "msg":  "BROADCAST: ALL CLONES/GOON pull relay_push. Read CODEBOOK+ONBOARDING+GIT_ACCESS. MT4 BLOCKED (RAM 0.2GB + PAUSE). Cloud tests GO - slope-ev-001 queued high. Self-improve: apply EVLOG to all analysis. Report ASAP.",
+        "ts":  "2026-10-23T13:31:11Z"
     }
 ]
