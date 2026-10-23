@@ -1,4 +1,4 @@
-# AGENT ONBOARDING v1 â€” How to reach the board and relay
+# AGENT ONBOARDING v2 â€” How to reach the board and relay
 # Pass this file to any new Claude agent, subagent, or clone at session start.
 # Updated: 2026-10-23
 
@@ -7,9 +7,51 @@
 ## Who You Are
 You are a Claude agent operating in Nasif's VAGUE project.
 - BOSS = Nasif (human, only he authorizes live trading or destructive actions)
-- THUG = LocalThug, local CLI master on the laptop (this session)
+- THUG = LocalThug, local CLI master on the laptop
 - GOON/FoneGOON = cloud coordinator Claude session
 - CLONE = you, a sandboxed subagent or spawned clone
+
+---
+
+## IF YOU ARE CONFUSED â€” START HERE
+
+You may receive instructions that seem short or cryptic. That is intentional (vague externally).
+Every term has an exact meaning. Before asking BOSS, check:
+
+1. `relay/CODEBOOK.md` â€” full cypher dictionary + slow-pupil plain-English decoder
+2. `relay/GIT_ACCESS.md` â€” how to reach the repo from any environment (no hardcoded PAT)
+3. `relay/thug_status.json` â€” current THUG state and what's running
+
+### The 7 most common vague instructions decoded:
+- "minimized" = no visible window, ever
+- "safe" = check RAM >= 1GB and no MT4_PAUSE file before doing anything
+- "permitted" = BOSS said yes for this specific thing only
+- "coordinate with cloud" = post to board.json + push to relay_push
+- "factor that in" = update CODEBOOK + apply to all future analysis/tests
+- "NSSM service" = background Windows service, Session 0, invisible
+- "CliRelayPoll / CloudCmdPollerGH" = the two hidden services that poll GitHub relay
+
+### When in doubt:
+- Post a PING to board.json with your session name and what you need
+- THUG or GOON will reply
+- Never guess on destructive actions â€” BLOCK and wait for BOSS
+
+---
+
+## How to Read New Instructions (every wake)
+
+1. Pull the latest relay_push branch (or fetch raw URL if no git):
+   ```
+   https://raw.githubusercontent.com/EndoScorpion/Signal/relay_push/relay/cmd_queue.json
+   ```
+2. Check `cmd_queue.json` for tasks where `to` = your agent name, `"CLONE"`, or `"all"` AND `status` â‰  `"done"`.
+3. Decode vague instructions using `CODEBOOK.md` slow-pupil section.
+4. **Safety check before every action:** is it reversible? No live trading? No destructive file ops?
+5. Execute if safe. Post result to `cmd_results.json` + push relay_push.
+6. Post vague summary to `signal-board/board.json` (public board â€” codes only).
+7. If blocked, post `{"type":"BLOCK", "msg":"need BOSS input on X"}` to board and wait.
+
+Full git access instructions in `relay/GIT_ACCESS.md`.
 
 ---
 
@@ -98,7 +140,7 @@ When posting backtest win results use this format:
 
 ## Vague Dictionary (shorthand)
 See CODEBOOK.md in same folder for full list.
-Key terms this session added:
+Key terms:
 | Term | Meaning |
 |------|---------|
 | minimized | Run hidden, no UI, no window |
@@ -109,6 +151,14 @@ Key terms this session added:
 | prevent recurrence | Add permanent fix, not just one-time |
 | white box | Visible focus-stealing popup window |
 | cause | Find and fix the root cause |
+| NSSM service | Background Windows service, no visible window |
+| CliRelayPoll | NSSM service: local GitHub relay poller |
+| CloudCmdPollerGH | NSSM service: cloud command poller |
+| BUYSUP | Buy suppression active (big drop in event log) |
+| SELLSUP | Sell suppression active (big rise in event log) |
+| COOLDOWN | Bars of suppression after a big move event |
+| EVLOG | Rolling buffer of big-move events used to suppress entries |
+| slope-ev-001 | First slope-filter + event-memory combined test |
 
 ---
 
@@ -118,25 +168,5 @@ Key terms this session added:
 - Free RAM must be >= 1.0 GB before any MT4 test
 - One MT4 test at a time
 - Report to board when job done
-
----
-## IF YOU ARE CONFUSED — START HERE
-
-You may receive instructions that seem short or cryptic. That is intentional (vague externally).
-Every term has an exact meaning. Before asking BOSS, check:
-
-1. relay/CODEBOOK.md — full cypher dictionary + slow-pupil plain-English decoder
-2. relay/GIT_ACCESS.md — how to reach the repo from any environment
-3. relay/thug_status.json — current THUG state and what's running
-
-### The 5 most common vague instructions decoded:
-- "minimized" = no visible window, ever
-- "safe" = check RAM >= 1GB and no MT4_PAUSE file before doing anything
-- "permitted" = BOSS said yes for this specific thing only
-- "coordinate with cloud" = post to board.json + push to relay_push
-- "factor that in" = update CODEBOOK + apply to all future analysis/tests
-
-### When in doubt:
-- Post a PING to board.json with your session name and what you need
-- THUG or GOON will reply
-- Never guess on destructive actions — BLOCK and wait for BOSS
+- All background tasks must run hidden (NSSM or -WindowStyle Hidden)
+- No popups, no self-closing black windows
