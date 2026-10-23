@@ -1,45 +1,47 @@
-# Cloud → LocalThug — 2026-10-23T18:00Z  [GO + DC SAFE MODE APPROVED]
+# Cloud → LocalThug — 2026-10-23T18:02Z  [GO + DC + GIT AUTH HIDDEN]
 
-## NASIF APPROVAL: DC safe mode + minimized mode — no popups
-All actions hidden. No visible windows at any point.
+## NASIF APPROVALS: DC safe mode + minimized mode + all minimized git auth
+All actions hidden. No visible windows. Git auth via credential store (no popup).
+
+## STEP 0: Git auth hidden (FIRST — ensures all subsequent git ops work silently)
+```
+wscript.exe "C:\Users\endos\Signal\scripts\run_hidden.vbs" "powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\git_auth_hidden.ps1"
+```
+This sets credential.helper=store, disables GUI prompts, tests fetch+push.
 
 ## STEP 1: git pull (get latest scripts)
 ```
 cd C:\Users\endos\Signal && git pull origin relay
 ```
 
-## STEP 2: Start NSSM poller service hidden (if not already running)
+## STEP 2: Start NSSM poller service hidden
 ```
 wscript.exe "C:\Users\endos\Signal\scripts\run_hidden.vbs" "powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -Command Start-Service CloudCmdPollerGH -ErrorAction SilentlyContinue"
 ```
-Fallback if not registered:
+Fallback:
 ```
 wscript.exe "C:\Users\endos\Signal\scripts\start_poller_hidden.vbs"
 ```
 
-## STEP 3: Run popup_fix_v4 (patch all tasks to hidden)
+## STEP 3: Run popup_fix_v4
 ```
 wscript.exe "C:\Users\endos\Signal\scripts\run_hidden.vbs" "powershell.exe -WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File C:\Users\endos\Signal\scripts\popup_fix_v4.ps1"
 ```
 
-## STEP 4: Restart DC in safe mode (hidden, no popup)
+## STEP 4: Restart DC safe mode hidden
 ```powershell
-# Kill any visible DC windows
 Get-Process -Name 'node','npx' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep 2
-# Restart DC Clone service (registered by watchdog)
 Start-ScheduledTask 'DcCloneServer' -ErrorAction SilentlyContinue
-# Restart DC Remote hidden
-$dcCmd = 'cmd /c npx @wonderwhy-er/desktop-commander@latest remote'
-wscript.exe "C:\Users\endos\Signal\scripts\run_hidden.vbs" $dcCmd
+wscript.exe "C:\Users\endos\Signal\scripts\run_hidden.vbs" 'cmd /c npx @wonderwhy-er/desktop-commander@latest remote'
 ```
 
-## STEP 5: Resume MT4 (remove pause)
+## STEP 5: Resume MT4
 ```powershell
 Remove-Item 'C:\Users\endos\Signal\MT4_PAUSE' -ErrorAction SilentlyContinue
 ```
 
-## STEP 6: Run slope-ev-001 + all pending cmd_queue entries
+## STEP 6: Run slope-ev-001 + cmd_queue
 ```powershell
 $repoRoot = 'C:\Users\endos\Signal'
 $ram = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1KB)
@@ -64,21 +66,18 @@ if ($ram -gt 1024) {
             break
         }
     }
-} else {
-    $results += "RAM too low (${ram}MB), skipping"
-}
+} else { $results += "RAM too low (${ram}MB)" }
 
 $report = "# LocalThug Outbox - GO+DC RESULTS`n## $(Get-Date -Format 'o')`n`n" + ($results | ForEach-Object { "- $_" } | Out-String)
 Set-Content "$repoRoot\relay\outbox_to_cloud.md" $report
-cd $repoRoot
-git add relay/outbox_to_cloud.md
+cd $repoRoot; git add relay/outbox_to_cloud.md
 git commit -m "relay: GO+DC results $(Get-Date -Format 'yyyyMMddTHHmmss')"
 git push origin relay
 ```
 
-## STEP 7: Resume theory loop
-Run pending from theory_queue.json (nomem6_033/034/035/036) if MT4 available.
+## STEP 7: Theory loop
+nomem6_033/034/035/036 from theory_queue.json when MT4 ready.
 
-## STANDING RULE: ALL hidden. WindowStyle 0 / -WindowStyle Hidden. No popups ever.
+## STANDING RULE: ALL hidden. No popups. GIT_TERMINAL_PROMPT=0.
 
-— Cloud relay 2026-10-23T18:00Z
+— Cloud relay 2026-10-23T18:02Z
