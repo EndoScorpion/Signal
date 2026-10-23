@@ -120,3 +120,43 @@
 | sp | Spread tested (3/5/8 pts) |
 | periods_pass | How many of 8 periods beat base |
 | set | .set filename tested |
+
+## Slope/Shift Filter Test (new 2026-10-23)
+EA concept: detect big recent move N candles back, use technical stats AT that candle as entry filter.
+
+| Term | Meaning |
+|------|---------|
+| SHIFT | Lookback offset in candles (e.g. SHIFT=7 = look 7 M1 bars back) |
+| SLOPE | Price change per bar over a window (pips/bar) |
+| BIGMOVE | Trigger: a move exceeding SlopeThreshold within ShiftWindow |
+| SNAPSTAT | Technical snapshot at the SHIFT candle (RSI, ATR, MA at that time) |
+| SHIFTWIN | Window size to scan for BIGMOVE (e.g. 5-10 candles) |
+| SLOPEMIN | Minimum slope to qualify as BIGMOVE |
+| WITH | Trade in direction of BIGMOVE |
+| AGAINST | Trade against direction of BIGMOVE (mean reversion) |
+
+Test queue entry format:
+```json
+{
+  "type": "slope-filter-test",
+  "ShiftWin": 10,
+  "SlopeMin": 5.0,
+  "SnapStat": ["RSI","ATR","MA_slope"],
+  "Mode": "WITH",
+  "note": "if big drop 5-10 M1 bars ago, check stats at that candle before entry"
+}
+```
+
+### Shift Filter — Dynamic Timeframe/Period Selection
+The shift, timeframe, and analysis period are all variable — chosen to best capture the event:
+- TF: timeframe of the big move (M1/M5/M15/H1) — match to move speed
+- SHIFT: how many bars back the event started
+- PERIOD: how many bars the move lasted (duration of the event)
+- SNAPSTAT taken at bar[SHIFT] on TF
+- Filter logic: only trade if SNAPSTAT at SHIFT meets threshold AND current bar aligns
+
+Example: "big drop happened 7 M5 bars ago, lasted 3 bars, RSI was 72 at start — now fading, go SHORT"
+Parameters: TF=M5, SHIFT=7, PERIOD=3, SNAPSTAT_RSI>70, Mode=AGAINST
+
+This means the EA looks BACK in history to re-read what the indicators said AT the event start,
+then uses that historical context to decide the current entry. Not just current bar indicators.
