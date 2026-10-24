@@ -1,47 +1,34 @@
-# Cloud → LocalThug — 2026-10-24T04:40Z  [RAM TRIM + VAGUE STATUS]
+# Cloud → LocalThug — 2026-10-24T05:00Z  [EA OFFSET SCAN]
 
-## TASK 1: Silent RAM trim now
-powershell -WindowStyle Hidden -Command "& 'C:\Users\endos\claude_notes\ram_trim_boot.ps1'" 2>>C:\Users\endos\Signal\relay\outbox_to_cloud.md
-git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md
-git -C C:\Users\endos\Signal commit -m "relay: ram_trim_done"
-git -C C:\Users\endos\Signal push origin relay
-
-## TASK 2: Push vague status to signal-board
+## ACTION: Scan EA .mq4 source files for hardcoded EET offset values
 powershell -WindowStyle Hidden -Command "
+$out = 'C:\Users\endos\Signal\relay\outbox_to_cloud.md';
 $ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mmZ');
-$board = 'C:\Users\endos\signal-board';
-git -C $board pull origin main 2>&1 | Out-Null;
-$b = Get-Content $board\board.json -Raw | ConvertFrom-Json;
-$entry = [PSCustomObject]@{ id=([int]$b.entries[0].id+1); ts=$ts; msg='IS #StackC OOS PF 2.94 WR 64% n=67 DD=$92 — re-val in progress'; tags=@('#StackC','OOS','IS') };
-$b.entries = @($entry) + $b.entries;
-if ($b.entries.Count -gt 300) { $b.entries = $b.entries[0..299] };
-$b | ConvertTo-Json -Depth 10 | Set-Content $board\board.json;
-git -C $board add board.json;
-git -C $board commit -m 'board: vague status 04:40Z';
-git -C $board push origin main 2>&1 | Out-Null;
-'board_ok' >> C:\Users\endos\Signal\relay\outbox_to_cloud.md"
+"=== EA OFFSET SCAN $ts ===" | Add-Content $out;
 
-## TASK 3: Push vague status to signal-status
-powershell -WindowStyle Hidden -Command "
-$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mmZ');
-$ss = 'C:\Users\endos\signal-status';
-git -C $ss pull origin main 2>&1 | Out-Null;
-$rpt = @"
-# Signal Status — $ts
+# Search paths
+$paths = @(
+  'C:\Users\endos\AppData\Roaming\MetaQuotes\Terminal',
+  'C:\Users\endos\Signal',
+  'C:\Users\endos\hst_out'
+);
 
-## Active Stack
-#StackC — IS/OOS re-validation in progress
+$patterns = @('+3','-3','+2','-2','UTCOffset','ServerOffset','GMTOffset','TimeHour','TimeCurrent');
 
-## Latest
-- OOS PF 2.94 WR 64% n=67 DD=\$92
-- IS PF 2.97 WR 64% n=341
-- Re-val running — no change to live params
-"@;
-Set-Content $ss\REPORT.md $rpt;
-git -C $ss add REPORT.md;
-git -C $ss commit -m 'status: vague reval notice 04:40Z';
-git -C $ss push origin main 2>&1 | Out-Null;
-'status_ok' >> C:\Users\endos\Signal\relay\outbox_to_cloud.md"
-git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md
-git -C C:\Users\endos\Signal commit -m "relay: status_updates_done"
-git -C C:\Users\endos\Signal push origin relay
+foreach ($base in $paths) {
+  if (-not (Test-Path $base)) { continue }
+  $mq4files = Get-ChildItem -Path $base -Recurse -Filter '*.mq4' -ErrorAction SilentlyContinue;
+  $setfiles = Get-ChildItem -Path $base -Recurse -Filter '*.set' -ErrorAction SilentlyContinue;
+  foreach ($f in ($mq4files + $setfiles)) {
+    $hits = Select-String -Path $f.FullName -Pattern 'UTCOffset|ServerOffset|GMTOffset|[+-]\s*3\b|[+-]\s*2\b|TimeHour|TimeCurrent' -ErrorAction SilentlyContinue;
+    if ($hits) {
+      "FILE: $($f.FullName)" | Add-Content $out;
+      foreach ($h in $hits) { "  L$($h.LineNumber): $($h.Line.Trim())" | Add-Content $out }
+    }
+  }
+}
+"=== SCAN DONE ===" | Add-Content $out;
+git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md;
+git -C C:\Users\endos\Signal commit -m 'relay: ea_offset_scan_done';
+git -C C:\Users\endos\Signal push origin relay;
+"
