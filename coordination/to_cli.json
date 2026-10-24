@@ -66,5 +66,27 @@
     "shell": "ps",
     "command": "$tasks = @(\n  'Lenovo UDC Lazy Deployment',\n  'Lenovo UDC Maintainance Task',\n  'Lenovo UDC Monitor',\n  'McAfee Sync Agent Pilot',\n  'OneDrive Standalone Update Task-S-1-5-21-1557930476-33232853-740120326-1001',\n  'Office Actions Server',\n  'Office Background Push Maintenance',\n  'Office Feature Updates',\n  'Office Feature Updates Logon',\n  'Office Performance Monitor',\n  'Office Startup Maintenance',\n  'Office ClickToRun Service Monitor',\n  'MicrosoftEdgeUpdateTaskMachineCore{CD52F0E2-9DAC-4A52-AB57-27032DF81D59}',\n  'MicrosoftEdgeUpdateTaskMachineUA{479380AE-EB86-4104-987A-03755518872B}'\n)\n$results = @()\nforeach ($t in $tasks) {\n  try {\n    $task = Get-ScheduledTask -TaskName $t -ErrorAction Stop\n    Disable-ScheduledTask -TaskName $t -ErrorAction Stop | Out-Null\n    $results += [PSCustomObject]@{ Task=$t; Result='Disabled'; State=$task.State }\n  } catch {\n    $results += [PSCustomObject]@{ Task=$t; Result='NotFound/Error'; State='N/A' }\n  }\n}\n$results | Format-Table -AutoSize | Out-String | Write-Host\n$r = 'relay/cmd_results/bloat_disabled_20261022.txt'\nNew-Item -Force -Path (Split-Path $r) -ItemType Directory | Out-Null\n$results | ConvertTo-Json | Set-Content $r\ngit -C C:\\Users\\endos\\Signal add $r\ngit -C C:\\Users\\endos\\Signal commit -m 'bloat tasks disabled result'\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host \"Done. Estimated RAM saved: ~200-400MB (Lenovo UDC ~50MB, McAfee ~100MB, OneDrive ~50MB, Office ~50MB, Edge ~50MB)\"",
     "note": "Approved by Nasif 2026-10-22. Disables 14 Windows bloat tasks. Results pushed to relay."
+  },
+  {
+    "id": "dc_remote_repair_20261024T2208",
+    "status": "pending",
+    "added_by": "cloud-thread-dc-repair",
+    "added_at": "2026-10-24T22:08:00Z",
+    "priority": 0,
+    "description": "DC Remote repair: kill node PIDs, start DcCloneServer task, relaunch DC Remote via hidden VBS. All minimized/no popups.",
+    "shell": "ps",
+    "command": "$vbsPath = 'C:\\Users\\endos\\Signal\\scripts\\run_hidden.vbs'\nif (-not (Test-Path $vbsPath)) {\n  @'\nDim objShell, cmd\ncmd = WScript.Arguments(0)\nSet objShell = CreateObject(\"WScript.Shell\")\nobjShell.Run cmd, 0, False\n'@ | Set-Content $vbsPath\n}\nGet-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue\nStart-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue\nStart-Sleep -Seconds 3\n$dcRemoteCmd = 'cmd /c npx @wonderwhy-er/desktop-commander@latest remote'\nStart-Process wscript.exe -ArgumentList \"\\\"$vbsPath\\\" \\\"$dcRemoteCmd\\\"\" -WindowStyle Hidden\nWrite-Host 'DC Remote repair done'",
+    "note": "Kill node, restart DcCloneServer, relaunch DC Remote hidden. Nasif 2026-10-24T22:08Z."
+  },
+  {
+    "id": "relay_autosync_wake_20261024T2208",
+    "status": "pending",
+    "added_by": "cloud-thread-dc-repair",
+    "added_at": "2026-10-24T22:09:00Z",
+    "priority": 1,
+    "description": "Wake RelayAutoSync scheduled task to resume relay polling.",
+    "shell": "ps",
+    "command": "Start-ScheduledTask -TaskName 'RelayAutoSync' -ErrorAction SilentlyContinue\nWrite-Host 'RelayAutoSync started'",
+    "note": "Wake relay poller. Nasif 2026-10-24T22:08Z."
   }
 ]
