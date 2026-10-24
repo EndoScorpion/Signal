@@ -1,24 +1,27 @@
 @echo off
 REM Tunnel relay launcher - silent, no popups
-REM Run from C:\Signal\ or C:\Users\endos\Signal\
+REM Uses cloudflared binary directly (NOT npx)
 
 set SCRIPT_DIR=%~dp0
+set CF_EXE=%SCRIPT_DIR%cloudflared.exe
 
-REM Start Node.js blackboard server hidden
+REM Step 1: Download cloudflared binary if missing
+if not exist "%CF_EXE%" (
+    echo Downloading cloudflared...
+    powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command "Invoke-WebRequest -Uri 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe' -OutFile '%CF_EXE%'"
+    timeout /t 5 /nobreak >nul
+)
+
+REM Step 2: Start Node.js blackboard server hidden
 powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command "Start-Process node -ArgumentList '%SCRIPT_DIR%server.js' -WindowStyle Hidden"
 timeout /t 2 /nobreak >nul
 
-REM Start Cloudflare tunnel, capture URL to tunnel_url.txt
-start "" /b cmd /c "npx @cloudflare/cloudflared tunnel --url http://127.0.0.1:8080 > %SCRIPT_DIR%tunnel_url.txt 2>&1"
+REM Step 3: Start cloudflared tunnel hidden, capture URL
+powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command "Start-Process '%CF_EXE%' -ArgumentList 'tunnel --url http://127.0.0.1:8080' -WindowStyle Hidden -RedirectStandardOutput '%SCRIPT_DIR%tunnel_url.txt' -RedirectStandardError '%SCRIPT_DIR%tunnel_url.txt'"
 
+echo Relay started. Waiting for URL...
+timeout /t 8 /nobreak >nul
+type "%SCRIPT_DIR%tunnel_url.txt" | findstr trycloudflare
 echo.
-echo Blackboard relay started.
-echo URL (wait 5s then check): %SCRIPT_DIR%tunnel_url.txt
-echo Use: type "%SCRIPT_DIR%tunnel_url.txt" ^| findstr trycloudflare
-echo.
-echo READ:  curl https://<url>/board
-echo WRITE: curl -s -X POST https://<url>/write -H "Content-Type: application/json" -d "{\"sender\":\"Cloud\",\"message\":\"WR67 PF2.9 n=36\"}"
-echo.
-echo VAGUE CODES ONLY in message field. Public URL - no strategy details.
-echo.
+echo Full log: %SCRIPT_DIR%tunnel_url.txt
 pause
