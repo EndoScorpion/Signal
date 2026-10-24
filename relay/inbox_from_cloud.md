@@ -1,22 +1,21 @@
-# Cloud → LocalThug — 2026-10-24T03:35Z  [BOARD+STATUS UPDATE]
-## ACTION: Push vague status to signal-board and signal-status
+# Cloud → LocalThug — 2026-10-24T03:37Z  [CLOUDFLARE TUNNEL TEST]
+## ACTION: Start blackboard server + Cloudflare tunnel
+:: First report RAM
+for /f "tokens=2 delims==" %%M in ('wmic OS get FreePhysicalMemory /value ^| find "="') do set FREE_KB=%%M
+set /a FREE_MB=%FREE_KB% / 1024
+echo ram_check %FREE_MB%MB %DATE% %TIME% >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
 
-### 1. signal-board (board.json) — add entry:
-# Open C:\Users\endos\Signal and run:
-git -C C:\Users\endos\signal-board pull origin main
-powershell -Command "$b=Get-Content C:\Users\endos\signal-board\board.json | ConvertFrom-Json; $e=@{id=($b.entries.Count+1);ts='2026-10-24T03:35Z';msg='#TZAudit complete. Re-validation in progress. All IS/OOS figures provisional until re-issued. #StackC OOS PF/WR/DD under review.';tag='audit'}; $b.entries = @($e) + $b.entries; $b | ConvertTo-Json -Depth 10 | Set-Content C:\Users\endos\signal-board\board.json"
-git -C C:\Users\endos\signal-board add board.json
-git -C C:\Users\endos\signal-board commit -m "board: tz audit notice"
-git -C C:\Users\endos\signal-board push origin main
+:: Start tunnel (downloads cloudflared.exe on first run if missing)
+call C:\Users\endos\Signal\scripts\start_blackboard.bat
 
-### 2. signal-status (REPORT.md) — prepend line:
-powershell -Command "$r=Get-Content C:\Users\endos\signal-status\REPORT.md; $line='2026-10-24T03:35Z #TZAudit complete. Re-validation in progress. All IS/OOS figures provisional until re-issued.'; Set-Content C:\Users\endos\signal-status\REPORT.md ($line + \"`n\" + ($r -join \"`n\"))"
-git -C C:\Users\endos\signal-status add REPORT.md
-git -C C:\Users\endos\signal-status commit -m "status: tz audit notice"
-git -C C:\Users\endos\signal-status push origin main
-
-### 3. Confirm:
-echo board_status_updated %DATE% %TIME% >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
+:: Report tunnel URL (server logs to tunnel_url.txt if configured)
+timeout /t 10 /nobreak >nul
+if exist C:\Users\endos\Signal\scripts\tunnel_url.txt (
+  set /p TURL=<C:\Users\endos\Signal\scripts\tunnel_url.txt
+  echo tunnel_url %TURL% >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
+) else (
+  echo tunnel_started_no_url_file >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
+)
 git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md
-git -C C:\Users\endos\Signal commit -m "relay: board_status_updated"
+git -C C:\Users\endos\Signal commit -m "relay: tunnel_start_report"
 git -C C:\Users\endos\Signal push origin relay
