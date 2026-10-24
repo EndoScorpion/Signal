@@ -4626,3 +4626,131 @@
 2026-10-24 17:21:00 committed: Logs/Cloud_SpaceSaver.log, Logs/SLC_KeepAwake.log, Logs/SLC_TrimWatch.log, Logs/SignalAutoBackup.log, Logs/cloud_cmd_poller.log, Logs/cloud_dc_watchdog.log, Logs/dc_clone.log, Logs/watchdog_pollers.log, relay/board_snapshot.json, relay/status.json
 2026-10-24 17:21:00 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-24 17:21:00 auto_sync done
+2026-10-24 17:23:11 auto_sync started
+2026-10-24 17:23:23 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:23:23 board snapshot updated
+2026-10-24 17:23:23 win table backed up (vague)
+2026-10-24 17:23:23 status.json updated
+2026-10-24 17:23:23 committed: relay/status.json
+2026-10-24 17:23:37 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:23:37 auto_sync done
+2026-10-24 17:25:46 auto_sync started
+2026-10-24 17:25:47 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:25:47 board snapshot updated
+2026-10-24 17:25:47 win table backed up (vague)
+2026-10-24 17:25:47 status.json updated
+2026-10-24 17:25:47 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:25:48 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:25:48 auto_sync done
+2026-10-24 17:27:57 auto_sync started
+2026-10-24 17:27:58 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:27:58 board snapshot updated
+2026-10-24 17:27:58 win table backed up (vague)
+2026-10-24 17:27:58 status.json updated
+2026-10-24 17:27:58 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:27:58 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:27:58 auto_sync done
+2026-10-24 17:30:08 auto_sync started
+2026-10-24 17:30:08 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:30:08 board snapshot updated
+2026-10-24 17:30:08 win table backed up (vague)
+2026-10-24 17:30:08 status.json updated
+2026-10-24 17:30:09 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:30:09 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:30:09 auto_sync done
+2026-10-24 17:32:19 auto_sync started
+2026-10-24 17:32:20 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:32:20 board snapshot updated
+2026-10-24 17:32:20 win table backed up (vague)
+2026-10-24 17:32:20 status.json updated
+2026-10-24 17:32:20 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:32:21 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:32:21 auto_sync done
+2026-10-24 17:34:30 auto_sync started
+2026-10-24 17:34:31 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:34:31 board snapshot updated
+2026-10-24 17:34:31 win table backed up (vague)
+2026-10-24 17:34:31 status.json updated
+2026-10-24 17:34:31 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:34:31 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:34:31 auto_sync done
+2026-10-24 17:36:41 auto_sync started
+2026-10-24 17:36:41 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:36:41 board snapshot updated
+2026-10-24 17:36:41 win table backed up (vague)
+2026-10-24 17:36:41 status.json updated
+2026-10-24 17:36:42 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:36:42 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:36:42 auto_sync done
+2026-10-24 17:38:51 auto_sync started
+2026-10-24 17:38:52 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:38:52 board snapshot updated
+2026-10-24 17:38:52 win table backed up (vague)
+2026-10-24 17:38:52 status.json updated
+2026-10-24 17:38:52 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:38:53 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:38:53 auto_sync done
+2026-10-24 17:41:02 auto_sync started
+2026-10-24 17:41:03 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: Cannot rebase onto multiple branches.
+2026-10-24 17:41:03 board snapshot updated
+2026-10-24 17:41:03 win table backed up (vague)
+2026-10-24 17:41:03 status.json updated
+2026-10-24 17:41:03 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:41:03 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:41:03 auto_sync done
+2026-10-24 17:43:13 auto_sync started
+2026-10-24 17:43:13 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:43:13 board snapshot updated
+2026-10-24 17:43:13 win table backed up (vague)
+2026-10-24 17:43:13 status.json updated
+2026-10-24 17:43:14 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:43:14 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:43:14 auto_sync done
+2026-10-24 17:45:23 auto_sync started
+2026-10-24 17:45:24 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:45:24 board snapshot updated
+2026-10-24 17:45:24 win table backed up (vague)
+2026-10-24 17:45:24 status.json updated
+2026-10-24 17:45:24 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:45:25 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:45:25 auto_sync done
+2026-10-24 17:47:34 auto_sync started
+2026-10-24 17:47:35 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:47:35 board snapshot updated
+2026-10-24 17:47:35 win table backed up (vague)
+2026-10-24 17:47:35 status.json updated
+2026-10-24 17:47:35 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:47:35 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:47:35 auto_sync done
+2026-10-24 17:49:45 auto_sync started
+2026-10-24 17:49:45 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: Cannot rebase onto multiple branches.
+2026-10-24 17:49:45 board snapshot updated
+2026-10-24 17:49:45 win table backed up (vague)
+2026-10-24 17:49:46 status.json updated
+2026-10-24 17:49:46 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:49:46 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:49:46 auto_sync done
+2026-10-24 17:51:55 auto_sync started
+2026-10-24 17:51:56 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:51:56 board snapshot updated
+2026-10-24 17:51:56 win table backed up (vague)
+2026-10-24 17:51:56 status.json updated
+2026-10-24 17:51:56 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:51:57 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:51:57 auto_sync done
+2026-10-24 17:54:06 auto_sync started
+2026-10-24 17:54:07 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:54:07 board snapshot updated
+2026-10-24 17:54:07 win table backed up (vague)
+2026-10-24 17:54:07 status.json updated
+2026-10-24 17:54:07 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:54:08 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:54:08 auto_sync done
+2026-10-24 17:56:17 auto_sync started
+2026-10-24 17:56:17 pull: From https://github.com/EndoScorpion/Signal  * branch            relay_push -> FETCH_HEAD fatal: It seems that there is already a rebase-merge directory, and I wonder if you are in the middle of another rebase.  If that is the case, please try 	git rebase (--continue | --abort | --skip) If that is not the case, please 	rm -fr ".git/rebase-merge" and run me again.  I am stopping in case you still have something valuable there. System.Management.Automation.RemoteException
+2026-10-24 17:56:17 board snapshot updated
+2026-10-24 17:56:17 win table backed up (vague)
+2026-10-24 17:56:17 status.json updated
+2026-10-24 17:56:18 committed: relay/board_snapshot.json, relay/status.json
+2026-10-24 17:56:18 push: To https://github.com/EndoScorpion/Signal.git  ! [rejected]        HEAD -> relay_push (non-fast-forward) error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git' hint: Updates were rejected because a pushed branch tip is behind its remote hint: counterpart. If you want to integrate the remote changes, use 'git pull' hint: before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-24 17:56:18 auto_sync done

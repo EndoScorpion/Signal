@@ -28254,3 +28254,19 @@ At C:\Users\endos\Desktop\hst_out\keep_awake.ps1:5 char:17
     + CategoryInfo          : InvalidArgument: (:) [], RuntimeException
     + FullyQualifiedErrorId : InvalidCastIConvertible
  
+Cannot convert value "-2147483647" to type "System.UInt32". Error: "Value was either too large or too small for a 
+UInt32."
+At C:\Users\endos\Desktop\hst_out\keep_awake.ps1:5 char:17
++ ... e ($true) { [void][W.K]::SetThreadExecutionState([uint32]0x80000001); ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [], RuntimeException
+    + FullyQualifiedErrorId : InvalidCastIConvertible
+ 
+Cannot convert value "-2147483647" to type "System.UInt32". Error: "Value was either too large or too small for a 
+UInt32."
+At C:\Users\endos\Desktop\hst_out\keep_awake.ps1:5 char:17
++ ... e ($true) { [void][W.K]::SetThreadExecutionState([uint32]0x80000001); ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [], RuntimeException
+    + FullyQualifiedErrorId : InvalidCastIConvertible
+ 
