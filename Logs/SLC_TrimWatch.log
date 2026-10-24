@@ -1,0 +1,7 @@
+Get-CimInstance : Not enough memory resources are available to complete this operation. 
+At C:\Users\endos\Desktop\hst_out\trim_watch.ps1:10 char:26
++ ...  $free = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePh ...
++                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (root\cimv2:Win32_OperatingSystem:String) [Get-CimInstance], CimException
+    + FullyQualifiedErrorId : HRESULT 0x8007000e,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand
+ 

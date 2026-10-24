@@ -1,0 +1,91 @@
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
+At C:\Users\endos\Desktop\hst_out\auto_spacesaver.ps1:38 char:83
++ ... $MinFreeGB) { Send-Slack "Auto-clean: C: $before -> $after GB free" }
++                                                                       ~~~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 
