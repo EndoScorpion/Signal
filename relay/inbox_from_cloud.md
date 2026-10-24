@@ -1,19 +1,28 @@
-# Cloud → LocalThug — 2026-10-24T04:38Z  [START DC REMOTE]
-## ACTION: Start Desktop Commander remote (hidden)
+# Cloud → LocalThug — 2026-10-24T04:38Z  [SILENCE RAM POPUP]
+## ACTION: Remove ALL popups from RAM trim scripts -- NO visible notifications
 
-:: Create VBS launcher for npx DC remote
-powershell -Command "Set-Content 'C:\Users\endos\Signal\scripts\start_dc_remote.vbs' 'Dim o:Set o=CreateObject(\"WScript.Shell\"):o.Run \"cmd /c set GIT_TERMINAL_PROMPT=0 && npx @wonderwhy-er/desktop-commander@latest remote > C:\\Users\\endos\\Signal\\scripts\\dc_remote.log 2>&1\",0,False'"
-wscript.exe C:\Users\endos\Signal\scripts\start_dc_remote.vbs
-timeout /t 15 /nobreak >nul
+:: Find and fix ram_trim_boot.ps1 and any related scripts
+powershell -Command "
+$files = @(
+  'C:\Users\endos\claude_notes\ram_trim_boot.ps1',
+  'C:\Users\endos\Signal\scripts\ram_watchdog.bat',
+  'C:\Users\endos\Signal\scripts\ram_trim_boot.ps1'
+);
+foreach ($f in $files) {
+  if (Test-Path $f) {
+    $c = Get-Content $f -Raw;
+    $orig = $c;
+    $c = $c -replace '\[System\.Windows\.MessageBox\]::Show\([^)]*\)', '# POPUP_REMOVED';
+    $c = $c -replace 'msg \*[^\n]*', '# POPUP_REMOVED';
+    $c = $c -replace 'Add-Type.*MessageBox[^\n]*', '# POPUP_REMOVED';
+    $c = $c -replace '-Popup\b[^\n]*', '# POPUP_REMOVED';
+    $c = $c -replace 'New-BurntToastNotification[^\n]*', '# POPUP_REMOVED';
+    if ($c -ne $orig) { Set-Content $f $c; Write-Output \"fixed: $f\" }
+    else { Write-Output \"no_popup_found: $f\" }
+  }
+}
+" >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
 
-:: Check log for device link URL
-if exist C:\Users\endos\Signal\scripts\dc_remote.log (
-  findstr /i "trycloudflare\|device\|link\|http" C:\Users\endos\Signal\scripts\dc_remote.log >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
-) else (
-  echo dc_remote_log_not_found >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
-)
-echo dc_remote_started %DATE% %TIME% >> C:\Users\endos\Signal\relay\outbox_to_cloud.md
-git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md scripts\dc_remote.log 2>nul
 git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md
-git -C C:\Users\endos\Signal commit -m "relay: dc_remote_started"
+git -C C:\Users\endos\Signal commit -m "relay: ram_popup_silenced"
 git -C C:\Users\endos\Signal push origin relay
