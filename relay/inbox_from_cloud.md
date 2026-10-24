@@ -1,34 +1,44 @@
-# Cloud → LocalThug — 2026-10-24T05:00Z  [EA OFFSET SCAN]
+# Cloud → LocalThug — 2026-10-24T05:01Z  [GEN META.JSON SIDECARS]
 
-## ACTION: Scan EA .mq4 source files for hardcoded EET offset values
+## ACTION: Scan history folders, generate .meta.json for each CSV/HST
 powershell -WindowStyle Hidden -Command "
 $out = 'C:\Users\endos\Signal\relay\outbox_to_cloud.md';
 $ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mmZ');
-"=== EA OFFSET SCAN $ts ===" | Add-Content $out;
+"=== META.JSON GEN $ts ===" | Add-Content $out;
 
-# Search paths
-$paths = @(
-  'C:\Users\endos\AppData\Roaming\MetaQuotes\Terminal',
-  'C:\Users\endos\Signal',
-  'C:\Users\endos\hst_out'
+$searchPaths = @(
+  'C:\Users\endos\Signal\data',
+  'C:\Users\endos\hst_out',
+  'C:\Users\endos\AppData\Roaming\MetaQuotes\Terminal'
 );
 
-$patterns = @('+3','-3','+2','-2','UTCOffset','ServerOffset','GMTOffset','TimeHour','TimeCurrent');
-
-foreach ($base in $paths) {
+foreach ($base in $searchPaths) {
   if (-not (Test-Path $base)) { continue }
-  $mq4files = Get-ChildItem -Path $base -Recurse -Filter '*.mq4' -ErrorAction SilentlyContinue;
-  $setfiles = Get-ChildItem -Path $base -Recurse -Filter '*.set' -ErrorAction SilentlyContinue;
-  foreach ($f in ($mq4files + $setfiles)) {
-    $hits = Select-String -Path $f.FullName -Pattern 'UTCOffset|ServerOffset|GMTOffset|[+-]\s*3\b|[+-]\s*2\b|TimeHour|TimeCurrent' -ErrorAction SilentlyContinue;
-    if ($hits) {
-      "FILE: $($f.FullName)" | Add-Content $out;
-      foreach ($h in $hits) { "  L$($h.LineNumber): $($h.Line.Trim())" | Add-Content $out }
-    }
+  $files = Get-ChildItem -Path $base -Recurse -Include '*.csv','*.hst' -ErrorAction SilentlyContinue;
+  foreach ($f in $files) {
+    $metaPath = $f.FullName + '.meta.json';
+    if (Test-Path $metaPath) { continue }  # skip if already exists
+    
+    # Infer source + timezone from filename
+    $name = $f.Name.ToUpper();
+    $src = 'unknown'; $tz = 'unknown'; $tzNote = '';
+    if ($name -match 'FXOPEN|FXO') { $src='FXOpen'; $tz='EET (UTC+3 summer / UTC+2 winter)'; $tzNote='MT4 server EET; DST variable per bar date' }
+    elseif ($name -match 'YAHOO|YF') { $src='Yahoo'; $tz='UTC+0'; $tzNote='exchange local; daily bars only' }
+    elseif ($name -match 'STOOQ') { $src='Stooq'; $tz='UTC+0'; $tzNote='daily bars' }
+    elseif ($name -match 'AV|ALPHAVANTAGE') { $src='AlphaVantage'; $tz='UTC+0'; $tzNote='inferred' }
+    elseif ($f.Extension -eq '.hst') { $src='MT4 terminal'; $tz='EET (UTC+3 summer / UTC+2 winter)'; $tzNote='MT4 .hst always EET server time' }
+    else { $src='unknown'; $tz='unknown'; $tzNote='manual verification needed' }
+    
+    $meta = [PSCustomObject]@{
+      source=$src; timezone=$tz; dst_note=$tzNote;
+      filename=$f.Name; created=$ts; verified_by='auto-scan'
+    };
+    $meta | ConvertTo-Json | Set-Content $metaPath;
+    "created: $metaPath" | Add-Content $out;
   }
 }
-"=== SCAN DONE ===" | Add-Content $out;
+"=== META GEN DONE ===" | Add-Content $out;
 git -C C:\Users\endos\Signal add relay\outbox_to_cloud.md;
-git -C C:\Users\endos\Signal commit -m 'relay: ea_offset_scan_done';
+git -C C:\Users\endos\Signal commit -m 'relay: meta_json_gen_done';
 git -C C:\Users\endos\Signal push origin relay;
 "
