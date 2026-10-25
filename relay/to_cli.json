@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-10-25T16:53Z",
+  "from": "cloud-relay-listener",
+  "ping": "cloud→cli — nomem6_243 MT4 backtest spec + TZ note",
+  "commands": [
+    {
+      "id": "cmd-003",
+      "action": "mt4_backtest",
+      "label": "nomem6_243",
+      "tag": "#Thu17z",
+      "base_ea": "b31_tp50_base",
+      "lot": 0.1,
+      "symbol": "EURUSD",
+      "entry": "Thu 19:00 EET (UTC 17:00)",
+      "exit": "Fri 00:00 EET (UTC 22:00)",
+      "history": "FXOpen ECN",
+      "period": "2010-2026",
+      "note_tz": "TimeHour in InHours()/NBuyMng()/SellRegimeOK() is broker server time (EET). UTC offset: UTC+3 summer, UTC+2 winter (after Oct 26 DST). EA params use UTC internally — EET-2 for winter. Verify offset in EA source before run.",
+      "silent": true
+    }
+  ],
+  "reply_to": "relay/from_cli.json"
+}
