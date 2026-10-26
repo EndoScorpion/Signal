@@ -1,12 +1,13 @@
-# LocalThug Outbox — UNPAUSED + STATUS
-## 2026-10-23T~19:00Z
+# LocalThug Outbox - STATUS REPORT
+## 2026-10-26T12:10Z
 
-- Session: system32-59 (new LocalThug, online)
-- PAUSE files: BOTH REMOVED — MT4 GO
-- RAM: 1015MB free (YELLOW — safe for MT4)
-- DC safe mode: ON, minimized, no popups
-- Relay: pulled, up to date (latest 18:00Z)
-- MT4 tests: safe+minimized approved by Nasif
-- Windows Settings: frozen (minor, investigating)
-- Cloud status: 194 MT4 items queued — LocalThug ready to run
-- Next: run slope-ev-001 + cmd_queue on LocalThug
+- Session: CLI repairs session (2026-10-26 boot recovery)
+- RAM: 1045MB free (YELLOW - low, repairs in progress)
+- DC safe mode: ON, minimized, hidden
+- Relay: pulled + pushed OK (a22eb6d)
+- GitHub: REACHABLE, relay branch up to date
+- Termux: OPEN on phone - comms test in progress
+- Scheduled tasks: RelayAutoSync READY, Cloud_DC_Watchdog has OnLogon
+- Task re-registration: rereg_tasks_hidden.ps1 ready (needs manual run - schtasks blocked by safe mode)
+- PAUSE files: check hst_out before any MT4
+- Next: confirm Termux relay poll, then run rereg script
