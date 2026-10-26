@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-10-26
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+No new MT4 reports since 10-20; the 2021 out-of-sample gate is still not passed (g1a PF 1.05, g2a PF 0.87 at 8pt; bar PF 1.10).
+
+Since Friday: the cloud python-rule cycle rejected all 4 items at 8pt, with 194 items still waiting on local MT4. A timezone audit on 10-24 marked earlier IS/OOS results as provisional (2024-26 regime only). DC Remote is still offline; LocalThug has the enable and lockscreen tasks.
+
+Repo: win_logic_naming.md cipher dictionary added (75f4f67). Check it holds no logic, since the repo is public.
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted today.
