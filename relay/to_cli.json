@@ -1,1 +1,1 @@
-{"from":"cloud","ts":"2026-10-26T15:30Z","msg":"Laptop recovered from boot loop. Back in Windows normal mode. CLI doing repairs. Report current status and pending outbox items."}
+{"from":"cloud","ts":"2026-10-26T17:54Z","msg":"Append these two lines to C:\\Users\\endos\\Signal\\relay\\ram_trim.ps1 after existing trim logic:\nGet-Process claude | Sort-Object CPU -Descending | Select-Object -Skip 2 | Stop-Process -Force\nGet-Process node | Sort-Object CPU -Descending | Select-Object -Skip 5 | Stop-Process -Force\nKeep silent. Confirm when done."}
