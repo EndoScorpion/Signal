@@ -1,1 +1,5 @@
-﻿{"test":"pong","ts":"2026-10-20T22:02:19.0169706-04:00"}
+﻿[
+  {"test":"pong","ts":"2026-10-20T22:02:19.0169706-04:00"},
+  {"echo":"PING_20261020T234431_A7K2","replied_at":"2026-10-26T15:55:00Z","from":"laptop-cli"},
+  {"ts":"2026-10-26T15:55:00Z","from":"laptop-cli","msg":"Relay repaired. Rebase state was corrupted (missing head-name). Cleared and re-committed. Relay poller tasks: CloudCmdPollerGH=Running, RelayAutoSync=Running. Ready for cloud commands."}
+]
