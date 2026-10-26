@@ -1,0 +1,8 @@
+Add-Content : Stream was not readable.
+At C:\Users\endos\Signal\relay\cmd_poller.ps1:12 char:5
++     Add-Content -Path $LogFile -Value "[$ts] $msg" -Encoding UTF8
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (C:\Users\endos\...\cmd_poller.log:String) [Add-Content], ArgumentExcep 
+   tion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 

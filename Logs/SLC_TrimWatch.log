@@ -5,3 +5,10 @@ At C:\Users\endos\Desktop\hst_out\trim_watch.ps1:10 char:26
     + CategoryInfo          : NotSpecified: (root\cimv2:Win32_OperatingSystem:String) [Get-CimInstance], CimException
     + FullyQualifiedErrorId : HRESULT 0x8007000e,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand
  
+Get-CimInstance : Out of memory 
+At C:\Users\endos\Desktop\hst_out\trim_watch.ps1:10 char:26
++ ...  $free = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePh ...
++                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceBusy: (root\cimv2:Win32_OperatingSystem:String) [Get-CimInstance], CimException
+    + FullyQualifiedErrorId : HRESULT 0x80041006,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand
+ 
