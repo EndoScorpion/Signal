@@ -1,21 +1,21 @@
 {
-  "timestamp": "2026-10-26T13:30Z",
+  "timestamp": "2026-10-26T13:31Z",
   "from": "cloud-relay",
-  "ping": "CLI crash diag",
+  "ping": "CLI crash diag v2 - safemode",
   "commands": [
     {
       "id": "cmd-diag-001",
       "action": "run_ps",
       "label": "cli_crash_diag",
-      "cmd": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"$ram=(Get-WmiObject Win32_OperatingSystem); $pct=[math]::Round(($ram.TotalVisibleMemorySize-$ram.FreePhysicalMemory)/$ram.TotalVisibleMemorySize*100,1); $evts=Get-EventLog -LogName Application -Newest 50 -EntryType Error -ErrorAction SilentlyContinue | Where-Object {$_.Source -match 'Claude|Application Error|Windows Error' -or $_.Message -match 'claude'} | Select-Object -First 5 TimeGenerated,Source,Message; $logdir=\"$env:APPDATA\\Claude\\logs\"; $logs=if(Test-Path $logdir){Get-ChildItem $logdir -Filter '*.log' | Select-Object Name,@{N='SizeMB';E={[math]::Round($_.Length/1MB,2)}},LastWriteTime}else{'no logs dir'}; $out=@{ts=(Get-Date -f 'yyyy-MM-ddTHH:mmZ');ram_pct=$pct;crash_events=($evts|ForEach-Object{\"$($_.TimeGenerated) [$($_.Source)] $($_.Message.Substring(0,[math]::Min(120,$_.Message.Length)))\"}); log_files=$logs}; $out|ConvertTo-Json -Depth 3|Out-File '$env:APPDATA\\Claude\\diag_output.json' -Encoding utf8; Write-Host 'diag done'\"",
-      "note": "Check RAM%, Event Log for Claude/OOM crashes, CLI log file sizes. Output to %APPDATA%\\Claude\\diag_output.json",
+      "cmd": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"$ram=(Get-WmiObject Win32_OperatingSystem); $pct=[math]::Round(($ram.TotalVisibleMemorySize-$ram.FreePhysicalMemory)/$ram.TotalVisibleMemorySize*100,1); $evts=Get-EventLog -LogName Application -Newest 50 -EntryType Error -ErrorAction SilentlyContinue | Where-Object {$_.Source -match 'Claude|Application Error|Windows Error' -or $_.Message -match 'claude'} | Select-Object -First 5 TimeGenerated,Source,Message; $logdir=\"$env:APPDATA\\Claude\\logs\"; $logs=if(Test-Path $logdir){Get-ChildItem $logdir -Filter '*.log' | Select-Object Name,@{N='SizeMB';E={[math]::Round($_.Length/1MB,2)}},LastWriteTime}else{'no logs dir'}; $isAdmin=([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); $bcdeditTest=try{$r=bcdedit /enum {current} 2>&1; 'ok'}catch{'FAILED: '+$_}; $out=@{ts=(Get-Date -f 'yyyy-MM-ddTHH:mmZ');ram_pct=$pct;is_admin=$isAdmin;bcdedit_accessible=$bcdeditTest;crash_events=($evts|ForEach-Object{\"$($_.TimeGenerated) [$($_.Source)] $($_.Message.Substring(0,[math]::Min(120,$_.Message.Length)))\"}); log_files=$logs}; $out|ConvertTo-Json -Depth 3|Out-File \"$env:APPDATA\\Claude\\diag_output.json\" -Encoding utf8; Write-Host 'diag done'\"",
+      "note": "Check RAM%, admin status, bcdedit access, Event Log for crashes. Safe-mode crash likely = CLI calls bcdedit without admin -> UAC blocks -> crash.",
       "silent": true
     },
     {
       "id": "cmd-diag-002",
       "action": "run_ps",
       "label": "cli_diag_relay_back",
-      "cmd": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"Start-Sleep 5; $f='$env:APPDATA\\Claude\\diag_output.json'; if(Test-Path $f){$content=Get-Content $f -Raw; $content|Out-File 'C:\\Users\\endos\\Signal\\relay\\from_cli_diag.json' -Encoding utf8}\"",
+      "cmd": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"Start-Sleep 8; $f=\"$env:APPDATA\\Claude\\diag_output.json\"; if(Test-Path $f){$content=Get-Content $f -Raw; $content|Out-File 'C:\\Users\\endos\\Signal\\relay\\from_cli_diag.json' -Encoding utf8}\"",
       "note": "Copy diag output to relay folder for cloud pickup",
       "silent": true
     }
