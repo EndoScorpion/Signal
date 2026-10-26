@@ -1170,3 +1170,35 @@ Signal pushed
 fatal: not a git repository (or any of the parent directories): .git
 fatal: not a git repository (or any of the parent directories): .git
 MQL4: nothing to commit
+warning: in the working copy of 'Logs/SignalAutoBackup.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Logs/cloud_dc_watchdog.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Logs/watchdog_pollers.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Logs/cloud_cmd_poller-20261024T232211.565.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Logs/cloud_cmd_poller-20261024T232227.416.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'data/news_pulls/NEWS_20261025_1616.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/cli_repair.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/popup_prevention.ps1', LF will be replaced by CRLF the next time Git touches it
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'SYSTEM@LenovoLaptop.(none)')
+To https://github.com/EndoScorpion/Signal.git
+ ! [rejected]        relay -> relay (non-fast-forward)
+error: failed to push some refs to 'https://github.com/EndoScorpion/Signal.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+Signal pushed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+MQL4: nothing to commit
