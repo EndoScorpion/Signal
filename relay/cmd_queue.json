@@ -1,4 +1,4 @@
-[
+ï»¿[
     {
         "id":  "dcclone_repoint_002",
         "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) -MultipleInstances StopExisting -Hidden; $principal = New-ScheduledTaskPrincipal -UserId \u0027ENDOSCORPION\\endos\u0027 -LogonType Interactive -RunLevel Highest; $action = New-ScheduledTaskAction -Execute \u0027C:\\Program Files\\nodejs\\node.exe\u0027 -Argument \u0027\"C:\\Users\\endos\\Signal\\relay\\dc_clone\\server.js\"\u0027 -WorkingDirectory \u0027C:\\Users\\endos\\Signal\\relay\\dc_clone\u0027; Unregister-ScheduledTask -TaskName \u0027DcCloneServer\u0027 -Confirm:$false -EA SilentlyContinue; Register-ScheduledTask -TaskName \u0027DcCloneServer\u0027 -Action $action -Principal $principal -Settings $s -Force | Out-Null; Write-Host \u0027DcCloneServer repointed to git checkout\u0027",
@@ -134,7 +134,7 @@
         "ts":  "2026-10-20T22:00:55Z",
         "source":  "project_chat",
         "from":  "Nasif",
-        "note":  "DISASTER RECOVERY BACKUP — laptop may die. Push all local changes (Signal + MQL4) to git NOW. Vague commit messages only, no strategy detail."
+        "note":  "DISASTER RECOVERY BACKUP ï¿½ laptop may die. Push all local changes (Signal + MQL4) to git NOW. Vague commit messages only, no strategy detail."
     },
     {
         "id":  "vague_challenge_20261020T2204",
@@ -150,7 +150,7 @@
         "id":  "relay_bidir_test_20261024T221913",
         "command":  "echo relay_bidir_test_ok_181913",
         "shell":  "ps",
-        "status":  "pending",
+        "status":  "done",
         "ts":  "2026-10-24T22:19:13Z",
         "source":  "cloud-dc-thread",
         "from":  "CloudCoordinator"

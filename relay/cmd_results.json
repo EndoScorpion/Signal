@@ -5,64 +5,46 @@
                           "value":  [
                                         {
                                             "value":  [
-                                                          "@{value=System.Object[]; Count=12}",
-                                                          "@{id=test_comms_009; stdout=relay_alive_check; stderr=; exit_code=0; completed_at=2026-10-19T22:34:43.5902373-04:00}"
+                                                          "@{value=System.Object[]; Count=2}",
+                                                          "@{id=cc_test_001; stdout=; stderr=At line:1 char:30\r\n+ echo COORDINATOR_TO_CLI_TEST \u0026\u0026 date\r\n+                              ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.; exit_code=1; completed_at=2026-10-20T05:34:47.2443612-04:00}",
+                                                          "@{id=chat_20261020T042532; stdout=relay_test_from_thread; stderr=; exit_code=0; completed_at=2026-10-20T05:34:47.2857005-04:00}",
+                                                          "@{id=git_test_001; stdout=; stderr=At line:1 char:20\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                    ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.\r\n\r\nAt line:1 char:31\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                               ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.; exit_code=1; completed_at=2026-10-20T05:34:47.2877163-04:00}",
+                                                          "@{id=83cef254; stdout=hi from LocalThug via GitHub relay; stderr=; exit_code=0; completed_at=2026-10-20T05:34:47.3135423-04:00}"
                                                       ],
-                                            "Count":  2
+                                            "Count":  5
                                         },
                                         {
-                                            "id":  "cc_test_001",
-                                            "stdout":  "",
-                                            "stderr":  "At line:1 char:30\r\n+ echo COORDINATOR_TO_CLI_TEST \u0026\u0026 date\r\n+                              ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.",
-                                            "exit_code":  1,
-                                            "completed_at":  "2026-10-20T05:34:47.2443612-04:00"
-                                        },
-                                        {
-                                            "id":  "chat_20261020T042532",
-                                            "stdout":  "relay_test_from_thread",
+                                            "id":  "mt4_forex_approved_20261020",
+                                            "stdout":  "MT4 forex tests approved by Nasif 2026-10-20T14:19Z. Run pending theory_queue entries in priority order: nomem6_026 (STACKA-FULL, M15 Model1), nomem6_029 (STACKA-MON17-HALFLOT, M15), nomem6_028 (E7-ASIA, M1 ticks), nomem6_027 (STACKA-DAYSTOP, M15), nomem6_018 (TRAIL08, M1 ticks). All years 2020-2026, cost=0.00008, 0.1 lot (except 029 Mon17 leg=0.05). Results to relay/cmd_results/. Flag if MT4 PF vs cloud differs \u003e30% or maxDD \u003e2x.",
                                             "stderr":  "",
                                             "exit_code":  0,
-                                            "completed_at":  "2026-10-20T05:34:47.2857005-04:00"
-                                        },
-                                        {
-                                            "id":  "git_test_001",
-                                            "stdout":  "",
-                                            "stderr":  "At line:1 char:20\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                    ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.\r\n\r\nAt line:1 char:31\r\n+ echo RELAY_TEST_OK \u0026\u0026 date /t \u0026\u0026 time /t\r\n+                               ~~\nThe token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version.",
-                                            "exit_code":  1,
-                                            "completed_at":  "2026-10-20T05:34:47.2877163-04:00"
-                                        },
-                                        {
-                                            "id":  "83cef254",
-                                            "stdout":  "hi from LocalThug via GitHub relay",
-                                            "stderr":  "",
-                                            "exit_code":  0,
-                                            "completed_at":  "2026-10-20T05:34:47.3135423-04:00"
+                                            "completed_at":  "2026-10-20T10:21:33.1105211-04:00"
                                         }
                                     ],
-                          "Count":  5
+                          "Count":  2
                       },
                       {
-                          "id":  "mt4_forex_approved_20261020",
-                          "stdout":  "MT4 forex tests approved by Nasif 2026-10-20T14:19Z. Run pending theory_queue entries in priority order: nomem6_026 (STACKA-FULL, M15 Model1), nomem6_029 (STACKA-MON17-HALFLOT, M15), nomem6_028 (E7-ASIA, M1 ticks), nomem6_027 (STACKA-DAYSTOP, M15), nomem6_018 (TRAIL08, M1 ticks). All years 2020-2026, cost=0.00008, 0.1 lot (except 029 Mon17 leg=0.05). Results to relay/cmd_results/. Flag if MT4 PF vs cloud differs \u003e30% or maxDD \u003e2x.",
+                          "id":  "dr_backup_20261020T2200",
+                          "stdout":  "",
                           "stderr":  "",
                           "exit_code":  0,
-                          "completed_at":  "2026-10-20T10:21:33.1105211-04:00"
+                          "completed_at":  "2026-10-20T19:19:36.2065212-04:00"
+                      },
+                      {
+                          "id":  "vague_challenge_20261020T2204",
+                          "stdout":  "cloud-coord challenge 22:04Z",
+                          "stderr":  "",
+                          "exit_code":  0,
+                          "completed_at":  "2026-10-20T19:19:36.5051059-04:00"
                       }
                   ],
-        "Count":  2
+        "Count":  3
     },
     {
-        "id":  "dr_backup_20261020T2200",
-        "stdout":  "",
+        "id":  "relay_bidir_test_20261024T221913",
+        "stdout":  "relay_bidir_test_ok_181913",
         "stderr":  "",
         "exit_code":  0,
-        "completed_at":  "2026-10-20T19:19:36.2065212-04:00"
-    },
-    {
-        "id":  "vague_challenge_20261020T2204",
-        "stdout":  "cloud-coord challenge 22:04Z",
-        "stderr":  "",
-        "exit_code":  0,
-        "completed_at":  "2026-10-20T19:19:36.5051059-04:00"
+        "completed_at":  "2026-10-26T11:54:47.8418568-04:00"
     }
 ]
