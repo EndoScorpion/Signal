@@ -1,1 +1,24 @@
-ewogICJ0aW1lc3RhbXAiOiAiMjAyNi0xMC0yNVQyMjowNVoiLAogICJmcm9tIjogImNsb3VkLXJlbGF5IiwKICAicGluZyI6ICJSQU0gdHJpbSBmb3IgU3RlbGxhcmlzIiwKICAiY29tbWFuZHMiOiBbCiAgICB7CiAgICAgICJpZCI6ICJjbWQtMDA1IiwKICAgICAgImFjdGlvbiI6ICJydW5fcHMiLAogICAgICAibGFiZWwiOiAicmFtX3RyaW1fc3RlbGxhcmlzIiwKICAgICAgImNtZCI6ICJwb3dlcnNoZWxsIC1XaW5kb3dTdHlsZSBIaWRkZW4gLUV4ZWN1dGlvblBvbGljeSBCeXBhc3MgLUNvbW1hbmQgXCIkZXhjbHVkZT1AKCd0ZXJtaW5hbC5leGUnLCdwb3dlcnNoZWxsLmV4ZScsJ210NjQuZXhlJywndGVybWluYWw2NC5leGUnKTsgR2V0LVByb2Nlc3MgY2hyb21lIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVlIHwgV2hlcmUgV29ya2luZ1NldCAtZ3QgMTUwTUIgfCBTdG9wLVByb2Nlc3MgLUZvcmNlOyBbR0NdOjpDb2xsZWN0KCk7IFtHQ106OldhaXRGb3JQZW5kaW5nRmluYWxpemVycygpOyBXcml0ZS1Ib3N0ICdSQU0gdHJpbSBkb25lJ1wiIiwKICAgICAgIm5vdGUiOiAiS2lsbCBDaHJvbWUgcHJvY2Vzc2VzID4xNTBNQi4gS2VlcCBNVDQgKG10NjQuZXhlKSwgcmVsYXkgcG9sbGVyLCBUYXNrIFNjaGVkdWxlci4gUnVuIHNpbGVudGx5LiIsCiAgICAgICJzaWxlbnQiOiB0cnVlCiAgICB9CiAgXSwKICAicmVwbHlfdG8iOiAicmVsYXkvZnJvbV9jbGkuanNvbiIKfQ==
+{
+  "timestamp": "2026-10-26T13:30Z",
+  "from": "cloud-relay",
+  "ping": "CLI crash diag",
+  "commands": [
+    {
+      "id": "cmd-diag-001",
+      "action": "run_ps",
+      "label": "cli_crash_diag",
+      "cmd": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"$ram=(Get-WmiObject Win32_OperatingSystem); $pct=[math]::Round(($ram.TotalVisibleMemorySize-$ram.FreePhysicalMemory)/$ram.TotalVisibleMemorySize*100,1); $evts=Get-EventLog -LogName Application -Newest 50 -EntryType Error -ErrorAction SilentlyContinue | Where-Object {$_.Source -match 'Claude|Application Error|Windows Error' -or $_.Message -match 'claude'} | Select-Object -First 5 TimeGenerated,Source,Message; $logdir=\"$env:APPDATA\\Claude\\logs\"; $logs=if(Test-Path $logdir){Get-ChildItem $logdir -Filter '*.log' | Select-Object Name,@{N='SizeMB';E={[math]::Round($_.Length/1MB,2)}},LastWriteTime}else{'no logs dir'}; $out=@{ts=(Get-Date -f 'yyyy-MM-ddTHH:mmZ');ram_pct=$pct;crash_events=($evts|ForEach-Object{\"$($_.TimeGenerated) [$($_.Source)] $($_.Message.Substring(0,[math]::Min(120,$_.Message.Length)))\"}); log_files=$logs}; $out|ConvertTo-Json -Depth 3|Out-File '$env:APPDATA\\Claude\\diag_output.json' -Encoding utf8; Write-Host 'diag done'\"",
+      "note": "Check RAM%, Event Log for Claude/OOM crashes, CLI log file sizes. Output to %APPDATA%\\Claude\\diag_output.json",
+      "silent": true
+    },
+    {
+      "id": "cmd-diag-002",
+      "action": "run_ps",
+      "label": "cli_diag_relay_back",
+      "cmd": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"Start-Sleep 5; $f='$env:APPDATA\\Claude\\diag_output.json'; if(Test-Path $f){$content=Get-Content $f -Raw; $content|Out-File 'C:\\Users\\endos\\Signal\\relay\\from_cli_diag.json' -Encoding utf8}\"",
+      "note": "Copy diag output to relay folder for cloud pickup",
+      "silent": true
+    }
+  ],
+  "reply_to": "relay/from_cli.json"
+}
