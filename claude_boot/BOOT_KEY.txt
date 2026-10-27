@@ -1,0 +1,15 @@
+CLAUDE BOOT USB
+===============
+Project: EndoScorpion/Signal
+Owner:   endoscorpion@gmail.com
+Created: 2026-10-27
+
+Files on this USB:
+  kali_claude.sh    - Run on Kali Linux boot to install + launch Claude CLI
+  ubuntu_claude.sh  - Run on Ubuntu/Xubuntu boot to install + launch Claude CLI
+  BOOT_KEY.txt      - This file
+  README.txt        - Instructions
+
+Usage:
+  chmod +x kali_claude.sh && sudo ./kali_claude.sh
+  chmod +x ubuntu_claude.sh && ./ubuntu_claude.sh
