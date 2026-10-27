@@ -1,0 +1,27 @@
+=== CLAUDE CLI ON KALI (from USB) ===
+
+1. Boot into Kali from this USB (F12 at startup -> select USB -> pick Kali)
+
+2. Connect to WiFi in Kali (top-right network icon)
+
+3. Open Terminal
+
+4. Find this USB drive:
+   lsblk
+   (Look for a partition ~32GB -- usually /dev/sdb2 or /dev/sdc2)
+
+5. Mount it:
+   sudo mkdir -p /mnt/usb
+   sudo mount /dev/sdb2 /mnt/usb
+
+6. Run Claude CLI installer:
+   bash /mnt/usb/claude_boot/kali_claude.sh
+
+7. Claude CLI will install (~2 min) and launch automatically.
+
+=== NEXT TIME (after first install) ===
+Claude is cached -- just run:
+   bash /mnt/usb/claude_boot/kali_claude.sh
+
+=== IF USB MOUNTS AS DIFFERENT LETTER ===
+Replace /dev/sdb2 with whatever lsblk shows as the large USB partition.
