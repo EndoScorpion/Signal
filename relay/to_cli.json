@@ -1,26 +1,16 @@
-[
-  {
-    "from": "cloud",
-    "ts": "2026-10-27T03:34Z",
-    "id": "passkey-fix-20261027",
-    "cmd": "RUN_COMMAND_ADMIN",
-    "args": ["powershell", "-NoProfile", "-Command", "sc.exe config NgcSvc start= delayed-auto; sc.exe config NgcKeyIso start= delayed-auto; sc.exe config WbioSrvc start= delayed-auto; $ngcPath=\"$env:LOCALAPPDATA\\Microsoft\\Ngc\"; $count=(Get-ChildItem -Path $ngcPath -Recurse -ErrorAction SilentlyContinue | Measure-Object).Count; Write-Host \"NGC file count: $count\"; if($count -gt 100){icacls $ngcPath /grant Administrators:F /T /C /Q; Remove-Item -Path \"$ngcPath\\*\" -Recurse -Force -ErrorAction SilentlyContinue; Write-Host 'NGC cleared'}; net stop NgcSvc; net stop NgcKeyIso; net stop WbioSrvc; Start-Sleep 2; net start WbioSrvc; net start NgcKeyIso; net start NgcSvc; Write-Host 'Done - passkey services restarted'"],
-    "msg": "Fix slow passkey auth: set Hello services delayed-auto, clear bloated NGC if >100 files, restart services. Run as Admin."
-  },
-  {
-    "from": "cloud",
-    "ts": "2026-10-27T03:27Z",
-    "id": "download-claude-backup-bat-20261027",
-    "cmd": "WRITE_FILE",
-    "path": "C:\\Users\\endos\\Desktop\\claude_backup.bat",
-    "content": "@echo off\r\ncd /d C:\\Users\\endos\r\nwhere claude >nul 2>&1 && (claude & goto :end)\r\nwhere npx >nul 2>&1 && (npx @anthropic-ai/claude-code@latest & goto :end)\r\nnode \"%APPDATA%\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js\" 2>nul && goto :end\r\necho Claude CLI not found. Run: npm install -g @anthropic-ai/claude-code\r\npause\r\n:end"
-  },
-  {
-    "from": "cloud",
-    "ts": "2026-10-27T03:27Z",
-    "id": "npm-install-g-claude-20261027",
-    "cmd": "RUN_COMMAND",
-    "args": ["cmd", "/c", "npm install -g @anthropic-ai/claude-code"],
-    "msg": "Global install @anthropic-ai/claude-code so claude command works directly"
-  }
-]
+{
+  "timestamp": "2026-10-27T03:43Z",
+  "from": "cloud-relay-listener",
+  "label": "usb-rescue-run-20261027",
+  "commands": [
+    {
+      "id": "cmd-004",
+      "action": "run_hidden",
+      "label": "usb-rescue-run-20261027",
+      "note": "Download bat then launch elevated (UAC prompt will appear). Bat has pause before flash step — user must press a key at that step.",
+      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"Invoke-WebRequest 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/usb_rescue/make_rescue_usb.bat' -OutFile 'C:\\Users\\endos\\Desktop\\make_rescue_usb.bat'; Start-Process 'cmd.exe' -ArgumentList '/c C:\\Users\\endos\\Desktop\\make_rescue_usb.bat' -Verb RunAs -WindowStyle Hidden\"",
+      "silent": true
+    }
+  ],
+  "reply_to": "relay/from_cli.json"
+}
