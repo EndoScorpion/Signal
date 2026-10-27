@@ -1,1 +1,18 @@
-{"from":"cloud","ts":"2026-10-27T03:14Z","id":"rescue-usb-20261027-001","cmd":"DOWNLOAD_AND_RUN","args":["https://raw.githubusercontent.com/EndoScorpion/Signal/main/relay/make_rescue_usb.bat","C:\\Users\\endos\\Downloads\\make_rescue_usb.bat"],"msg":"Download rescue USB bat to Downloads — right-click Run as Admin to flash drive D with Ubuntu+Claude"}
+[
+  {
+    "from": "cloud",
+    "ts": "2026-10-27T03:15Z",
+    "id": "write-claude-watchdog-20261027",
+    "cmd": "WRITE_FILE",
+    "path": "C:\\Users\\endos\\Signal\\claude_watchdog.ps1",
+    "content": "# Claude CLI Watchdog - one-shot; Task Scheduler handles repeat\r\n$logFile = \"C:\\Users\\endos\\Signal\\claude_restart_log.txt\"\r\nfunction Write-Log($msg) {\r\n    $ts = (Get-Date).ToString(\"yyyy-MM-dd HH:mm:ss\")\r\n    \"$ts $msg\" | Out-File -FilePath $logFile -Append -Encoding utf8\r\n}\r\n$claudeRunning = Get-WmiObject Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -like \"*claude*\" }\r\nif (-not $claudeRunning) {\r\n    Write-Log \"Claude CLI not found - relaunching\"\r\n    Start-Process cmd.exe -ArgumentList '/k \"cd /d C:\\Users\\endos && claude\"' -WindowStyle Normal\r\n    Write-Log \"Relaunch issued\"\r\n}"
+  },
+  {
+    "from": "cloud",
+    "ts": "2026-10-27T03:15Z",
+    "id": "register-claudewatchdog-20261027",
+    "cmd": "RUN_COMMAND",
+    "args": ["powershell", "-WindowStyle", "Hidden", "-Command", "$act = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument '\"C:\\Users\\endos\\Signal\\run_hidden.vbs\" \"powershell.exe -ExecutionPolicy Bypass -File C:\\Users\\endos\\Signal\\claude_watchdog.ps1\"'; $trg = @(New-ScheduledTaskTrigger -AtLogOn; $rep = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Seconds 30) -Once -At (Get-Date); $rep); Register-ScheduledTask -TaskName ClaudeWatchdog -Action $act -Trigger $trg -RunLevel Limited -Force"],
+    "msg": "Register ClaudeWatchdog: check every 30s, relaunch claude if dead"
+  }
+]
