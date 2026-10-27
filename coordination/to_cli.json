@@ -88,5 +88,16 @@
     "shell": "ps",
     "command": "Start-ScheduledTask -TaskName 'RelayAutoSync' -ErrorAction SilentlyContinue\nWrite-Host 'RelayAutoSync started'",
     "note": "Wake relay poller. Nasif 2026-10-24T22:08Z."
+  },
+  {
+    "id": "ventoy_usb_setup_20261027T1236",
+    "status": "pending",
+    "added_by": "cloud-ventoy-thread",
+    "added_at": "2026-10-27T12:36:00Z",
+    "priority": 0,
+    "description": "Detect 128GB USB drive, download latest Ventoy, install it on USB. Results pushed to relay.",
+    "shell": "ps",
+    "command": "$usbDisk = Get-Disk | Where-Object { $_.BusType -eq 'USB' -and $_.Size -gt 100GB -and $_.Size -lt 160GB } | Select-Object -First 1\nif (-not $usbDisk) { $usbDisk = Get-Disk | Where-Object { $_.IsRemovable -eq $true -and $_.Size -gt 100GB -and $_.Size -lt 160GB } | Select-Object -First 1 }\nif (-not $usbDisk) {\n  $err = @{ ts=(Get-Date -Format 'u'); status='ERROR'; msg='No 128GB USB disk found. All disks: ' + ((Get-Disk | Select-Object Number,BusType,Size,IsRemovable | ConvertTo-Json -Compress)) }\n  $err | ConvertTo-Json | Set-Content 'relay\\cmd_results\\ventoy_result.json'\n  git -C C:\\Users\\endos\\Signal add relay\\cmd_results\\ventoy_result.json\n  git -C C:\\Users\\endos\\Signal commit -m 'ventoy: no USB found'\n  git -C C:\\Users\\endos\\Signal push origin relay\n  Write-Host 'ERROR: No 128GB USB found'; exit 1\n}\n$diskNum = $usbDisk.Number\n$physDrive = \"\\\\.\\PhysicalDrive$diskNum\"\n$szGB = [math]::Round($usbDisk.Size/1GB,1)\nWrite-Host \"Found USB: disk $diskNum ($szGB GB) at $physDrive\"\n$outDir = \"$env:TEMP\\ventoy_setup\"\nNew-Item -ItemType Directory -Force -Path $outDir | Out-Null\n$rel = Invoke-RestMethod 'https://api.github.com/repos/ventoy/Ventoy/releases/latest' -UseBasicParsing\n$asset = $rel.assets | Where-Object { $_.name -match 'ventoy-.*-windows\\.zip' } | Select-Object -First 1\nif (-not $asset) { Write-Host 'ERROR: Could not find Ventoy windows zip in latest release'; exit 1 }\nWrite-Host \"Downloading $($asset.name) ...\"\nInvoke-WebRequest $asset.browser_download_url -OutFile \"$outDir\\ventoy.zip\" -UseBasicParsing\nExpand-Archive \"$outDir\\ventoy.zip\" -DestinationPath $outDir -Force\n$exe = Get-ChildItem $outDir -Recurse -Filter 'Ventoy2Disk.exe' | Select-Object -First 1\nif (-not $exe) { Write-Host 'ERROR: Ventoy2Disk.exe not found after extraction'; exit 1 }\nWrite-Host \"Ventoy exe: $($exe.FullName)\"\n$proc = Start-Process -FilePath $exe.FullName -ArgumentList \"-I $physDrive\" -Wait -PassThru -NoNewWindow\n$exitCode = $proc.ExitCode\nWrite-Host \"Ventoy exit code: $exitCode\"\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\nNew-Item -ItemType Directory -Force -Path 'relay\\cmd_results' | Out-Null\n@{ ts=$ts; disk_num=$diskNum; phys_drive=$physDrive; size_gb=$szGB; ventoy_version=$rel.tag_name; exit_code=$exitCode; status=if($exitCode -eq 0){'OK'}else{'ERROR'} } | ConvertTo-Json | Set-Content 'relay\\cmd_results\\ventoy_result.json'\ngit -C C:\\Users\\endos\\Signal add relay\\cmd_results\\ventoy_result.json\ngit -C C:\\Users\\endos\\Signal commit -m \"ventoy install done $ts exit=$exitCode\"\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host 'Ventoy setup complete'",
+    "note": "Detect 128GB USB, download Ventoy from GitHub, install with -I (no confirmation). Nasif 2026-10-27."
   }
 ]
