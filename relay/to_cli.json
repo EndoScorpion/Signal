@@ -1,15 +1,7 @@
 {
-  "timestamp": "2026-10-27T04:11Z",
+  "timestamp": "2026-10-27T04:12Z",
   "from": "cloud-relay-listener",
   "commands": [
-    {
-      "id": "cmd-009",
-      "action": "run_hidden",
-      "label": "usb-rescue-run-20261027",
-      "note": "USB 32GB on D: confirmed 61GB free. UAC dialog will appear. Bat has pause before flash step.",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"Invoke-WebRequest 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/usb_rescue/make_rescue_usb.bat' -OutFile 'C:\\Users\\endos\\Desktop\\make_rescue_usb.bat'; Start-Process 'cmd.exe' -ArgumentList '/c C:\\Users\\endos\\Desktop\\make_rescue_usb.bat' -Verb RunAs -WindowStyle Hidden\"",
-      "silent": true
-    },
     {
       "id": "cmd-008",
       "action": "run_hidden",
