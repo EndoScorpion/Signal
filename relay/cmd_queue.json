@@ -1,165 +1,34 @@
 [
+    {"id":"dcclone_repoint_002","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T00:06:00Z"},
+    {"id":"cmdpoller_repoint_001","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T00:06:01Z"},
+    {"id":"check_dcremote_id_002","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T00:06:02Z"},
+    {"id":"verify_001","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T00:06:03Z"},
+    {"id":"test_comms_001","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T00:44:18Z"},
+    {"id":"test_comms_002","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T00:59:30Z"},
+    {"id":"test_comms_004","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T01:08:45Z"},
+    {"id":"test_comms_005","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T01:14:10Z"},
+    {"id":"test_comms_006","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T01:18:30Z"},
+    {"id":"test_comms_007","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T01:24:35Z"},
+    {"id":"test_comms_008","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T01:42:40Z"},
+    {"id":"test_comms_009","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T02:28:00Z"},
+    {"id":"cc_test_001","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T04:18:40Z"},
+    {"id":"chat_20261020T042532","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T04:25:32Z"},
+    {"id":"git_test_001","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T04:35:17Z"},
+    {"id":"83cef254","command":"echo done","shell":"ps","status":"done"},
+    {"id":"mt4_forex_approved_20261020","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T14:20:02Z"},
+    {"id":"dr_backup_20261020T2200","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T22:00:55Z"},
+    {"id":"vague_challenge_20261020T2204","command":"echo done","shell":"ps","status":"done","ts":"2026-10-20T22:04:12Z"},
+    {"id":"relay_bidir_test_20261024T221913","command":"echo done","shell":"ps","status":"done","ts":"2026-10-24T22:19:13Z"},
+    {"id":"rereg-tasks-20261026-001","command":"echo superseded","shell":"ps","status":"done","ts":"2026-10-26T00:00:00Z"},
+    {"id":"rereg-tasks-20261027-001","command":"echo superseded","shell":"cmd","status":"done","ts":"2026-10-27T00:21:00Z"},
     {
-        "id":  "dcclone_repoint_002",
-        "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) -MultipleInstances StopExisting -Hidden; $principal = New-ScheduledTaskPrincipal -UserId 'ENDOSCORPION\\endos' -LogonType Interactive -RunLevel Highest; $action = New-ScheduledTaskAction -Execute 'C:\\Program Files\\nodejs\\node.exe' -Argument '\"C:\\Users\\endos\\Signal\\relay\\dc_clone\\server.js\"' -WorkingDirectory 'C:\\Users\\endos\\Signal\\relay\\dc_clone'; Unregister-ScheduledTask -TaskName 'DcCloneServer' -Confirm:$false -EA SilentlyContinue; Register-ScheduledTask -TaskName 'DcCloneServer' -Action $action -Principal $principal -Settings $s -Force | Out-Null; Write-Host 'DcCloneServer repointed to git checkout'",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T00:06:00Z"
-    },
-    {
-        "id":  "cmdpoller_repoint_001",
-        "command":  "$s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 4) -MultipleInstances StopExisting -Hidden; $a2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-NonInteractive -WindowStyle Hidden -File C:\\Users\\endos\\Signal\\relay\\cmd_poller.ps1'; $t2 = Get-ScheduledTask -TaskName 'CloudCmdPollerGH' -EA SilentlyContinue; if ($t2) { Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $a2 -Trigger $t2.Triggers -Settings $s -RunLevel Highest -Force | Out-Null; Write-Host 'CloudCmdPollerGH repointed' } else { Write-Host 'CloudCmdPollerGH not found' }",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T00:06:01Z"
-    },
-    {
-        "id":  "check_dcremote_id_002",
-        "command":  "$f = 'C:\\tools\\start_dcremote.ps1'; if (Test-Path $f) { $c = Get-Content $f -Raw; if ($c -match '987fd7bd') { $c2 = $c -replace '987fd7bd[^\"']*','24123e3e-6795-430b-abf6-32e186477523'; Set-Content $f $c2 -NoNewline; Write-Host 'device ID patched' } else { Write-Host 'device ID ok' } } else { Write-Host 'file not found' }",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T00:06:02Z"
-    },
-    {
-        "id":  "verify_001",
-        "command":  "$p = Get-Process node -EA SilentlyContinue | Where-Object {(Get-WmiObject Win32_Process -Filter \"ProcessId=$($_.Id)\" -EA SilentlyContinue).CommandLine -match 'server.js'}; $t = Get-ScheduledTask DcCloneServer,CloudCmdPollerGH -EA SilentlyContinue | Select-Object TaskName,State; Write-Host ('DC Clone: '+(if ($p) {'RUNNING PID '+$p.Id} else {'DEAD'})); $t | ForEach-Object {Write-Host ($_.TaskName+' '+$_.State)}",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T00:06:03Z"
-    },
-    {
-        "id":  "test_comms_001",
-        "command":  "echo '2-way comms test from cloud coordinator'",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T00:44:18Z"
-    },
-    {
-        "id":  "test_comms_002",
-        "command":  "echo relay_test_ok",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T00:59:30Z"
-    },
-    {
-        "id":  "test_comms_004",
-        "command":  "echo relay_test_ok",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T01:08:45Z"
-    },
-    {
-        "id":  "test_comms_005",
-        "command":  "echo relay_test_ok",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T01:14:10Z"
-    },
-    {
-        "id":  "test_comms_006",
-        "command":  "echo relay_test_ok",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T01:18:30Z"
-    },
-    {
-        "id":  "test_comms_007",
-        "command":  "echo relay_test_ok",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T01:24:35Z"
-    },
-    {
-        "id":  "test_comms_008",
-        "command":  "echo relay_test_ok",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T01:42:40Z"
-    },
-    {
-        "id":  "test_comms_009",
-        "command":  "echo relay_alive_check",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T02:28:00Z"
-    },
-    {
-        "id":  "cc_test_001",
-        "command":  "echo COORDINATOR_TO_CLI_TEST && date",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T04:18:40Z",
-        "source":  "coordinator",
-        "from":  "CloudCoordinator"
-    },
-    {
-        "id":  "chat_20261020T042532",
-        "command":  "echo relay_test_from_thread",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T04:25:32Z",
-        "source":  "project_chat",
-        "from":  "Nasif"
-    },
-    {
-        "id":  "git_test_001",
-        "command":  "echo RELAY_TEST_OK && date /t && time /t",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T04:35:17Z",
-        "source":  "coordinator",
-        "from":  "CloudCoordinator"
-    },
-    {
-        "id":  "83cef254",
-        "command":  "echo 'hi from LocalThug via GitHub relay'",
-        "shell":  "ps",
-        "status":  "done"
-    },
-    {
-        "id":  "mt4_forex_approved_20261020",
-        "command":  "echo 'MT4 forex tests approved'",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T14:20:02Z"
-    },
-    {
-        "id":  "dr_backup_20261020T2200",
-        "command":  "cd C:\\Users\\endos\\Signal; git add -A; $st = git status --short; if ($st) { git commit -m 'sync'; git push origin relay; Write-Host 'Signal pushed' } else { Write-Host 'Signal nothing to commit' }",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T22:00:55Z"
-    },
-    {
-        "id":  "vague_challenge_20261020T2204",
-        "command":  "echo 'cloud-coord challenge 22:04Z'",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-20T22:04:12Z"
-    },
-    {
-        "id":  "relay_bidir_test_20261024T221913",
-        "command":  "echo relay_bidir_test_ok_181913",
-        "shell":  "ps",
-        "status":  "done",
-        "ts":  "2026-10-24T22:19:13Z"
-    },
-    {
-        "id":  "rereg-tasks-20261026-001",
-        "shell":  "ps",
-        "command":  "echo superseded",
-        "status":  "done",
-        "ts":  "2026-10-26T00:00:00Z",
-        "note":  "superseded by rereg-tasks-20261027-001"
-    },
-    {
-        "id":  "rereg-tasks-20261027-001",
-        "shell":  "cmd",
-        "command":  "schtasks /Delete /TN ClaudeRAMTrimLoop /F & schtasks /Create /TN ClaudeRAMTrimLoop /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\ram_trim_boot.ps1\" /SC ONLOGON /RL HIGHEST /F & schtasks /Delete /TN RelayAutoSync /F & schtasks /Create /TN RelayAutoSync /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\relay_sync.ps1\" /SC ONLOGON /RL HIGHEST /F & schtasks /Delete /TN Cloud_DC_Watchdog /F & schtasks /Create /TN Cloud_DC_Watchdog /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\dc_watchdog.ps1\" /SC ONLOGON /RL HIGHEST /F & echo rereg_done",
-        "status":  "pending",
-        "ts":  "2026-10-27T00:21:00Z",
-        "source":  "cloud-relay-thread",
-        "from":  "CloudCoordinator",
-        "desc":  "Re-register ClaudeRAMTrimLoop RelayAutoSync Cloud_DC_Watchdog with wscript+run_hidden.vbs (no popup). Nasif approved all safe repair actions."
+        "id": "fix-watchdog-20261027-001",
+        "shell": "cmd",
+        "command": "schtasks /Delete /TN Cloud_DC_Watchdog /F & schtasks /Create /TN Cloud_DC_Watchdog /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\dc_watchdog.ps1\" /SC MINUTE /MO 15 /RL HIGHEST /F & echo watchdog_rereg_done",
+        "status": "pending",
+        "ts": "2026-10-27T00:27:00Z",
+        "source": "cloud-relay-thread",
+        "from": "CloudCoordinator",
+        "desc": "Fix Cloud_DC_Watchdog: use MINUTE/15 trigger (ONLOGON caused XML error). wscript hidden. SLC_LaptopMonitor skipped (not found)."
     }
 ]
