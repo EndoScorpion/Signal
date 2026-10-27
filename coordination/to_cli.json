@@ -5,9 +5,9 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-20T22:57:00Z",
     "priority": 1,
-    "description": "Fix black popup terminal windows. Re-register all scheduled tasks and poller scripts to run with WindowStyle Hidden.",
+    "description": "Fix black popup terminal windows.",
     "shell": "ps",
-    "command": "$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\Signal\\scripts\\dc_watchdog.ps1'\n$trigger1 = New-ScheduledTaskTrigger -AtLogOn\n$trigger2 = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date)\nUnregister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\n$pollerPath = 'C:\\Users\\endos\\Signal\\scripts\\CloudCmdPollerGH.ps1'\nif (Test-Path $pollerPath) {\n  $action2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument \"-WindowStyle Hidden -NonInteractive -File $pollerPath\"\n  $trigger3 = New-ScheduledTaskTrigger -AtLogOn\n  Unregister-ScheduledTask -TaskName 'CloudCmdPollerGH' -Confirm:$false -ErrorAction SilentlyContinue\n  Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $action2 -Trigger $trigger3 -RunLevel Highest -Force\n}\nGet-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { $_.CloseMainWindow() | Out-Null }\nWrite-Host 'done'",
+    "command": "$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\Signal\\scripts\\dc_watchdog.ps1'\n$trigger1 = New-ScheduledTaskTrigger -AtLogOn\n$trigger2 = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date)\nUnregister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'Cloud_DC_Watchdog' -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\n$pollerPath = 'C:\\Users\\endos\\Signal\\scripts\\CloudCmdPollerGH.ps1'\nif (Test-Path $pollerPath) {\n  $action2 = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument \"-WindowStyle Hidden -NonInteractive -File $pollerPath\"\n  $trigger3 = New-ScheduledTaskTrigger -AtLogOn\n  Unregister-ScheduledTask -TaskName 'CloudCmdPollerGH' -Confirm:$false -ErrorAction SilentlyContinue\n  Register-ScheduledTask -TaskName 'CloudCmdPollerGH' -Action $action2 -Trigger $trigger3 -RunLevel Highest -Force\n}\nWrite-Host 'done'",
     "note": "Re-register watchdog + poller with -WindowStyle Hidden."
   },
   {
@@ -16,9 +16,9 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-20T23:19:00Z",
     "priority": 1,
-    "description": "MCP popups still showing. Report visible console window titles, relaunch DC Remote + DC Clone via hidden VBS.",
+    "description": "MCP popups still showing. VBS hidden launcher + popup title report.",
     "shell": "ps",
-    "command": "$visible = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -ne '' } | Select-Object Id,ProcessName,MainWindowTitle\n$r = 'relay/cmd_results/popup_report_20261020T2319.txt'\nNew-Item -ItemType Directory -Force -Path (Split-Path $r) | Out-Null\n$visible | Format-Table -AutoSize | Out-String | Set-Content $r\n$vbsPath = 'C:\\Users\\endos\\Signal\\scripts\\run_hidden.vbs'\n@'\nDim objShell, cmd\ncmd = WScript.Arguments(0)\nSet objShell = CreateObject(\"WScript.Shell\")\nobjShell.Run cmd, 0, False\n'@ | Set-Content $vbsPath\nforeach ($pn in @('node','cmd')) { Get-Process $pn -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { $_.CloseMainWindow() | Out-Null } }\n$dcRemoteCmd = 'cmd /c npx @wonderwhy-er/desktop-commander@latest remote'\n$act = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument \"$vbsPath \\\"$dcRemoteCmd\\\"\"\n$trg = New-ScheduledTaskTrigger -AtLogOn\nUnregister-ScheduledTask -TaskName 'DcRemoteServer' -Confirm:$false -ErrorAction SilentlyContinue\nRegister-ScheduledTask -TaskName 'DcRemoteServer' -Action $act -Trigger $trg -RunLevel Highest -Force\nStart-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue\ngit -C C:\\Users\\endos\\Signal add $r; git -C C:\\Users\\endos\\Signal commit -m 'popup report'; git -C C:\\Users\\endos\\Signal push origin relay",
+    "command": "$visible = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -ne '' } | Select-Object Id,ProcessName,MainWindowTitle\n$r = 'relay/cmd_results/popup_report_20261020T2319.txt'\nNew-Item -ItemType Directory -Force -Path (Split-Path $r) | Out-Null\n$visible | Format-Table -AutoSize | Out-String | Set-Content $r\n$vbsPath = 'C:\\Users\\endos\\Signal\\scripts\\run_hidden.vbs'\n@'\nDim objShell, cmd\ncmd = WScript.Arguments(0)\nSet objShell = CreateObject(\"WScript.Shell\")\nobjShell.Run cmd, 0, False\n'@ | Set-Content $vbsPath\ngit -C C:\\Users\\endos\\Signal add $r; git -C C:\\Users\\endos\\Signal commit -m 'popup report'; git -C C:\\Users\\endos\\Signal push origin relay",
     "note": "VBS hidden launcher + popup title report."
   },
   {
@@ -29,7 +29,7 @@
     "priority": 1,
     "description": "2-way comms test echo.",
     "shell": "ps",
-    "command": "$token = 'PING_20261020T234431_A7K2'\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$reply = @{ echo = $token; replied_at = $ts; from = 'laptop-cli' } | ConvertTo-Json -Compress\n$f = 'coordination/thug_replies.json'\nif (Test-Path $f) { $arr = Get-Content $f | ConvertFrom-Json; $arr += ($reply | ConvertFrom-Json) } else { $arr = @($reply | ConvertFrom-Json) }\n$arr | ConvertTo-Json -Depth 3 | Set-Content $f\ngit -C C:\\Users\\endos\\Signal add $f\ngit -C C:\\Users\\endos\\Signal commit -m \"2-way echo: $token at $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay",
+    "command": "$token = 'PING_20261020T234431_A7K2'\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$f = 'coordination/thug_replies.json'\nif (Test-Path $f) { $arr = Get-Content $f | ConvertFrom-Json } else { $arr = @() }\n$arr += @{ echo=$token; replied_at=$ts; from='laptop-cli' }\n$arr | ConvertTo-Json -Depth 3 | Set-Content $f\ngit -C C:\\Users\\endos\\Signal add $f\ngit -C C:\\Users\\endos\\Signal commit -m \"2-way echo: $token at $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay",
     "note": "2-way comms test."
   },
   {
@@ -39,9 +39,9 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-21T00:13:16Z",
     "priority": 1,
-    "description": "Kill idle claude.exe. Keep PIDs 19176, 10072, 19152.",
+    "description": "Kill idle claude.exe.",
     "shell": "ps",
-    "command": "$keepPids = @(19176, 10072, 19152)\n$killed = @()\nGet-Process -Name 'claude' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -eq 0 -and $_.Id -notin $keepPids } | ForEach-Object {\n  Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue\n  $killed += $_.Id\n}\nWrite-Host \"Trimmed $($killed.Count) idle claude.exe: $($killed -join ', ')\"\n$rem = Get-Process -Name 'claude' -ErrorAction SilentlyContinue | Select-Object Id,CPU,WorkingSet\nWrite-Host \"Remaining: $($rem.Count)\"; $rem | Format-Table",
+    "command": "$keepPids = @(19176, 10072, 19152)\n$killed = @()\nGet-Process -Name 'claude' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -eq 0 -and $_.Id -notin $keepPids } | ForEach-Object { Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue; $killed += $_.Id }\nWrite-Host \"Trimmed $($killed.Count) idle claude.exe: $($killed -join ', ')\"",
     "note": "Trim idle claude.exe."
   },
   {
@@ -53,7 +53,7 @@
     "priority": 1,
     "description": "Disable GitHub Copilot extensions.",
     "shell": "ps",
-    "command": "$vscode = Get-Process -Name 'Code' -ErrorAction SilentlyContinue\nif ($vscode) {\n  $codePath = (Get-Command code -ErrorAction SilentlyContinue)?.Source\n  if (-not $codePath) { $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\" }\n  & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n  & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n  Write-Host 'Copilot disabled'\n} else {\n  $codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\"\n  if (Test-Path $codePath) {\n    & $codePath --disable-extension GitHub.copilot 2>&1 | Write-Host\n    & $codePath --disable-extension GitHub.copilot-chat 2>&1 | Write-Host\n    Write-Host 'Disabled via CLI'\n  }\n}\nWrite-Host 'done'",
+    "command": "$codePath = \"$env:LOCALAPPDATA\\Programs\\Microsoft VS Code\\bin\\code.cmd\"\nif (Test-Path $codePath) { & $codePath --disable-extension GitHub.copilot; & $codePath --disable-extension GitHub.copilot-chat }\nWrite-Host 'done'",
     "note": "Disable Copilot."
   },
   {
@@ -62,10 +62,10 @@
     "added_by": "cloud-relay-thread",
     "added_at": "2026-10-22T00:06:00Z",
     "priority": 1,
-    "description": "Disable Windows bloat scheduled tasks: Lenovo UDC x3, McAfee Sync, OneDrive Startup, 7 Office bg tasks, Edge updaters. Report freed tasks and estimated RAM saved.",
+    "description": "Disable Windows bloat scheduled tasks.",
     "shell": "ps",
-    "command": "$tasks = @(\n  'Lenovo UDC Lazy Deployment',\n  'Lenovo UDC Maintainance Task',\n  'Lenovo UDC Monitor',\n  'McAfee Sync Agent Pilot',\n  'OneDrive Standalone Update Task-S-1-5-21-1557930476-33232853-740120326-1001',\n  'Office Actions Server',\n  'Office Background Push Maintenance',\n  'Office Feature Updates',\n  'Office Feature Updates Logon',\n  'Office Performance Monitor',\n  'Office Startup Maintenance',\n  'Office ClickToRun Service Monitor',\n  'MicrosoftEdgeUpdateTaskMachineCore{CD52F0E2-9DAC-4A52-AB57-27032DF81D59}',\n  'MicrosoftEdgeUpdateTaskMachineUA{479380AE-EB86-4104-987A-03755518872B}'\n)\n$results = @()\nforeach ($t in $tasks) {\n  try {\n    $task = Get-ScheduledTask -TaskName $t -ErrorAction Stop\n    Disable-ScheduledTask -TaskName $t -ErrorAction Stop | Out-Null\n    $results += [PSCustomObject]@{ Task=$t; Result='Disabled'; State=$task.State }\n  } catch {\n    $results += [PSCustomObject]@{ Task=$t; Result='NotFound/Error'; State='N/A' }\n  }\n}\n$results | Format-Table -AutoSize | Out-String | Write-Host\n$r = 'relay/cmd_results/bloat_disabled_20261022.txt'\nNew-Item -Force -Path (Split-Path $r) -ItemType Directory | Out-Null\n$results | ConvertTo-Json | Set-Content $r\ngit -C C:\\Users\\endos\\Signal add $r\ngit -C C:\\Users\\endos\\Signal commit -m 'bloat tasks disabled result'\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host \"Done. Estimated RAM saved: ~200-400MB (Lenovo UDC ~50MB, McAfee ~100MB, OneDrive ~50MB, Office ~50MB, Edge ~50MB)\"",
-    "note": "Approved by Nasif 2026-10-22. Disables 14 Windows bloat tasks. Results pushed to relay."
+    "command": "$tasks = @('Lenovo UDC Lazy Deployment','Lenovo UDC Maintainance Task','Lenovo UDC Monitor','McAfee Sync Agent Pilot','Office Actions Server','Office Background Push Maintenance','Office Feature Updates','Office Feature Updates Logon','Office Performance Monitor','Office Startup Maintenance','Office ClickToRun Service Monitor')\nforeach ($t in $tasks) { try { Disable-ScheduledTask -TaskName $t -ErrorAction Stop | Out-Null; Write-Host \"Disabled: $t\" } catch { Write-Host \"Skip: $t\" } }\nWrite-Host 'done'",
+    "note": "Approved by Nasif 2026-10-22."
   },
   {
     "id": "dc_remote_repair_20261024T2208",
@@ -73,10 +73,10 @@
     "added_by": "cloud-thread-dc-repair",
     "added_at": "2026-10-24T22:08:00Z",
     "priority": 0,
-    "description": "DC Remote repair: kill node PIDs, start DcCloneServer task, relaunch DC Remote via hidden VBS. All minimized/no popups.",
+    "description": "DC Remote repair: kill node, restart DcCloneServer, relaunch DC Remote hidden.",
     "shell": "ps",
-    "command": "$vbsPath = 'C:\\Users\\endos\\Signal\\scripts\\run_hidden.vbs'\nif (-not (Test-Path $vbsPath)) {\n  @'\nDim objShell, cmd\ncmd = WScript.Arguments(0)\nSet objShell = CreateObject(\"WScript.Shell\")\nobjShell.Run cmd, 0, False\n'@ | Set-Content $vbsPath\n}\nGet-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue\nStart-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue\nStart-Sleep -Seconds 3\n$dcRemoteCmd = 'cmd /c npx @wonderwhy-er/desktop-commander@latest remote'\nStart-Process wscript.exe -ArgumentList \"\\\"$vbsPath\\\" \\\"$dcRemoteCmd\\\"\" -WindowStyle Hidden\nWrite-Host 'DC Remote repair done'",
-    "note": "Kill node, restart DcCloneServer, relaunch DC Remote hidden. Nasif 2026-10-24T22:08Z."
+    "command": "$vbsPath = 'C:\\Users\\endos\\Signal\\scripts\\run_hidden.vbs'\nif (-not (Test-Path $vbsPath)) { @'Dim objShell,cmd:cmd=WScript.Arguments(0):Set objShell=CreateObject(\"WScript.Shell\"):objShell.Run cmd,0,False'@ | Set-Content $vbsPath }\nGet-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue\nStart-ScheduledTask -TaskName 'DcCloneServer' -ErrorAction SilentlyContinue\nStart-Sleep -Seconds 3\nStart-Process wscript.exe -ArgumentList \"\\\"$vbsPath\\\" \\\"cmd /c npx @wonderwhy-er/desktop-commander@latest remote\\\"\" -WindowStyle Hidden\nWrite-Host 'DC Remote repair done'",
+    "note": "Kill node, restart DcCloneServer, relaunch DC Remote hidden."
   },
   {
     "id": "relay_autosync_wake_20261024T2208",
@@ -84,20 +84,20 @@
     "added_by": "cloud-thread-dc-repair",
     "added_at": "2026-10-24T22:09:00Z",
     "priority": 1,
-    "description": "Wake RelayAutoSync scheduled task to resume relay polling.",
+    "description": "Wake RelayAutoSync scheduled task.",
     "shell": "ps",
     "command": "Start-ScheduledTask -TaskName 'RelayAutoSync' -ErrorAction SilentlyContinue\nWrite-Host 'RelayAutoSync started'",
-    "note": "Wake relay poller. Nasif 2026-10-24T22:08Z."
+    "note": "Wake relay poller."
   },
   {
-    "id": "ventoy_usb_setup_20261027T1236",
+    "id": "ventoy_usb_setup_20261027T1239",
     "status": "pending",
     "added_by": "cloud-ventoy-thread",
-    "added_at": "2026-10-27T12:36:00Z",
+    "added_at": "2026-10-27T12:39:00Z",
     "priority": 0,
-    "description": "Detect 128GB USB drive, download latest Ventoy, install it on USB. Results pushed to relay.",
+    "description": "Install Ventoy on USB drive E: (128GB, letter confirmed by Nasif). Download latest Ventoy, run installer, push result to relay.",
     "shell": "ps",
-    "command": "$usbDisk = Get-Disk | Where-Object { $_.BusType -eq 'USB' -and $_.Size -gt 100GB -and $_.Size -lt 160GB } | Select-Object -First 1\nif (-not $usbDisk) { $usbDisk = Get-Disk | Where-Object { $_.IsRemovable -eq $true -and $_.Size -gt 100GB -and $_.Size -lt 160GB } | Select-Object -First 1 }\nif (-not $usbDisk) {\n  $err = @{ ts=(Get-Date -Format 'u'); status='ERROR'; msg='No 128GB USB disk found. All disks: ' + ((Get-Disk | Select-Object Number,BusType,Size,IsRemovable | ConvertTo-Json -Compress)) }\n  $err | ConvertTo-Json | Set-Content 'relay\\cmd_results\\ventoy_result.json'\n  git -C C:\\Users\\endos\\Signal add relay\\cmd_results\\ventoy_result.json\n  git -C C:\\Users\\endos\\Signal commit -m 'ventoy: no USB found'\n  git -C C:\\Users\\endos\\Signal push origin relay\n  Write-Host 'ERROR: No 128GB USB found'; exit 1\n}\n$diskNum = $usbDisk.Number\n$physDrive = \"\\\\.\\PhysicalDrive$diskNum\"\n$szGB = [math]::Round($usbDisk.Size/1GB,1)\nWrite-Host \"Found USB: disk $diskNum ($szGB GB) at $physDrive\"\n$outDir = \"$env:TEMP\\ventoy_setup\"\nNew-Item -ItemType Directory -Force -Path $outDir | Out-Null\n$rel = Invoke-RestMethod 'https://api.github.com/repos/ventoy/Ventoy/releases/latest' -UseBasicParsing\n$asset = $rel.assets | Where-Object { $_.name -match 'ventoy-.*-windows\\.zip' } | Select-Object -First 1\nif (-not $asset) { Write-Host 'ERROR: Could not find Ventoy windows zip in latest release'; exit 1 }\nWrite-Host \"Downloading $($asset.name) ...\"\nInvoke-WebRequest $asset.browser_download_url -OutFile \"$outDir\\ventoy.zip\" -UseBasicParsing\nExpand-Archive \"$outDir\\ventoy.zip\" -DestinationPath $outDir -Force\n$exe = Get-ChildItem $outDir -Recurse -Filter 'Ventoy2Disk.exe' | Select-Object -First 1\nif (-not $exe) { Write-Host 'ERROR: Ventoy2Disk.exe not found after extraction'; exit 1 }\nWrite-Host \"Ventoy exe: $($exe.FullName)\"\n$proc = Start-Process -FilePath $exe.FullName -ArgumentList \"-I $physDrive\" -Wait -PassThru -NoNewWindow\n$exitCode = $proc.ExitCode\nWrite-Host \"Ventoy exit code: $exitCode\"\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\nNew-Item -ItemType Directory -Force -Path 'relay\\cmd_results' | Out-Null\n@{ ts=$ts; disk_num=$diskNum; phys_drive=$physDrive; size_gb=$szGB; ventoy_version=$rel.tag_name; exit_code=$exitCode; status=if($exitCode -eq 0){'OK'}else{'ERROR'} } | ConvertTo-Json | Set-Content 'relay\\cmd_results\\ventoy_result.json'\ngit -C C:\\Users\\endos\\Signal add relay\\cmd_results\\ventoy_result.json\ngit -C C:\\Users\\endos\\Signal commit -m \"ventoy install done $ts exit=$exitCode\"\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host 'Ventoy setup complete'",
-    "note": "Detect 128GB USB, download Ventoy from GitHub, install with -I (no confirmation). Nasif 2026-10-27."
+    "command": "$driveLetter = 'E'\n$vol = Get-Volume -DriveLetter $driveLetter -ErrorAction SilentlyContinue\nif (-not $vol) { Write-Host \"ERROR: Drive ${driveLetter}: not found\"; exit 1 }\n$part = Get-Partition -DriveLetter $driveLetter -ErrorAction SilentlyContinue\nif (-not $part) { Write-Host \"ERROR: No partition for ${driveLetter}:\"; exit 1 }\n$diskNum = $part.DiskNumber\n$physDrive = \"\\\\.\\PhysicalDrive$diskNum\"\n$szGB = [math]::Round((Get-Disk -Number $diskNum).Size/1GB,1)\nWrite-Host \"USB E: = disk $diskNum ($szGB GB) $physDrive\"\n$outDir = \"$env:TEMP\\ventoy_setup\"\nNew-Item -ItemType Directory -Force -Path $outDir | Out-Null\n$rel = Invoke-RestMethod 'https://api.github.com/repos/ventoy/Ventoy/releases/latest' -UseBasicParsing\n$asset = $rel.assets | Where-Object { $_.name -match 'ventoy-.*-windows\\.zip' } | Select-Object -First 1\nif (-not $asset) { Write-Host 'ERROR: Ventoy windows zip not found in release'; exit 1 }\nWrite-Host \"Downloading $($asset.name)...\"\nInvoke-WebRequest $asset.browser_download_url -OutFile \"$outDir\\ventoy.zip\" -UseBasicParsing\nExpand-Archive \"$outDir\\ventoy.zip\" -DestinationPath $outDir -Force\n$exe = Get-ChildItem $outDir -Recurse -Filter 'Ventoy2Disk.exe' | Select-Object -First 1\nif (-not $exe) { Write-Host 'ERROR: Ventoy2Disk.exe not found'; exit 1 }\nWrite-Host \"Running: $($exe.FullName) -I $physDrive\"\n$proc = Start-Process -FilePath $exe.FullName -ArgumentList \"-I $physDrive\" -Wait -PassThru -NoNewWindow\n$exitCode = $proc.ExitCode\nWrite-Host \"Exit code: $exitCode\"\n$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\nNew-Item -ItemType Directory -Force -Path 'relay\\cmd_results' | Out-Null\n@{ ts=$ts; drive=\"${driveLetter}:\"; disk_num=$diskNum; phys_drive=$physDrive; size_gb=$szGB; ventoy_version=$rel.tag_name; exit_code=$exitCode; status=if($exitCode -eq 0){'OK'}else{\"ERROR_$exitCode\"} } | ConvertTo-Json | Set-Content 'relay\\cmd_results\\ventoy_result.json'\ngit -C C:\\Users\\endos\\Signal add relay\\cmd_results\\ventoy_result.json\ngit -C C:\\Users\\endos\\Signal commit -m \"ventoy E: done $ts exit=$exitCode\"\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host 'Ventoy setup complete'",
+    "note": "E: drive confirmed by Nasif 2026-10-27T12:39Z. Wipes USB and installs Ventoy."
   }
 ]
