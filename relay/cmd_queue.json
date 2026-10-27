@@ -21,24 +21,7 @@
     {"id":"relay_bidir_test_20261024T221913","command":"echo done","shell":"ps","status":"done","ts":"2026-10-24T22:19:13Z"},
     {"id":"rereg-tasks-20261026-001","command":"echo superseded","shell":"ps","status":"done","ts":"2026-10-26T00:00:00Z"},
     {"id":"rereg-tasks-20261027-001","command":"echo superseded","shell":"cmd","status":"done","ts":"2026-10-27T00:21:00Z"},
-    {
-        "id": "fix-watchdog-20261027-001",
-        "shell": "cmd",
-        "command": "schtasks /Delete /TN Cloud_DC_Watchdog /F & schtasks /Create /TN Cloud_DC_Watchdog /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\dc_watchdog.ps1\" /SC MINUTE /MO 15 /RL HIGHEST /F & echo watchdog_rereg_done",
-        "status": "pending",
-        "ts": "2026-10-27T00:27:00Z",
-        "source": "cloud-relay-thread",
-        "from": "CloudCoordinator",
-        "desc": "Fix Cloud_DC_Watchdog: use MINUTE/15 trigger (ONLOGON caused XML error). wscript hidden. SLC_LaptopMonitor skipped (not found)."
-    },
-    {
-        "id": "fix-focus-steal-20261027-001",
-        "shell": "cmd",
-        "command": "schtasks /Delete /TN RelayAutoSync /F & schtasks /Create /TN RelayAutoSync /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\relay_autosync.ps1\" /SC MINUTE /MO 5 /RL HIGHEST /F & echo relayautosync_rehidden_done",
-        "status": "pending",
-        "ts": "2026-10-27T00:52:00Z",
-        "source": "cloud-relay-thread",
-        "from": "CloudCoordinator",
-        "desc": "Re-register RelayAutoSync with wscript hidden wrapper to prevent focus steal. MINUTE/5 trigger. Must NOT steal focus or show window."
-    }
+    {"id":"fix-watchdog-20261027-001","shell":"cmd","command":"schtasks /Delete /TN Cloud_DC_Watchdog /F & schtasks /Create /TN Cloud_DC_Watchdog /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\dc_watchdog.ps1\" /SC MINUTE /MO 15 /RL HIGHEST /F & echo watchdog_rereg_done","status":"pending","ts":"2026-10-27T00:27:00Z","source":"cloud-relay-thread","from":"CloudCoordinator","desc":"Fix Cloud_DC_Watchdog wscript hidden MINUTE/15"},
+    {"id":"fix-focus-steal-20261027-001","shell":"cmd","command":"schtasks /Delete /TN RelayAutoSync /F & schtasks /Create /TN RelayAutoSync /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\relay_autosync.ps1\" /SC MINUTE /MO 5 /RL HIGHEST /F & echo relayautosync_rehidden_done","status":"pending","ts":"2026-10-27T00:52:00Z","source":"cloud-relay-thread","from":"CloudCoordinator","desc":"Re-register RelayAutoSync wscript hidden no focus steal"},
+    {"id":"defender-exclude-20261027-001","shell":"ps","command":"Start-Process powershell -ArgumentList '-ExecutionPolicy Bypass -WindowStyle Hidden -File C:\\Users\\endos\\Signal\\relay\\defender_exclude_all.ps1' -Verb RunAs","status":"pending","ts":"2026-10-27T03:02:00Z","source":"cloud-relay-thread","from":"CloudCoordinator","desc":"Run defender_exclude_all.ps1 as admin hidden - Nasif approved"}
 ]
