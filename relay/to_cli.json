@@ -1,13 +1,21 @@
 {
-  "timestamp": "2026-10-27T15:22Z",
+  "timestamp": "2026-10-27T15:25Z",
   "from": "cloud-relay-listener",
   "commands": [
     {
-      "id": "cmd-012",
+      "id": "cmd-014",
       "action": "run_hidden",
-      "label": "ventoy-dl",
-      "note": "Step 1 of 2: download and extract Ventoy latest from GitHub releases. No UAC needed.",
-      "command": "powershell -WindowStyle Hidden -Command \"$r = Invoke-RestMethod 'https://api.github.com/repos/ventoy/Ventoy/releases/latest'; $url = ($r.assets | Where-Object { $_.name -like '*windows*' } | Select-Object -First 1).browser_download_url; Invoke-WebRequest -Uri $url -OutFile 'C:\\Users\\endos\\Downloads\\ventoy-windows.zip' -UseBasicParsing; Expand-Archive -Path 'C:\\Users\\endos\\Downloads\\ventoy-windows.zip' -DestinationPath 'C:\\Users\\endos\\Downloads\\ventoy_extracted' -Force\"",
+      "label": "claude-kill-extra",
+      "note": "Kill extra Claude Desktop instances, keep only largest (by RAM).",
+      "command": "powershell -WindowStyle Hidden -Command \"$procs = Get-Process 'Claude' -ErrorAction SilentlyContinue; if ($procs.Count -gt 1) { $procs | Sort-Object WorkingSet64 -Descending | Select-Object -Skip 1 | Stop-Process -Force }; Write-Output 'Claude instances: ' + $procs.Count\"",
+      "silent": true
+    },
+    {
+      "id": "cmd-013",
+      "action": "run_hidden",
+      "label": "ventoy-extract-update",
+      "note": "ventoy-1.1.18 zip already at Downloads. Extract + run update GPT on D: — UAC prompt will appear.",
+      "command": "powershell -WindowStyle Hidden -Command \"Expand-Archive -Path 'C:\\Users\\endos\\Downloads\\ventoy-1.1.18-windows.zip' -DestinationPath 'C:\\Users\\endos\\Downloads\\ventoy_extracted' -Force; $exe = (Get-ChildItem 'C:\\Users\\endos\\Downloads\\ventoy_extracted' -Recurse -Filter 'Ventoy2Disk.exe' | Select-Object -First 1).FullName; Start-Process -FilePath $exe -ArgumentList '-u -s -g D:' -Verb RunAs -Wait; Write-Output 'DONE'\"",
       "silent": true
     },
     {
@@ -15,13 +23,6 @@
       "action": "run_hidden",
       "label": "relay-autoread-install",
       "command": "cmd /c \"powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \\\"Invoke-WebRequest 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/relay/install_relay_auto_read.bat' -OutFile 'C:\\Users\\endos\\Signal\\install_relay_auto_read.bat'\\\" && C:\\Users\\endos\\Signal\\install_relay_auto_read.bat\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-007",
-      "action": "run_hidden",
-      "label": "ram-trim-now",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"[System.GC]::Collect(); [System.GC]::WaitForPendingFinalizers()\"",
       "silent": true
     },
     {
