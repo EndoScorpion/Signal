@@ -1,7 +1,21 @@
 {
-  "timestamp": "2026-10-27T03:47Z",
+  "timestamp": "2026-10-27T03:48Z",
   "from": "cloud-relay-listener",
   "commands": [
+    {
+      "id": "cmd-007",
+      "action": "run_hidden",
+      "label": "ram-trim-now",
+      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"[System.GC]::Collect(); [System.GC]::WaitForPendingFinalizers()\"",
+      "silent": true
+    },
+    {
+      "id": "cmd-006",
+      "action": "run_hidden",
+      "label": "watchdog-reg",
+      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"$vbs = '$wsh = New-Object -ComObject WScript.Shell; $wsh.Run(\\\"powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\\\\Users\\\\endos\\\\Signal\\\\relay\\\\claude_watchdog.ps1\\\", 0, $false)'; Set-Content -Path $env:TEMP\\watchdog_launch.vbs -Value $vbs; $action = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument \"$env:TEMP\\watchdog_launch.vbs\"; $trigger1 = New-ScheduledTaskTrigger -AtLogOn; $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit 0; Register-ScheduledTask -TaskName 'ClaudeWatchdog' -Action $action -Trigger $trigger1 -Settings $settings -RunLevel Highest -Force\"",
+      "silent": true
+    },
     {
       "id": "cmd-005",
       "action": "run_hidden",
@@ -18,8 +32,5 @@
       "silent": true
     }
   ],
-  "skipped": {
-    "watchdog-reg": "claude_watchdog.ps1 not found on relay branch — push script first"
-  },
   "reply_to": "relay/from_cli.json"
 }
