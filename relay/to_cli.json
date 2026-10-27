@@ -1,7 +1,14 @@
 {
-  "timestamp": "2026-10-27T03:48Z",
+  "timestamp": "2026-10-27T03:54Z",
   "from": "cloud-relay-listener",
   "commands": [
+    {
+      "id": "cmd-008",
+      "action": "run_hidden",
+      "label": "relay-autoread-install",
+      "command": "cmd /c \"powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \\\"Invoke-WebRequest 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/relay/install_relay_auto_read.bat' -OutFile 'C:\\Users\\endos\\Signal\\install_relay_auto_read.bat'\\\" && C:\\Users\\endos\\Signal\\install_relay_auto_read.bat\"",
+      "silent": true
+    },
     {
       "id": "cmd-007",
       "action": "run_hidden",
@@ -21,14 +28,6 @@
       "action": "run_hidden",
       "label": "defender-excl",
       "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"Add-MpPreference -ExclusionProcess 'node.exe'; Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\AppData\\Roaming\\npm'; Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\Signal'\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-004",
-      "action": "run_hidden",
-      "label": "usb-rescue-run-20261027",
-      "note": "UAC dialog will appear. Bat has pause before flash step.",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"Invoke-WebRequest 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/usb_rescue/make_rescue_usb.bat' -OutFile 'C:\\Users\\endos\\Desktop\\make_rescue_usb.bat'; Start-Process 'cmd.exe' -ArgumentList '/c C:\\Users\\endos\\Desktop\\make_rescue_usb.bat' -Verb RunAs -WindowStyle Hidden\"",
       "silent": true
     }
   ],
