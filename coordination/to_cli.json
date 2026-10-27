@@ -110,5 +110,16 @@
     "shell": "ps",
     "command": "$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$log = @()\n# Restart HID service\ntry { Restart-Service -Name HidServ -Force -ErrorAction Stop; $log += 'HidServ restarted OK' } catch { $log += \"HidServ restart FAIL: $_\" }\n# Re-enable any errored HID devices\n$bad = Get-PnpDevice | Where-Object { $_.Class -eq 'HIDClass' -and $_.Status -ne 'OK' }\nif ($bad) {\n  $bad | ForEach-Object {\n    try { Enable-PnpDevice -InstanceId $_.InstanceId -Confirm:$false -ErrorAction Stop; $log += \"Enabled: $($_.FriendlyName)\" } catch { $log += \"Enable FAIL $($_.FriendlyName): $_\" }\n  }\n} else { $log += 'All HID devices OK status' }\n# Scan for new PnP devices\ntry { pnputil /scan-devices | Out-Null; $log += 'pnputil scan done' } catch { $log += 'pnputil scan skipped' }\n# Write result\nNew-Item -ItemType Directory -Force -Path 'relay\\cmd_results' | Out-Null\n@{ ts=$ts; log=$log } | ConvertTo-Json -Depth 3 | Set-Content 'relay\\cmd_results\\usb_hid_fix_result.json'\ngit -C C:\\Users\\endos\\Signal add relay\\cmd_results\\usb_hid_fix_result.json\ngit -C C:\\Users\\endos\\Signal commit -m \"usb hid fix result $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host 'USB HID fix done'",
     "note": "Nasif reports USB mouse+keyboard not responding 2026-10-27T13:47Z. All hidden, no popups."
+  },
+  {
+    "id": "bcd_backup_shrink_calc_20261027T1542",
+    "status": "pending",
+    "added_by": "cloud-bcd-thread",
+    "added_at": "2026-10-27T15:42:00Z",
+    "priority": 0,
+    "description": "BCD backup + restore point + C: shrink calc. Run as Admin. No partition changes yet.",
+    "shell": "ps",
+    "command": "$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')\n$dateStr = (Get-Date).ToString('yyyyMMdd')\n$bcdPath = \"C:\\bcdbackup_$dateStr.bak\"\ntry { & bcdedit /export $bcdPath; $bcdOK = 'OK' } catch { $bcdOK = \"FAIL: $_\" }\ntry { Enable-ComputerRestore -Drive 'C:\\' } catch {}\ntry { Checkpoint-Computer -Description 'PreLinuxDualBoot' -RestorePointType MODIFY_SETTINGS; $rpOK = 'OK' } catch { $rpOK = \"FAIL: $_\" }\n$shrinkGB = 'n/a'\ntry {\n  $s = Get-PartitionSupportedSize -DriveLetter C -ErrorAction Stop\n  $shrinkGB = [math]::Round(($s.SizeMax - $s.SizeMin)/1GB, 2)\n} catch { $shrinkGB = \"FAIL: $_\" }\n$result = @{ ts=$ts; bcd_backup=$bcdPath; bcd_status=$bcdOK; restore_point=$rpOK; safe_shrink_gb=$shrinkGB }\nNew-Item -ItemType Directory -Force -Path 'relay\\cmd_results' | Out-Null\n$result | ConvertTo-Json | Set-Content 'relay\\cmd_results\\bcd_backup_result.json'\ngit -C C:\\Users\\endos\\Signal add relay\\cmd_results\\bcd_backup_result.json\ngit -C C:\\Users\\endos\\Signal commit -m \"bcd backup + shrink calc $ts\"\ngit -C C:\\Users\\endos\\Signal push origin relay\nWrite-Host \"BCD backup done. Shrink available: $shrinkGB GB\"",
+    "note": "Nasif requested BCD backup before dual-boot. No partition changes. Results pushed to relay."
   }
 ]
