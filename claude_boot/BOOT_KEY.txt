@@ -1,0 +1,31 @@
+╔═════════════════════════════════════════════════════════╗
+║   Lenovo IdeaPad Slim 3 — FIRST TIME BOOT TO USB        ║
+╠═════════════════════════════════════════════════════════╣
+║                                                          ║
+║  STEP 1: Plug in the Ventoy USB drive                   ║
+║                                                          ║
+║  STEP 2: POWER OFF completely                           ║
+║          (not sleep, not restart — full shutdown)       ║
+║                                                          ║
+║  STEP 3: Power ON, then IMMEDIATELY press               ║
+║          F12  repeatedly until boot menu appears        ║
+║          (before the Windows logo shows)                ║
+║          If F12 fails, try  Fn + F12                    ║
+║                                                          ║
+║  STEP 4: In boot menu → select the USB drive            ║
+║          (shows as "Ventoy" or USB brand name)          ║
+║                                                          ║
+║  STEP 5: Ventoy menu → pick Kali Linux or Ubuntu        ║
+║                                                          ║
+║  STEP 6: Desktop loads → open terminal (Ctrl+Alt+T)     ║
+║          Run: bash /cdrom/claude_boot/kali_claude.sh    ║
+║          OR:  bash /cdrom/claude_boot/ubuntu_claude.sh  ║
+║                                                          ║
+║  ── IF F12 DOESN'T WORK (Fast Startup issue) ──         ║
+║  In Windows: hold Shift + click Restart                 ║
+║  → Troubleshoot → Advanced → Use a Device → USB        ║
+║                                                          ║
+║  FIRST TIME ONLY: put your ANTHROPIC_API_KEY in         ║
+║  D:\claude_boot\key.txt  (one line, no spaces)          ║
+║                                                          ║
+╚═════════════════════════════════════════════════════════╝
