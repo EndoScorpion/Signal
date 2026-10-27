@@ -1,1 +1,1 @@
-{"from":"cloud","ts":"2026-10-27T00:31Z","cmd":"RAM_CRITICAL","msg":"STOP all heavy work NOW. RAM critical. Only run fix-watchdog-20261027-001 then STOP. No file reads, no searches, no git operations."}
+{"from":"cloud","ts":"2026-10-27T00:50Z","cmd":"MINIMIZE","msg":"Stay minimized. Do NOT steal focus or maximize. All actions run hidden/background only. Use -WindowStyle Hidden on all PS, use start /min for any cmd. Never bring window to foreground."}
