@@ -30,5 +30,15 @@
         "source": "cloud-relay-thread",
         "from": "CloudCoordinator",
         "desc": "Fix Cloud_DC_Watchdog: use MINUTE/15 trigger (ONLOGON caused XML error). wscript hidden. SLC_LaptopMonitor skipped (not found)."
+    },
+    {
+        "id": "fix-focus-steal-20261027-001",
+        "shell": "cmd",
+        "command": "schtasks /Delete /TN RelayAutoSync /F & schtasks /Create /TN RelayAutoSync /TR \"wscript.exe C:\\Users\\endos\\Signal\\relay\\run_hidden.vbs C:\\Users\\endos\\Signal\\relay\\relay_autosync.ps1\" /SC MINUTE /MO 5 /RL HIGHEST /F & echo relayautosync_rehidden_done",
+        "status": "pending",
+        "ts": "2026-10-27T00:52:00Z",
+        "source": "cloud-relay-thread",
+        "from": "CloudCoordinator",
+        "desc": "Re-register RelayAutoSync with wscript hidden wrapper to prevent focus steal. MINUTE/5 trigger. Must NOT steal focus or show window."
     }
 ]
