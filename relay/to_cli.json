@@ -1,21 +1,13 @@
 {
-  "timestamp": "2026-10-27T04:14Z",
+  "timestamp": "2026-10-27T15:22Z",
   "from": "cloud-relay-listener",
   "commands": [
     {
-      "id": "cmd-011",
+      "id": "cmd-012",
       "action": "run_hidden",
-      "label": "ventoy-xubuntu-iso",
-      "note": "Runs after Ventoy installs. Copies ISO to D:\ — no UAC needed.",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"Invoke-WebRequest 'https://cdimage.ubuntu.com/xubuntu/releases/22.04/release/xubuntu-22.04.5-desktop-amd64.iso' -OutFile 'D:\\xubuntu-22.04.iso'\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-010",
-      "action": "run_hidden",
-      "label": "ventoy-install",
-      "note": "UAC prompt will appear for Ventoy2Disk /I D:",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"$v='C:\\Users\\endos\\Signal\\ventoy'; New-Item -ItemType Directory -Force -Path $v | Out-Null; Invoke-WebRequest 'https://github.com/ventoy/Ventoy/releases/download/v1.0.99/ventoy-1.0.99-windows.zip' -OutFile \"$v\\ventoy.zip\"; Expand-Archive \"$v\\ventoy.zip\" -DestinationPath $v -Force; $exe=(Get-ChildItem $v -Recurse -Filter 'Ventoy2Disk.exe' | Select-Object -First 1).FullName; Start-Process $exe -ArgumentList '/I D:' -Verb RunAs -Wait\"",
+      "label": "ventoy-dl",
+      "note": "Step 1 of 2: download and extract Ventoy latest from GitHub releases. No UAC needed.",
+      "command": "powershell -WindowStyle Hidden -Command \"$r = Invoke-RestMethod 'https://api.github.com/repos/ventoy/Ventoy/releases/latest'; $url = ($r.assets | Where-Object { $_.name -like '*windows*' } | Select-Object -First 1).browser_download_url; Invoke-WebRequest -Uri $url -OutFile 'C:\\Users\\endos\\Downloads\\ventoy-windows.zip' -UseBasicParsing; Expand-Archive -Path 'C:\\Users\\endos\\Downloads\\ventoy-windows.zip' -DestinationPath 'C:\\Users\\endos\\Downloads\\ventoy_extracted' -Force\"",
       "silent": true
     },
     {
