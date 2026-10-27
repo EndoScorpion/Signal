@@ -1,6 +1,14 @@
 [
   {
     "from": "cloud",
+    "ts": "2026-10-27T03:34Z",
+    "id": "passkey-fix-20261027",
+    "cmd": "RUN_COMMAND_ADMIN",
+    "args": ["powershell", "-NoProfile", "-Command", "sc.exe config NgcSvc start= delayed-auto; sc.exe config NgcKeyIso start= delayed-auto; sc.exe config WbioSrvc start= delayed-auto; $ngcPath=\"$env:LOCALAPPDATA\\Microsoft\\Ngc\"; $count=(Get-ChildItem -Path $ngcPath -Recurse -ErrorAction SilentlyContinue | Measure-Object).Count; Write-Host \"NGC file count: $count\"; if($count -gt 100){icacls $ngcPath /grant Administrators:F /T /C /Q; Remove-Item -Path \"$ngcPath\\*\" -Recurse -Force -ErrorAction SilentlyContinue; Write-Host 'NGC cleared'}; net stop NgcSvc; net stop NgcKeyIso; net stop WbioSrvc; Start-Sleep 2; net start WbioSrvc; net start NgcKeyIso; net start NgcSvc; Write-Host 'Done - passkey services restarted'"],
+    "msg": "Fix slow passkey auth: set Hello services delayed-auto, clear bloated NGC if >100 files, restart services. Run as Admin."
+  },
+  {
+    "from": "cloud",
     "ts": "2026-10-27T03:27Z",
     "id": "download-claude-backup-bat-20261027",
     "cmd": "WRITE_FILE",
