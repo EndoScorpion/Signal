@@ -1,18 +1,18 @@
 [
   {
     "from": "cloud",
-    "ts": "2026-10-27T03:15Z",
-    "id": "write-claude-watchdog-20261027",
+    "ts": "2026-10-27T03:27Z",
+    "id": "download-claude-backup-bat-20261027",
     "cmd": "WRITE_FILE",
-    "path": "C:\\Users\\endos\\Signal\\claude_watchdog.ps1",
-    "content": "# Claude CLI Watchdog - one-shot; Task Scheduler handles repeat\r\n$logFile = \"C:\\Users\\endos\\Signal\\claude_restart_log.txt\"\r\nfunction Write-Log($msg) {\r\n    $ts = (Get-Date).ToString(\"yyyy-MM-dd HH:mm:ss\")\r\n    \"$ts $msg\" | Out-File -FilePath $logFile -Append -Encoding utf8\r\n}\r\n$claudeRunning = Get-WmiObject Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -like \"*claude*\" }\r\nif (-not $claudeRunning) {\r\n    Write-Log \"Claude CLI not found - relaunching\"\r\n    Start-Process cmd.exe -ArgumentList '/k \"cd /d C:\\Users\\endos && claude\"' -WindowStyle Normal\r\n    Write-Log \"Relaunch issued\"\r\n}"
+    "path": "C:\\Users\\endos\\Desktop\\claude_backup.bat",
+    "content": "@echo off\r\ncd /d C:\\Users\\endos\r\nwhere claude >nul 2>&1 && (claude & goto :end)\r\nwhere npx >nul 2>&1 && (npx @anthropic-ai/claude-code@latest & goto :end)\r\nnode \"%APPDATA%\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js\" 2>nul && goto :end\r\necho Claude CLI not found. Run: npm install -g @anthropic-ai/claude-code\r\npause\r\n:end"
   },
   {
     "from": "cloud",
-    "ts": "2026-10-27T03:15Z",
-    "id": "register-claudewatchdog-20261027",
+    "ts": "2026-10-27T03:27Z",
+    "id": "npm-install-g-claude-20261027",
     "cmd": "RUN_COMMAND",
-    "args": ["powershell", "-WindowStyle", "Hidden", "-Command", "$act = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument '\"C:\\Users\\endos\\Signal\\run_hidden.vbs\" \"powershell.exe -ExecutionPolicy Bypass -File C:\\Users\\endos\\Signal\\claude_watchdog.ps1\"'; $trg = @(New-ScheduledTaskTrigger -AtLogOn; $rep = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Seconds 30) -Once -At (Get-Date); $rep); Register-ScheduledTask -TaskName ClaudeWatchdog -Action $act -Trigger $trg -RunLevel Limited -Force"],
-    "msg": "Register ClaudeWatchdog: check every 30s, relaunch claude if dead"
+    "args": ["cmd", "/c", "npm install -g @anthropic-ai/claude-code"],
+    "msg": "Global install @anthropic-ai/claude-code so claude command works directly"
   }
 ]
