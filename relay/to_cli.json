@@ -1,34 +1,40 @@
 {
-  "timestamp": "2026-10-28T01:44Z",
+  "timestamp": "2026-10-28T02:10Z",
   "from": "cloud-relay-listener",
   "commands": [
     {
-      "id": "cmd-018",
-      "action": "run_hidden",
-      "label": "ventoy-fix-efi-guid",
-      "note": "Fix Ventoy EFI partition GUID from BasicData to EFI System. Auto-detects USB disk (100-200GB). UAC prompt will appear.",
-      "command": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"$disk = (Get-Disk | Where-Object {$_.Size -gt 100GB -and $_.Size -lt 200GB} | Select-Object -First 1).Number; if ($null -eq $disk) { Write-Output 'ERROR: USB disk not found'; exit 1 }; $script = \"list disk`nselect disk $disk`nselect partition 2`nset id=c12a7328-f81f-11d2-ba4b-00a0c93ec93b override`nexit\"; $tmp = [System.IO.Path]::GetTempFileName(); $script | Out-File $tmp -Encoding ascii; Start-Process 'diskpart' -ArgumentList \"/s $tmp\" -Verb RunAs -Wait -WindowStyle Hidden; Write-Output \"DONE disk=$disk\"; $script | Out-File 'C:\\Signal\\efi_fix_result.txt' -Encoding ascii\"",
+      "id": "cmd-019",
+      "label": "usb-backup",
+      "note": "Back up D: files to C:\\Temp\ before wiping. No UAC needed.",
+      "command": "powershell -WindowStyle Hidden -Command \"New-Item -ItemType Directory -Force 'C:\\Temp\\usb_backup' | Out-Null; Copy-Item 'D:\\alpine-standard-3.24.3-x86_64.iso' 'C:\\Temp\\usb_backup\\' -ErrorAction SilentlyContinue; Copy-Item 'D:\\claude_boot' 'C:\\Temp\\usb_backup\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; Copy-Item 'D:\\ventoy' 'C:\\Temp\\usb_backup\\ventoy' -Recurse -Force -ErrorAction SilentlyContinue; $r=@{cmd='cmd-019';label='usb-backup';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');files=(Get-ChildItem 'C:\\Temp\\usb_backup' -Recurse | Select-Object -Expand FullName)};$j=Get-Content 'C:\\Users\\endos\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\..\\..\\..\\relay\\from_cli.json' -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue;if(-not $j){$j=@{results=@();updated=''}};$j.results+=$r;$j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');$j|ConvertTo-Json -Depth 10|Set-Content 'relay\\from_cli.json'\"",
       "silent": true
     },
     {
-      "id": "cmd-017",
-      "action": "run_hidden",
-      "label": "usb-disk-info",
-      "command": "powershell -WindowStyle Hidden -Command \"New-Item -ItemType Directory -Force -Path 'C:\\Signal' | Out-Null; Get-Disk | Where-Object {$_.Size -gt 100GB -and $_.Size -lt 200GB} | Select-Object Number,PartitionStyle,Size | ConvertTo-Json | Out-File 'C:\\Signal\\usb_disk_info.txt' -Encoding ascii; $content = Get-Content 'C:\\Signal\\usb_disk_info.txt' -Raw; $payload = @{cmd='cmd-017-result'; data=$content} | ConvertTo-Json; $payload | Out-File 'C:\\Users\\endos\\Signal\\relay\\from_cli.json' -Encoding ascii\"",
+      "id": "cmd-020",
+      "label": "ventoy-fresh-install",
+      "note": "Fresh Ventoy install on D: (PNY 128GB). WIPES D:. UAC dialog will appear - click Yes. Looks for Ventoy2Disk.exe in common locations.",
+      "command": "powershell -WindowStyle Hidden -Command \"$paths=@('C:\\Ventoy\\Ventoy2Disk.exe','C:\\Users\\endos\\Downloads\\Ventoy2Disk.exe','C:\\Temp\\Ventoy2Disk.exe','C:\\Temp\\usb_backup\\ventoy\\Ventoy2Disk.exe',(Get-ChildItem 'C:\\Users\\endos\\Desktop' -Filter 'Ventoy2Disk.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -Expand FullName));$exe=$paths|Where-Object{Test-Path $_}|Select-Object -First 1;if($exe){Start-Process $exe -ArgumentList '/I D:' -Verb RunAs -Wait}else{[System.IO.File]::WriteAllText('C:\\Temp\\ventoy_not_found.txt','Ventoy2Disk.exe not found. Please place it in C:\\Temp\\ and re-run.')}\"\n",
+      "silent": false
+    },
+    {
+      "id": "cmd-021",
+      "label": "usb-restore",
+      "note": "Restore alpine ISO and claude_boot back to D: after fresh Ventoy install. No UAC needed. Run after cmd-020 completes.",
+      "command": "powershell -WindowStyle Hidden -Command \"Copy-Item 'C:\\Temp\\usb_backup\\alpine-standard-3.24.3-x86_64.iso' 'D:\\' -Force -ErrorAction SilentlyContinue; Copy-Item 'C:\\Temp\\usb_backup\\claude_boot' 'D:\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; $r=@{cmd='cmd-021';label='usb-restore';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');d_files=(Get-ChildItem 'D:\\' | Select-Object -Expand Name)};$j=Get-Content 'relay\\from_cli.json' -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue;if(-not $j){$j=@{results=@();updated=''}};$j.results+=$r;$j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');$j|ConvertTo-Json -Depth 10|Set-Content 'relay\\from_cli.json'\"",
       "silent": true
     },
     {
       "id": "cmd-006",
-      "action": "run_hidden",
       "label": "watchdog-reg",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"$vbs = '$wsh = New-Object -ComObject WScript.Shell; $wsh.Run(\\\"powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\\\\Users\\\\endos\\\\Signal\\\\relay\\\\claude_watchdog.ps1\\\", 0, $false)'; Set-Content -Path $env:TEMP\\watchdog_launch.vbs -Value $vbs; $action = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument \"$env:TEMP\\watchdog_launch.vbs\"; $trigger1 = New-ScheduledTaskTrigger -AtLogOn; $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit 0; Register-ScheduledTask -TaskName 'ClaudeWatchdog' -Action $action -Trigger $trigger1 -Settings $settings -RunLevel Highest -Force\"",
+      "note": "Register Cloud_DC_Watchdog scheduled task (auto-restart DC Clone, poller, DC Remote every 15 min).",
+      "command": "powershell -WindowStyle Hidden -Command \"$action=New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\claude_watchdog.ps1';$trigger1=New-ScheduledTaskTrigger -AtLogOn;$trigger2=New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date);Register-ScheduledTask -TaskName Cloud_DC_Watchdog -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\"",
       "silent": true
     },
     {
       "id": "cmd-005",
-      "action": "run_hidden",
       "label": "defender-excl",
-      "command": "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command \"Add-MpPreference -ExclusionProcess 'node.exe'; Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\AppData\\Roaming\\npm'; Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\Signal'\"",
+      "note": "Add Defender exclusions for Signal/relay folders to prevent scan interference.",
+      "command": "powershell -WindowStyle Hidden -Command \"Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\Signal','C:\\Users\\endos\\relay','C:\\Signal' -ErrorAction SilentlyContinue\"",
       "silent": true
     }
   ],
