@@ -1,39 +1,39 @@
 {
-  "timestamp": "2026-10-28T02:10Z",
+  "timestamp": "2026-10-28T18:41Z",
   "from": "cloud-relay-listener",
   "commands": [
     {
       "id": "cmd-019",
       "label": "usb-backup",
-      "note": "Back up D: files to C:\\Temp\ before wiping. No UAC needed.",
-      "command": "powershell -WindowStyle Hidden -Command \"New-Item -ItemType Directory -Force 'C:\\Temp\\usb_backup' | Out-Null; Copy-Item 'D:\\alpine-standard-3.24.3-x86_64.iso' 'C:\\Temp\\usb_backup\\' -ErrorAction SilentlyContinue; Copy-Item 'D:\\claude_boot' 'C:\\Temp\\usb_backup\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; Copy-Item 'D:\\ventoy' 'C:\\Temp\\usb_backup\\ventoy' -Recurse -Force -ErrorAction SilentlyContinue; $r=@{cmd='cmd-019';label='usb-backup';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');files=(Get-ChildItem 'C:\\Temp\\usb_backup' -Recurse | Select-Object -Expand FullName)};$j=Get-Content 'C:\\Users\\endos\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\..\\..\\..\\relay\\from_cli.json' -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue;if(-not $j){$j=@{results=@();updated=''}};$j.results+=$r;$j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');$j|ConvertTo-Json -Depth 10|Set-Content 'relay\\from_cli.json'\"",
+      "note": "Back up D: files to C:\\Temp\\usb_backup before wiping. No UAC.",
+      "command": "powershell -WindowStyle Hidden -Command \"New-Item -ItemType Directory -Force 'C:\\Temp\\usb_backup' | Out-Null; Copy-Item 'D:\\alpine-standard-3.24.3-x86_64.iso' 'C:\\Temp\\usb_backup\\' -Force -ErrorAction SilentlyContinue; Copy-Item 'D:\\claude_boot' 'C:\\Temp\\usb_backup\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-019';label='usb-backup';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');backed_up=(Get-ChildItem 'C:\\Temp\\usb_backup' -Recurse | Measure-Object).Count}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
       "silent": true
     },
     {
       "id": "cmd-020",
       "label": "ventoy-fresh-install",
-      "note": "Fresh Ventoy install on D: (PNY 128GB). WIPES D:. UAC dialog will appear - click Yes. Looks for Ventoy2Disk.exe in common locations.",
-      "command": "powershell -WindowStyle Hidden -Command \"$paths=@('C:\\Ventoy\\Ventoy2Disk.exe','C:\\Users\\endos\\Downloads\\Ventoy2Disk.exe','C:\\Temp\\Ventoy2Disk.exe','C:\\Temp\\usb_backup\\ventoy\\Ventoy2Disk.exe',(Get-ChildItem 'C:\\Users\\endos\\Desktop' -Filter 'Ventoy2Disk.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -Expand FullName));$exe=$paths|Where-Object{Test-Path $_}|Select-Object -First 1;if($exe){Start-Process $exe -ArgumentList '/I D:' -Verb RunAs -Wait}else{[System.IO.File]::WriteAllText('C:\\Temp\\ventoy_not_found.txt','Ventoy2Disk.exe not found. Please place it in C:\\Temp\\ and re-run.')}\"\n",
+      "note": "Fresh Ventoy on D: (wipes D:). Searches common paths; if not found, downloads from GitHub. UAC will appear - click Yes.",
+      "command": "powershell -WindowStyle Hidden -Command \"$paths=@('C:\\Ventoy\\Ventoy2Disk.exe','C:\\Temp\\Ventoy2Disk.exe','C:\\Temp\\usb_backup\\ventoy\\Ventoy2Disk.exe') + (Get-ChildItem $env:USERPROFILE\\Downloads,'C:\\Users\\endos\\Desktop' -Filter 'Ventoy2Disk.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -Expand FullName); $exe=$paths|Where-Object{$_ -and (Test-Path $_)}|Select-Object -First 1; if(-not $exe){$zip='C:\\Temp\\ventoy_dl.zip'; Invoke-WebRequest 'https://github.com/ventoy/Ventoy/releases/download/v1.1.05/ventoy-1.1.05-windows.zip' -OutFile $zip -UseBasicParsing; Expand-Archive $zip 'C:\\Temp\\ventoy_dl' -Force; $exe=Get-ChildItem 'C:\\Temp\\ventoy_dl' -Filter 'Ventoy2Disk.exe' -Recurse | Select-Object -First 1 -Expand FullName}; if($exe){Start-Process $exe -ArgumentList '/I D:' -Verb RunAs -Wait; $st='launched'}else{$st='not_found'}; $r=[PSCustomObject]@{cmd='cmd-020';label='ventoy-fresh-install';status=$st;exe=$exe;ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ')}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
       "silent": false
     },
     {
       "id": "cmd-021",
       "label": "usb-restore",
-      "note": "Restore alpine ISO and claude_boot back to D: after fresh Ventoy install. No UAC needed. Run after cmd-020 completes.",
-      "command": "powershell -WindowStyle Hidden -Command \"Copy-Item 'C:\\Temp\\usb_backup\\alpine-standard-3.24.3-x86_64.iso' 'D:\\' -Force -ErrorAction SilentlyContinue; Copy-Item 'C:\\Temp\\usb_backup\\claude_boot' 'D:\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; $r=@{cmd='cmd-021';label='usb-restore';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');d_files=(Get-ChildItem 'D:\\' | Select-Object -Expand Name)};$j=Get-Content 'relay\\from_cli.json' -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue;if(-not $j){$j=@{results=@();updated=''}};$j.results+=$r;$j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');$j|ConvertTo-Json -Depth 10|Set-Content 'relay\\from_cli.json'\"",
+      "note": "Restore alpine ISO + claude_boot back to D: after Ventoy install completes. No UAC.",
+      "command": "powershell -WindowStyle Hidden -Command \"Copy-Item 'C:\\Temp\\usb_backup\\alpine-standard-3.24.3-x86_64.iso' 'D:\\' -Force -ErrorAction SilentlyContinue; Copy-Item 'C:\\Temp\\usb_backup\\claude_boot' 'D:\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-021';label='usb-restore';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');d_root=(Get-ChildItem 'D:\\' | Select-Object -Expand Name)}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
       "silent": true
     },
     {
       "id": "cmd-006",
       "label": "watchdog-reg",
-      "note": "Register Cloud_DC_Watchdog scheduled task (auto-restart DC Clone, poller, DC Remote every 15 min).",
+      "note": "Register Cloud_DC_Watchdog scheduled task.",
       "command": "powershell -WindowStyle Hidden -Command \"$action=New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\claude_watchdog.ps1';$trigger1=New-ScheduledTaskTrigger -AtLogOn;$trigger2=New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date);Register-ScheduledTask -TaskName Cloud_DC_Watchdog -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\"",
       "silent": true
     },
     {
       "id": "cmd-005",
       "label": "defender-excl",
-      "note": "Add Defender exclusions for Signal/relay folders to prevent scan interference.",
+      "note": "Add Defender exclusions for Signal/relay folders.",
       "command": "powershell -WindowStyle Hidden -Command \"Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\Signal','C:\\Users\\endos\\relay','C:\\Signal' -ErrorAction SilentlyContinue\"",
       "silent": true
     }
