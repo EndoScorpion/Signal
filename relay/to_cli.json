@@ -1,27 +1,20 @@
 {
-  "timestamp": "2026-10-28T01:35Z",
+  "timestamp": "2026-10-28T01:44Z",
   "from": "cloud-relay-listener",
   "commands": [
+    {
+      "id": "cmd-018",
+      "action": "run_hidden",
+      "label": "ventoy-fix-efi-guid",
+      "note": "Fix Ventoy EFI partition GUID from BasicData to EFI System. Auto-detects USB disk (100-200GB). UAC prompt will appear.",
+      "command": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"$disk = (Get-Disk | Where-Object {$_.Size -gt 100GB -and $_.Size -lt 200GB} | Select-Object -First 1).Number; if ($null -eq $disk) { Write-Output 'ERROR: USB disk not found'; exit 1 }; $script = \"list disk`nselect disk $disk`nselect partition 2`nset id=c12a7328-f81f-11d2-ba4b-00a0c93ec93b override`nexit\"; $tmp = [System.IO.Path]::GetTempFileName(); $script | Out-File $tmp -Encoding ascii; Start-Process 'diskpart' -ArgumentList \"/s $tmp\" -Verb RunAs -Wait -WindowStyle Hidden; Write-Output \"DONE disk=$disk\"; $script | Out-File 'C:\\Signal\\efi_fix_result.txt' -Encoding ascii\"",
+      "silent": true
+    },
     {
       "id": "cmd-017",
       "action": "run_hidden",
       "label": "usb-disk-info",
-      "note": "Check USB partition style (MBR vs GPT). Write result to C:\\Signal\\usb_disk_info.txt then relay back.",
       "command": "powershell -WindowStyle Hidden -Command \"New-Item -ItemType Directory -Force -Path 'C:\\Signal' | Out-Null; Get-Disk | Where-Object {$_.Size -gt 100GB -and $_.Size -lt 200GB} | Select-Object Number,PartitionStyle,Size | ConvertTo-Json | Out-File 'C:\\Signal\\usb_disk_info.txt' -Encoding ascii; $content = Get-Content 'C:\\Signal\\usb_disk_info.txt' -Raw; $payload = @{cmd='cmd-017-result'; data=$content} | ConvertTo-Json; $payload | Out-File 'C:\\Users\\endos\\Signal\\relay\\from_cli.json' -Encoding ascii\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-016",
-      "action": "run_hidden",
-      "label": "start-here-usb-copy",
-      "command": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/claude_boot/START_HERE.txt' -OutFile 'D:\\START_HERE.txt' -UseBasicParsing; Write-Output 'DONE'\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-015",
-      "action": "run_hidden",
-      "label": "claude-boot-usb-copy",
-      "command": "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"New-Item -ItemType Directory -Force -Path 'D:\\claude_boot' | Out-Null; $base = 'https://raw.githubusercontent.com/EndoScorpion/Signal/relay/claude_boot'; @('kali_claude.sh','ubuntu_claude.sh','BOOT_KEY.txt','README.txt') | ForEach-Object { Invoke-WebRequest -Uri \"$base/$_\" -OutFile \"D:\\claude_boot\\$_\" -UseBasicParsing }; Write-Output 'DONE'\"",
       "silent": true
     },
     {
