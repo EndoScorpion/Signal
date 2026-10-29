@@ -1,0 +1,225 @@
+THEORY ADDENDUM v54 — T356-T360
+EURUSD FXOpen ECN H1 | COST=0.00008 (8pt round-trip) | UTC
+Base: n=10, WR=100%, avg=+0.1071%
+Generated: 2026-10-29
+
+================================================================
+T356: 2-BAR ENTRY PATTERN (PREV BAR DIRECTION)
+================================================================
+
+prev_down corr with pnl: +0.181 (weak)
+
+RESULT:
+  Prev bar DOWN (close<open): n=9, avg=+0.1090% (+2%)  ← 9 of 10 qualify
+  Prev bar UP   (close>open): n=1,  avg=+0.0906%  (only 2026-08-06)
+
+Combined filter (prev_down AND body size):
+  prev_down AND body>=0.3: n=8, avg=+0.1051% (-2%)  ← WORSE (excludes 2026-03-30!)
+  prev_down AND body>=0.5: n=6, avg=+0.1073% (+0%)  ← no lift
+  prev_down AND body>=0.7: n=3, avg=+0.1033% (-4%)  ← WORSE
+
+INTERPRETATION:
+- 9/10 entries already have a down bar the prior hour — same as prior_lo10_break situation
+- prev_down is nearly universal, not discriminating (like repeat lo10 breaks in T344)
+- Adding body size threshold HURTS by removing good trades
+- The one UP bar trade (2026-08-06, v6a=0.166) is a mid-quality trade, not an outlier
+- FINDING: Prior bar direction = NULL predictor. Skip from all models.
+
+================================================================
+T357: ATR_abs × EMA50_dist INTERACTION
+================================================================
+
+interaction corr with pnl: +0.668 (MODERATE-STRONG)
+
+RESULT:
+  High interaction (>= median 16.8): n=5, avg=+0.1239% (+16%)
+  Low  interaction (<  median):      n=5, avg=+0.0904% (-16%)
+
+Per-trade by interaction value (atr_pts × ema_dist_in_atr):
+  2026-08-06: 4.7  → +0.0906%
+  2024-12-18: 7.6  → +0.1299%  ← low interact but high pnl (high ATR carries it)
+  2025-12-30: 9.1  → +0.1032%
+  2026-07-21: 12.2 → +0.0803%
+  2026-02-16: 12.4 → +0.0480%  ← mid interact, worst pnl
+  2026-01-08: 21.2 → +0.1001%
+  2026-05-14: 29.1 → +0.1009%
+  2026-02-17: 30.7 → +0.1167%
+  2024-12-10: 32.6 → +0.1399%
+  2026-03-30: 51.9 → +0.1618%  ← best trade, highest interaction
+
+INTERPRETATION:
+- The interaction term (ATR × EMA_dist) has corr=+0.668 — meaningful
+- But this is REDUNDANT: both ATR_abs (+0.912 corr) and EMA_dist are already in V6a
+- The interaction doesn't add independent information beyond what V6a captures
+- The 2 exceptions (2024-12-18: low interact but high pnl; 2026-02-16: mid interact but worst pnl)
+  are explained by ATR_abs alone (Dec 2024 has high ATR, Feb-16 has low ATR)
+- FINDING: ATR × EMA_dist interaction corr=+0.668 is real but redundant with V6a.
+  Adding it to composites is unlikely to improve on V6a's existing +0.920 capture.
+  Do not create a separate interaction term; V6a encodes it via ATR_abs component.
+
+================================================================
+T358: QC WINDOW START BAR DIRECTION
+================================================================
+
+qc_start_down corr with pnl: +0.223 (weak)
+
+RESULT:
+  First compression bar DOWN: n=3, avg=+0.1175%
+  First compression bar UP:   n=7, avg=+0.1027%
+
+Per-trade:
+  start_down=False: 7 trades (most of the sample)
+  start_down=True:  3 trades (2026-01-08, 2026-03-30, 2026-08-06)
+
+NOTE: 2026-03-30 (BEST trade) starts DOWN. 2026-02-16 (WORST) starts UP.
+But the split is 3 vs 7 — not a reliable filter.
+
+INTERPRETATION:
+- Compression windows that begin with a down bar (trending down from first hour) → slightly higher pnl
+- But n=3 for start_down=True — cannot use as gate
+- corr=+0.223 is weak (consistent with T342 seasonality / T356 prev_bar findings at ~0.2 level)
+- FINDING: QC start bar direction = NULL predictor. Too few start_down cases for a gate.
+
+================================================================
+T359: V8 COMPOSITE (V5 + ATR_abs + slope_7 + ema_slope)
+================================================================
+
+RESULT:
+  V8  (V5+ATR_abs+slope_7+ema_slope): corr=+0.913
+  V7-proxy (V5+ATR_abs+slope_7 only): corr=+0.925
+  V7  (original, V5+ATR_abs+slope_qc): corr=+0.937 ← STILL BEST
+
+CRITICAL FINDING: Adding ema_slope to V7 HURTS the composite (0.913 < 0.925 < 0.937)
+
+V8 range: 0.219 – 0.687 (narrower than V7's 0.124-0.831)
+
+Per-trade V8 ranking order:
+  2026-03-30: v8=0.687 → +0.1618%  ← rank #1 correct
+  2026-02-17: v8=0.680 → +0.1167%  ← rank #2 (should be lower than Dec 2024)
+  2024-12-18: v8=0.636 → +0.1299%  ← rank #3
+  2024-12-10: v8=0.600 → +0.1399%  ← rank #4 (Dec 10 > Dec 18 in pnl but rank reversed in V8)
+  ...
+  2026-02-16: v8=0.219 → +0.0480%  ← rank #10 correct (worst correctly ranked last)
+
+V8 threshold performance:
+  v8>=0.50: n=5, avg=+0.1297% (+21%)
+  v8>=0.55: n=4, avg=+0.1371% (+28%)
+  (matches V6a thresholds — V8 provides no improvement)
+
+WHY V8 HURTS:
+- EMA slope is already partially redundant with the ema_norm component of V5
+  (both measure EMA distance/position relative to price)
+- Adding ema_slope as a 4th normalization term dilutes the weight of ATR_abs
+  (ATR_abs is the strongest individual predictor at +0.912)
+- The variable-window slope_qc in V7 captures decay patterns better than fixed slope_7
+  for the composite context (even though slope_7 has better individual corr)
+
+FINDING: V7 (original, using slope_qc variable window) remains the best composite at +0.937.
+  V7-proxy (slope_7 fixed window) = +0.925 is 2nd.
+  V8 (adding ema_slope) = +0.913 is 3rd — worse.
+  DO NOT add EMA slope to the composite. Use it as a standalone sizing signal only.
+
+Updated composite ranking:
+  V7  (V5+ATR_abs+slope_qc):          +0.937 ← BEST (unchanged)
+  V7p (V5+ATR_abs+slope_7):           +0.925
+  V6a (V5+ATR_abs):                   +0.920
+  V8  (V5+ATR_abs+slope_7+ema_slope): +0.913 ← WORSE, do not use
+
+================================================================
+T360: LO10 BREAK DEPTH (ENTRY BAR CLOSE POSITION RELATIVE TO LO10)
+================================================================
+
+lo10_break_depth corr with pnl: +0.240 (weak)
+(Depth = (lo10 - close) / ATR; positive = close below lo10; negative = close above lo10)
+
+KEY OBSERVATION: 6 of 10 entry bars CLOSE ABOVE lo10 (negative depth)
+  The setup only requires the bar's LOW to break below lo10 — not the close.
+  Most bars wick below lo10 and close back above it.
+
+Per-trade sorted by depth:
+  2026-01-08: depth=-0.944ATR (-6.8pts close above lo10) → +0.1001%
+  2026-02-16: depth=-0.634ATR (-4.2pts) → +0.0480%  ← close above lo10, still qualifies
+  2024-12-18: depth=-0.479ATR (-4.4pts) → +0.1299%
+  2026-07-21: depth=-0.442ATR (-2.6pts) → +0.0803%
+  2026-03-30: depth=-0.230ATR (-2.6pts) → +0.1618%  ← BEST trade, close above lo10!
+  2025-12-30: depth=-0.189ATR (-1.4pts) → +0.1032%
+  2026-08-06: depth=+0.198ATR (+1.3pts below lo10) → +0.0906%
+  2024-12-10: depth=+0.223ATR (+2.2pts) → +0.1399%
+  2026-05-14: depth=+0.758ATR (+5.5pts) → +0.1009%
+  2026-02-17: depth=+0.842ATR (+7.0pts) → +0.1167%
+
+Depth threshold sweep (depth>=X):
+  depth>=0.20: n=3, avg=+0.1191% (+11%)  ← marginal, n=3
+  (no strong threshold effect)
+
+Half-split:
+  Deep (>= median): n=5, avg=+0.1102% (+3%)
+  Shallow (<median): n=5, avg=+0.1040% (-3%)
+
+INTERPRETATION:
+- Depth is NOT monotonic with pnl: best trade (2026-03-30) closes above lo10 (-0.230 depth)
+- The bar's close position within/around lo10 has no predictive value
+- This is consistent with T349 finding (close position within bar = null predictor)
+- FINDING: lo10 break depth = NULL predictor (corr=+0.240, non-monotonic).
+  The signal is in the LOW breaking lo10, not where the bar closes relative to it.
+
+================================================================
+SUMMARY — UPDATED FINDINGS THROUGH T360
+================================================================
+
+T356: Prior bar direction = nearly universal (9/10 down). NULL predictor.
+T357: ATR × EMA interaction corr=+0.668 is REDUNDANT with V6a. Skip.
+T358: QC start bar direction = null predictor (corr=+0.223, n=3 for one group).
+T359: V8 (adding ema_slope to V7) HURTS composite. V7 remains best at +0.937.
+T360: lo10 break depth = null predictor (corr=+0.240, non-monotonic).
+
+COMPOSITE FINAL RANKING (after T360):
+  V7  (V5+ATR_abs+slope_qc):          +0.937 ← CONFIRMED BEST
+  V7p (V5+ATR_abs+slope_7):           +0.925
+  V6a (V5+ATR_abs):                   +0.920
+  V5  (rank+ema_norm+h4+cv):          +0.885
+
+KEY FINDING: The V7 composite (using variable-window slope_qc) has peaked at +0.937.
+  Testing of additional components (EMA slope, interaction terms) has not improved it.
+  The 4 components of V7 represent the ceiling with current feature engineering.
+
+CONFIRMED NULL PREDICTORS (from T356-T360):
+  - Prior bar direction (nearly universal, null)
+  - ATR × EMA interaction (redundant with V6a)
+  - QC start bar direction (null)
+  - EMA slope in composite (hurts V7)
+  - lo10 break depth (null, non-monotonic)
+
+PREDICTOR RANKINGS (FINAL THROUGH T360):
+  Individual predictors:
+    1. ATR absolute:           +0.912 ← components of V7
+    2. V5 composite:           +0.885 ← components of V7
+    3. ATR slope 7-bar:        -0.734 ← new best slope
+    4. EMA50 slope (5-bar):    -0.702
+    5. ATR rank:               +0.756
+    6. ATR slope 5-bar:        -0.592
+    7. Prior week direction:   -0.595
+    8. ATR slope 10-bar:       -0.572
+    9. ATR slope qc-var:       -0.569
+   10. ATR × EMA interaction:  +0.668 (redundant)
+   11. Exit bar timing:        -0.464 (result)
+   12. H4 dist quality:        +0.356
+   13. Prior lo10 break:       +0.294
+   14. Seasonality/month:      +0.253
+   15. Hour of day:            +0.223
+   16. qc length:              +0.187
+   17. Close position:         +0.131
+   18. Prior bar direction:    +0.181 (null, nearly universal)
+   19. QC start direction:     +0.223 (null, n=3)
+   20. lo10 break depth:       +0.240 (null, non-monotonic)
+   21. Directional accuracy:   -0.105
+   22. Bar body size:          -0.097
+   23. Day of week:            -0.096
+   24. ATR slope 3-bar:        +0.226 (noisy, wrong direction)
+
+NEXT THEORIES (T361-T365):
+T361: Body-to-range ratio on entry bar (bar fill %) — consistent with T349/T360 or new angle?
+T362: Consecutive compression hours — distribution of hours within qc window (all 13-14? mixed?)
+T363: EMA50 distance bins — is there a nonlinear sweet spot (too far = worse)?
+T364: H4 EMA distance ratio — h4_ema_dist in ATR units (currently binary h4_aligned)
+T365: Two-setup week — if a trade fired earlier this week, does 2nd trade in same week perform differently?
