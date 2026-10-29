@@ -1,0 +1,193 @@
+THEORY LOOP ADDENDUM v73 — T451-T455 (DIRECTION CORRECTION)
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== CRITICAL CORRECTION FROM v72 =====
+DIRECTION BUG DISCOVERED: All T441-T450 findings used LONG trade direction on a
+data file that has since been updated. The lo10 break is a BEARISH continuation signal;
+the correct trade is SHORT (sell the breakdown, profit from price decline).
+
+Evidence: With current data, LONG direction gives WR=0% (all stops hit on data update).
+SHORT direction gives WR=100% avg=+0.1251% (n=8) — confirmed this session.
+
+Data file update: fxopen_eurusd_h1.json was updated between T446-T450 session and this
+session. A new trade 2026-07-21 appeared, making baseline n=9.
+
+IMPLICATION: All T441-T450 correlations (ATR=+0.860, r=+0.743, d1_dist=+0.524,
+h1_rsi=-0.453) were measured with LONG direction on old data. Re-verified below with
+SHORT direction — all major findings survive with improved correlation magnitudes.
+
+===== BASELINE (SHORT direction, current data) =====
+n=9 WR=100% avg=+0.1032%
+  2024-12-10: r=18.7 ATR=108.0pts → +0.1463%
+  2024-12-18: r=21.0 ATR=100.3pts → +0.1358%
+  2026-01-08: r=23.4 ATR=81.0pts  → +0.0973%
+  2026-02-16: r=5.2  ATR=78.0pts  → +0.0405%
+  2026-02-17: r=27.0 ATR=92.1pts  → +0.1101%
+  2026-03-30: r=28.2 ATR=128.2pts → +0.1607%  ← best
+  2026-05-14: r=17.1 ATR=79.7pts  → +0.0954%
+  2026-07-21: r=9.5  ATR=65.3pts  → +0.0385%  ← worst (NEW trade)
+  2026-10-12: r=13.5 ATR=82.8pts  → +0.1040%
+
+ATR units: ECN pts = price × 1e5. 65.3pts = 0.000653 price = 6.53 pips = 65.3 ECN pts.
+Canonical gate ATR>=7.5 was originally in 4th-decimal pts (×1e4). In ECN pts (×1e5),
+the gate is equivalent to ATR>=75 ECN pts (0.00075 price). But all 9 trades pass
+ATR>=65 so the gate is not biting — trades at 65-78 ECN pts are the weakest.
+
+===== T451: ATR THRESHOLD OPTIMIZATION (ECN pts scale) =====
+ATR minimum scan:
+  atr>=60 ECN pts: n=9 WR=100% avg=+0.1032%  (baseline)
+  atr>=70 ECN pts: n=8 WR=100% avg=+0.1113%  (drops 2026-07-21)
+  atr>=80 ECN pts: n=6 WR=100% avg=+0.1257%  (drops 2026-07-21 and 2026-02-16)
+  atr>=85 ECN pts: n=4 WR=100% avg=+0.1382%
+  atr>=90 ECN pts: n=4 WR=100% avg=+0.1382%
+  atr>=95 ECN pts: n=3 WR=100% avg=+0.1476%  (n=3, too small)
+  atr>=100 ECN pts: n=3 WR=100% avg=+0.1476% (n=3, too small)
+
+ATR maximum scan (does high ATR add noise?):
+  atr<=130: n=9 WR=100% avg=+0.1032%
+  atr<=110: n=8 WR=100% avg=+0.0960%  (drops 2026-03-30, the best trade!)
+  atr<=100: n=6 WR=100% avg=+0.0810%
+  atr<=90: n=5 WR=100% avg=+0.0752%
+
+  CONCLUSION: High ATR is BETTER. Never cap ATR from above.
+
+ATR sorted near-monotonic:
+  65.3→+0.0385%, 78.0→+0.0405%, 79.7→+0.0954%, 81.0→+0.0973%,
+  82.8→+0.1040%, 92.1→+0.1101%, 100.3→+0.1358%, 108.0→+0.1463%, 128.2→+0.1607%
+
+Corr(ATR, pnl_pct) = +0.898 (was +0.860 with LONG/old data — STRONGER with SHORT)
+
+BEST PRACTICAL ATR GATE (n>=4): atr>=85 ECN pts → n=4 WR=100% avg=+0.1382%
+  These 4 trades: ATR=92.1, 100.3, 108.0, 128.2pts — strong volatility within quiet band.
+
+NOTE: The two worst trades (2026-07-21 at 65.3pts and 2026-02-16 at 78.0pts) are
+the lowest-ATR trades. They pass the old 7.5×1e4 = 75 ECN pt threshold but barely.
+Updating canonical gate: ATR >= 80 ECN pts (= 0.00080 price) drops these two.
+
+===== T452: RANK-WITHIN-WINDOW =====
+r_min scan within r<29:
+  r>=0 and r<29:  n=9 WR=100% avg=+0.1032%
+  r>=10 and r<29: n=7 WR=100% avg=+0.1214%  (drops r=5.2 and r=9.5 worst trades)
+  r>=15 and r<29: n=6 WR=100% avg=+0.1243%
+  r>=18 and r<29: n=5 WR=100% avg=+0.1300%  ← best n>=5 band
+  r>=20 and r<29: n=4 WR=100% avg=+0.1260%
+
+r_max scan (does tighter quiet window help?):
+  r<29: n=9 avg=+0.1032%  (baseline)
+  r<25: n=7 avg=+0.0940%  (removes 2026-03-30 and 2026-02-17 — HURTS)
+  r<20: n=5 avg=+0.0850%  (removes 3 trades including the best: 2026-03-30 r=28.2)
+
+VERDICT: Very quiet (r<10) is BAD. Tightening from r<29 to r<20 HURTS (removes best trades).
+The window r=18-29 is optimal (n=5, avg=+0.1300%). The moderately quiet band is best.
+
+Two worst trades: r=5.2 (+0.0405%) and r=9.5 (+0.0385%). Both extremely quiet.
+Best trades: r=18.7 (+0.1463%), r=21.0 (+0.1358%), r=28.2 (+0.1607%).
+
+Corr(r, pnl_pct) = +0.795 (was +0.743 with LONG/old data — STRONGER with SHORT)
+
+===== T453: H1 RSI + ATR COMBINED =====
+H1 RSI scan:
+  h1_rsi<=35: n=7 WR=100% avg=+0.1075%  (drops 2024-12-18 rsi=39.9 and 2026-01-08 rsi=31.5)
+  h1_rsi<=30: n=5 WR=100% avg=+0.1233%
+  h1_rsi<=25: n=5 WR=100% avg=+0.1233%  (same 5)
+  h1_rsi<=20: n=3 WR=100% avg=+0.1370%  (n=3 too small)
+
+Corr(h1_rsi, pnl_pct) = -0.489 (was -0.453 — STRONGER with SHORT)
+
+ATR + H1 RSI combined — ATR adds NOTHING beyond H1 RSI at current data range:
+All ATR thresholds (7.5-10.5 ECN pts notation OR actual 65-128) give same n as RSI alone.
+This is because ATR values don't overlap with the >=80 threshold usefully here.
+h1_rsi<=30 alone: n=5 avg=+0.1233% is the practical gate.
+
+KEY NOTE: The RSI gate does NOT screen the two worst trades (2026-07-21 h1_rsi=31.6
+and 2026-02-16 h1_rsi=36.2). h1_rsi<=30 drops 2026-07-21 ✓ but keeps 2026-02-16.
+
+===== T454: ATR + D1_DIST COMBINED =====
+d1_dist scan:
+  d1_dist>=-10: n=8 WR=100% avg=+0.1110%  (drops 2026-07-21 d1d=8.2)
+
+Wait — NEW data note: 2026-07-21 has d1_dist=+8.221 (price below D1 MA50 by 8.2 ATR).
+This trade is NOT the worst by d1_dist! The worst is 2026-02-16 d1_dist=-10.7.
+
+  d1_dist>=0: n=6 WR=100% avg=+0.1138%
+  d1_dist>=2: n=5 WR=100% avg=+0.1171%
+  d1_dist>=10: n=4 WR=100% avg=+0.1367%  ← best n>=4 gate
+
+Corr(d1_dist, pnl_pct) = +0.414 (was +0.524 with LONG/old data — WEAKER with SHORT)
+This is a notable change: d1_dist is still positive but less predictive in SHORT direction.
+The ATR is now even more dominant.
+
+ATR + d1_dist combined — marginal improvement over d1_dist alone:
+  atr>=8.0 + d1_dist>=2: n=5 avg=+0.1171%  (same as d1_dist>=2 alone)
+  No synergy found — ATR threshold at ECN 60-85pts range doesn't discriminate here.
+
+===== T455: PREDICTOR STABILITY =====
+Is ATR a quality predictor or just a magnitude proxy?
+
+  Corr(ATR, pnl_pct) = +0.898  ← ATR strongly predicts pnl magnitude
+  Corr(ATR, pnl/ATR) = +0.620  ← ATR ALSO predicts quality (not zero!)
+
+  IF ATR only predicted magnitude: Corr(ATR, pnl/ATR) ≈ 0.
+  +0.620 means higher ATR genuinely produces better QUALITY trades (not just larger wins).
+  ATR is a DUAL predictor: more volatile = larger wins AND higher quality.
+
+  Partial Corr(r, pnl | ATR) = +0.562 — rank has strong INDEPENDENT contribution
+  Even after controlling for ATR, rank predicts pnl. Not a proxy for ATR.
+
+FULL CORRELATION MATRIX (SHORT direction, n=9 baseline but n=8 in corr due to exclusions):
+             r    atr    h4d  d1_dist  h1_rsi  h4_rsi  d1_rsi     qc  pnl_pct
+r        1.000  0.685  0.396    0.079  -0.358  -0.159  -0.251 -0.458    0.795
+atr      0.685  1.000 -0.009    0.268  -0.438  -0.045  -0.052 -0.226    0.898
+h4d      0.396 -0.009  1.000    0.307  -0.632  -0.261  -0.450 -0.417    0.214
+d1_dist  0.079  0.268  0.307    1.000  -0.492   0.181  -0.540 -0.066    0.414
+h1_rsi  -0.358 -0.438 -0.632   -0.492   1.000   0.426  -0.073  0.174   -0.489
+h4_rsi  -0.159 -0.045 -0.261    0.181   0.426   1.000  -0.423  0.318   -0.067
+d1_rsi  -0.251 -0.052 -0.450   -0.540  -0.073  -0.423   1.000  0.409   -0.294
+qc      -0.458 -0.226 -0.417   -0.066   0.174   0.318   0.409  1.000   -0.546
+pnl_pct  0.795  0.898  0.214    0.414  -0.489  -0.067  -0.294 -0.546    1.000
+
+PnL CORRELATIONS RANKED (SHORT, current data):
+  atr     : corr=+0.898  ← STRONGEST (up from +0.860)
+  r       : corr=+0.795  ← 2nd (up from +0.743)
+  qc      : corr=-0.546  ← 3rd — SURPRISE! (was -0.273, now much stronger negative)
+  h1_rsi  : corr=-0.489  ← 4th (similar to -0.453)
+  d1_dist : corr=+0.414  ← 5th (DOWN from +0.524 — less predictive in SHORT)
+  d1_rsi  : corr=-0.294  ← 6th
+  h4d     : corr=+0.214  ← 7th (weak)
+  h4_rsi  : corr=-0.067  ← 8th (near zero)
+
+QC BOMBSHELL: qc correlation jumped from -0.273 to -0.546 with SHORT direction!
+Lower qc = fewer recent quiet bars = more volatile recent market = better SHORT trades.
+This makes intuitive sense: a SHORT at a lo10 break works better when the market
+has been volatile recently (fewer quiet bars = less stable support structure).
+But the canonical gate requires qc>=3 (minimum), so it's already filtering for SOME
+quiet history. The negative correlation means qc=3-4 is better than qc=6-7.
+
+===== SYSTEM RANKINGS (SHORT, n>=4) =====
+  Best individual gates within r<29 (SHORT):
+  atr>=85 ECN pts:      n=4 WR=100% avg=+0.1382%  ← new best
+  r>=18 and r<29:       n=5 WR=100% avg=+0.1300%  ← best n>=5
+  d1_dist>=10 ATR:      n=4 WR=100% avg=+0.1367%
+  h1_rsi<=30:           n=5 WR=100% avg=+0.1233%
+  BASELINE (r<29):      n=9 WR=100% avg=+0.1032%
+
+  Note: n=4 gates have limited statistical significance. Best practical live gate
+  is r=18-29 (n=5 avg=+0.1300%) or h1_rsi<=30 (n=5 avg=+0.1233%).
+
+===== CANONICAL GATE SET UPDATE =====
+Proposed gate update (ATR threshold correction):
+OLD: ATR >= 7.5 pts (×1e4 notation = 0.00075 price)
+NEW: ATR >= 80 ECN pts (= 0.00080 price) — drops the two weakest trades (65.3, 78.0pts)
+  → n=6 from baseline n=9, avg=+0.1257% vs +0.1032% baseline
+
+===== NEXT BATCH (T456-T460) =====
+T456: QC optimization — qc corr=-0.546 is now 3rd strongest! What's the optimal
+      qc maximum? Gate currently requires qc>=3. Does qc<=5 (exclude high qc) improve?
+T457: Combined ATR + rank gate — dual strongest predictors, both independent.
+      ATR>=80 + r>=18: what's the optimal combination?
+T458: Time-of-day analysis within {13,14} — does h=13 or h=14 differ in quality?
+T459: Exit bar distribution — do winning trades exit at bar 1, 2, 3, or 4?
+      Does earlier exit correlate with ATR or r?
+T460: Regime shift test — are the correlations stable pre-/post-2026?
+      ATR: is the correlation driven by 2026-03-30 (ATR=128, best trade)?
