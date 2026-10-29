@@ -1,0 +1,278 @@
+THEORY ADDENDUM v56 — T366-T370
+EURUSD FXOpen ECN H1 | COST=0.00008 (8pt round-trip) | UTC
+Base: n=10, WR=100%, avg=+0.1071%
+Generated: 2026-10-29
+
+================================================================
+T366: V9 COMPOSITE (REPLACE BINARY h4_norm WITH CONTINUOUS h4_dist_atr_norm)
+================================================================
+
+V7  (binary h4_norm, V5+ATR_abs+slope_qc): corr=+0.937 ← REFERENCE
+V9  (cont. h4_dist_norm, V9_v5+ATR_abs+slope_qc): corr=+0.920 ← WORSE
+V9f (cont. h4_dist_norm, V9_v5+ATR_abs, no slope): corr=+0.937 (TIES V7)
+
+Normalization: h4_dist_atr_norm = clip((h4_dist + 8) / 16, 0, 1)
+  (range -8 to +8 ATR; positive = aligned short)
+  Replaces binary h4_norm (0.0 or 1.0) in V5 base.
+
+Per-trade V9 ranking (sorted by v9):
+  2026-03-30: v9=0.815 h4_dist=6.52  v7=0.831 → +0.1618%  ← #1 correct
+  2026-02-17: v9=0.633 h4_dist=4.24  v7=0.649 → +0.1167%  ← #2
+  2025-12-30: v9=0.534 h4_dist=-0.31 v7=0.345 → +0.1032%  ← RISE: was 4th, now 3rd
+  2024-12-10: v9=0.524 h4_dist=2.32  v7=0.613 → +0.1399%  ← DROP: was 3rd in v7
+  2024-12-18: v9=0.503 h4_dist=1.69  v7=0.586 → +0.1299%
+  2026-01-08: v9=0.444 h4_dist=7.00  v7=0.455 → +0.1001%
+  2026-05-14: v9=0.420 h4_dist=5.57  v7=0.408 → +0.1009%
+  2026-08-06: v9=0.260 h4_dist=-5.77 v7=0.166 → +0.0906%  ← anti-aligned, lower
+  2026-07-21: v9=0.208 h4_dist=2.68  v7=0.227 → +0.0803%
+  2026-02-16: v9=0.052 h4_dist=1.09  v7=0.149 → +0.0480%  ← #10 correct (worst)
+
+KEY OBSERVATION: V9 re-ranks 2025-12-30 from rank 4 to rank 3. This trade has
+  h4_dist=-0.31 (barely above H4 EMA → NOT aligned) but performs at +0.1032%.
+  V7 ranked it 4th; V9 promotes it because continuous h4 gives it partial credit
+  (h4_dist_norm = (−0.31+8)/16 = 0.481) rather than V7's binary penalty (h4_norm=0.0).
+
+V9 threshold sweep:
+  v9>=0.45: n=5, avg=+0.1303% (+22%)
+  v9>=0.50: n=5, avg=+0.1303% (+22%)  ← matches V6a>=0.50 (+22%) performance
+  v9>=0.55: n=2, avg=+0.1393% (+30%)  ← comparable to V7 at top threshold
+
+WHY V9 (with slope_qc) IS WORSE:
+- slope_qc was optimized for V5's binary h4_norm; when h4_norm changes, its
+  interaction weight changes and degrades the composite
+- V9f (removing slope_qc) ties V7 at +0.937 — the continuous h4 component
+  contributes the same information when slope is removed
+- The "free" component slot from removing slope_qc is why V9f = V7 not V9 > V7
+
+FINDING: V9 (full) = +0.920 — WORSE than V7. V9f (no slope) = +0.937 — TIES V7.
+  V7 remains the best single composite. Continuous h4_dist does NOT improve V7.
+  Reason: the slope_qc component in V7 was calibrated around binary h4_norm.
+  Replacing h4_norm destabilizes slope_qc's contribution.
+  CONCLUSION: Keep V7. The binary h4_norm + slope_qc combination is already optimal.
+
+================================================================
+T367: JOINT GATE — ema_dist>=3.0 AND v6a>=0.50
+================================================================
+
+Gate comparison:
+  ema_dist>=3.0 alone: n=4, avg=+0.1298% (+21%)
+  v6a>=0.50 alone:     n=4, avg=+0.1371% (+28%)
+  JOINT (AND):         n=3, avg=+0.1395% (+30%)  ← BEST lift, n=3
+  UNION (OR):          n=5, avg=+0.1298% (+21%)
+
+Overlap analysis:
+  ema_dist>=3.0 selects: 2024-12-10, 2026-02-17, 2026-03-30, 2026-05-14
+  v6a>=0.50 selects:     2024-12-10, 2024-12-18, 2026-02-17, 2026-03-30
+  Overlap (3 trades):    2024-12-10, 2026-02-17, 2026-03-30
+  dist>=3 only (1):      2026-05-14 (v6a=0.408, ema_dist=4.006)
+  v6a>=0.50 only (1):    2024-12-18 (v6a=0.586, ema_dist=0.831)
+
+  2026-05-14: v6a=0.408 (below 0.50 gate) but ema_dist=4.006 (above 3.0) → +0.1009%
+  2024-12-18: v6a=0.586 (above 0.50 gate) but ema_dist=0.831 (below 3.0) → +0.1299%
+
+KEY FINDING:
+- The two gates are 75% overlapping (3 of 4 trades each select 3 common trades)
+- Each gate uniquely captures 1 trade the other misses
+- 2024-12-18 (ema_dist=0.831) shows that HIGH ATR alone (v6a=0.586) → strong trade even
+  without far EMA distance. This is the "ATR dominates" pattern from V6a.
+- 2026-05-14 (v6a=0.408) shows that FAR EMA distance can compensate for lower ATR.
+
+INTERPRETATION:
+- ema_dist>=3.0 and v6a>=0.50 are COMPLEMENTARY, not identical
+- JOINT gate (AND): n=3, avg=+0.1395% — highest avg but n=3 only
+- UNION gate (OR): n=5, avg=+0.1298% — preserves both unique trades, decent lift
+- v6a>=0.50 is slightly better as standalone (+28% vs +21%)
+- Joint AND gate is marginal gain (+30% vs +28%) for halving n to 3
+
+FINDING: ema_dist and v6a gates are 75% redundant (3/4 overlap), each captures 1
+  unique trade. v6a>=0.50 remains the primary gate (+28%). ema_dist>=3.0 is a
+  complementary secondary gate. Running both as OR adds 1 extra trade at modest cost.
+  Joint AND gate has highest per-trade quality but n=3 is too small to act on.
+  DO NOT add ema_dist as a required gate; use v6a as primary.
+
+================================================================
+T368: ATR RANK PERCENTILE BINS (EXTREME vs MILD COMPRESSION)
+================================================================
+
+atr_rank corr with pnl: +0.756 (strong — confirmed from prior analysis)
+Range: 2.8 – 17.9 percentile (all trades within 0-20% by definition)
+
+Per-trade sorted by rank (lowest = most compressed):
+  2026-02-16: rank= 2.8% v6a=0.149 → +0.0480%  ← WORST: ultra-compressed, worst trade
+  2026-07-21: rank= 6.0% v6a=0.227 → +0.0803%
+  2026-05-14: rank= 9.9% v6a=0.408 → +0.1009%
+  2026-08-06: rank=11.9% v6a=0.166 → +0.0906%
+  2026-03-30: rank=14.7% v6a=0.831 → +0.1618%  ← BEST: rank 15%, not extreme
+  2024-12-10: rank=15.5% v6a=0.613 → +0.1399%
+  2026-01-08: rank=15.9% v6a=0.455 → +0.1001%
+  2025-12-30: rank=16.3% v6a=0.345 → +0.1032%
+  2024-12-18: rank=16.7% v6a=0.586 → +0.1299%
+  2026-02-17: rank=17.9% v6a=0.649 → +0.1167%
+
+Bin performance:
+  rank 0-5%:  n=1, avg=+0.0480% (-55%)  ← extreme compression = worst
+  rank 5-10%: n=2, avg=+0.0906% (-15%)
+  rank 10-15%: n=2, avg=+0.1262% (+18%)
+  rank 15-20%: n=5, avg=+0.1180% (+10%)
+
+Binary split:
+  rank<10 (extreme compression): n=3, avg=+0.0764% (-29%)
+  rank 10-20 (mild compression): n=7, avg=+0.1203% (+12%)
+
+KEY INSIGHT: EXTREME ATR compression (rank<10%) → WORSE performance.
+  The best trade (2026-03-30) is at rank=14.7%, not near 0%.
+  Ultra-low rank (near-0%) means price is nearly completely frozen → poor setup.
+  The sweet spot is 10-20% compression — compressed but not dead.
+
+Threshold sweep (rank>=X):
+  rank>=10: n=7, avg=+0.1203% (+12%)
+  rank>=12: n=6, avg=+0.1201% (+12%)
+  rank>=15: n=5, avg=+0.1180% (+10%)
+
+FINDING: rank<10% (extreme compression) = AVOID gate. n=3, avg=+0.0764% (-29%).
+  Adding rank>=10 as a filter: n=7, avg=+0.1203% (+12%). But this is largely
+  captured by v6a (rank is a component via rank_norm). Key insight: extremely
+  low rank (near-0) paradoxically hurts — these are dead markets, not ideal setups.
+  This updates prior understanding: ATR rank matters but "lower = always better" is FALSE.
+  The signal is "compressed but not dead" (rank 10-20%), not "most compressed" (rank <5%).
+
+NOTE: rank_norm = (r - 10) / 10 already penalizes rank<10 via negative values.
+  V5/V6a/V7 already encode this through rank_norm. No new gate needed.
+  But: the raw finding inverts the naive assumption about compression depth.
+
+================================================================
+T369: SESSION HOUR SPLIT (h=13 vs h=14 UTC ENTRY)
+================================================================
+
+h=13 (1pm UTC): n=7, avg=+0.1027%
+h=14 (2pm UTC): n=3, avg=+0.1175% (+15%)
+hour corr with pnl: +0.223
+
+Per-trade with hour:
+  h=13: 2024-12-10 (+0.1399%), 2024-12-18 (+0.1299%), 2025-12-30 (+0.1032%),
+        2026-02-16 (+0.0480%)←WORST, 2026-05-14 (+0.1009%), 2026-02-17 (+0.1167%),
+        2026-07-21 (+0.0803%)
+  h=14: 2026-01-08 (+0.1001%), 2026-03-30 (+0.1618%)←BEST, 2026-08-06 (+0.0906%)
+
+OBSERVATION:
+  - h=14 trades avg +0.1175% vs h=13 avg +0.1027% — 14% spread
+  - But the WORST trade (2026-02-16, +0.0480%) is h=13
+  - The BEST trade (2026-03-30, +0.1618%) is h=14
+  - The h=13 sample (n=7) is large and diverse — includes both extremes
+  - corr=+0.223 matches prior hourly finding (T342-level, weak)
+  - n=3 for h=14 — cannot draw reliable conclusions
+
+INTERPRETATION:
+  h=14 London afternoon entries appear marginally better (US session opening effect?),
+  but n=3 is insufficient. The worst trade being h=13 skews the comparison.
+  Removing worst trade: h=13 n=6 avg=+0.1118% (closer to h=14's +0.1175%).
+
+FINDING: Hour of entry = WEAK predictor (corr=+0.223). h=14 marginally better
+  but n=3. NOT a reliable gate. Same conclusion as prior hour analysis (T342).
+  Current model correctly allows both h=13 and h=14 — no change needed.
+
+================================================================
+T370: EMA50 CURVATURE (SECOND DERIVATIVE — IS EMA50 ACCELERATING DOWN?)
+================================================================
+
+ema_curvature = (ema[i] - 2*ema[i-1] + ema[i-2]) in price units
+ema_curvature corr with pnl: -0.040 (ESSENTIALLY NULL)
+Range: -0.000037 to +0.000015 (−0.37pts to +0.15pts)
+
+Per-trade sorted by curvature:
+  2026-08-06: curv=-0.37pts (accelerating down) v6a=0.166 → +0.0906%
+  2024-12-10: curv=-0.35pts (accelerating down) v6a=0.613 → +0.1399%
+  2026-02-17: curv=-0.23pts (accelerating down) v6a=0.649 → +0.1167%
+  2026-05-14: curv=-0.23pts (accelerating down) v6a=0.408 → +0.1009%
+  2026-07-21: curv=-0.19pts (accelerating down) v6a=0.227 → +0.0803%
+  2024-12-18: curv=+0.01pts (flat/up) v6a=0.586 → +0.1299%
+  2025-12-30: curv=+0.07pts (flat/up) v6a=0.345 → +0.1032%
+  2026-02-16: curv=+0.14pts (decelerating) v6a=0.149 → +0.0480%  ← worst
+  2026-03-30: curv=+0.14pts (decelerating) v6a=0.831 → +0.1618%  ← BEST
+  2026-01-08: curv=+0.15pts (decelerating) v6a=0.455 → +0.1001%
+
+Binary split:
+  curv<0  (EMA accelerating down): n=5, avg=+0.1057% (-1%)
+  curv>=0 (EMA decelerating/flat): n=5, avg=+0.1086% (+1%)
+
+KEY OBSERVATION: The worst and best trades BOTH have curv≈+0.14pts (essentially identical).
+  - 2026-03-30 (BEST, +0.1618%) curv=+0.1395 pts
+  - 2026-02-16 (WORST, +0.0480%) curv=+0.1350 pts
+  This confirms complete null: same curvature produces opposite trade outcomes.
+  corr=-0.040 is essentially zero (noise level).
+
+FINDING: EMA50 curvature = NULL predictor (corr=-0.040). The EMA50's second
+  derivative (whether it's accelerating or decelerating downward) has no predictive
+  power. Consistent with T359 (EMA slope itself = null in composite context).
+  EMA50 distance and direction are captured in existing features (ema_norm, h4_norm);
+  higher-order derivatives add nothing. Skip from all models.
+
+================================================================
+SUMMARY — UPDATED FINDINGS THROUGH T370
+================================================================
+
+T366: V9 (cont. h4 + slope_qc) = +0.920 < V7 = +0.937. WORSE.
+      V9f (no slope) = +0.937 = TIES V7. V7 remains BEST.
+T367: ema_dist>=3.0 and v6a>=0.50 are 75% overlapping (3/4 shared).
+      v6a>=0.50 (+28%) > ema_dist>=3.0 (+21%). JOINT=+30% but n=3 only.
+      ema_dist is complementary, NOT additive gate. v6a remains primary.
+T368: rank<10% (extreme compression) = AVOID. Sweet spot is rank 10-20%.
+      "Lower rank = always better" is FALSE. rank_norm already captures this in V7.
+T369: h=14 marginally better (+0.1175% vs +0.1027%) but n=3, weak signal.
+      Hour = NULL gate (corr=+0.223). No change to model.
+T370: EMA50 curvature = NULL predictor (corr=-0.040). Skip entirely.
+
+COMPOSITE FINAL RANKING (after T370 — V7 STILL BEST):
+  V7  (V5+ATR_abs+slope_qc):          +0.937 ← CONFIRMED BEST (unchanged)
+  V7p (V5+ATR_abs+slope_7):           +0.925
+  V6a (V5+ATR_abs):                   +0.920
+  V9f (V5+ATR_abs, cont. h4_dist):    +0.937 (TIES V7, different component)
+  V5  (rank+ema_norm+h4+cv):          +0.885
+
+CONFIRMED NULL PREDICTORS (T366-T370):
+  - V9 improvement attempt: failed (continuous h4 + slope_qc = +0.920 < V7)
+  - EMA50 curvature / 2nd derivative (corr=-0.040)
+  - Session hour (corr=+0.223, n=3 for h=14)
+  - ema_dist gate as required filter (complementary to v6a, not additive)
+
+KEY INSIGHT (T368): Extreme ATR compression (rank<10%) is COUNTERPRODUCTIVE.
+  The best trades occur at rank 10-20% (compressed-but-active), not near-zero.
+  This updates the naive assumption that "most compressed = best setup".
+
+PREDICTOR RANKINGS (FINAL THROUGH T370):
+  Individual predictors:
+    1. ATR absolute:           +0.912
+    2. V5 composite:           +0.885
+    3. ATR slope 7-bar:        -0.734
+    4. ATR rank:               +0.756 (but non-monotonic: <10% is BAD)
+    5. EMA50 slope (5-bar):    -0.702
+    6. ATR slope 5-bar:        -0.592
+    7. Prior week direction:   -0.595
+    8. ATR slope 10-bar:       -0.572
+    9. ATR slope qc-var:       -0.569
+   10. ATR × EMA interaction:  +0.668 (redundant)
+   11. EMA50 dist (H1):        +0.463 (partially captured by V6a)
+   12. Exit bar timing:        -0.464 (result)
+   13. H4 EMA dist (cont.):    +0.356
+   14. Prior lo10 break:       +0.294
+   15. Seasonality/month:      +0.253
+   16. Hour of day:            +0.223
+   17. qc length:              +0.187
+   18. Close position:         +0.131
+   19. Two-setup week:         +0.105 (non-testable, n=1)
+   20. EMA50 curvature:        -0.040 (null) ← NEW
+   21. Bar fill %:             -0.024 (null)
+
+GATE SUMMARY (as of T370):
+  PRIMARY:   v6a>=0.50 → n=4, avg=+0.1371% (+28%)  ← USE THIS
+  SECONDARY: ema_dist>=3.0 → n=4, avg=+0.1298% (+21%)  ← complementary
+  JOINT AND: n=3, avg=+0.1395% (+30%)  ← best quality, too small
+  AVOID:     atr_rank<10% (extreme compression → +0.0764%, -29%)
+
+NEXT THEORIES (T371-T375):
+T371: Rolling window backtest — if we run the model forward-only (no lookahead),
+      does the composite still hold? (walk-forward validation)
+T372: Entry bar close vs. next-bar open gap — does gap-down vs gap-up on next bar affect outcome?
+T373: Drawdown depth within trade — how far does price go against entry before recovery?
+T374: v6a threshold scan on expanded synthetic date range — what if we had 50 trades?
+T375: Regime detection — is V7's performance tied to a specific macro regime (ATR level bucket)?
