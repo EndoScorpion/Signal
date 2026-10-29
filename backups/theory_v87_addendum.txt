@@ -1,0 +1,251 @@
+THEORY LOOP ADDENDUM v87 — T521-T525
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T521: ema50_slope THRESHOLD GATE =====
+
+Corr(ema50_slope, pnl_pct) = -0.701 (confirmed)
+
+All 9 trades with exact slope values (sorted ascending, most negative first):
+  Mar-30 [T1] slope=-0.000765 r=28.2 → +0.1607% (BEST)
+  Dec-10 [T1] slope=-0.000519 r=18.7 → +0.1463%
+  Oct-12 [t0] slope=-0.000481 r=13.5 → +0.1040%
+  May-14 [t0] slope=-0.000354 r=17.1 → +0.0954%
+  Feb-17 [T1] slope=-0.000347 r=27.0 → +0.1101%
+  Jan-08 [T1] slope=-0.000289 r=23.4 → +0.0973%
+  Feb-16 [t0] slope=-0.000138 r=5.2  → +0.0405% (BAD)
+  Jul-21 [t0] slope=-0.000119 r=9.5  → +0.0385% (WORST)
+  Dec-18 [T1] slope=-0.000108 r=21.0 → +0.1358%
+
+CRITICAL DISCOVERY: Dec-18 (+0.1358%, r=21.0, tier1) has slope=-0.000108 — the SMALLEST (shallowest).
+  This is the same "Dec-18 exception" we see with range10, bc10, cross_age.
+  Dec-18 consistently fails soft indicators yet is a strong trade.
+
+Threshold scan:
+  slope<=-0.00020: n=6 avg=+0.1190%  ← loses Dec-18!
+  slope<=-0.00030: n=5 avg=+0.1233%  ← tier1 minus Dec-18
+  slope<=-0.00050: n=2 avg=+0.1535%  ← BEST avg, but n=2 (Mar-30 + Dec-10)
+
+OPTIMIZATION TABLE (every unique slope value):
+  slope<=-0.000481: n=3 avg=+0.1370%  ← excludes Dec-18, includes Oct-12 (t0)
+  slope<=-0.000354: n=4 avg=+0.1266%
+  slope<=-0.000347: n=5 avg=+0.1233%  ← all tier1 except Dec-18, plus May-14 (t0)
+  slope<=-0.000289: n=6 avg=+0.1190%
+  slope<=-0.000138: n=7 avg=+0.1078%
+  slope<=-0.000119: n=8 avg=+0.0991%
+  slope<=-0.000108: n=9 avg=+0.1032% (all trades)
+
+VERDICT ON SLOPE AS GATE: ema50_slope is a STRONG predictor (-0.701) BUT has the Dec-18 problem.
+  Dec-18 (slope=-0.000108, the shallowest) is a tier1 quality trade (r=21.0, +0.1358%).
+  Any slope threshold that removes the BAD/WORST trades also removes Dec-18.
+
+  The slope-r interaction:
+    Low r trades (bad): slope=-0.000138 (Feb-16), -0.000119 (Jul-21)
+    Dec-18 (r=21.0): slope=-0.000108 — LOWER slope than the bad trades!
+
+  This means: slope<=-0.000138 removes Feb-16 AND keeps Jul-21... wait:
+    slope<=-0.000138 means "more negative than -0.000138" — so it KEEPS Feb-16 but loses Jul-21 at -0.000119.
+
+  Let me re-read: sorted ASCENDING (most negative = best context = first):
+    -0.000765 (Mar-30, BEST) → -0.000519 → -0.000481 → ... → -0.000108 (Dec-18, shallowest)
+    -0.000119 (Jul-21) is MORE negative than Dec-18 (-0.000108)
+    -0.000138 (Feb-16) is MORE negative than Jul-21
+
+  So slope<=-0.000138 KEEPS Feb-16 (slope=-0.000138 just meets threshold) and Jul-21 (-0.000119 also meets).
+  slope<=-0.000110 would keep Jul-21 but lose Dec-18 — no useful threshold separates them!
+
+  CONFIRMED: There is NO slope threshold that removes the two worst trades (Feb-16, Jul-21)
+  without also removing Dec-18 (the strongest tier1 non-extreme trade).
+
+  The -0.000108 (Dec-18) is between -0.000119 (Jul-21) and the rest.
+  Any cut keeping Dec-18 also keeps Jul-21 and Feb-16 (all three have slopes in -0.000108 to -0.000138 range).
+
+VERDICT: ema50_slope is NOT gateable as a primary filter without removing Dec-18.
+  Confirmed as STRONG SOFT INDICATOR (-0.701) — use for context only.
+  The Dec-18 exception is structural: Dec-18 is a regime-start trade (cross_age=6, bc10=7)
+  where momentum hasn't yet fully accelerated, but the signal is high quality (r=21.0).
+
+===== T522: ema50_slope ACCELERATION (2nd derivative) =====
+
+Corr(ema50_accel, pnl_pct) = -0.735  ← STRONGEST PREDICTOR IN THE DATASET (#1 over r=+0.795?? No — r is still #1)
+
+Wait — correlation sign: -0.735 means "more negative accel = better trade".
+ALL 9 trades have NEGATIVE acceleration (all accelerating downward). Range: -0.000015 to -0.000424.
+
+Sorted values (most accelerating first = best context):
+  Dec-10:  accel=-0.000424 r=18.7 → +0.1463%
+  Mar-30:  accel=-0.000341 r=28.2 → +0.1607% (BEST)
+  Oct-12:  accel=-0.000293 r=13.5 → +0.1040%
+  May-14:  accel=-0.000130 r=17.1 → +0.0954%
+  Dec-18:  accel=-0.000127 r=21.0 → +0.1358%  ← moderate accel, good trade
+  Jan-08:  accel=-0.000074 r=23.4 → +0.0973%
+  Feb-16:  accel=-0.000059 r=5.2  → +0.0405% (BAD)
+  Feb-17:  accel=-0.000057 r=27.0 → +0.1101%
+  Jul-21:  accel=-0.000015 r=9.5  → +0.0385% (WORST)
+
+KEY INSIGHT: Dec-18 has accel=-0.000127 (moderate acceleration) while Feb-17 (same area, +0.1101%)
+  has accel=-0.000057 (weak). The acceleration is not perfectly ordered but correlation is strong.
+
+COMPARISON WITH SLOPE: For Dec-18 specifically:
+  slope=-0.000108 (shallow — below slope threshold cutoffs)
+  accel=-0.000127 (moderate — above accel threshold cutoffs)
+  Dec-18 has SHALLOW slope but MODERATE acceleration — the trend was JUST starting to steepen at entry.
+  This is why accel captures Dec-18 better than slope!
+
+Threshold scan:
+  accel<=-0.0001: n=5 avg=+0.1284%  ← Dec-10, Mar-30, Oct-12, May-14, Dec-18
+  accel<=-0.0002: n=3 avg=+0.1370%  ← Dec-10, Mar-30, Oct-12
+
+CAN ACCEL GATE WITHOUT REMOVING DEC-18?
+  accel<=-0.0001 keeps: Dec-10, Mar-30, Oct-12, May-14, Dec-18
+  accel<=-0.0001 drops: Jan-08, Feb-16, Feb-17, Jul-21
+  Among dropped: Feb-16 (BAD), Jul-21 (WORST) are dropped!
+  Also drops: Feb-17 (+0.1101%, r=27.0, tier1) and Jan-08 (+0.0973%, r=23.4, tier1)
+
+  So accel<=-0.0001 removes both BAD trades, but also removes 2 profitable tier1 trades.
+  n=5 avg=+0.1284% — improvement over tier1 n=5 avg=+0.1300%... wait, this n=5 includes Oct-12 (t0)
+  and May-14 (t0) while dropping Feb-17 and Jan-08 (tier1). So it's a different n=5 set.
+
+  Among the 5 kept: r values are 18.7, 28.2, 13.5, 17.1, 21.0 — includes low-r trades!
+  This means accel<=-0.0001 does NOT align with r>=18 tier.
+
+VERDICT: ema50_accel is the STRONGEST continuous predictor at -0.735.
+  IMPORTANT NUANCE: Acceleration captures Dec-18 (which slope misses) but can't separate
+  good tier1 trades (Feb-17, Jan-08) from bad low-r trades.
+  accel<=-0.0001 as standalone: n=5 avg=+0.1284% (includes t0 trades, excludes some tier1).
+
+  BEST COMBINATION HYPOTHESIS: r>=18 + accel<=-0.0001 → check which tier1 trades pass.
+  From tier1 (r>=18): Dec-10 (accel=-0.000424 ✓), Mar-30 (-0.000341 ✓), Dec-18 (-0.000127 ✓),
+                      Jan-08 (-0.000074 ✗), Feb-17 (-0.000057 ✗)
+  r>=18 + accel<=-0.0001: n=3 avg=(+0.1463+0.1607+0.1358)/3 = +0.1476%
+
+  This is the SAME as r>=18 + w_below_ema20=1 (also n=3, avg=+0.1476%)!
+  The Dec trades (Dec-10, Dec-18) pass BOTH filters. Mar-30 passes accel but NOT w_below.
+  Wait — Mar-30 is NOT below weekly EMA20 in prior tests. Let me recheck...
+
+  From v84: w_below_ema20 for tier1 trades: Dec-10 ✓, Dec-18 ✓, Jan-08 ✗, Feb-17 ✗, Mar-30 ✓
+  So r>=18 + w_below_ema20=1 = {Dec-10, Dec-18, Mar-30} = n=3 avg=+0.1476%
+  And r>=18 + accel<=-0.0001 = {Dec-10, Dec-18, Mar-30} = n=3 avg=+0.1476% ← IDENTICAL SET!
+
+  These two filters identify THE SAME 3 TIER1 TRADES. They are equivalent within tier1.
+
+VERDICT: ema50_accel is STRONG (-0.735) and equivalent to w_below_ema20 within tier1.
+  The convergence of multiple soft indicators on the same 3 trades ({Dec-10, Dec-18, Mar-30})
+  is a significant finding: these are the HIGHEST CONFIDENCE tier1 trades.
+  Remains a SOFT INDICATOR — removes profitable tier1 trades (Feb-17, Jan-08).
+
+===== T523: H4 EMA20 < H4 EMA50 =====
+
+Corr(h4_ema20_50_dist, pnl_pct) = +0.201  ← NEAR-ZERO
+
+Profile: 7 of 9 trades are in H4 EMA bear cross. But:
+  Dec-10 (r=18.7, +0.1463%): BULL cross (h4_ema20 > h4_ema50)
+  Feb-16 (BAD): BULL cross
+
+FINDING: Near-zero correlation. H4 EMA20/50 cross doesn't discriminate well.
+  Both a BAD trade (Feb-16) and a strong tier1 trade (Dec-10) are in BULL cross.
+  The h4_dist_atr gate (existing) already captures most of this regime information.
+
+  H4 EMA bear cross: n=7 avg=+0.1060% (similar to baseline +0.1032%)
+  Does NOT remove both bad trades: Jul-21 (WORST) is in bear cross group.
+
+VERDICT: H4 EMA20/50 cross is NOT useful. Corr=+0.201 near-zero.
+  The existing h4_dist_atr>=1.0 gate already captures H4 regime quality.
+  Do NOT add as gate.
+
+===== T524: ATR RANK 126-BAR vs 252-BAR =====
+
+  Corr(atr_rank_252, pnl_pct) = +0.795  ← confirmed superior
+  Corr(atr_rank_126, pnl_pct) = +0.578  ← weaker
+
+Both rank values:
+  r252=5.2,  r126=9.5  → +0.0405% (Feb-16, BAD)
+  r252=9.5,  r126=18.3 → +0.0385% (Jul-21, WORST)   ← r126 says TIER1! Wrong call.
+  r252=13.5, r126=12.7 → +0.1040% (Oct-12)
+  r252=17.1, r126=31.7 → +0.0954% (May-14)          ← r126 very high (31.7) but weak trade
+  r252=18.7, r126=23.0 → +0.1463% (Dec-10)
+  r252=21.0, r126=23.8 → +0.1358% (Dec-18)
+  r252=23.4, r126=28.6 → +0.0973% (Jan-08)
+  r252=27.0, r126=37.3 → +0.1101% (Feb-17)
+  r252=28.2, r126=36.5 → +0.1607% (Mar-30, BEST)
+
+CRITICAL FINDING: r126 misclassifies Jul-21 (WORST trade) as tier1 (r126=18.3 >= 18).
+  With 252-bar window: Jul-21 r=9.5 → correctly NOT tier1.
+  With 126-bar window: Jul-21 r126=18.3 → would be included in tier1 (ERROR).
+
+  Also: May-14 r126=31.7 (very high) but only +0.0954% (mediocre).
+  The 6-month window has too much recency bias — volatile recent periods inflate ATR rank.
+
+r126>=18 (no upper): n=7 avg=+0.1120% (includes Jul-21, degrades quality vs r252>=18)
+r126>=18 & <35: n=5 avg=+0.1027% (same n as tier1 but DIFFERENT set — includes Jul-21, excludes Mar-30!)
+
+VERDICT: 252-bar window is CONFIRMED SUPERIOR (corr +0.795 vs +0.578).
+  126-bar window introduces recency bias — misclassifies Jul-21 as tier1.
+  DO NOT replace 252-bar with 126-bar. 252-bar remains the correct window.
+
+===== T525: MILESTONE — ema50_slope/accel SYNTHESIS =====
+
+THREE-WAY EQUIVALENCE DISCOVERY:
+The following soft indicators all identify the SAME top 3 tier1 trades {Dec-10, Dec-18, Mar-30}:
+  1. r>=18 + w_below_ema20=1 → {Dec-10, Dec-18, Mar-30}
+  2. r>=18 + ema50_accel<=-0.0001 → {Dec-10, Dec-18, Mar-30}
+  3. r>=18 + bc10<=8 → {Dec-10, Dec-18} only (n=2, Mar-30 doesn't pass bc10<=8)
+
+So filters 1 and 2 identify the exact same n=3 set, avg=+0.1476%.
+This convergence is evidence that {Dec-10, Dec-18, Mar-30} represent a DISTINCT SIGNAL SUBTYPE.
+
+SIGNAL SUBTYPE HYPOTHESIS:
+  "Full momentum" signals: price in weekly downtrend (w_below) + EMA50 slope accelerating (accel<=-0.0001)
+  → The highest-confidence SHORT setups, avg=+0.1476%
+
+  "Quality but moderate momentum" signals: Jan-08, Feb-17 (tier1 but fewer soft indicators pass)
+  → Still profitable, avg=(0.0973+0.1101)/2 = +0.1037%
+
+UPDATED CORRELATION RANKING (FINAL v87):
+  1. r (ATR rank 252-bar):    +0.795 (PRIMARY GATE)
+  2. ema50_accel:             -0.735 (NEW #2 — slope acceleration, strongest soft indicator)
+  3. ema50_slope:             -0.701 (demoted to #3)
+  4. bear_count10:            -0.479
+  5. d1_ema20_50_dist:        +0.392
+  6. d1_ema_bear_cross:       +0.387
+  7. w_below_ema20:           +0.387 (+0.924 within tier1)
+  8. adr5:                    +0.385 (tautological within r>=18)
+  9. w_ema20_dist:            +0.376
+  10. H4 EMA20/50 cross:      +0.201 (new, near-zero)
+  11. tr_spike5:              +0.177 (near-zero)
+  12. range5:                 +0.179 (near-zero)
+  13. d1_consec_bear:         -0.086 (null)
+  14. h4_rsi:                 -0.067 (null, tautological)
+  15. atr_acc:                +0.059 (null)
+  16. body_frac:              +0.055 (null)
+  17. bar_oc_dist:            -0.045 (null)
+  18. ema50_cross_age:        +0.149 (near-zero, U-shape hypothesis)
+
+===== CANONICAL GATE — FINAL v87 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%):
+  Original gates + r >= 18 (ATR rank 252-bar) + Target/stop 1.5×ATR/4bar
+
+TOP SOFT INDICATORS (ordered by predictive strength):
+  1. ema50_accel <= -0.0001 (-0.735) — EMA50 slope accelerating downward
+  2. ema50_slope <= -0.0003 (-0.701) — EMA50 in active downtrend (note: Dec-18 exception)
+  3. bear_count10 <= 8 (-0.479) — fresh bearish signal
+  4. d1_ma50_dist >= 5.0 (+0.414) — price well below D1 MA50
+  5. w_below_ema20 = 1 (+0.387, +0.924 within tier1) — weekly trend aligned
+
+HIGHEST-CONFIDENCE SUBTYPE: r>=18 + (w_below_ema20=1 OR accel<=-0.0001)
+  → {Dec-10, Dec-18, Mar-30}, n=3, avg=+0.1476% — the "full momentum" signals
+
+===== NEXT BATCH (T526-T530) =====
+T526: ema50_accel + r combined — is r>=18 + accel<=-0.0001 the optimal double-gate?
+      Test different accel thresholds × r thresholds to find the Pareto frontier.
+T527: Extended hold duration — do "full momentum" signals (Dec-10, Dec-18, Mar-30) benefit from 5-6 bar hold?
+      The T495 optimum was 4 bars for all 9 trades — does the high-quality subset have a longer optimum?
+T528: Momentum persistence — after a "full momentum" signal, what happens to price in the next 24-48 bars?
+      Compute avg trajectory of subsequent H1 closes to understand typical continuation depth.
+T529: Multiple signal windows — test h in {11,12} and {15,16} as alternative to {13,14}.
+      Does the momentum persist into other hours, or is 13-14 truly optimal?
+T530: MILESTONE — comprehensive back-of-envelope trading stats for tier1 vs full-momentum subtype.
+      Per-year breakdown, estimated frequency, realistic annualized expectancy.
