@@ -1,0 +1,242 @@
+THEORY LOOP ADDENDUM v84 — T506-T510
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T506: ADR5 DEEPER SCAN =====
+
+Corr(adr5, pnl_pct) = +0.385 (unchanged from T503)
+
+ADR5 range across all trades: 4.39 to 6.51.
+
+Higher threshold scan:
+  adr5>=4.5: n=8 WR=100% avg=+0.1110%  (drops Feb-16=4.39 only)
+  adr5>=4.7: n=6 WR=100% avg=+0.1148%  (drops Feb-16, Mar-30=4.54, Jul-21=4.61)
+  adr5>=5.0: n=5 WR=100% avg=+0.1158%  (drops +4 low-adr trades)
+  adr5>=6.0: n=2 WR=100% avg=+0.1252%  (Dec-10=6.42, Oct-12=6.51 only)
+
+CRITICAL FINDING — ADR5 x r>=18 cross:
+  adr5>=4.0 + r>=18: n=5 WR=100% avg=+0.1300%  ← SAME AS r>=18 ALONE
+  adr5>=4.5 + r>=18: n=5 WR=100% avg=+0.1300%  ← SAME, no reduction
+  adr5>=5.0 + r>=18: n=3 WR=100% avg=+0.1265%  ← WORSE than tier1!
+  adr5>=5.5 + r>=18: n=3 WR=100% avg=+0.1265%  ← same n=3
+
+ANALYSIS:
+  ALL tier1 trades (r>=18) have adr5>=4.5 — so adr5>=4.5 adds ZERO filtering on top of r>=18.
+  This means: r>=18 already selects for higher-adr5 environments implicitly.
+  adr5>=5.0 actually removes Mar-30 (r=28.2, adr5=4.54) — the BEST tier1 trade! → WORSE.
+  The only regime where ADR5 helps is below tier1 (r<18 trades) — but those are already excluded.
+
+VERDICT: ADR5 adds NOTHING to r>=18 gate. Confirmed as structural correlate only.
+  adr5 corr=+0.385 is real but it's an indirect marker for r (quiet regimes = lower ADR).
+  Do NOT add as gate. Not even as soft gate on top of r>=18.
+
+===== T507: H4 EMA50 SLOPE =====
+
+Corr(h4_ema_slope, pnl_pct) = -0.437  ← MODERATE NEGATIVE
+
+h4_ema_slope: 5-bar rate of change of H4 EMA50 (negative = EMA50 falling).
+
+ALL 9 trades have h4_ema_slope < 0 (H4 EMA50 falling everywhere!) — structural from h4d>=1.0 gate.
+  When price is 1.0×ATR below H4 EMA50, the EMA50 is by definition being pulled down.
+
+Sorted by slope (most negative = steepest fall):
+  -0.000726 r=28.2 → +0.1607% (Mar-30)  ← BEST, steepest slope
+  -0.000692 r=17.1 → +0.0954% (May-14)
+  -0.000674 r=23.4 → +0.0973% (Jan-08)
+  -0.000601 r=13.5 → +0.1040% (Oct-12)
+  -0.000482 r=27.0 → +0.1101% (Feb-17)
+  -0.000296 r=21.0 → +0.1358% (Dec-18)  ← good trade, near-flat slope
+  -0.000292 r=9.5  → +0.0385% (Jul-21)  ← WORST, similar slope to Dec-18!
+  -0.000252 r=18.7 → +0.1463% (Dec-10)  ← very good, flatter slope
+  -0.000026 r=5.2  → +0.0405% (Feb-16)  ← BAD, nearly flat slope
+
+Threshold scan:
+  h4s<=-0.0002: n=8 avg=+0.1110%  (drops Feb-16=-0.000026, nearly flat)
+  h4s<=-0.0005: n=4 avg=+0.1144%  (steep slopes only)
+
+PARADOX:
+  Feb-16 (BAD) has h4s=-0.000026 (nearly flat) — gate h4s<=-0.0002 removes it.
+  BUT Jul-21 (WORST) has h4s=-0.000292 — passes h4s<=-0.0002. Same slope as Dec-18 (+0.1358%).
+  Dec-18 (great trade) and Jul-21 (worst trade) have NEARLY IDENTICAL H4 slopes.
+  → Cannot separate quality by H4 slope threshold.
+  h4s<=-0.0002 removes Feb-16 (BAD) but keeps Jul-21 (WORST) — same problem as weekly trend.
+
+CONCLUSION: H4 EMA50 slope is SOFT, corr=-0.437, but same confounding issue.
+  The steeper the H4 EMA50 fall, the better on average — but Jul-21 undermines any clean gate.
+  Do NOT add as hard gate. As soft observation: very flat slope (<=-0.0001 in magnitude) = warning sign.
+
+===== T508: H1 BEAR COUNT (bars below H1 EMA50 in prior 10) =====
+
+Corr(bear_count10, pnl_pct) = -0.479  ← MODERATE NEGATIVE (surprising direction!)
+
+bear_count10: how many of the prior 10 H1 bars had close < H1 EMA50.
+
+Distribution:
+  bc10=7:  Dec-18 r=21.0 → +0.1358%  ← BEST outside tier-floor
+  bc10=8:  Dec-10 r=18.7 → +0.1463%
+  bc10=10: 7 of 9 trades
+
+By bc10 group:
+  bc10<10 (fresher): n=2 (Dec-10, Dec-18) avg=+0.1411%
+  bc10=10 (exhausted): n=7 avg=+0.0924%
+
+Threshold scan:
+  bc10>=8: n=8 avg=+0.0991%  (drops Dec-18 only — WORSE!)
+  bc10>=10: n=7 avg=+0.0924%  (WORSE — forces exhausted trend)
+
+CRITICAL FINDING: Higher bear count = WORSE outcomes on average.
+  This is the OPPOSITE of the compression/breakout hypothesis.
+  The TOP 2 trades (Dec-10 bc10=8, Dec-18 bc10=7) have FEWER bars below EMA50.
+
+MECHANISM HYPOTHESIS:
+  When bc10=10 (all 10 prior bars below EMA50), the bear trend on H1 is OVEREXTENDED.
+  At h in {13,14} (US session), many short sellers are already in — less new selling pressure.
+  When bc10=7-8, some H1 bars were above EMA50 recently, meaning trend is FRESHER.
+  A fresher, less exhausted trend has more short-sellers still to enter → better continuation.
+
+HOWEVER: bc10 threshold scan is HARMFUL (lower avg for bc10>=8 or bc10>=10).
+  The gate bc10<=8 keeps only n=2 trades — too few.
+  The gate bc10<10 keeps n=2 trades — too few.
+
+VERDICT: Bear count is a REVERSE-DIRECTION soft indicator.
+  bc10=10 (exhausted) = slightly worse context. bc10<10 (fresher) = better trades in sample.
+  But n=2 for bc10<10 — not actionable as a gate.
+  Soft observation: note when bc10<10 (less than fully exhausted trend) — higher quality signal.
+  Do NOT add as hard gate. Correlation of -0.479 is meaningful insight into mechanism.
+
+NEW INSIGHT: The H1 signal works BEST when the bear trend is FRESHER (not fully exhausted).
+  bc10=10 trades: 7/7 WR 100% but avg=+0.0924% (weaker momentum continuation).
+  bc10<10 trades: 2/2 WR 100% avg=+0.1411% (stronger momentum continuation).
+
+===== T509: D1 DAILY POSITION (close vs D1 open) =====
+
+Corr(d1_pos, pnl_pct) = -0.284  ← WEAK NEGATIVE
+
+d1_pos = (close - D1_open) / ATR14. Negative = below D1 open = bearish intraday session.
+
+ALL 9 trades have d1_pos < 0 (ALL below D1 open) — universal bearish intraday condition.
+  Range: -0.329 to -3.924.
+
+Sorted:
+  -3.924 r=13.5 → +0.1040% (Oct-12)  ← furthest below open
+  -3.203 r=27.0 → +0.1101% (Feb-17)
+  -3.084 r=18.7 → +0.1463% (Dec-10)
+  -3.098 r=17.1 → +0.0954% (May-14)
+  -2.161 r=28.2 → +0.1607% (Mar-30)  ← BEST
+  -1.615 r=5.2  → +0.0405% (Feb-16)  ← BAD
+  -1.518 r=23.4 → +0.0973% (Jan-08)
+  -0.597 r=9.5  → +0.0385% (Jul-21)  ← WORST, least below open
+  -0.329 r=21.0 → +0.1358% (Dec-18)  ← Good trade, barely below open!
+
+Threshold scan:
+  d1_below (d1p<=0): n=9 avg=+0.1032% (all — universal)
+  d1p<=-2.0: n=5 avg=+0.1233% — better, but drops Dec-18 (-0.329) AND Jan-08 (-1.518)
+
+PARADOX:
+  Jul-21 (WORST, d1p=-0.597) barely made it below D1 open.
+  Dec-18 (GREAT, +0.1358%, r=21.0) barely made it below D1 open (-0.329)!
+  Same shallow d1 position, opposite quality — d1_pos cannot separate them.
+  d1p<=-1.0 drops Jul-21 (-0.597) AND Dec-18 (-0.329): n=7 avg=+0.1078% — marginal.
+  d1p<=-2.0 drops both bads PLUS drops Jan-08 (-1.518) and Dec-18 (-0.329): n=5 avg=+0.1233%.
+
+VERDICT: D1 daily position is a SOFT predictor. corr=-0.284, near-universal condition.
+  More negative d1_pos = slightly better, but Dec-18 (great) and Jul-21 (worst) both have shallow.
+  Do NOT add as gate. Soft observation: very shallow intraday session (d1_pos > -1.0) = warning sign.
+  The filter paradox: can't remove Jul-21 without also removing Dec-18.
+
+===== T510: COMBINED FILTER MILESTONE =====
+
+All soft results within tier1 (r>=18):
+
+  Tier1 (r>=18):               n=5 WR=100% avg=+0.1300%  ← BEST
+  + w_below_ema20=1:           n=3 WR=100% avg=+0.1476%  (drops Jan-08, Feb-17)
+  + adr5>=4.5:                 n=5 WR=100% avg=+0.1300%  (no change — all tier1 pass)
+  + adr5>=5.0:                 n=3 WR=100% avg=+0.1265%  (WORSE — drops Mar-30 BEST)
+  + h4_slope<0:                n=5 WR=100% avg=+0.1300%  (no change — all pass)
+  + d1_pos<=0:                 n=5 WR=100% avg=+0.1300%  (no change — all pass)
+  + w_below + adr5>=5.0:       n=2 WR=100% avg=+0.1411%  (Dec-10, Dec-18 only)
+
+Per-trade soft profile within tier1:
+  Dec-10 r=18.7: W+ A+ H+ D+ (all softs pass) → +0.1463%
+  Dec-18 r=21.0: W+ A+ H+ D+ (all softs pass) → +0.1358%  ← but bc10=7 (fresher!)
+  Jan-08 r=23.4: W- A+ H+ D+ (fails weekly)   → +0.0973%  ← weakest tier1
+  Feb-17 r=27.0: W- A- H+ D+ (fails weekly+ADR) → +0.1101%
+  Mar-30 r=28.2: W+ A- H+ D+ (fails ADR only)  → +0.1607%  ← BEST, fails ADR!
+
+KEY OBSERVATIONS:
+  1. Within tier1, h4_slope<0 and d1_pos<=0 are TAUTOLOGIES — all 5 trades pass automatically.
+     These two indicators add ZERO information within r>=18.
+  2. w_below_ema20 is the only soft that can split tier1: 3 pass (Dec-10, Dec-18, Mar-30), 2 fail.
+     Tier1+weekly: avg=+0.1476% (drops weakest 2: Jan-08 +0.0973%, Feb-17 +0.1101%)
+  3. adr5>=5.0 is HARMFUL within tier1: removes Mar-30 (BEST), keeping only 3 weaker trades.
+  4. w_below + adr5>=5.0 = n=2 (Dec-10, Dec-18). avg=+0.1411% — not as good as w_below alone (+0.1476%).
+
+MILESTONE CONCLUSION:
+  Within tier1 (r>=18), the ONLY soft indicator that adds value is w_below_ema20.
+  w_below+r>=18: n=3 avg=+0.1476% vs tier1 n=5 avg=+0.1300%.
+  Trade-off: giving up 2 trades (Jan-08, Feb-17) for a better average — but n=3 is too small to confirm.
+
+===== FINAL PICTURE AFTER T461-T510 (50 THEORIES) =====
+
+NULL FEATURES (confirmed useless):
+  [all prior null features from v83 unchanged]
+  ATR carry: near-universal expanding condition
+  H4 EMA50 slope: tautological (all falling), no useful threshold
+  D1 daily position: tautological (all below D1 open), Jul-21 and Dec-18 inseparable
+  ADR5 (within r>=18): adds NOTHING — all tier1 trades already pass adr5>=4.5
+  Bear count bc10>=8: HARMFUL — forces exhausted-trend trades, worse avg
+
+NEW INSIGHTS (not gates):
+  bc10 MECHANISM: bear count -0.479 corr — fresher bear trend (bc10=7-8) = BETTER continuation.
+    bc10=10 (all bars below EMA50) = overextended signal, slightly weaker momentum.
+    bc10<10 trades: Dec-10 (+0.1463%) and Dec-18 (+0.1358%) — top 2 non-r28 tier1 trades.
+  w_below_ema20 WITHIN TIER1: n=3 avg=+0.1476% if applied as filter on top of r>=18.
+    Drops Jan-08 (+0.0973%, weakest) and Feb-17 (+0.1101%), keeps Dec-10/Dec-18/Mar-30.
+    Trade-off: fewer trades for higher confidence. n=3 too small to confirm statistically.
+
+CONFIRMED PREDICTORS (deployable):
+  r (ATR rank 252-bar): PRIMARY GATE — r>=18 AND r<29 → n=5 avg=+0.1300%
+  h4d (H4 EMA50 distance): REGIME GATE — h4d>=1.0
+  ema50_slope: SOFT — slope <= -0.4 = higher confidence
+  range10: SOFT — larger 10-bar range = more prior momentum
+  |gap|: SOFT — |gap| <= 0.3 = cleaner setup
+  d1_ma50_dist: MODERATE (+0.414) — price below D1 MA50 = better context
+  w_ema20_dist: MODERATE (+0.376) — price below weekly EMA20 = slight edge
+  bc10: REVERSE SOFT — lower bc10 (fresher signal) = better, but n<5 for useful threshold
+
+===== CANONICAL GATE — FINAL v84 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars (confirmed optimal T495)
+
+Soft indicators (not gated):
+  - ema50_slope <= -0.4 (H1 EMA50 in active downtrend)
+  - range10 >= 3.0 (prior momentum available)
+  - prev_d1_ret < 0 (prior day directional alignment)
+  - |gap| <= 0.3 (clean continuation open)
+  - d1_ma50_dist >= 5.0 (price well below D1 MA50)
+  - w_ema20_dist > 0 (price below weekly EMA20, soft — but drops Mar-30 if strict)
+  - bc10 <= 9 (fresher signal — NOT exhausted trend, soft)
+
+===== NEXT BATCH (T511-T515) =====
+T511: bc10 re-analysis — instead of hard bc10 threshold, test bc10 as CONTINUOUS variable.
+      Does bc10 correlate WITHIN tier1? Plot each tier1 trade by bc10 vs pnl_pct.
+      bc10 = {7,8,10,10,10} for tier1 — is there a within-tier1 pattern?
+T512: Range5 variant — 5-bar ATR-normalized range (different from range10 tested before).
+      range5 = (hi5 - lo5) / atr14. More recent 5-bar compression vs 10-bar.
+      Does shorter-window compression improve signal quality vs range10?
+T513: Wick-to-body ratio — how much of the entry bar is wick vs body?
+      wick_ratio = (bar['h'] - bar['l'] - abs(bar['c'] - bar['o'])) / (bar['h'] - bar['l'])
+      A bar with large lower wick = rejection, could be bearish. Upper wick = already tested supply.
+T514: Entry bar direction (bearish close vs open) — T461 tested this as near-zero.
+      But cross with r>=18: within tier1, are BEARISH entry bars better?
+      bearish_bar = (close < open). Test as tier1 soft qualifier.
+T515: MILESTONE — FRESH SIGNAL DETECTION: bc10 + bear_count comparison as regime freshness.
+      New metric: ema50_cross_age = bars since last time H1 close crossed BELOW H1 EMA50.
+      Young cross age (recently broke below EMA50) = fresh signal. Old = exhausted.
+      Hypothesis: Dec-10 (bc10=8) recently re-entered bearish territory on H1.
