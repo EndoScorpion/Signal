@@ -1,0 +1,147 @@
+THEORY LOOP ADDENDUM v95 — T561-T565 FRACTAL/CHAOS/LONG DIRECTION
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T561: FRACTAL BRANCH — Williams 5-bar confirmed fractal low =====
+
+Williams 5-bar fractal low + lo10 combo: n=0 (ZERO OVERLAP)
+Williams fractal standalone (replaces lo10): n=1 WR=100% avg=+0.1488%
+  Single trade: 2026-03-27 +0.1488% — 3 days before Mar-30 trio signal
+
+KEY FINDING: Williams 5-bar fractal and lo10 break are COMPLETELY ORTHOGONAL.
+  None of the 9 lo10 baseline signals have a confirmed fractal at the signal bar.
+
+WHY: The 5-bar fractal requires 2 future bars for confirmation (2 bars lag).
+  At the time of the lo10 break, bar[i-2] has not yet formed a confirmed fractal
+  because bar[i-1] and bar[i] haven't confirmed it yet.
+  The lo10 break IS a structural breakout, but not a confirmed fractal in the Williams sense.
+
+IMPLICATION: Fractal entry is a DIFFERENT signal class:
+  - It fires on confirmation of structure (2 bars after the actual fractal)
+  - The one standalone fractal signal (Mar-27, +0.1488%) has IDENTICAL quality to the trio
+  - Mar-27 is 3 days before the trio's Mar-30 — different setup, same direction
+
+VERDICT: Fractal as standalone (no lo10 required) = potential new signal line.
+  n=1 is insufficient to conclude. Need more data / longer history.
+  Tag: FRACTAL LINE — research with ATR21 or longer history for more signals.
+
+===== T562: CHAOS ADAPTIVE BRANCH — adaptive lo_period =====
+
+Adaptive lo_period rule: period = round(5 + (1 - atr_rank/100) * 20)
+  Low vol (rank=5) → period≈24 | High vol (rank=95) → period≈6
+
+RESULT: n=7 WR=100% avg=+0.1214%
+  Identical to lo25 result! Removes Feb-16 and Jul-21. Zero unique trades.
+
+Adaptive periods assigned to actual signals:
+  Dec-10 r=18.7 → period=21, Dec-18 r=21.0 → period=21
+  Jan-08 r=23.4 → period=20, Feb-17 r=27.0 → period=20
+  Mar-30 r=28.2 → period=19, May-14 r=17.1 → period=22
+  Oct-12 r=13.5 → period=22
+
+  Feb-16 r=5.2 → period≈24 (longer lookback = harder to break = filtered out)
+  Jul-21 r=9.5 → period≈23 (longer lookback = also filtered out)
+
+CRITICAL FINDING: The adaptive period CONVERGES to the same n=7 set as lo25.
+  The chaos rule is physically equivalent to lo25 in practice for this dataset.
+  REASON: Low-quality trades (Feb-16, Jul-21) happen at low ATR rank = get long period = filtered.
+  This validates the lo25 quality filter from a chaos theory perspective:
+  "Adaptive breakout lookback is naturally shorter in trending regimes."
+
+VERDICT: Chaos adaptive period = lo25 equivalent. No new signals added.
+  The lo25 fixed period is an excellent approximation of the adaptive rule.
+
+===== T563: MULTI-SCALE BRANCH — H1+H4 simultaneous lo break =====
+
+H1 lo10 + H4 lo10 break: n=7 WR=100% avg=+0.1078%
+  Drops Dec-18 and Jul-21 vs baseline (7 vs 9)
+  {Dec-10, Jan-08, Feb-16, Feb-17, Mar-30, May-14, Oct-12}
+
+H4 lo10 break standalone: n=8 WR=88% avg=+0.0738%
+  ADDS 2025-02-06 (LOSER) — bad trade added by H4-only gate
+
+FINDING: Multi-scale (H1+H4 both break) is a VALID quality filter.
+  It removes Dec-18 (a good trade +0.1358%) and Jul-21 (low quality +0.0385%).
+  Net effect: loses more in Dec-18 than it gains by dropping Jul-21.
+  avg drops from +0.1032% to +0.1078% — marginal improvement, but loses Dec-18.
+
+COMPARISON: Multi-scale vs lo25:
+  Multi-scale removes {Dec-18, Jul-21}, adds nothing (n=7 avg=+0.1078%)
+  lo25 removes {Feb-16, Jul-21}, adds nothing (n=7 avg=+0.1214%)
+  lo25 is BETTER: removes the worse trade (Feb-16 r=5.2) while keeping Dec-18 (+0.1358%)
+
+VERDICT: Multi-scale not preferred over lo25. H4 lo10 adds noise (2025-02-06 loser).
+  Multi-scale is a different filter path — not recommended for primary line.
+
+===== T564: LONG DIRECTION BASELINE =====
+
+LONG at 13-14 UTC: n=4 WR=25% avg=-0.0687% ← NEGATIVE EXPECTANCY
+  2024-07-10: LOSS -0.0286%
+  2025-03-17: WIN  +0.0806%
+  2025-05-05: LOSS -0.2169% (big loss)
+  2025-12-02: LOSS -0.1097%
+
+CRITICAL FINDING: LONG direction at 13-14 UTC has NO EDGE.
+  WR=25%, avg NEGATIVE = this session window is structurally SHORT-biased.
+
+Why 13-14 UTC is SHORT-biased:
+  13-14 UTC = New York FX market open window.
+  EUR/USD tends to REVERSE or continue BEARISH from London session highs.
+  The EUR tends to give back morning gains vs USD at NY open.
+  This structural bias explains why the SHORT signal has 100% WR at this time.
+  A LONG signal tries to trade AGAINST this structural flow = fails.
+
+LONG by session (hour scan):
+  07-08 UTC (Asian close / London open): n=50 WR=54% avg=-0.0067% (barely negative, many signals)
+  09-10 UTC: n=31 WR=42% avg=-0.0274% (worse)
+  11-12 UTC: n=18 WR=44% avg=-0.0142%
+  13-14 UTC: n=4  WR=25% avg=-0.0687% (worst)
+  15-16 UTC: n=1  WR=0%
+
+KEY FINDING: LONG has most signals at 07-08 UTC (Asian-London overlap) but all negative avg.
+  No LONG session window shows positive avg. EURUSD LONG hi10 break is not an edge
+  in any session with these gates.
+
+POSSIBILITY: LONG needs completely different context (not the bear-context H4/H1 EMA gates).
+  The hi10 break in a BULLISH context (h4_dist < -1.0, ema50_dist < -0.5) is finding
+  price already above both EMAs — these "bullish" bars are often extended and reversing.
+
+VERDICT: LONG direction requires redesign. Mirror of SHORT logic fails.
+  Next step: try LONG with BEARISH context (price below EMAs, buying a reversal)
+  or test completely different hours (07-08 UTC Asian open).
+
+===== T565: MILESTONE — FRACTAL/CHAOS/LONG SUMMARY =====
+
+=== WHAT WORKS ===
+Fractal standalone: 1 signal (Mar-27 +0.1488%) — potential new signal class, n=1
+Chaos adaptive: = lo25 equivalent (validates the fixed lo25 quality filter via chaos theory)
+Multi-scale: valid but not better than lo25
+
+=== WHAT DOESN'T WORK ===
+Fractal + lo10 combo: zero overlap (orthogonal signals)
+LONG at 13-14 UTC: WR=25% negative avg (wrong structural flow)
+LONG at any session: all sessions show negative or near-zero avg
+
+=== STRUCTURAL DISCOVERY ===
+13-14 UTC (NY open) is ASYMMETRICALLY SHORT-biased for EURUSD.
+  SHORT lo10 break: WR=100% (9/9)
+  LONG hi10 break: WR=25% (1/4)
+  The NY open session structurally favors USD strength / EUR weakness.
+
+=== Gen5 PLAN (updated) ===
+T566: LONG reversal redesign — try LONG when price is BELOW bearish EMA (oversold bounce)
+T567: LONG 07-08 UTC scan with better context (Asian-London transition window)
+T568: Fractal chain — is Mar-27 fractal a standalone signal? Add ATR21 for more fractals.
+T569: SHORT direction expansion — test 07-08 UTC SHORT at London open
+T570: MILESTONE — Gen5 complete, new signal lines identified, MT4 EA spec
+
+===== NEXT BATCH (T566-T570) =====
+T566: LONG oversold bounce (bearish context) — price below EMA, reversal signal
+T567: LONG 07-08 UTC session signal
+T568: Fractal signal line development
+T569: SHORT at London open (07-08 UTC)
+T570: Gen5 milestone and EA spec
+
