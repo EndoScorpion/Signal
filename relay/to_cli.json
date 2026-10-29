@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-29T12:19Z",
-  "from": "cloud-fix-desktop",
+  "timestamp": "2026-10-29T23:16Z",
+  "from": "cloud-thread-sbj2jo",
   "commands": [
     {
-      "id": "cmd-lean-cfg-002",
-      "label": "write-lean-claude-desktop-config",
-      "note": "Write lean config with only desktop-commander, then launch Claude Desktop minimized",
-      "command": "powershell -WindowStyle Hidden -Command \"$src='%APPDATA%\\Claude\\claude_desktop_config.json'; $bak='%APPDATA%\\Claude\\claude_desktop_config_backup_20261029b.json'; Copy-Item $src $bak -Force -ErrorAction SilentlyContinue; $lean='{\"mcpServers\":{\"desktop-commander\":{\"command\":\"npx\",\"args\":[\"-y\",\"@wonderwhy-er/desktop-commander@latest\"]}}}'; $lean|Set-Content $src -Encoding UTF8; Start-Sleep 1; explorer 'shell:appsFolder\\AnthropicPBC.Claude_p874v2pg6g7v8!Claude'\"",
+      "id": "cmd-wl-backup-001",
+      "label": "winlogic-encrypted-backup-D-E",
+      "note": "Kill any 7z, then archive C:\\Users\\endos\\Signal (skip hst_out) to Desktop, copy to D: and E:. No compression (-mx=0), AES256 encrypted, encrypt headers. Report file sizes.",
+      "command": "powershell -WindowStyle Hidden -Command \"taskkill /f /im 7z.exe 2>$null; $sz = if (Test-Path 'C:\\Program Files\\7-Zip\\7z.exe') {'C:\\Program Files\\7-Zip\\7z.exe'} else {'C:\\Program Files (x86)\\7-Zip\\7z.exe'}; $out = 'C:\\Users\\endos\\Desktop\\WinLogic_backup.7z'; & $sz a -mx=0 -mhe=on -pSc0rp!0n $out 'C:\\Users\\endos\\Signal' -x!'C:\\Users\\endos\\Signal\\hst_out' -x!'C:\\Users\\endos\\Signal\\data\\history' 2>&1 | Out-File 'C:\\Users\\endos\\Desktop\\wl_backup_log.txt'; Copy-Item $out 'D:\\WinLogic_backup.7z' -Force; Copy-Item $out 'E:\\WinLogic_backup.7z' -Force; $d=(Get-Item 'D:\\WinLogic_backup.7z').length; $e=(Get-Item 'E:\\WinLogic_backup.7z').length; \"D:$d E:$e\" | Out-File 'C:\\Users\\endos\\Desktop\\wl_backup_sizes.txt'\"",
       "silent": true
     }
   ],
