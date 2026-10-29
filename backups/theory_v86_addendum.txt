@@ -1,0 +1,179 @@
+THEORY LOOP ADDENDUM v86 — T516-T520
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T516: MULTI-BAR LO10 BREAK CONFIRM =====
+
+Trade clustering analysis:
+  Clustered (signal within 1 day): n=2 avg=+0.0753%  ← Feb-16 (+0.0405%) and Feb-17 (+0.1101%)
+  Isolated (no neighbor): n=7 avg=+0.1112%  ← all other trades
+
+FINDING: Isolated signals outperform clustered signals (+0.1112% vs +0.0753%).
+  The cluster = Feb-16 (BAD, r=5.2) and Feb-17 (OK, r=27.0). Feb-16 drags the cluster average.
+  But the cluster quality is r-determined: Feb-16 is bad because r=5.2, not because it's clustered.
+
+  No multi-bar confirmation logic adds value here. The question was whether a "2nd signal within 1 day"
+  confirms the first — but Feb-16 fires BEFORE Feb-17, so the 2nd signal would have been day 2 (Feb-17)
+  which is actually the better trade. The direction of confirmation is ambiguous.
+
+VERDICT: Multi-bar confirmation (lo10 break on 2 consecutive days) is NOT a useful concept.
+  The one cluster in the data is dominated by r-effect (bad trade = low r, not due to clustering).
+  Do NOT add a "require 2nd break" gate. Isolated signals are the norm and are better on average
+  only because they tend to have higher r.
+
+===== T517: TR SPIKE =====
+
+Corr(tr_spike5, pnl_pct) = +0.177  ← NEAR-ZERO
+
+TR spike sorted:
+  1.20(low)  r=17.1 → +0.0954% (May-14)
+  1.21(low)  r=9.5  → +0.0385% (Jul-21)   ← BAD
+  1.32(low)  r=21.0 → +0.1358% (Dec-18)
+  1.34(low)  r=18.7 → +0.1463% (Dec-10)
+  1.52(high) r=13.5 → +0.1040% (Oct-12)
+  1.63(high) r=5.2  → +0.0405% (Feb-16)   ← BAD
+  1.82(high) r=27.0 → +0.1101% (Feb-17)
+  1.95(high) r=28.2 → +0.1607% (Mar-30)   ← BEST
+  2.36(high) r=23.4 → +0.0973% (Jan-08)
+
+PARADOX: Dec-10 (+0.1463%) and Dec-18 (+0.1358%) have LOW tr_spike5 (1.32, 1.34).
+  Mar-30 (BEST) has high tr_spike5=1.95.
+  Jul-21 (WORST) also has low tr_spike5=1.21.
+
+  tr_spike>=1.8: n=3 avg=+0.1227% — but this is Jan-08+Feb-17+Mar-30, not the Dec trades.
+  Low spike (<=1.5): n=4 avg=+0.1040% — includes Dec-10 and Dec-18 (good) AND Jul-21 (bad).
+
+VERDICT: TR spike is NOT a useful predictor. Correlation near-zero (+0.177).
+  The metric partially overlaps with ATR rank (r). High pre-signal TR spikes = high ATR environment.
+  Do NOT gate on tr_spike5.
+
+===== T518: NFP PROXIMITY =====
+
+n=0 NFP-week trades in the baseline.
+FINDING: None of the 9 trades fired during an NFP week (1st Friday of month window).
+  The base gate window h in {13,14} during NFP week produces NO signals — all 9 trades are "normal" weeks.
+
+IMPLICATION: The gate already naturally avoids NFP sessions — either ATR conditions differ on NFP weeks,
+  or the lo10 break pattern simply doesn't coincide with NFP timing in this dataset.
+
+VERDICT: NFP proximity is VACUOUSLY satisfied (n=0 NFP trades). Not informative as a filter.
+  The base gate inherently avoids NFP events. No action needed.
+
+===== T519: D1 EMA CROSS (D1 EMA20 < D1 EMA50) =====
+
+Corr(d1_ema20_50_dist, pnl_pct) = +0.392  ← MODERATE (similar to d1_ma50_dist = +0.414)
+
+Split: BEAR_CROSS (n=5) avg=+0.1171% vs BULL_CROSS (n=4) avg=+0.0881%
+
+D1 EMA profile:
+  BULL_CROSS: Feb-16 (BAD, r=5.2), Feb-17 (+0.1101%, r=27.0), May-14 (+0.0954%), Jan-08 (+0.0973%)
+  BEAR_CROSS: Mar-30 (BEST), Jul-21 (WORST), Dec-10, Dec-18, Oct-12
+
+CRITICAL FINDING: Jul-21 (WORST, r=9.5) is in BEAR_CROSS group — it has bearish D1 EMA structure
+  yet still the worst trade. This is the same r-confounding pattern: Jul-21 is bad because r=9.5,
+  not because of D1 EMA structure.
+
+ALSO: Feb-17 (+0.1101%) is in BULL_CROSS — good trade despite no D1 EMA bear cross!
+
+  d1_ema_bear_cross=1: n=5 avg=+0.1171% (improvement vs baseline +0.1032%)
+  But this doesn't gate away Jul-21 (WORST) while keeping all tier1 trades.
+
+COMPARISON with d1_ma50_dist (+0.414): d1_ema20_50_dist (+0.392) is slightly weaker.
+  They measure similar things: D1 trend structure. Already covered by existing h4d/ema50 gates.
+
+VERDICT: D1 EMA cross is SOFT positive (+0.392) but r-confounded.
+  BEAR_CROSS filter (n=5 avg=+0.1171%) improves over baseline but keeps Jul-21 (r=9.5).
+  The +0.392 correlation is real but driven by the r relationship.
+  Note: slightly weaker than d1_ma50_dist (+0.414) — d1_ma50_dist remains the better D1 metric.
+  Do NOT add as gate. Add to soft indicator list.
+
+===== T520: MILESTONE — UPDATED CORRELATION RANKING =====
+
+FULL RANKING (base n=9, sorted by |corr|):
+
+  r (ATR rank):              +0.795  ← PRIMARY GATE (unchanged)
+  ema50_slope:               -0.701  ← STRONG (NOTE: was -0.518, recomputed correctly here)
+  bear_count10:              -0.479  ← SOFT REVERSE
+  d1_ema_bear_cross:         +0.387  ← SOFT (= d1_ema20_50_dist/d1_ma50_dist territory)
+  w_below_ema20:             +0.387  ← SOFT
+  d1_ema20_50_dist:          +0.392  ← SOFT
+  adr5:                      +0.385  ← SOFT (tautological within r>=18)
+  w_ema20_dist:              +0.376  ← SOFT
+  tr_spike5:                 +0.177  ← NEAR-ZERO
+  near_nfp:                  N/A     ← vacuous (n=0 NFP trades)
+
+IMPORTANT CORRECTION: ema50_slope correlation is -0.701 (strong), not -0.518 as previously recorded.
+  The prior value may have used a different slope formula. Current formula:
+    ema50_slope = (ema50 - ema50.shift(5)) / (ema50.shift(5) + 1e-10)
+  This is a 5-bar percentage change. The -0.701 correlation makes ema50_slope the #2 predictor
+  (behind r), stronger than bear_count10 and range10.
+
+WITHIN-TIER1 CORRELATIONS (r>=18, n=5):
+  w_below_ema20:   +0.924  ← VERY STRONG within tier1
+  w_ema20_dist:    +0.761  ← STRONG within tier1
+  ema50_slope:     -0.622  ← MODERATE within tier1
+  tr_spike5:       -0.533  ← interesting reversal! (low spike = better within tier1)
+  bear_count10:    -0.339  ← MODERATE within tier1
+  adr5:            -0.093  ← near-zero (tautology confirmed)
+
+KEY INSIGHT — tr_spike5 WITHIN TIER1 REVERSAL:
+  Within tier1, tr_spike5 correlation REVERSES to -0.533.
+  Tier1 trades with LOW tr_spike: Dec-10 (1.34, +0.1463%), Dec-18 (1.32, +0.1358%)
+  Tier1 trades with HIGH tr_spike: Jan-08 (2.36, +0.0973%), Feb-17 (1.82, +0.1101%), Mar-30 (1.95, +0.1607%)
+  The reversal is weak (n=5) but interesting: WITHIN tier1, lower pre-signal volatility spike = better.
+  This aligns with the "quiet compression before breakout" hypothesis, but only within high-quality signals.
+
+KEY INSIGHT — w_below_ema20 WITHIN TIER1 (+0.924):
+  This is the strongest within-tier1 predictor by far.
+  Dec-10 and Dec-18 are BELOW weekly EMA20 (w_below=1). Jan-08, Feb-17, Mar-30 are NOT.
+  r>=18 + w_below=1: n=3 avg=+0.1476% (2nd best filter combination after bare r>=18 at n=5)
+  The CATCH: it removes Jan-08 (+0.0973%) and Feb-17 (+0.1101%) — both profitable.
+  The HIGH +0.924 within tier1 is because BELOW weekly EMA = more bearish context = higher avg.
+  NOT a hard gate — it screens profitable trades.
+
+BEST COMBINATION FILTERS (tested):
+  r>=18 only:                n=5 avg=+0.1300%  (baseline tier1)
+  r>=18 + w_below_ema20=1:   n=3 avg=+0.1476%  ← highest avg, loses 2 profitable trades
+  r>=18 + bear_count10<=8:   n=2 avg=+0.1411%  ← very high avg, n=2 too small
+  r>=18 + tr_spike5>=1.5:    n=3 avg=+0.1227%  ← moderate improvement
+  r>=18 + adr5>=4.0:         n=5 avg=+0.1300%  ← identical to r>=18 alone (tautology confirmed)
+
+CONCLUSION: r>=18 remains the single most useful gate.
+  Within tier1, w_below_ema20 is the strongest soft indicator (+0.924).
+  ema50_slope is the #2 overall predictor at -0.701 — reassess as candidate gate.
+
+  CRITICAL QUESTION FOR T521: Can ema50_slope be used as a SECONDARY gate (alongside r>=18)?
+  If ema50_slope<=-0.0003 (negative slope) keeps all tier1 and drops bad trades → viable.
+
+===== CANONICAL GATE — FINAL v86 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars (confirmed optimal T495)
+
+UPDATED SOFT INDICATOR LIST:
+  - ema50_slope <= -0.0003 (H1 EMA50 in active downtrend, CORR -0.701, #2 predictor) ← UPGRADE
+  - range10 >= 3.0 (prior momentum, CORR +0.541)
+  - bear_count10 <= 8 (fresh bearish signal, CORR -0.479)
+  - d1_ma50_dist >= 5.0 (CORR +0.414)
+  - w_below_ema20 = 1 (CORR +0.387, but +0.924 within tier1!)
+  - prev_d1_ret < 0 (directional alignment)
+  - |gap| <= 0.3 (clean open)
+  - d1_ema_bear_cross = 1 (CORR +0.387, new)
+
+===== NEXT BATCH (T521-T525) =====
+T521: ema50_slope threshold gate — what slope cutoff maximizes quality within tier1?
+      Test: ema50_slope <= -0.0001, -0.0002, -0.0003 within r>=18.
+      KEY: Does any slope threshold remove ONLY the bad trades within tier1?
+T522: Slope of slope — is the EMA50 slope itself accelerating? (2nd derivative)
+      ema50_accel = ema50_slope - ema50_slope.shift(5). Does acceleration predict better outcomes?
+T523: H4 EMA20 — faster H4 EMA (20 vs 50). H4 EMA20 as additional regime filter.
+      H4 EMA20 < H4 EMA50 = short-term H4 downtrend confirmed.
+T524: ATR rank variant — test 126-bar (6-month) window vs 252-bar (1-year).
+      Is there a shorter window that provides better signal?
+T525: MILESTONE — ema50_slope analysis with exact threshold scan across all 9 trades.
+      Full per-trade slope values with threshold optimization.
