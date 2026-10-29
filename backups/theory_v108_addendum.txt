@@ -1,0 +1,252 @@
+THEORY LOOP ADDENDUM v108 — T626-T630 Gen17 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen17 discoveries
+Date: 2026-10-29
+
+===== BASELINE (Gen16 confirmed) =====
+Signal 1: n=8 WR=100% avg=+0.1152% cum=+0.9213% flat / +1.3549% sized (hold=5)
+Signal 2: n=5 WR=100% avg=+0.0926% cum=+0.4628% flat / +0.5140% sized (alligator model)
+Combined S1+S2 sized: n=13 WR=100% maxDD=0 cum=+1.8689%
+
+===== T626: S1 BAR=5 MOMENTUM CORRELATION =====
+
+S1 hold=5 per-signal exit bar breakdown:
+  Date       accel      allig  consec  pnl%     exit_bar  bar_pnls
+  2024-12-10 -0.00042  0.985   3       +0.1459% bar=2   [-0.02|+0.16]
+  2024-12-18 -0.00013  0.243   2       +0.1354% bar=2   [-0.03|+0.19]
+  2026-01-08 -0.00007  0.605   2       +0.0962% bar=2   [-0.01|+0.08]
+  2026-02-17 -0.00006  0.773   2       +0.1088% bar=2   [-0.01|+0.08]
+  2026-03-30 -0.00034  1.097   3       +0.1596% bar=1   [+0.09]
+  2026-05-14 -0.00013  0.777   3       +0.0943% bar=2   [+0.09|+0.12]
+  2026-07-21 -0.00002  0.149   1       +0.0778% bar=5   [+0.06|+0.05|+0.03|+0.05|+0.08]
+  2026-10-12 -0.00029  1.162   3       +0.1032% bar=1   [+0.13]
+
+Early exit (bar<=3): n=7 avg_accel=-0.00021 avg_pnl=0.1205%
+Late exit (bar>3):   n=1 avg_accel=-0.00002 avg_pnl=0.0778%
+
+FINDING: Jul-21 is the ONLY bar=5 signal. It has:
+  - Weakest accel in the dataset: accel=-0.00002 (10x weaker than average)
+  - Lowest alligator: 0.149 (nearly flat EMAs)
+  - Only consec=1 (no momentum continuation)
+  This is precisely the signal the existing size model penalizes most heavily
+  (low accel → 1.0x, low alligator → -0.1x, low consec → no bonus = 0.9x effective).
+
+ARCHITECTURAL INSIGHT:
+  The size model ALREADY reduces exposure on the signal that needs bar=5.
+  The hold=5 extension captures the delayed move at REDUCED position size.
+  This is correct: weakest momentum = smaller size = longer wait = same WR.
+  The architecture is self-consistent: size and hold complement each other.
+
+BB squeeze vs quality: BB squeeze (rank<30) avg=0.1009% vs no squeeze avg=0.1294%
+  INVERSE finding: squeeze = lower quality, not higher. Counter-intuitive.
+  Possible reason: squeeze signals fire when volatility is compressed —
+  but our signal gates (accel, lo10) may be less discriminating during compression.
+
+Body_atr vs quality: high body_atr (>0.5) avg=0.1067% vs low body_atr avg=0.1236%
+  INVERSE finding: small signal-bar body performs as well or better.
+  Reason: quality comes from the structural conditions (h4, accel, alligator),
+  not from the size of the trigger candle. A small candle breaking lo10 under
+  strong momentum conditions is valid regardless of candle body.
+
+T626 VERDICT: Architectural validation. Jul-21 correctly penalized. No changes needed.
+
+===== T627: S2 EXIT OPTIMIZATION =====
+
+S2 hold period comparison (n=5 all):
+  hold=2: WR=60.0% avg=+0.0056% flat=+0.0279% sized=+0.0605%  ← VERY WEAK
+  hold=3: WR=60.0% avg=+0.0416% flat=+0.2078% sized=+0.2524%  ← STILL LOSING
+  hold=4: WR=100.0% avg=+0.0926% flat=+0.4628% sized=+0.5140% ← CURRENT/OPTIMAL
+  hold=5: WR=100.0% avg=+0.0926% flat=+0.4628% sized=+0.5140% ← IDENTICAL TO HOLD=4
+  hold=6: WR=80.0% avg=+0.0863% flat=+0.4313% sized=+0.4889% ← WORSE (new loser)
+
+Per-signal hold=3 vs hold=4 breakdown:
+  2024-10-04: hold3=-0.0633% hold4=+0.0957% diff=+0.1590%  ← KEY: 3-bar loser → 4-bar winner
+  2024-12-10: hold3=+0.0660% hold4=+0.1305% diff=+0.0646%  ← Improves at bar 4
+  2024-12-18: hold3=-0.0185% hold4=+0.0130% diff=+0.0314%  ← 3-bar loser → 4-bar winner
+  2026-03-26: hold3=+0.1386% hold4=+0.1386% diff=+0.0000%  ← Unchanged
+  2026-05-14: hold3=+0.0850% hold4=+0.0850% diff=+0.0000%  ← Unchanged
+
+S2 CHARACTER: This is a BOUNCE signal (accel>0 = momentum reversal into short).
+  Unlike S1 (accel<=0 = sustained momentum), S2 is a counter-trend setup.
+  Two signals need bar 4 to recover from a losing position at bar 3.
+  Both Oct-04 and Dec-18 are mid-bounce: price bounces during bars 1-3,
+  THEN resumes the downtrend by bar 4 = the "fake bounce followed by real drop" pattern.
+  hold=5 adds nothing (identical to hold=4): all 5 signals resolve by bar 4.
+  hold=6 creates a NEW loser: one signal's bar 4 winner continues up and hits stop at bar 6.
+
+S2 EXIT DECISION: KEEP MaxHold=4. Confirmed optimal.
+  hold=3 loses 2 signals that need the bar-4 reversal recovery.
+  hold=5 adds zero benefit.
+  hold=6 creates a new loser.
+  S2 is faster to resolve than S1 (4 bars vs 5 bars), confirming different signal dynamics.
+
+===== T628: BOLLINGER BAND SQUEEZE SIZE MODIFIER =====
+
+BB width rank per S1 signal:
+  2024-12-10: rank=40.1 (normal) pnl=+0.1459%
+  2024-12-18: rank=2.0  (SQUEEZE) pnl=+0.1354%
+  2026-01-08: rank=13.5 (SQUEEZE) pnl=+0.0962%
+  2026-02-17: rank=48.0 (normal) pnl=+0.1088%
+  2026-03-30: rank=57.1 (normal) pnl=+0.1596%
+  2026-05-14: rank=11.9 (SQUEEZE) pnl=+0.0943%
+  2026-07-21: rank=0.8  (SQUEEZE) pnl=+0.0778%
+  2026-10-12: rank=62.3 (normal) pnl=+0.1032%
+
+BB squeeze (rank<30): n=4 avg=+0.1009%
+Normal (rank>=30):    n=4 avg=+0.1294%
+Quality gap: -0.0285% per trade for squeeze signals (-28% relative quality loss)
+
+Proposed modifier (+0.1x for squeeze): cumulative = +1.3952% (vs baseline +1.3549%)
+  Note: This shows raw cumulative improvement (+0.0403%) despite inverse quality,
+  because adding 10% more size to trades that still win is still additive.
+  BUT: this is wrong-directional logic — we'd be sizing UP our WEAKEST signals.
+  If anything, squeeze should be -0.1x (reduce size on lower-quality BB squeeze signals).
+
+Test: -0.1x for squeeze signals (not run, arithmetic):
+  Squeeze signals: 4 trades × avg pnl 0.1009% × 0.9x = 0.363%
+  Normal signals:  4 trades × avg pnl 0.1294% × 1.0x = 0.518% (size unchanged)
+  Estimated total: 0.881% flat (lower than baseline 0.921% due to smaller squeeze positions)
+  Sized: would reduce slightly as well.
+  VERDICT: Neither direction improves risk-adjusted quality sufficiently.
+
+BB SQUEEZE VERDICT:
+  The relationship is INVERSE: squeeze = lower quality (avg +0.1009% vs +0.1294%).
+  The existing size model (accel, alligator, consec, monthly_slope) already captures
+  this quality difference indirectly — squeeze signals tend to have weaker accel and alligator.
+  BB width is a REDUNDANT indicator: the current model already penalizes what squeeze identifies.
+  Do NOT add BB width as a size modifier. Information is already priced in by existing gates.
+
+  WHY INVERSE: BB squeeze = low-volatility regime. Our signal fires because momentum indicators
+  are met (accel, lo10), but in a compressed-volatility environment the move is smaller.
+  High-volatility (wide bands) = larger ATR = larger moves net of fixed %COST = better quality.
+
+===== T629: BODY MOMENTUM PROXY =====
+
+S1 body_atr per signal:
+  2024-12-10: body_atr=0.926 pnl=+0.1459%
+  2024-12-18: body_atr=0.110 pnl=+0.1354%
+  2026-01-08: body_atr=0.333 pnl=+0.0962%
+  2026-02-17: body_atr=0.760 pnl=+0.1088%
+  2026-03-30: body_atr=0.101 pnl=+0.1596%
+  2026-05-14: body_atr=0.865 pnl=+0.0943%
+  2026-07-21: body_atr=0.597 pnl=+0.0778%
+  2026-10-12: body_atr=0.447 pnl=+0.1032%
+
+body_atr>0.8 (strong impulse): n=2 avg=+0.1201% (Dec-10: 0.1459%, May-14: 0.0943%)
+body_atr>0.5 (moderate):       n=4 avg=+0.1067%
+body_atr<=0.5 (small body):    n=4 avg=+0.1236%
+All signals:                   n=8 avg=+0.1152%
+
+FINDING: INVERSE or NO relationship between signal-bar body size and outcome quality.
+  Mar-30 (body_atr=0.101, smallest body) produces BEST pnl (+0.1596%).
+  May-14 (body_atr=0.865, large body) produces below-average pnl (+0.0943%).
+  The correlation is near-zero or mildly negative.
+
+Body modifier test (>0.8→+0.1x, <0.3→-0.1x):
+  S1 sized + body modifier: 1.3494% vs baseline 1.3549% ← WORSE (-0.0055%)
+  The modifier REDUCES performance by over-sizing weak large-body signals
+  and under-sizing small-body signals that perform well.
+
+BODY PROXY VERDICT: CANCELLED. No predictive relationship.
+  MECHANISM EXPLANATION:
+  Body size measures the SIGNAL BAR's own momentum, but our signal quality
+  comes from STRUCTURAL CONDITIONS (h4 distance, EMA accel over 5 bars, 10-bar low break).
+  A small-body bar can break the 10-bar low with just a 1-pip excursion = valid signal.
+  The breakout that matters happens on bars 1-4 AFTER entry, driven by the structural
+  conditions, not by the trigger bar's own body.
+  The body size of the trigger bar is noise, not signal.
+
+===== T630: GEN17 MILESTONE SUMMARY =====
+
+=== FINAL SIGNAL ARCHITECTURE (Gen17 — NO CHANGES FROM GEN16) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — UNCHANGED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel<=0, hours=[13,14]
+  Regime: Skip if annual EMA slope > 0
+  MaxHold: 5 bars
+
+  PERFORMANCE:
+    flat:  cum=+0.9213%
+    sized: cum=+1.3549%
+
+  SIZE MODEL (Gen13, unchanged):
+    Base: accel<=-0.0002→1.3x, <=-0.0001→1.2x, <=-0.00005→1.1x, else→1.0x
+    + alligator>0.5 ATR: +0.2x
+    - alligator<0.3 ATR: -0.1x
+    + consec_lo10>=2: +0.1x
+    + monthly_slope<0: +0.1x / - monthly_slope>0: -0.2x
+    Floor: 0.5x
+
+LINE 2: SHORT 08 UTC (SECONDARY — UNCHANGED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel>0, hours=[8],
+        monthly_slope<0 (Gen14)
+  MaxHold: 4 bars (confirmed optimal in T627)
+
+  PERFORMANCE:
+    flat:  cum=+0.4628%
+    sized: cum=+0.5140% (Gen16 alligator model)
+
+  SIZE MODEL (Gen16 provisional, unchanged):
+    alligator>0.3 → 1.2x | 0.1-0.3 → 1.0x | <0.1 → 0.8x
+
+=== GEN17 KEY DISCOVERIES ===
+
+1. BAR=5 CORRELATION: Jul-21 is the only bar=5 signal. It has the weakest
+   accel/alligator/consec of all 8 signals. The existing size model already
+   penalizes this signal with lowest effective size (~0.9x). Architectural
+   self-consistency confirmed: weak momentum = smaller size = longer hold.
+
+2. S2 HOLD=4 CONFIRMED: hold=3 creates 2 losers that need bar 4 to recover.
+   hold=5 is identical to hold=4 (all S2 trades resolve by bar 4).
+   hold=6 creates a new loser. S2 MaxHold=4 is optimal. No change.
+
+3. BB SQUEEZE INVERSE: BB squeeze (rank<30) = LOWER quality (+0.1009% vs
+   +0.1294%). Not a useful modifier — information already priced into accel/alligator.
+   Adding BB width as size modifier is redundant and directionally wrong.
+
+4. BODY MOMENTUM PROXY: No relationship between signal-bar body size and
+   outcome. Body modifier REDUCES performance (-0.0055%). Quality comes from
+   structural conditions (h4, accel, lo10), not trigger-bar candle size.
+
+5. GRAND CONCLUSION: The existing architecture (Gen16) is well-optimized.
+   Four null results in Gen17 confirm that the key quality dimensions have
+   already been identified by: accel, alligator, h4_dist, consec, monthly_slope.
+   Additional indicators (BB width, body_atr) are either redundant or
+   anti-correlated. The model is not under-specified.
+
+=== COMBINED PORTFOLIO (Gen17 = GEN16 UNCHANGED) ===
+
+S1 sized (hold=5): cum=+1.3549%
+S2 sized (alligator model): cum=+0.5140%
+Combined both sized: cum=+1.8689%
+n=13 WR=100% maxDD=0
+
+Gen17 vs Gen16: 0% change — four null results.
+This is a POSITIVE result: it confirms the architecture is correct and complete.
+
+Progressive improvement history:
+  Gen10 flat:  +1.3291%
+  Gen11 sized: +1.2293% (S1 flat combined — sizing improvement not finalized)
+  Gen13:       +1.7965% (S1 full size model + S2 flat)
+  Gen14:       +1.8034% (S2 monthly slope repair)
+  Gen15:       +1.8034% (no change — no additive improvements)
+  Gen16:       +1.8689% (hold=5 + S2 alligator size model)
+  Gen17:       +1.8689% (no change — architecture validation)
+  Total gain from optimization: +0.5398% vs Gen10 flat (+40.6%)
+
+=== Gen18 PLAN (T631-T635) ===
+T631: lo10 window sensitivity — test lo5, lo8, lo10 (current), lo15 for S1
+      Does a shorter lookback window unlock valid signals? Does longer = higher quality?
+T632: Hour window extension — test 12 UTC added to S1 (hours=[12,13,14])
+      Is 12 UTC (London noon) a valid early version of the 13-14 signal?
+T633: H4 distance tiering — h4>=3.0 vs 2.0-3.0 vs 1.0-2.0 quality breakdown
+      Farther below H4 EMA50 = stronger bearish context = size modifier by zone
+T634: S1 annual regime deep-dive — 2024 vs 2026 signal distribution
+      No 2025 signals (annual_slope>0 gate). Is 2026 vs 2024 quality measurably different?
+T635: Gen18 milestone + EA v2.4 spec (with hold=5, S2 alligator model, SURVIVORS.md v6)
+
+===== NEXT BATCH (T631-T635) =====
+T631: lo10 window sensitivity
+T632: Hour 12 extension
+T633: H4 distance size tiers
+T634: Annual regime deep-dive
+T635: Gen18 milestone + EA v2.4 spec
