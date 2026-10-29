@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-29T02:01Z",
-  "from": "cloud-colors-thread",
+  "timestamp": "2026-10-29T03:26Z",
+  "from": "light-config-thread",
   "commands": [
     {
-      "id": "cmd-022",
-      "label": "install-claude-colors-v2",
-      "note": "Install updated claude_field_colors_v2.user.js into Tampermonkey scripts folder. Fixes field borders + Claude icon visibility under black-green-2 theme.",
-      "command": "powershell -WindowStyle Hidden -Command \"$src='https://raw.githubusercontent.com/EndoScorpion/signal/relay/relay/claude_field_colors_v2.user.js'; $dst='C:\\Users\\endos\\AppData\\Roaming\\Tampermonkey\\scripts'; if(-not (Test-Path $dst)){New-Item -ItemType Directory -Force $dst | Out-Null}; Invoke-WebRequest $src -OutFile (Join-Path $dst 'claude_field_colors_v2.user.js') -UseBasicParsing -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-022';label='install-claude-colors-v2';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ')}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
+      "id": "cmd-read-cfg-001",
+      "label": "read-claude-desktop-config",
+      "note": "Read claude_desktop_config.json and write to from_cli.json for light config build",
+      "command": "powershell -WindowStyle Hidden -Command \"$cfg = Get-Content '%APPDATA%\\Claude\\claude_desktop_config.json' -Raw -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-read-cfg-001';label='read-claude-desktop-config';status='done';data=$cfg;ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ')}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; if(-not $j.results){$j|Add-Member -NotePropertyName results -NotePropertyValue @() -Force}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 20|Set-Content $p\"",
       "silent": true
     }
   ],
