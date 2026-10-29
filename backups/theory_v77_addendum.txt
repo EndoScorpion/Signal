@@ -1,0 +1,200 @@
+THEORY LOOP ADDENDUM v77 — T471-T475
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T471: WHY DID 2025 GO DARK? =====
+
+Root cause identified: IT WAS NOT ONE GATE — IT WAS THE INTERSECTION.
+
+2025 gate pass rates (% of H1 bars):
+  r<29 alone:                         32.5% bars pass
+  lo10 break alone:                   14.6% bars pass
+  h4_dist_atr>=1.0 alone:             32.4% bars pass
+  ema50_dist>=0.5 alone:              38.0% bars pass
+  r<29 AND lo10:                       4.8% bars pass
+  r<29 AND lo10 AND h4d>=1.0:          1.7% bars pass
+  All gates (incl. qc>=3, hour):       0.0% → ZERO trades
+
+Monthly 2025 ATR rank (252-bar):
+  Median r across all 2025 months: 38.9–56.0 (well above the r<29 threshold)
+  % bars with r<29 per month: 20–41% (individually passable)
+
+MECHANISM: In 2025, each gate individually let some bars through, but NO HOUR within
+the 13-14 UTC window had ALL gates satisfied simultaneously. The ATR rank was elevated
+(median 48.3), meaning EURUSD was in a higher-volatility regime — ATR was above the
+29th percentile MORE OFTEN than normal, which is counterintuitive but implies the
+"quiet band" condition rarely held long enough to also coincide with a lo10 break AND
+the trend alignment (h4d>=1.0 AND ema50_dist>=0.5) at hour 13-14.
+
+H4 TREND ALIGNMENT IS THE HIDDEN BOTTLENECK:
+  2025 h4_dist_atr mean: -0.890 (price was ABOVE H4 EMA50, not below!)
+  % bars with h4_dist_atr >= 1.0: 32.4%
+  This means EURUSD was largely in a BULLISH or neutral regime in 2025.
+  The setup requires price to be >= 1 ATR BELOW the H4 EMA50 — a bearish trend context.
+  In 2025, this was rarely satisfied at the same time as the quiet ATR condition.
+
+CONCLUSION: 2025 went dark because EURUSD was in an elevated-ATR, bullish-trending
+regime (price above H4 EMA50) that did not align with the quiet-band bearish setup.
+No single gate failed alone — the COMBINATION failed. This is actually reassuring:
+the system correctly stayed silent during an unfavorable regime.
+
+OPERATIONAL IMPLICATION: The h4_dist_atr>=1.0 filter is the REGIME FILTER.
+When EURUSD is bullish (price above H4 EMA50), the SHORT lo10 break setup won't fire.
+This is by design — the setup is a bearish continuation signal, needing bearish trend context.
+
+===== T472: 2-YEAR ATR RANK WINDOW (rolling 504 bars) =====
+
+504-bar window results: n=11 WR=81.8% avg=+0.0626%
+Additional trades (NEW at 504-bar window, not in 252-bar baseline):
+  2025-03-26: r252=29.8 (fails r<29!) r504=23.2 → -0.1644%  ← LOSER
+  2025-07-10: r252=37.7 (fails r<29!) r504=27.4 → +0.1560%  ← Winner
+  2025-11-03: r252=42.1 (fails r<29!) r504=22.6 → -0.1278%  ← LOSER
+
+CRITICAL FINDING: The 504-bar window adds 3 trades from 2025 — 2 are LOSERS.
+  WR drops: 100% (252) → 81.8% (504)
+  Avg drops: +0.1032% (252) → +0.0626% (504) — 40% degradation!
+
+The 252-bar window correctly excluded these 2025 trades. Why:
+  2025-03-26 r252=29.8 (barely above threshold — the 252-bar window was CORRECT to exclude)
+  The 2025 trades that pass r504<29 have r252 of 29.8, 37.7, 42.1 — these are NOT quiet
+  by the 252-bar standard. The 504-bar window is too generous: it labels bars "quiet"
+  that are actually in the high-range regime of the surrounding 2-year period.
+
+VERDICT: 252-bar (1-year) rolling window is SUPERIOR to 504-bar.
+  The 1-year window correctly captures the CURRENT regime context.
+  The 2-year window dilutes the signal with stale history.
+  Do NOT switch to 504-bar. Keep 252-bar window.
+
+===== T473: RANGE-BASED QUIET BAND — (hi10-lo10)/ATR14 =====
+
+range10 = (10-bar high - 10-bar low) / ATR14
+Low range10 = price compressed in a tight band (classic quiet-band compression).
+High range10 = price expanded over 10 bars (momentum/trending context).
+
+Corr(range10, pnl_pct) = +0.541 ← NOTABLE positive correlation!
+
+range10 sorted at all 9 trades:
+  2.29 → +0.1101%  (compressed)
+  2.52 → +0.1358%
+  2.53 → +0.0405%  ← exception: low range but bad trade (ATR=78, r=5.2 — quality gate fails)
+  2.80 → +0.0385%  ← exception: low range but bad trade (ATR=65, r=9.5)
+  3.02 → +0.0973%
+  3.10 → +0.0954%
+  4.22 → +0.1463%  ← wider range = BETTER trade? Counterintuitive
+  4.54 → +0.1040%
+  4.63 → +0.1607%  ← widest range, best trade
+
+PARADOX: The positive correlation means LARGER 10-bar range = BETTER trade.
+This seems counterintuitive (we expect compression before breakout), but it makes sense:
+- A large 10-bar range WITH quiet recent bars (qc>=3) means: recent consolidation after
+  a big move. The 10-bar range captures the size of the prior SWING, not just the quiet.
+- The quiet bars (qc=3-6) capture the recent compression; range10 captures the swing size.
+- Large swing → more momentum available for the breakout continuation.
+
+THRESHOLD SCAN:
+  range10<=4.0: n=6 avg=+0.0863%  (drops the 3 best trades including 2026-03-30!)
+  range10<=5.0: n=9 avg=+0.1032%  (baseline — all trades pass)
+  No upper threshold scan needed — range10 max in data is 4.63, all pass at <=5.0
+
+VERDICT: range10 is positively correlated with pnl but CANNOT be used as a minimum gate.
+It HURTS when used as a maximum (drops best trades). It is a soft indicator:
+larger 10-bar range (more prior movement) = better trades.
+The current qc metric already partially captures this. Adding range10 as a gate:
+  Do NOT add range10<=X as a filter — it removes the best trades.
+  Soft interpretation: range10 >= 4.0 is a positive indicator (n=3 all strong).
+
+===== T474: CLOSE<LO10 VARIANT (vs current LOW<LO10) =====
+
+LOW<lo10 (current): n=9 WR=100% avg=+0.1032%
+CLOSE<lo10 (variant): n=4 WR=100% avg=+0.1140%
+
+Overlap analysis:
+  Common trades (4): 2024-12-10, 2026-02-17, 2026-05-14, 2026-10-12
+  LOW-only trades (5 dropped by CLOSE filter):
+    2024-12-18: r=21.0 atr=100.3 → +0.1358%  ← GOOD trade lost
+    2026-01-08: r=23.4 atr=81.0  → +0.0973%  ← decent trade lost
+    2026-02-16: r=5.2  atr=78.0  → +0.0405%  ← bad trade correctly removed
+    2026-03-30: r=28.2 atr=128.2 → +0.1607%  ← BEST trade lost!
+    2026-07-21: r=9.5  atr=65.3  → +0.0385%  ← bad trade correctly removed
+
+CLOSE filter removes: best trade (+0.1607%), 2nd best available (+0.1358%), AND the 2 bad trades.
+Net: loses more good trades than bad trades.
+
+VERDICT: CLOSE<lo10 is NOT an improvement over LOW<lo10.
+While it correctly removes the 2 bad trades (2026-02-16, 2026-07-21), it also removes
+3 good/great trades including the best trade (2026-03-30 +0.1607%).
+The r>=18 gate already handles the 2 bad trades without sacrificing them.
+Keep LOW<lo10 as the entry signal. The r>=18 gate is the correct quality filter, not CLOSE.
+
+===== T475: HOLDING PERIOD OPTIMIZATION =====
+
+Max bars scan (n constant at 9, all entries same):
+  max_bars=2: WR=88.9% avg=+0.0979%  ← 1 loss (2026-02-17: doesn't reach target in 2 bars)
+  max_bars=3: WR=100.0% avg=+0.0993%  ← all wins but slightly lower than max_bars=4
+  max_bars=4: WR=100.0% avg=+0.1032%  ← CURRENT (optimal)
+  max_bars=5: WR=100.0% avg=+0.1077%  ← BEST avg! But is it curve-fit?
+  max_bars=6: WR=88.9% avg=+0.1024%   ← 1 loss at bar 6
+
+ATR target multiplier scan (stop=1.5×ATR, max_bars=4):
+  1.0×ATR: WR=100% avg=+0.0732%  ← target too close
+  1.25×ATR: WR=100% avg=+0.0894%
+  1.5×ATR: WR=100% avg=+0.1032%  ← CURRENT
+  1.75×ATR: WR=88.9% avg=+0.0725%  ← some miss target in 4 bars
+  2.0×ATR: WR=88.9% avg=+0.0716%
+  2.5×ATR: WR=88.9% avg=+0.0691%  ← target too far
+
+VERDICT: Current 1.5×ATR target with 4-bar max is optimal.
+  max_bars=5 shows slightly better avg (+0.1077%) but gives 1 extra bar exposure.
+  With r>=18 gate applied: max_bars=3, 4, or 6 all give identical n=5 WR=100% avg=+0.1300%.
+  The 2 worst trades (time-exits at bar=4) are already removed by the r>=18 gate,
+  making the holding period irrelevant for the quality subset.
+
+CONCLUSION: No holding period improvement found. Keep 4-bar max, 1.5×ATR target.
+Extending to 5 bars gains 0.004% avg but adds risk and lookahead. Not worth it.
+
+===== UPDATED GATE STATUS TABLE =====
+Feature          | Corr pnl | Gate?   | Status
+composite_score  | +0.970   | NO      | IS only, overfit
+exit_bar         | -0.841   | NO      | post-hoc
+ATR14            | +0.898   | YES     | r>=18 (equiv) — TIER 1
+r (ATR rank)     | +0.795   | YES     | r>=18 AND r<29 — PRIMARY GATE
+4-day ATR        | +0.698   | NO      | captured by ATR14
+range10          | +0.541   | SOFT+   | larger range = better (no threshold gate)
+qc               | -0.546   | equiv   | redundant with r>=18
+h1_rsi           | -0.489   | NO      | soft filter only
+|prev_d1_ret|    | +0.465   | NO      | soft preference
+prev_d1_ret      | -0.437   | NO      | soft preference
+d1_dist          | +0.414   | NO      | covered by h4d gate
+ATR slope        | +0.383   | NO      | structural artifact
+h4_dist_atr      | KEY      | YES     | >=1.0 — REGIME GATE (kept from original)
+2yr window (504) | WORSE    | NO      | 252-bar window superior
+CLOSE<lo10       | WORSE    | NO      | LOW<lo10 superior (loses best trades)
+
+===== CANONICAL GATE — FINAL v77 =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year, optimal over 504-bar)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars
+
+Regime requirement: EURUSD price must be BELOW H4 EMA50 by >= 1 ATR (bearish trend context).
+When this fails (bullish EURUSD regime), setup goes silent — correctly.
+
+Soft positive indicators (do not gate, but note):
+  - range10 >= 4.0 (large 10-bar price swing before setup)
+  - prev_d1_ret < 0 (prior day was down)
+
+===== NEXT BATCH (T476-T480) =====
+T476: Entry timing precision — within hours 13-14, is the FIRST qualifying bar of the day
+      better or worse than the SECOND? Are consecutive-day setups (same week) different quality?
+T477: H4 EMA50 distance deep dive — current gate h4d>=1.0. Test h4d>=1.5 and h4d>=2.0.
+      Does deeper below H4 EMA = stronger trend = better trade?
+T478: Pre-setup volatility pattern — 5-bar ATR sequence before the setup.
+      Does a specific ATR decline pattern precede the best trades?
+T479: Body direction filter — is the entry bar bearish (close < open)?
+      Or can bullish entry bars also produce good shorts?
+T480: Multi-timeframe RSI alignment — check if H4 RSI and D1 RSI below 50 adds edge.
+      (h4_rsi corr=-0.067, nearly zero, but maybe in combination with h1_rsi?)
