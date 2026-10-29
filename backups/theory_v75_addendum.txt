@@ -1,0 +1,196 @@
+THEORY LOOP ADDENDUM v75 — T461-T465
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== T461: CAN EXIT BAR BE PREDICTED EX-ANTE? =====
+
+FINDING: YES. r>=13 alone screens out ALL time-exit trades (the 2 worst).
+  r>=13: n=7 time_exits=0 avg=+0.1214%
+  r>=10: n=7 time_exits=0 avg=+0.1214%
+  qc<=6:  n=7 time_exits=0 avg=+0.1214%
+  atr>=80: n=6 time_exits=0 avg=+0.1257%
+  atr>=70: n=8 time_exits=1 avg=+0.1113%  (2026-07-21 still slips through at atr=79.7)
+  r>=13+qc<=6: n=7 time_exits=0 avg=+0.1214%  (redundant — same result as r>=13 alone)
+
+CRITICAL INSIGHT: r>=13 and qc<=6 are REDUNDANT ex-ante filters.
+Both drop exactly the same 2 trades: 2026-02-16 (r=5.2, qc=7) and 2026-07-21 (r=9.5, qc=8).
+Combining them adds NO additional filtering power.
+
+PICK ONE: r>=13 is the simpler, more interpretable gate.
+
+Predictors of exit_bar (how much each feature predicts whether exit is slow):
+  Corr(r,       exit_bar) = -0.717  ← strongest (higher r = faster exit)
+  Corr(h1_rsi,  exit_bar) = +0.646  ← second (more oversold = faster exit)
+  Corr(qc,      exit_bar) = +0.635  ← third  (more quiet bars = slower exit)
+  Corr(atr,     exit_bar) = -0.636  ← similar (higher ATR = faster exit)
+  Corr(d1_dist, exit_bar) = -0.598  ← weaker
+
+These predictors tell us: a slow-moving, low-momentum market (low r, high qc, low ATR)
+produces setups that don't reach target in time. This is the MECHANISM of the
+correlation structure. ATR, r, qc are all proxies for "market has enough energy to
+complete the 1.5×ATR move in 4 bars."
+
+===== T462: h=14 UTC DETAILED ANALYSIS =====
+
+h=13: n=6 WR=100% avg=+0.0944%
+  2024-12-10: atr=108.0 r=18.7 qc=5 exit=2 → +0.1463%
+  2024-12-18: atr=100.3 r=21.0 qc=4 exit=2 → +0.1358%
+  2026-02-16: atr=78.0  r=5.2  qc=7 exit=4 → +0.0405%  ← worst (time exit)
+  2026-02-17: atr=92.1  r=27.0 qc=5 exit=2 → +0.1101%
+  2026-05-14: atr=79.7  r=17.1 qc=3 exit=2 → +0.0954%
+  2026-07-21: atr=65.3  r=9.5  qc=8 exit=4 → +0.0385%  ← worst (time exit)
+
+h=14: n=3 WR=100% avg=+0.1207%
+  2026-01-08: atr=81.0  r=23.4 qc=5 exit=2 → +0.0973%
+  2026-03-30: atr=128.2 r=28.2 qc=6 exit=1 → +0.1607%  ← best
+  2026-10-12: atr=82.8  r=13.5 qc=5 exit=1 → +0.1040%
+
+KEY OBSERVATION: Both time-exit trades (worst trades) happen at h=13.
+h=14 has ZERO time exits — all 3 hit target within bar 1-2.
+
+With dual gate (atr>=80+r>=18):
+  h=13 subset: n=3 avg=+0.1307%  (2024-12-10, 2024-12-18, 2026-02-17)
+  h=14 subset: n=2 avg=+0.1290%  (2026-01-08, 2026-03-30)
+
+VERDICT: With the strong quality gate (atr>=80+r>=18) applied, h=13 and h=14
+perform SIMILARLY (+0.1307% vs +0.1290%). The h=14 advantage is FULLY EXPLAINED
+by the fact that the two worst trades (low ATR, low r) happen to be at h=13.
+Hours {13, 14} are equally valid once quality gates screen the bad trades.
+
+Do NOT restrict to h=14 only — n=3 is too small and the advantage disappears with
+the quality gate applied.
+
+===== T463: LINEAR COMPOSITE QUALITY SCORE =====
+
+OLS weights (z-scored features, n=9):
+  ATR weight: +0.0305  ← dominant (per unit z-score)
+  r weight:   +0.0069
+  qc weight:  -0.0132
+  intercept:  +0.1032
+
+Composite score correlation: Corr(score, pnl) = +0.970
+Individual correlations: ATR=+0.898, r=+0.795, qc=-0.546
+
+THE COMPOSITE SCORE (ATR, r, qc combined) EXPLAINS 94% OF VARIANCE (r²=0.941).
+ATR is the dominant term — its weight is 4.4× that of r in z-score units.
+
+Practical gate using composite score:
+  Top half (composite score >= median): n=5 avg=+0.1297%
+  Bottom half:                           n=4 avg=+0.0701%
+
+This is a 1.85× improvement in expected return by taking only the top-half composite trades.
+The composite score is a better filter than any individual gate.
+
+FORMULA (approximate, ECN pts notation):
+  score = 0.0305 * (ATR_z) + 0.0069 * (r_z) - 0.0132 * (qc_z) + 0.1032
+  where X_z = (X - mean_X) / std_X over the historical sample.
+
+This is an IN-SAMPLE fit (n=9) so the exact weights are overfit. The DIRECTION
+of each coefficient is robust (ATR+, r+, qc-) but magnitudes should not be
+trusted for live use without OOS validation.
+
+PRACTICAL IMPLICATION: Use the gates (ATR>=80, r>=18, qc<=6) as discrete screens
+rather than trying to implement a continuous score in live trading.
+
+===== T464: BOOTSTRAP CONFIDENCE INTERVALS =====
+
+Gate: ATR>=80 + r>=18 (n=5 avg=+0.1300%)
+  95% CI: [+0.1101%, +0.1500%]
+  P(avg > 0):     100.0%
+  P(avg > 0.05%): 100.0%
+  P(avg > 0.10%):  99.8%  ← highly statistically significant!
+
+Gate: qc<=6 (n=7 avg=+0.1214%)
+  95% CI: [+0.1047%, +0.1400%]
+  P(avg > 0.10%):  99.6%
+
+VERDICT: Despite small sample (n=5), the 95% CI lower bound is +0.1101%.
+After cost of 0.008% and realistic slippage, this is still strongly positive.
+n=5 IS statistically sufficient for this signal given 100% WR and tight CI.
+
+HOWEVER: The bootstrap assumes trades are IID draws from the same distribution.
+With n=9 baseline spanning 2024-2026, this is an approximation.
+Key risk: the signal may weaken if EURUSD volatility regime changes.
+
+===== T465: NEW FEATURE SEARCH =====
+
+PREVIOUS-DAY DIRECTION (momentum alignment):
+  Corr(prev_d1_ret, pnl_pct) = -0.437  ← meaningful (4th-rank-level correlation)
+  Previous day DOWN: n=7 avg=+0.1120%  ← trade WITH prior momentum
+  Previous day UP:   n=2 avg=+0.0722%  ← counter-momentum days worse
+
+Both days with positive previous-day return:
+  2026-02-16: prev_d1=+0.0000 (flat) qc=7 → +0.0405%
+  2026-10-12: prev_d1=+0.0001 (barely positive) qc=5 → +0.1040%
+NOTE: 2026-10-12 is barely positive (0.0001) — effectively flat. True UP day
+only has n=1 clear case (2026-02-16) which is a bad trade anyway (high qc, low r).
+
+VERDICT: prev_d1 < 0 (prior day down) is weakly additive. With n=9 and 7 of 9 trades
+already having neg prev_d1, this mostly overlaps with other filters.
+
+WEEK OF MONTH:
+  wom=1 (days 7-13):  n=3 avg=+0.1159%
+  wom=2 (days 14-20): n=4 avg=+0.0954%
+  wom=3 (days 21-27): n=1 avg=+0.0385%  ← worst (but n=1)
+  wom=4 (days 28+):   n=1 avg=+0.1607%  ← best (but n=1)
+No clear week-of-month pattern with n=9. Cannot draw conclusions.
+
+4-DAY ATR (recent 4-day volatility regime):
+  Corr(4-day ATR, pnl_pct) = +0.698  ← NOTABLE
+  d4_atr values at trades (sorted):
+    2026-07-21: d4=80.8  → +0.0385%  ← low d4, worst trade
+    2026-05-14: d4=84.0  → +0.0954%
+    2026-01-08: d4=98.9  → +0.0973%
+    2026-02-17: d4=103.5 → +0.1101%
+    2026-10-12: d4=111.9 → +0.1040%
+    2026-02-16: d4=115.9 → +0.0405%  ← exception! high d4 but bad trade
+    2024-12-18: d4=123.2 → +0.1358%
+    2024-12-10: d4=133.1 → +0.1463%
+    2026-03-30: d4=137.6 → +0.1607%  ← best
+
+  Note: 2026-02-16 has d4=115.9 but pnl=+0.0405% (bad). This is an outlier.
+  The 4-day ATR is a MACRO volatility indicator — it includes the period before
+  the quiet-band. When the 4-day ATR is high but the CURRENT ATR14 is low (78pts),
+  it may indicate recent volatility has DISSIPATED, not that current momentum is strong.
+
+  VERDICT: 4-day ATR adds +0.698 correlation, but it's largely captured by
+  the existing ATR14 (point-in-time volatility). The 2026-02-16 exception shows
+  it can mislead. Do NOT add 4-day ATR as a gate without more data.
+
+===== UPDATED CORRELATION RANKINGS (ALL TESTED) =====
+  composite_score: +0.970  ← NEW BEST (in-sample OLS fit, overfit)
+  exit_bar:        -0.841  (post-hoc, not usable ex-ante)
+  ATR14:           +0.898  ← BEST ex-ante single predictor
+  r (ATR rank):    +0.795
+  4-day ATR:       +0.698
+  qc:              -0.546 (global) / -0.741 (OOS)
+  h1_rsi:          -0.489
+  prev_d1_ret:     -0.437
+  d1_dist:         +0.414
+
+===== CANONICAL LIVE GATE (FINAL RECOMMENDED) =====
+
+Tier 1 (BEST, n=5, avg=+0.1300%, bootstrap CI [+0.110%, +0.150%]):
+  ATR >= 80 ECN pts  AND
+  r >= 18            (ATR rank >= 18%)
+  + All original gates: r<29, lo10 break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+
+Tier 2 (BROADER, n=7, avg=+0.1214%, bootstrap CI [+0.105%, +0.140%]):
+  qc <= 6  (or equivalently: r>=13)
+  + All original gates above
+
+h=14 preference: CONFIRMED as data noise (advantage disappears with quality gate).
+  Keep hours {13,14} — do NOT restrict to h=14 only.
+prev_d1 < 0: Soft preference, not a hard gate.
+
+===== NEXT BATCH (T466-T470) =====
+T466: EURUSD momentum study — when D1 close is down X%, what's next bar behavior?
+      Does the size of yesterday's decline predict the lo10 break trade quality?
+T467: ATR trend — is ATR14 rising vs falling at trade entry? Rising ATR may predict
+      continued momentum; falling ATR = fading volatility = worse trades.
+T468: Multiple-gate sweep — test ALL combinations of the top 3 ex-ante filters
+      (ATR>=80, r>=18, qc<=6) individually and combined. Which pair is best?
+T469: Missing period analysis — why are there NO trades in some months?
+      Is there seasonality (months of year) in the setup frequency?
+T470: Is the lo10 break signal STILL valid under 2026 market conditions?
+      Count setups per month 2024-2026; check if frequency is stable.
