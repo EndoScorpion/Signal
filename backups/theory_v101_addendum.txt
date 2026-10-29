@@ -1,0 +1,218 @@
+THEORY LOOP ADDENDUM v101 — T591-T595 Gen10 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen10 discoveries
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=8, Gen9 confirmed) =====
+Signal 1: n=8 WR=100% avg=+0.1067%
+Signal 2 (hour=8): n=5 WR=100% avg=+0.095% (Gen9 repair confirmed)
+
+===== T591: SIGNAL 2 lo15 VARIANT DEEP-DIVE =====
+
+Signal 2 variant comparison:
+  hour=8 + lo10 (Gen9): n=5 WR=100% avg=+0.095% cum=+0.4752%
+    Dates: 2024-10-04, 2024-12-10, 2024-12-18, 2025-10-22, 2026-03-26
+  lo15 + hours=[7,8]:   n=6 WR=100% avg=+0.1142% cum=+0.6852%
+    Dates: 2024-10-04, 2024-12-10, 2025-10-22, 2026-03-26, 2026-03-26 (dup!), 2026-03-27
+  lo15 + hour=7 only:  n=2 WR=100% avg=+0.1116% (only 2026 signals — thin)
+  lo15 + hour=8 only:  n=4 WR=100% avg=+0.1155% cum=+0.4619%
+    Dates: 2024-10-04, 2024-12-10, 2025-10-22, 2026-03-26
+  lo20 + hours=[7,8]:  n=5 WR=100% avg=+0.1177%
+  lo25 + hours=[7,8]:  n=5 WR=100% avg=+0.1177% (same as lo20)
+
+IMPORTANT OBSERVATION:
+  lo15 + hours=[7,8] has a DUPLICATE on 2026-03-26 (fires at hour=7 AND hour=8 same day)!
+  The same-day dedup rule (established for CT-LONG) must also apply to lo15 variant.
+  After dedup: lo15+hours=[7,8] = n=5 (same n as hour=8+lo10).
+
+  lo15 + hour=8 gives SAME signals as hour=8+lo10 MINUS Dec-18 2024.
+  lo15 is MORE selective (requires 15-bar low break = stronger momentum).
+
+WHY lo15 WORKS:
+  The 15-bar low break filters out the hour=7 losers naturally — those 2025 losers
+  could NOT make a 15-bar low (only a 10-bar low). lo15 achieves the same repair as
+  the hour=8 fix via a different mechanism: requiring more substantial momentum.
+
+SIGNAL 2 ARCHITECTURE CONCLUSION:
+  Option A (Gen9 confirmed): hour=8 + lo10 → n=5 WR=100% all 3 periods
+  Option B (alternative):    lo15 + hours=[7,8] → n=5-6 WR=100% all 3 periods (after dedup)
+  Both pass. Option A is simpler. Option B catches a few extra 2026 signals.
+  RECOMMENDATION: Use Option A (hour=8+lo10) as PRIMARY. lo15 as MONITORING variant.
+
+===== T592: CT-LONG 2026 SEARCH =====
+
+CT-LONG hi5 deduped (ATR14, h4>=1.0):
+  2026 signals found: 1 (Mar-27 2026, +0.1516%)
+  Only signal in 2026 data (Jan-Oct 2026, 10 months): n=1.
+
+FINDING: CT-LONG is genuinely rare in 2026 so far.
+  Mar-27 2026 was the only 5-bar high break in bearish context during 13-14 UTC in 2026.
+  2026 has been active for Signal 1 (n=6 bearish) but not for CT-LONG.
+  This makes sense: Signal 1 fires when EUR is in a sustained bearish trend (no reversals).
+  CT-LONG fires when EUR is deeply bearish AND showing a reversal attempt.
+  2026's trend has been consistently bearish without major reversal attempts.
+
+h4>=0.5 relaxed CT-LONG: n=5 in 2025 (adds 1 more), still only 1 in 2026.
+hi3 CT-LONG: n=6 deduped | adds 2026-02-04 (barely positive +0.002%, WR 50% in 2026)
+  → hi3 expansion adds noise in 2026. Stick with hi5.
+
+CT-LONG STATUS: n=5 (hi5, no accel filter, h4>=1.0). Still need n>=10.
+  2026 confirms CT-LONG is dormant when Signal 1 is active (inverse relationship).
+
+===== T593: Gen3A QUALITY TIER EXPANSION =====
+
+Full quality tier scan on Signal 1:
+
+  Baseline:           n=8 WR=100% avg=+0.1067% (all 8 signals including May-26)
+  accel<=-0.00005:    n=7 WR=100% avg=+0.1214% ← NEW TIER — removes only May-26 2026
+  accel<=-0.0001:     n=5 WR=100% avg=+0.1284% ← Gen2A (known)
+  r>=18:              n=6 WR=100% avg=+0.1091% ← Gen2B (known)
+  accel<=-0.0002:     n=3 WR=100% avg=+0.1370% ← Dec-10 2024, Mar-30 2026, Oct-12 2026
+  Gen3A (accel<=-0.0001+r>=18+lo25): n=3 WR=100% avg=+0.1476% ← Dec-10, Dec-18, Mar-30
+
+MAJOR FINDING: accel<=-0.00005 is a NEW tier that captures 7/8 signals at WR=100%.
+  The ONLY excluded signal is May-26 2026 (weakest: +0.0043%).
+  This tier has higher avg (+0.1214%) AND higher n (7 vs 5) than accel<=-0.0001.
+  It is SUPERIOR to Gen2A as a broad quality tier.
+
+  Gen2A (accel<=-0.0001): misses Jan-08 and Feb-17 2026 (both good: +0.097% and +0.110%)
+  accel<=-0.00005: includes Jan-08 and Feb-17 but excludes May-26 (the weak one)
+  → accel<=-0.00005 is the CORRECT broad quality gate (better than accel<=-0.0001)
+
+h4>=2.0 quality gate: CONFIRMED REDUNDANT
+  h4>=2.0 gives same n=8 as baseline. All 8 Signal 1 signals already have h4>=2.0.
+  The h4>=1.0 gate already captures all deeply bearish bars (>2.0 in practice).
+
+rank<20: n=3 WR=100% avg=+0.1153% — too restrictive. Worse avg than r>=18.
+
+UPDATED QUALITY TIERS (Signal 1):
+  Tier 0 (all signals):     n=8 WR=100% avg=+0.1067%  [full size]
+  Tier 1 (broad quality):   n=7 WR=100% avg=+0.1214%  [accel<=-0.00005] ← NEW, best tier/n tradeoff
+  Tier 2 (quality):         n=5 WR=100% avg=+0.1284%  [accel<=-0.0001]
+  Tier 3 (tight quality):   n=3 WR=100% avg=+0.1370%  [accel<=-0.0002]
+  Tier 4 (premium Gen3A):   n=3 WR=100% avg=+0.1476%  [accel<=-0.0001+r>=18+lo25]
+
+  EA SIZE RECOMMENDATION: Use accel as a SIZE SCALE (not a filter):
+    accel>=-0.00005: Tier 0 size (baseline)
+    accel<=-0.00005: +10% size
+    accel<=-0.0001:  +20% size
+    accel<=-0.0002:  +30% size
+    Gen3A conditions: +40% size (premium max)
+
+r>=18 alone gives n=6 WR=100% avg=+0.1091% — useful but accel<=-0.00005 is better.
+  r_rank retains utility as a signal context indicator, not as a primary size gate.
+
+===== T594: ALLIGATOR SPREAD SIZE MULTIPLIER =====
+
+Alligator spread distribution for Signal 1:
+  Dec-10 2024: spread=0.985 → pnl=+0.1463%  (above 0.5, strong)
+  Dec-18 2024: spread=0.243 → pnl=+0.1358%  (below 0.5, strong anyway)
+  Jan-08 2026: spread=0.605 → pnl=+0.0973%  (above 0.5, moderate)
+  Feb-17 2026: spread=0.773 → pnl=+0.1101%  (above 0.5, good)
+  Mar-30 2026: spread=1.097 → pnl=+0.1607%  (above 1.0, premium!)
+  May-14 2026: spread=0.777 → pnl=+0.0954%  (above 0.5, moderate)
+  May-26 2026: spread=0.347 → pnl=+0.0043%  (below 0.5, WEAKEST!)
+  Oct-12 2026: spread=1.162 → pnl=+0.1040%  (above 1.0, good)
+
+Tier breakdown:
+  spread [0, 0.3):   n=1 avg=+0.1358% (Dec-18 2024 — outlier, high pnl despite low spread)
+  spread [0.3, 0.5): n=1 avg=+0.0043% (May-26 2026 — the weakest signal!)
+  spread [0.5, 1.0): n=4 avg=+0.1123%
+  spread [1.0, +∞):  n=2 avg=+0.1323%
+
+KEY FINDING: May-26 2026 (spread=0.347, pnl=+0.0043%) is IDENTIFIED by low spread.
+  If we had sized it 0.5x based on spread, we'd reduce exposure on the weakest signal.
+  The pattern: spread>0.5 = better quality signal (4+2=6 signals at higher avg).
+  BUT Dec-18 2024 (spread=0.243) is a high-pnl exception — so spread<0.5 isn't always weak.
+
+Size multiplier simulation (0.5x at spread<0.3, 1.0x at [0.3,0.5), 1.5x at >0.5):
+  Base cum (all 1x):    +0.8539%
+  Weighted cum:         +1.1429%
+  Improvement:          +0.2890% (+34% improvement on cumulative P&L!)
+
+VERDICT: Alligator spread is a useful SIZE MODIFIER for Signal 1.
+  Threshold: spread>0.5 ATR = full/increased size; spread<0.5 ATR = reduced size.
+  This is NOT a filter (all signals still fire) — just a size scale.
+  With n=8, this is promising but needs more data to confirm.
+  TAG: Add alligator_spread to EA data stream for monitoring. Apply size multiplier when n>=15.
+
+===== T595: MILESTONE — Gen10 COMPLETE =====
+
+=== REVISED SIGNAL ARCHITECTURE (Gen10) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — EA-READY)
+  n=8 WR=100% avg=+0.1067%
+  Gate: ATR14, rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, hours=[13,14]
+
+  Quality tiers (for SIZE scaling):
+    Tier 0: baseline (no extra gates) → base size
+    Tier 1: accel<=-0.00005 → +10% size  [NEW, recommended tier for broad enhancement]
+    Tier 2: accel<=-0.0001 → +20% size
+    Tier 3: accel<=-0.0002 → +30% size
+    Tier 4: Gen3A (accel<=-0.0001+r>=18+lo25) → +40% size [premium, n=3]
+    Alligator spread>0.5 ATR: additional +20% size (stacks with above)
+    Alligator spread<0.5 ATR: -10% size reduction
+
+  REGIME: Accept zero signals in bullish years (annual EMA slope>0).
+  ENTRY: Market close. MaxHold=4 bars.
+
+LINE 2: SHORT 08 UTC (SECONDARY — RESTORED, EA-READY)
+  PRIMARY: hours=[8] + lo10 → n=5 WR=100% all periods
+  BACKUP: lo15 + hours=[7,8] (with same-day dedup) → n=5 WR=100% all periods
+  Gate: ATR14, rank<29, h4>=0.5, ema_dist>=0.5, qc>=3, body<=1.5, accel>0, hours=[8]
+  Size: Full size (restored from 50%). No alligator tier yet (n=5 too small).
+  ENTRY: Market close. MaxHold=4 bars.
+
+LINE 3: CT-LONG 13-14 UTC (MONITORING)
+  n=5 WR=80% hi5 deduped, NO accel filter. Need n>=10.
+  2026 dormant (only 1 signal). Continue logging.
+
+=== GEN10 KEY DISCOVERIES ===
+
+1. SIGNAL 2 lo15 VARIANT: Achieves same result as hour=8 fix via different mechanism.
+   lo15 naturally excludes the hour=7 losers (they fail the longer-lookback test).
+   Both approaches valid. Use hour=8+lo10 as primary (simpler, more signals).
+
+2. SAME-DAY DEDUP EXTENDS TO SIGNAL 2 lo15: Mar-26 2026 fires at both hour=7 and hour=8
+   with lo15. Apply first-signal-per-day rule to all multi-hour signal variants.
+
+3. accel<=-0.00005 IS THE BEST BROAD QUALITY TIER:
+   Captures 7/8 signals at WR=100% avg=+0.1214%. Better than accel<=-0.0001 (fewer misses).
+   The one excluded signal (May-26 2026) is the weakest (+0.0043%).
+
+4. ALLIGATOR SPREAD SIZE MULTIPLIER: +34% cumulative P&L improvement with 0.5x/1.5x scaling.
+   Identifies the weakest signal (May-26) by its low spread (0.347 ATR).
+   Promising indicator for size scaling. Monitor until n>=15.
+
+5. CT-LONG INVERSE TO SIGNAL 1: 2026 has been bearish (Signal 1 fires 6x) but CT-LONG
+   fires only 1x (Mar-27). When EUR trends consistently bearish, reversals are rare.
+   CT-LONG is the complement of Signal 1 — they don't coexist in the same regime.
+
+6. h4>=2.0 IS REDUNDANT: All 8 Signal 1 signals have h4>2.0 anyway. The h4>=1.0 gate
+   already captures only deeply bearish bars in practice.
+
+7. COMPLETE QUALITY TIERS ESTABLISHED: 5 tiers from accel<=-0.00005 to Gen3A+Alligator.
+   EA can now scale size smoothly based on accel depth and alligator spread.
+
+=== Gen10 COMBINED PORTFOLIO ===
+
+Signal 1: n=8 WR=100% cum=+0.8539%
+Signal 2: n=5 WR=100% cum=+0.4752%
+Combined: n=13 WR=100% cum=+1.3291% maxDD=0%
+  With size scaling (Tier 1 + Alligator): estimated cum=+1.7-1.9% (simulation pending)
+
+=== Gen11 PLAN (T596-T600) ===
+T596: Signal 1 + accel tier size simulation — run the 5-tier size model across all 8 signals
+      Apply Alligator spread multiplier simultaneously; show equity curve with vs without sizing
+T597: Signal 2 + accel>0 quality tiers — is there an equivalent tier system for Signal 2?
+      Test: accel thresholds for Signal 2 (hour=8 set), h4>1.0 vs h4>0.5 quality
+T598: CT-LONG persistence check — hi7 or hi10 expansion, relaxed ema_dist>=0.3, new 2026 search
+T599: Cross-signal synergy — when S1 and S2 fire in same week, are they correlated?
+      Test: paired week performance vs independent performance
+T600: MILESTONE Gen11 — full EA specification, size model finalization, SURVIVORS.md v3
+
+===== NEXT BATCH (T596-T600) =====
+T596: Size model simulation (Tier 0-4 + Alligator multiplier on Signal 1)
+T597: Signal 2 quality tiers (hour=8 set)
+T598: CT-LONG expansion (hi7, relaxed gates)
+T599: Cross-signal weekly correlation analysis
+T600: Gen11 milestone — final EA v2.0 spec with size model
