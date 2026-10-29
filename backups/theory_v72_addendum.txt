@@ -1,0 +1,154 @@
+THEORY LOOP ADDENDUM v72 — T446-T450
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | r<29 canonical gate set
+Date: 2026-10-29
+
+===== BASELINE =====
+n=8 WR=100% avg=+0.1103%
+
+===== T446: D1 SLOPE ATR-NORMALIZATION FIX =====
+Finding: Raw slope and ATR-normalized slope have IDENTICAL sign for all 8 trades.
+  raw values: -0.016 to +0.007 (tiny price-unit changes in 20-day MA)
+  norm values: -14.99 to +8.98 (large because D1 MA moves slowly vs H1 ATR)
+  Sign is SAME: all 4 negative raw = 4 negative norm (same 4 d1_slope<=0 trades)
+
+d1_slope_norm threshold scan: FLAT — all thresholds from -1.0 to +1.0 give
+  exactly n=4 avg=+0.1360% because the 4 slope<0 trades have norm=-9.9 to -15.0
+  (well below any reasonable threshold). The 4 slope>0 trades have norm=+4.6 to +8.97.
+
+VERDICT: Normalization bug from T441 was cosmetic — the sign-based filter (d1_slope<=0)
+is perfectly valid and unaffected by scale. Prior findings stand.
+
+===== T447: D1 DISTANCE FINE RESOLUTION =====
+Confirmed breakpoints:
+  d1_dist>=-9: n=7 avg=+0.1205%  (drops 2026-02-16, the -10.7 ATR outlier)
+  d1_dist>=0:  n=5 avg=+0.1281%  (price at/below D1 MA50)
+  d1_dist>=2:  n=4 avg=+0.1360%  (1+ ATR below D1 MA50)
+  d1_dist>=10.5: n=3 avg=+0.1362% (n=3 too small)
+
+Best practical gate: d1_dist>=2 (price clearly below D1 MA50 by ≥2 ATR) = n=4 avg=+0.1360%
+Corr(d1_dist, pnl) = +0.524 confirmed at multiple resolutions.
+
+NOTE: The d1_dist values are very large (10-35 ATR) for the best 4 trades.
+This reflects that D1 MA50 is a very slow-moving average — when price is 10-35 ATR
+below it on H1, we're in a significant multi-day selloff which is mean-reverting.
+
+===== T448: CONFLUENCE SCORE (d1_dist × h4d) =====
+Confluence score values:
+  2026-10-12: conf=+196.5 (d1=34.66 × h4=5.67) → +0.1032%  [high conf, avg pnl]
+  2026-03-30: conf=+75.9  (d1=15.87 × h4=4.78) → +0.1596%  [best pnl]
+  2024-12-10: conf=+31.8  (d1=11.75 × h4=2.71) → +0.1459%
+  2024-12-18: conf=+14.1  (d1=10.35 × h4=1.36) → +0.1354%
+  2026-01-08: conf=+10.7  (d1=1.88  × h4=5.70) → +0.0962%
+  2026-05-14: conf=-7.4   (d1=-1.23 × h4=6.00) → +0.0943%
+  2026-02-16: conf=-12.8  (d1=-10.7 × h4=1.19) → +0.0392%  [worst pnl]
+  2026-02-17: conf=-21.0  (d1=-5.24 × h4=4.01) → +0.1088%  [negative conf, good pnl]
+
+Corr(confluence, pnl) = +0.251 — WEAKER than d1_dist alone (+0.524)
+Corr(h4d, pnl) = +0.113 — very weak
+
+VERDICT: The product d1_dist × h4d dilutes the d1_dist signal. The 2026-10-12 trade
+has the highest confluence (196) but only median pnl. The 2026-02-17 trade has
+NEGATIVE confluence yet +0.1088% pnl. d1_dist alone is the better predictor.
+Confluence score is NOT useful as a gate.
+
+===== T449: RSI FILTERS (H4, D1, H1) =====
+RSI values at baseline trades:
+  2024-12-10: h1_rsi=19.3 h4_rsi=22.9 d1_rsi=44.0 → +0.1459%
+  2024-12-18: h1_rsi=39.9 h4_rsi=27.6 d1_rsi=18.0 → +0.1354%
+  2026-01-08: h1_rsi=31.5 h4_rsi=29.4 d1_rsi=14.0 → +0.0962%
+  2026-02-16: h1_rsi=36.2 h4_rsi=17.3 d1_rsi=47.8 → +0.0392%  ← worst
+  2026-02-17: h1_rsi=23.8 h4_rsi=3.0  d1_rsi=49.0 → +0.1088%
+  2026-03-30: h1_rsi=16.9 h4_rsi=21.6 d1_rsi=28.7 → +0.1596%  ← best
+  2026-05-14: h1_rsi=23.2 h4_rsi=13.5 d1_rsi=30.4 → +0.0943%
+  2026-10-12: h1_rsi=18.1 h4_rsi=14.5 d1_rsi=17.9 → +0.1032%
+
+Correlations:
+  Corr(h1_rsi, pnl) = -0.453  ← significant negative (more oversold H1 = better)
+  Corr(h4_rsi, pnl) = +0.267  ← weak positive (counterintuitive)
+  Corr(d1_rsi, pnl) = -0.229  ← weak negative
+
+Threshold scan results:
+  H4 RSI: all 8 trades have h4_rsi <= 30! (max=29.4). Gate non-binding at any <30 threshold.
+  D1 RSI<=45: n=6 avg=+0.1224% (drops 2026-02-16 d1_rsi=47.8 and 2026-02-17 d1_rsi=49.0)
+  D1 RSI<=40: n=5 avg=+0.1177%
+  H1 RSI<=35: n=6 avg=+0.1180%
+  H1 RSI<=30: n=5 avg=+0.1224%
+  H1 RSI<=20: n=3 avg=+0.1362% (n=3 too small)
+
+KEY NOTE: 2026-02-17 has h4_rsi=3.0 (extreme oversold!) — H4 RSI=3 is an extreme
+signal but trade yields only +0.1088% (median). D1 RSI=49 for this trade
+(not oversold on D1). Shows H4 RSI alone ≠ quality predictor.
+
+VERDICT: H1 RSI is most useful (corr=-0.453). H1 RSI<=30 gives n=5 avg=+0.1224%
+(vs n=8 +0.1103%). H4 RSI is non-binding (all already <30). D1 RSI<=45 is marginal.
+The correlation signal is moderate — worth combining with ATR (T451).
+
+===== T450: FULL CORRELATION MATRIX — REGIME MAP =====
+BOMBSHELL FINDINGS from full correlation matrix:
+
+  atr     : corr = +0.860 ← STRONGEST PREDICTOR (by far)
+  r       : corr = +0.743 ← Second strongest (POSITIVE — higher rank within r<29 is BETTER)
+  d1_dist : corr = +0.524
+  h1_rsi  : corr = -0.453
+  qc      : corr = -0.273
+  h4_rsi  : corr = +0.267
+  confluence: corr = +0.251
+  d1_rsi  : corr = -0.229
+  h4d     : corr = +0.113 ← surprisingly WEAKEST gate feature
+
+ATR FINDING: Within the r<29 basket, HIGHER ATR = better trade. Near-monotonic:
+  ATR=7.8 → +0.0392% (worst)
+  ATR=8.0 → +0.0943%
+  ATR=8.1 → +0.0962%
+  ATR=8.3 → +0.1032%
+  ATR=9.2 → +0.1088%
+  ATR=10.0 → +0.1354%
+  ATR=10.8 → +0.1459%
+  ATR=12.8 → +0.1596% (best)
+  Corr = +0.860 — almost linear relationship!
+
+RANK FINDING: Within r<29, higher rank (closer to 29%) is better than lower rank:
+  r=5.2 → +0.0392% (worst trade — EXTREMELY quiet market)
+  r=13.5 → +0.1032%
+  r=28.2 → +0.1596% (best trade)
+  Corr = +0.743 — the very quietest market makes WORST trades!
+  Implication: r<20 is NOT better than r=20-29. Tightening from r<29 to r<20 would HURT.
+
+H4D FINDING: h4d has corr=+0.113 — nearly UNCORRELATED with PnL!
+  h4d range: 1.191 to 6.004; no clear monotonic relationship with outcome.
+  h4d IS important as a filter (trades must be below H4 EMA) but magnitude
+  above the 1.0 threshold doesn't predict better trades.
+
+IMPORTANT CORRELATION STRUCTURE:
+  d1_dist ↔ confluence: +0.939 (nearly identical — confirms d1_dist alone is enough)
+  h4d ↔ h1_rsi: -0.614 (higher h4d = lower H1 RSI — makes sense: deep below H4 EMA = oversold H1)
+  h4d ↔ d1_rsi: -0.428 (similar logic)
+  d1_dist ↔ h1_rsi: -0.509 (deeper below D1 MA = more oversold H1)
+
+MULTICOLLINEARITY: d1_dist, h1_rsi, and h4d are all related to "how oversold is the market"
+but d1_dist is the strongest individual predictor. H1 RSI adds independent information.
+
+IDEAL REGIME profile (top-3 trades: +0.1596%, +0.1459%, +0.1354%):
+  ATR >= 10 pts (high volatility within quiet band)
+  r = 18-22% (moderate quiet, not extreme)
+  d1_dist >= 10 ATR (deep below D1 MA50)
+  h1_rsi <= 25 (oversold on H1)
+  d1_rsi < 45 (not overbought on D1)
+
+===== SYSTEM RANKINGS (updated) =====
+QUALITY-4: r<29 + d1_slope<=0         → n=4 WR=100% avg=+0.1360%
+QUALITY-5: r<29 + d1_below + |h4|>=0.1 → n=5 WR=100% avg=+0.1281%
+RSID-5:    r<29 + h1_rsi<=30          → n=5 WR=100% avg=+0.1224%
+EFFICIENT-7: r<29 + |h4_slope|>=0.1    → n=7 WR=100% avg=+0.1205%
+BASELINE-8:  r<29                      → n=8 WR=100% avg=+0.1103%
+
+===== NEXT BATCH (T451-T455) =====
+T451: ATR threshold optimization — ATR is strongest predictor (corr=0.860)
+      What's the optimal ATR minimum within r<29? Current gate=7.5pts.
+      Scan from 7.5 to 11.0 pts in 0.5 increments.
+T452: Rank-within-window — r=20-29 better than r<20? Test r>20 subset.
+      Why does the quietest market (r=5) make worst trade?
+T453: H1 RSI + ATR combined — do they add independently? (both corr with pnl)
+T454: ATR + d1_dist combined gate — the two strongest independent predictors
+T455: Predictor stability test — are ATR and rank the drivers or are they
+      proxies for something else? Check ATR vs actual price move (exit_bar+pnl)
