@@ -1,0 +1,250 @@
+THEORY LOOP ADDENDUM v83 — T501-T505
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T501: WEEKLY TREND ALIGNMENT (weekly EMA20) =====
+
+Corr(w_ema20_dist, pnl_pct) = +0.376  ← MODERATE
+
+w_ema20_dist: (weekly EMA20 - close) / ATR14. Positive = close BELOW weekly EMA20 (bearish).
+
+Sorted by w_ema20_dist:
+  w_dist=-19.25(ABOVE) r=5.2  → +0.0405% (Feb-16)  ← BAD trade, ABOVE weekly EMA20
+  w_dist=-12.64(ABOVE) r=27.0 → +0.1101% (Feb-17)  ← GOOD trade, also ABOVE
+  w_dist= -3.42(ABOVE) r=23.4 → +0.0973% (Jan-08)
+  w_dist= -2.08(ABOVE) r=17.1 → +0.0954% (May-14)
+  w_dist=+14.94(BELOW) r=28.2 → +0.1607% (Mar-30)  ← BEST trade, BELOW
+  w_dist=+22.33(BELOW) r=9.5  → +0.0385% (Jul-21)  ← WORST trade, ALSO BELOW!
+  w_dist=+24.71(BELOW) r=18.7 → +0.1463% (Dec-10)
+  w_dist=+26.74(BELOW) r=21.0 → +0.1358% (Dec-18)
+  w_dist=+37.91(BELOW) r=13.5 → +0.1040% (Oct-12)
+
+Weekly EMA20 scan:
+  w_below_ema20=1 (dist>0): n=5 WR=100% avg=+0.1171%
+
+CRITICAL PARADOX: The WORST trade (Jul-21 r=9.5 +0.0385%) is BELOW weekly EMA20!
+  The gate "w_below_ema20=1" does NOT remove Jul-21.
+  It removes Feb-16 (BAD, dist=-19.25 ABOVE) — removing 1 bad trade.
+  But ALSO removes Feb-17 (r=27.0, +0.1101%), Jan-08 (r=23.4, +0.0973%), May-14 (r=17.1, +0.0954%) — 3 good trades.
+
+ANALYSIS:
+  The avg improvement (+0.1171% vs +0.1032%) is driven by removing Feb-16 (BAD),
+  but Jul-21 (WORST) remains in the gate-passed group!
+  Compare to r>=18: removes BOTH bad trades (Feb-16 r=5.2, Jul-21 r=9.5).
+  Weekly trend gate: removes 1 bad + 3 good trades. r>=18: removes 2 bad trades only.
+  Corr=+0.376 is real but the mechanism is CONFOUNDED with r (Feb-16 is low-r AND above weekly EMA20).
+
+VERDICT: T501 weekly trend is a SOFT predictor.
+  Does NOT replace r>=18 as quality gate. Cannot remove Jul-21 (the structural worst case).
+  As a soft observation: 5/9 trades occur with price below weekly EMA20; within those 5 the avg is higher.
+  But the gate also drops 3 valid tier1 trades (Feb-17, Jan-08, May-14).
+  Do NOT add as hard gate. Note as SOFT context.
+
+===== T502: ATR CARRY (avg ATR in next 4 bars vs entry ATR) =====
+
+Corr(atr_carry_ratio, pnl_pct) = +0.199  ← WEAK
+
+atr_carry_ratio = avg(atr14 in bars 1-4) / atr14 at entry. >1 = ATR expanding after entry.
+
+Sorted:
+  carry=0.986(contracting) r=5.2  → +0.0405% (Feb-16)  ← ONLY contracting trade
+  carry=1.062(expanding)   r=27.0 → +0.1101% (Feb-17)
+  carry=1.074(expanding)   r=18.7 → +0.1463% (Dec-10)
+  carry=1.085(expanding)   r=28.2 → +0.1607% (Mar-30)  ← BEST
+  carry=1.099(expanding)   r=23.4 → +0.0973% (Jan-08)
+  carry=1.123(expanding)   r=9.5  → +0.0385% (Jul-21)  ← WORST despite HIGH carry!
+  carry=1.141(expanding)   r=21.0 → +0.1358% (Dec-18)
+  carry=1.168(expanding)   r=13.5 → +0.1040% (Oct-12)
+  carry=1.187(expanding)   r=17.1 → +0.0954% (May-14)
+
+ANALYSIS:
+  8/9 trades have expanding ATR in the next 4 bars (carry > 1.0) — near-universal condition.
+  The ONLY contracting trade (Feb-16) is also BAD — but this is the only observation.
+  Jul-21 (WORST, r=9.5) has carry=1.123 (high expanding) — carry does NOT predict quality.
+  Note: ATR carry > 1.0 is nearly universal because ATR is mean-reverting UPWARD from low-r regimes.
+  In r<29 (quiet regime), the next 4 bars almost always show slightly higher ATR as the regime normalizes.
+
+VERDICT: ATR carry is NOT a useful predictor.
+  Only 1 contracting trade in sample (n=1 constraint). Correlation +0.199 is weak.
+  The structural property (carry>1 in quiet regimes) makes this a tautology, not a signal.
+  Do NOT add as gate.
+
+===== T503: ADR FILTER (5-day avg D1 range / ATR14) =====
+
+Corr(adr5, pnl_pct) = +0.385  ← MODERATE
+
+adr5: rolling 5-trading-day avg of (D1 high - D1 low) / ATR14. Higher = more "active" daily range.
+
+Sorted:
+  adr5=4.39(high) r=5.2  → +0.0405% (Feb-16)  ← BAD trade, lowest adr5
+  adr5=4.54(high) r=28.2 → +0.1607% (Mar-30)  ← BEST trade, 2nd lowest adr5!
+  adr5=4.61(high) r=9.5  → +0.0385% (Jul-21)  ← WORST trade, 3rd lowest
+  adr5=4.71(high) r=27.0 → +0.1101% (Feb-17)
+  adr5=5.60(high) r=21.0 → +0.1358% (Dec-18)
+  adr5=5.67(high) r=17.1 → +0.0954% (May-14)
+  adr5=5.80(high) r=23.4 → +0.0973% (Jan-08)
+  adr5=6.42(high) r=18.7 → +0.1463% (Dec-10)
+  adr5=6.51(high) r=13.5 → +0.1040% (Oct-12)
+
+ALL trades have adr5 >= 4.0 — the threshold scan (1.5, 2.0, 2.5) gave n=9 for all values.
+
+CRITICAL PARADOX:
+  The 2 BAD trades (Feb-16=4.39, Jul-21=4.61) ARE at the LOW end — supporting adr5 filtering.
+  BUT the BEST trade (Mar-30=4.54 r=28.2 +0.1607%) is also at the LOW end!
+  A threshold of adr5>=5.0 would keep: Dec-18(5.60), May-14(5.67), Jan-08(5.80), Dec-10(6.42), Oct-12(6.51)
+  That drops: Feb-16(BAD) + Jul-21(WORST) + Feb-17(r=27.0 +0.1101%) + Mar-30(BEST +0.1607%)
+  adr5>=5.0 avg = (0.1358+0.0954+0.0973+0.1463+0.1040)/5 = +0.1158% — better than baseline
+  BUT removes the BEST trade (Mar-30 +0.1607%)!
+  This is the same confounding pattern as range10: r>=28 trades can have low adr5.
+
+ANALYSIS:
+  adr5 corr=+0.385 is real and moderate. The clustering: low adr5 includes BOTH bads AND the best trade.
+  Any gate that removes the bads also removes the best.
+  adr5>=5.0 improves average by removing bads but at the cost of dropping Mar-30 (BEST).
+  Notably: both bad trades + best trade are all in the 4.4-4.6 range — inseparable by adr5 alone.
+
+VERDICT: ADR5 is a SOFT predictor but cannot replace or augment r>=18 cleanly.
+  Corr=+0.385 is meaningful but the gate paradox (Mar-30 has low adr5 = same as bad trades) prevents use.
+  OBSERVATION: adr5>=5.0 is worth noting as a secondary soft indicator (improves avg if Mar-30 is accepted
+  as a statistical outlier at low adr5). But r>=28 trades can legitimately have low adr5.
+  Do NOT add as hard gate. Soft observation only.
+
+===== T504: H4 RSI AT ENTRY (oversold = better SHORT?) =====
+
+Corr(h4_rsi, pnl_pct) = -0.067  ← NEAR-ZERO
+
+All trades SORTED by H4 RSI:
+  h4_rsi=3.0  r=27.0 → +0.1101% (Feb-17)  ← EXTREME oversold
+  h4_rsi=13.5 r=17.1 → +0.0954% (May-14)
+  h4_rsi=14.5 r=13.5 → +0.1040% (Oct-12)
+  h4_rsi=17.3 r=5.2  → +0.0405% (Feb-16)  ← BAD, extremely oversold
+  h4_rsi=21.6 r=28.2 → +0.1607% (Mar-30)  ← BEST
+  h4_rsi=22.9 r=18.7 → +0.1463% (Dec-10)
+  h4_rsi=27.6 r=21.0 → +0.1358% (Dec-18)
+  h4_rsi=29.4 r=23.4 → +0.0973% (Jan-08)
+  h4_rsi=30.9 r=9.5  → +0.0385% (Jul-21)  ← WORST, least oversold of group
+
+CRITICAL FINDING: ALL 9 trades have H4 RSI <= 31 (ALL oversold, <40 threshold).
+  H4 RSI is UNIVERSALLY oversold at signal time — this is a STRUCTURAL CONSEQUENCE of the gate.
+  Why: the setup requires close below H1 EMA50 (ema50_dist>=0.5) AND close below H4 EMA50 (h4d>=1.0).
+  Price so far below both 50-bar EMAs will almost always produce RSI < 40 on H4.
+
+H4 RSI scan:
+  h4_rsi<=30: n=8 WR=100% avg=+0.1113% — drops only Jul-21 (30.9)
+  h4_rsi<=35: n=9 WR=100% avg=+0.1032% (all)
+  (higher thresholds = same n=9)
+
+ANALYSIS:
+  h4_rsi<=30 drops Jul-21 (WORST) — avg improves to +0.1113%.
+  BUT: this is threshold n-1 (8 of 9 trades). Not meaningful.
+  The correlation is near-zero (-0.067) — no predictive relationship.
+  The WORST trade (Jul-21) has the HIGHEST RSI (30.9 = least oversold) and
+  the 2nd best trade (Feb-17) has the LOWEST RSI (3.0 = most extreme oversold).
+  No monotonic relationship.
+
+VERDICT: H4 RSI is NOT a useful predictor.
+  It is a structural tautology — the gate already forces RSI into oversold territory.
+  The range (3.0 to 30.9) is too compressed and the correlation is near-zero.
+  Do NOT add as gate. The h4d>=1.0 gate already captures this structural constraint.
+
+===== T505: DOW EFFECT (Monday vs other days) =====
+
+All trades:
+  Dec-10 Tue r=18.7 → +0.1463%
+  Dec-18 Wed r=21.0 → +0.1358%
+  Jan-08 Thu r=23.4 → +0.0973%
+  Feb-16 Mon r=5.2  → +0.0405%  ← BAD
+  Feb-17 Tue r=27.0 → +0.1101%
+  Mar-30 Mon r=28.2 → +0.1607%  ← BEST
+  May-14 Thu r=17.1 → +0.0954%
+  Jul-21 Tue r=9.5  → +0.0385%  ← WORST
+  Oct-12 Mon r=13.5 → +0.1040%
+
+By DOW:
+  Mon: n=3 avg=+0.1017% (Feb-16 BAD + Mar-30 BEST + Oct-12) — SPREAD
+  Tue: n=3 avg=+0.0983% (Dec-10, Feb-17, Jul-21 WORST) — includes worst
+  Wed: n=1 avg=+0.1358%
+  Thu: n=2 avg=+0.0964%
+
+Monday only: n=3 WR=100% avg=+0.1017%
+Non-Monday: n=6 WR=100% avg=+0.1039%
+
+ANALYSIS:
+  Monday is MARGINALLY worse than non-Monday (+0.1017% vs +0.1039%).
+  But n=3 on Monday includes both the BEST trade (Mar-30 r=28.2) and the BAD trade (Feb-16 r=5.2).
+  Monday DOW cannot separate quality — it's pure r confounding.
+  Tue n=3 includes the WORST trade (Jul-21 r=9.5) — no DOW pattern for worst trades either.
+  No DOW provides meaningful separation.
+
+VERDICT: DOW effect is NOT detectable.
+  All DOW subsets have too few trades (n=1 to n=3) for any statistical conclusion.
+  The BAD and BEST trades are on the SAME day (Monday). The WORST trade (Tue) contradicts Tue being safe.
+  As expected: this is an n=9 sample. DOW needs n>=50 for meaningful distribution.
+  Do NOT add as gate.
+
+===== FINAL PICTURE AFTER T461-T505 (45 THEORIES) =====
+
+NULL FEATURES (confirmed useless after exhaustive testing):
+  Body characteristics: body_atr, bearish_body, bar_momentum — ALL near-zero
+  Pre-breakdown pattern: range5_mean, range5_trend — near-zero
+  Confirmation: 2-bar confirm, CLOSE<lo10 — both HARMFUL
+  Multi-TF indicators: MTF RSI — implied by structure
+  Entry bar characteristics: body size, body direction, open gap direction
+  Seasonality: quarter, month, DOW — insufficient n, r-confounded
+  Regime duration: session_quiet_streak — doesn't filter quality
+  Alternative windows: 504-bar ATR rank — inferior to 252-bar
+  Monthly channel: month_pos — r-confounded, fails on bad trades
+  Breakdown depth: signal_depth — structure is wick-based, depth irrelevant
+  EMA20 distance: already 100% implied by existing gates
+  RR optimization: all deviations from 1.5S/1.5T/4bars INFERIOR
+  D1 bearish streak: d1_consec_bear — near-zero correlation
+  ATR acceleration: atr_acc — near-zero, growing ATR is universal condition
+  Second setup in window: n=1, no conclusion
+  ATR carry: atr_carry_ratio — near-universal expanding condition, not predictive
+  H4 RSI: corr=-0.067 near-zero, structurally forced <31 by gate (not informative)
+  DOW (Monday): n=3 per day, BAD and BEST are both Monday — no effect
+
+CONFIRMED PREDICTORS (deployable):
+  r (ATR rank 252-bar): PRIMARY GATE — r>=18 AND r<29
+  h4d (H4 EMA50 distance): REGIME GATE — h4d>=1.0
+  ema50_slope: SOFT — slope <= -0.4 = higher confidence
+  range10: SOFT — larger 10-bar range = more prior momentum (wide range = better)
+  |gap|: SOFT — |gap| <= 0.3 = cleaner setup (vacuously satisfied at tier1 level)
+  d1_ma50_dist: MODERATE (+0.414) — price below D1 MA50 = better context
+  w_ema20_dist: MODERATE (+0.376) — price below weekly EMA20 = slight edge (SOFT only)
+  adr5: MODERATE (+0.385) — higher 5-day ADR = somewhat better context (SOFT, paradox with Mar-30)
+
+===== CANONICAL GATE — FINAL v83 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars (confirmed optimal T495)
+
+Soft indicators (not gated):
+  - ema50_slope <= -0.4 (H1 EMA50 in active downtrend)
+  - range10 >= 3.0 (prior momentum available)
+  - prev_d1_ret < 0 (prior day directional alignment)
+  - |gap| <= 0.3 (clean continuation open)
+  - d1_ma50_dist >= 5.0 (price well below D1 MA50 = deeper bearish context)
+  - w_ema20_dist > 0 (price below weekly EMA20 = weekly trend confirmation, soft)
+  - adr5 >= 5.0 (above-average daily range context, soft — but drops Mar-30 BEST trade)
+
+===== NEXT BATCH (T506-T510) =====
+T506: ADR5 deeper analysis — re-scan with higher thresholds (4.0 to 6.0) to find exact inflection.
+      Specifically: does adr5>=4.7 or adr5>=5.0 improve avg while keeping acceptable n?
+      Cross-check with r gate: are the trades dropped by adr5>=5.0 also covered by r>=18?
+T507: H4 EMA50 slope — not just distance (h4d) but the RATE OF CHANGE of H4 EMA50.
+      h4_ema_slope = (h4_ema - h4_ema.shift(5)) / h4_ema.shift(5) — is H4 EMA50 falling at entry?
+      Hypothesis: faster-falling H4 EMA50 = stronger bear regime = better SHORT continuation.
+T508: H1 bear trend count — how many of the 10 H1 bars before entry are below H1 EMA50?
+      bar_below_ema50 = (df['c'] < df['ema50']). rolling count in 10-bar window.
+      Hypothesis: more bars below EMA50 = more established downtrend = better continuation.
+T509: D1 daily position at entry — where is the H1 entry relative to that day's D1 open?
+      d1_open = df['o'].resample('1D').first(). position = (c - d1_open) / atr14.
+      Hypothesis: already below D1 open = intraday selling pressure = better setup.
+T510: Milestone — COMBINED FILTER TEST: r>=18 + w_below_ema20 + adr5 threshold.
+      How many tier1 trades survive combined soft filter? Is combination additive or cancels?
