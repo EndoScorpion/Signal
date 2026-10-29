@@ -1,0 +1,176 @@
+THEORY ADDENDUM v44 — T306-T310
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T306: comp_v5 AS POSITION SIZING MULTIPLIER ===
+
+All 10 trades are profitable (WR=100%) so sizing affects return distribution, not survival.
+
+Method 1: Proportional (size = v5 / max_v5):
+  Effective units: 5.8 (vs 10 equal-weight)
+  Avg pnl/unit: +0.1191%  ← +11% vs equal-weight +0.1071%
+  Capital concentration: largest trades are highest-quality ones
+
+Method 2: Binary (v5>=0.5 → 2x, v5<0.5 → 1x):
+  Effective units: 15 (5×2 + 5×1)
+  Avg pnl/unit: +0.1146%
+  High-quality n=5 at 2x: avg=+0.1297%, lower n=5 at 1x: avg=+0.0846%
+
+Method 3: Quintile sizing (0.2/0.4/0.6/0.8/1.0x):
+  Avg pnl/unit: +0.1193%  ← slight improvement over proportional, similar result
+
+SIZING RESULTS SUMMARY:
+  Equal weight:     avg=+0.1071%/unit  (baseline)
+  Binary 2x/1x:    avg=+0.1146%/unit  (+7%)
+  Proportional:     avg=+0.1191%/unit  (+11%)
+  Quintile:         avg=+0.1193%/unit  (+11%)
+
+KEY FINDING: comp_v5-proportional sizing improves avg return per unit by ~11%.
+The improvement comes from concentration in high-quality setups. Since WR=100%
+on both halves of the distribution, there is no WR cost to sizing down on lower-V5.
+This confirms V5 is a genuine QUALITY signal, not just a direction signal.
+
+PRACTICAL IMPLEMENTATION:
+  Minimum viable: binary (v5>=0.5 → 2x lot, v5<0.5 → 1x lot)
+  Optimal: lot = base_lot × (v5 / 0.789) [0.789 = max observed v5 in dataset]
+  Floor: never go below 0.1×base (minimum meaningful position)
+
+CONCLUSION: T306 USEFUL. V5-proportional sizing adds ~11% to per-unit return at
+no WR cost. Should be implemented in EA once live testing begins.
+
+=== T307: HOUR SUB-PATTERN (13h vs 14h UTC) ===
+
+  13:00 UTC: n=7, WR=100%, avg=+0.1027%, avg_v5=0.444
+  14:00 UTC: n=3, WR=100%, avg=+0.1175%, avg_v5=0.491
+
+Hour correlation with pnl: +0.223 (CONFIRMS T281 finding exactly — +0.223)
+
+Per-trade:
+  13h trades (n=7): 2024-12-10 (+0.1399%), 2024-12-18 (+0.1299%), 2025-12-30 (+0.1032%),
+                    2026-02-16 (+0.0480%), 2026-02-17 (+0.1167%), 2026-05-14 (+0.1009%),
+                    2026-07-21 (+0.0803%)
+  14h trades (n=3): 2026-01-08 (+0.1001%), 2026-03-30 (+0.1618%), 2026-08-06 (+0.0906%)
+
+KEY FINDING: 14h avg (+0.1175%) > 13h avg (+0.1027%) by +0.0148%, and 14h has
+higher avg_v5 (0.491 vs 0.444). But n=3 vs n=7 — the difference is within noise.
+The hour effect is real as a predictor (+0.223 confirmed) but not strong enough to
+justify filtering to 14h only (n would drop to 3).
+
+CONCLUSION: T307 CONFIRMS T281. The +0.223 hour correlation is stable. 14h is
+marginally higher quality by avg_v5 but n=3 is insufficient to trade on 14h-only.
+Both hours retained. Hour is already the weakest predictor in the hierarchy.
+
+=== T308: qc THRESHOLD SENSITIVITY ===
+
+Test: vary minimum consecutive ATR-compression bars required (qc_min = 1,2,3,4,5)
+
+  qc>=1: n=11, WR=100%, avg=+0.1078%  ← adds 1 new trade vs qc>=3
+  qc>=2: n=11, WR=100%, avg=+0.1078%  ← same as qc>=1
+  qc>=3: n=10, WR=100%, avg=+0.1071%  [CURRENT BASE]
+  qc>=4: n=10, WR=100%, avg=+0.1071%  ← all existing trades have qc>=4
+  qc>=5: n=10, WR=100%, avg=+0.1071%  ← all existing trades have qc>=5
+
+NEW TRADE (at qc>=2): 2026-10-12, qc=2, pnl=+0.1143% ← WINNER at +7% vs base avg
+
+KEY FINDINGS:
+1. Relaxing qc from 3 to 2 adds exactly ONE new trade (2026-10-12, qc=2, +0.1143%).
+   That trade is a WINNER and slightly above the base average. WR stays 100% at n=11.
+2. All current 10 trades have qc>=4 or qc>=5 (no qc=3 or qc=4 trades in the base set).
+   The qc>=3 requirement is actually a soft constraint — current trades meet qc>=4.
+3. Relaxing qc: n goes 10→11, avg improves slightly (+0.1071%→+0.1078%).
+
+OPEN QUESTION: Is 2026-10-12 genuinely a qc=2 setup, or is this noise at n=1?
+The trade is recent (Oct 2026) and passes all other filters with qc=2. It's the only
+qc=2 trade in the dataset. With n=1 added we cannot conclude qc=2 is valid.
+
+PROVISIONAL CONCLUSION: qc>=2 slightly improves the dataset (n=11, all winners).
+Not enough evidence to change the qc>=3 requirement, but worth tracking the qc=2
+trade if live testing begins (it passed all other quality gates).
+
+COMPOSITE CHECK: What is the comp_v5 score of the qc=2 trade?
+  → Need to compute: if it has high V5, the filter would already accept it via comp_v5>=0.5.
+  → TODO: T313 should compute V5 for the qc=2 trade.
+
+=== T309: lo WINDOW SENSITIVITY (lo5, lo10, lo20) ===
+
+  Base (lo10 break): n=10, WR=100%, avg=+0.1071%
+  Also break lo5:    n=10, WR=100%, avg=+0.1071% — ALL 10 TRADES break lo5 too
+  Only lo10 break (not lo5): n=0 — NO marginal lo10-only breaks
+
+KEY FINDING: Every current trade breaks lo5 AND lo10 simultaneously. There are zero
+trades where the bar breaks lo10 but not lo5 (i.e., no "marginal" lo10 breaks).
+
+INTERPRETATION: The entries are not marginal new-low breaks — they are DEEP breakdowns
+that breach both 5-bar and 10-bar lows simultaneously. This is structurally consistent
+with a genuine compression breakout (not a weak/noise break):
+  - High-quality setups emerge from a compressed range
+  - The breakdown is decisive (goes through lo5 too)
+  - Marginal breaks of only the 10-bar low don't occur in qualifying setups
+
+CONCLUSION: lo10 and lo5 are equivalent as filters for this setup. lo10 is not a
+meaningful distinguisher. The key is the MAGNITUDE of the breakdown (large enough to
+break any reasonable lookback window). lo10 can be simplified to lo5 with identical results.
+
+=== T310: EMA50 DISTANCE BINS ===
+
+  ema_dist [0.5–1.5)×ATR: n=3, WR=100%, avg=+0.1079% (near-EMA entries)
+  ema_dist [1.5–3.0)×ATR: n=3, WR=100%, avg=+0.0761% (mid-distance)  ← WORST
+  ema_dist [3.0–6.0)×ATR: n=4, WR=100%, avg=+0.1298% (far-from-EMA) ← BEST bin
+  ema_dist [6.0+)×ATR:    n=0
+
+Overall correlation: +0.463 (CONFIRMS T268 finding +0.463 exactly)
+
+Per-trade ema_dist (sorted ascending):
+  2026-08-06: 0.72×ATR → +0.0906%
+  2024-12-18: 0.83×ATR → +0.1299%
+  2025-12-30: 1.23×ATR → +0.1032%
+  2026-02-16: 1.88×ATR → +0.0480%  ← worst trade, medium distance
+  2026-07-21: 2.08×ATR → +0.0803%
+  2026-01-08: 2.94×ATR → +0.1001%
+  2024-12-10: 3.31×ATR → +0.1399%
+  2026-02-17: 3.69×ATR → +0.1167%
+  2026-05-14: 4.01×ATR → +0.1009%
+  2026-03-30: 4.58×ATR → +0.1618%  ← best trade, max distance
+
+KEY FINDING: Non-monotonic pattern:
+  - Close to EMA (0.5-1.5×): avg +0.1079% — decent (already above EMA)
+  - Mid-distance (1.5-3.0×): avg +0.0761% — WORST (transitional zone)
+  - Far from EMA (3.0-6.0×): avg +0.1298% — BEST (deep extension = strong snap-back potential)
+
+The 3.0-6.0× bin also has the best single trades (2024-12-10 and 2026-03-30 are both
+top performers). Filtering ema_dist>=3.0 would give n=4, avg=+0.1298% — comparable to
+the best existing filters but n=4 is small.
+
+CONCLUSION: T310 CONFIRMS T268. The +0.463 correlation is structural. Far-from-EMA
+setups are higher quality but n=4 prevents a definitive filter. EMA distance already
+enters the comp_v5 composite via ema_norm — T310 validates this inclusion.
+
+=== PARAMETER INSIGHT: WHAT ARE THE BINDING CONSTRAINTS? ===
+
+From T303, T308, T309 together:
+  - Relaxing rank threshold to 25/30/35 → 0 new trades (not binding)
+  - Relaxing qc to 2 → 1 new trade (marginally binding)
+  - lo5 ≡ lo10 for this dataset (not a distinguishing constraint)
+  - The TRUE binding constraints generating the low n (~3-4/yr):
+    1. ema50_dist >= 0.5×ATR (likely binding — requires price well below EMA)
+    2. ATR rank<20 compression (the 252-bar percentile is restrictive)
+    3. 13-14 UTC window (only 2 hours/day)
+    4. 1 trade/day dedup (only 1 entry per calendar day)
+    Combined: setup requires simultaneously low ATR + large EMA distance + correct hour
+
+=== CUMULATIVE FINDINGS SUMMARY (T306-T310) ===
+T306: V5 sizing adds +11% avg/unit. Binary (2x/1x at v5>=0.5) is practical minimum.
+T307: 14h marginally > 13h but n=3 (not actionable). Confirms T281 +0.223 correlation.
+T308: qc>=2 adds 1 winner (2026-10-12, +0.1143%). n→11, WR stays 100%.
+T309: All entries break lo5 AND lo10. No marginal breaks. lo5≡lo10 for this setup.
+T310: EMA dist 3-6× is best bin (n=4, avg=+0.1298%). Confirms T268 +0.463 correlation.
+
+=== NEXT THEORY DIRECTIONS (T311+) ===
+1. T311: Alternative hour windows (12h, 15h, 16h) — are other hours viable?
+2. T312: Weighted V5 (rank×2 in the composite) — does T299 insight improve V5?
+3. T313: V5 score for the qc=2 trade (2026-10-12) — is it accepted by comp_v5>=0.5?
+4. T314: Month-of-year seasonality — are certain months higher quality?
+5. T315: Bar body direction (close<open bearish vs close>open) at signal bar
+6. T316: Prior bar direction (bar i-1 direction vs bar i PnL)
+
+=== TOTAL THEORIES TESTED: 310 ===
