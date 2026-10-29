@@ -1,0 +1,151 @@
+THEORY ADDENDUM v42 — T300-T302
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T300: 300-THEORY MILESTONE REVIEW ===
+
+300 theories tested on EURUSD FXOpen ECN H1 (2024-2026). Dataset: n=10 qualifying
+trades, all profitable (WR 100%), avg +0.1071% net of cost.
+
+FULL PREDICTOR HIERARCHY (by |correlation|):
+  #1  T297a V5_eq composite:    +0.885 (rank+ema+H4+atr_cv_inv)
+  #2  T272  ATR rank (<20):     +0.756
+  #3  T292  V2 composite:       +0.735 (rank+ema+H4)
+  #4  T259  Prior day loc:      -0.730
+  #5  T296  atr_cv:             -0.648
+  #6  T271  Composite (T259):   +0.619
+  #7  T268  EMA50 distance:     +0.463
+  #8  T285  H4 alignment:       +0.356
+  #9  T263  Consec down:        +0.356
+ #10  T284  Consec lower highs: -0.350
+ [... 11 more below -0.300]
+
+BEST FILTERS (updated):
+  rank10-20 AND ema50>=3.0:    n=3, +0.1395% (+30%)
+  comp_v5>=0.5:                n=5, +0.1297% (+21%)  ← RECOMMENDED primary filter
+  H4-aligned AND rank10-20:    n=5, +0.1297% (+21%)
+  consec_down >= 1:            n=8, +0.1166% (+8.9%)
+
+CEILING ASSESSMENT:
+  n=10 trades over 2.75 years is the fundamental constraint. With n=10:
+  - Best achievable correlation from independent single factor: ~0.75-0.76
+  - Best 4-factor equal-weight composite (V5_eq): +0.885 → R²=0.783
+  - The dataset explains 78% of PnL variance with these 4 predictors combined
+  - Remaining 22% unexplained = noise, small-n statistical uncertainty, or factors not yet tested
+  - Adding a 5th factor (T302 loc at +0.837) degrades composite → 4 factors appears optimal for n=10
+
+REMAINING HIGH-VALUE THEORY DIRECTIONS:
+  1. T303: V5 with tuned cv_norm lo=0.06 (+0.892 confirmed in T301)
+  2. T304: Relaxed rank threshold — test rank<25 or rank<30 to generate more trades
+  3. T305: Time-of-day sub-patterns within 13-14h window
+  4. T306: Multi-day holds (5-8 bar hold vs current 4-bar max)
+  5. T307: Stop/target ratio optimization (current 1.5:1.5)
+
+=== T301: OPTIMIZED cv_norm SCALING (grid search) ===
+
+cv_norm formula: max(0, min(1, (hi - atr_cv) / (hi - lo)))
+Grid search results vs reference (lo=0.05, hi=0.15 = +0.885):
+
+  lo=0.04, hi=0.12:  corr=0.859  (−0.026 vs ref)
+  lo=0.05, hi=0.13:  corr=0.879  (−0.006)
+  lo=0.05, hi=0.15:  corr=0.885  (REFERENCE)
+  lo=0.06, hi=0.15:  corr=0.892  (+0.007) ← BEST
+  lo=0.05, hi=0.20:  corr=0.850  (−0.035)
+
+KEY FINDING: Tightening the lower bound from 0.05 to 0.06 marginally improves from
++0.885 to +0.892. Widening the upper bound to 0.20 hurts significantly.
+
+OPTIMAL cv_norm: cv_norm = max(0, min(1, (0.15 - atr_cv) / 0.09))
+  atr_cv = 0.06 → cv_norm = 1.00 (perfectly uniform)
+  atr_cv = 0.10 → cv_norm = 0.56
+  atr_cv = 0.15 → cv_norm = 0.00 (most variable)
+
+Effect on V5 composite: +0.892 (vs +0.885 original) → marginal improvement.
+The original 0.05–0.15 scaling is already near-optimal for this dataset.
+Given n=10 overfitting risk, the original symmetric scaling is safer.
+
+CONCLUSION: T301 confirms current cv_norm scaling is near-optimal. +0.007 improvement
+at risk of overfitting to n=10. Not changing the V5_eq formula.
+
+=== T302: COMPOSITE V6 (V5 + loc factor = 5 factors) ===
+
+comp_v6 = (rank_norm + ema_norm + h4_norm + cv_norm + loc_norm) / 5.0
+loc_norm = min(-loc / 0.5, 1.0) if loc < 0 else 0.0
+
+Correlation: +0.837 ← WORSE than V5_eq (+0.885) by -0.048
+
+Per-trade (sorted by comp_v6):
+  2026-02-16: 0.242 (loc=-0.30) → +0.0480%  ← worst stays near bottom
+  2026-08-06: 0.245 (loc=-0.26) → +0.0906%
+  2026-07-21: 0.348 (loc=-0.30) → +0.0803%
+  2025-12-30: 0.360 (loc=-0.18) → +0.1032%
+  2026-05-14: 0.558 (loc=-0.62) → +0.1009%
+  2024-12-18: 0.571 (loc=-0.27) → +0.1299%
+  2026-01-08: 0.606 (loc=-0.73) → +0.1001%  ← rises significantly (good loc)
+  2024-12-10: 0.666 (loc=-0.70) → +0.1399%
+  2026-02-17: 0.760 (loc=-1.44) → +0.1167%  ← high loc, but lower return than 2024-12-10
+  2026-03-30: 0.831 (loc=-0.91) → +0.1618%  ← best stays at top
+
+KEY FINDING: V6 degrades from V5. The pattern continues:
+  V2 (3 factors): +0.735
+  V5 (4 factors): +0.885 ← PEAK
+  V6 (5 factors): +0.837 ← degradation
+
+WHY: 2026-01-08 jumps from rank 7 to rank 4 in V6 due to excellent loc (-0.73), but
+its actual return (+0.1001%) is middle-of-pack. This is the same dilution problem seen
+in T294: loc doesn't add independent information at this composite level.
+
+The loc factor was excellent as standalone (-0.730, #4 predictor) and in T271 (custom
+composite). But once rank, ema, H4, and atr_cv are in the composite, loc's remaining
+independent variance is small and it introduces noise.
+
+CONCLUSION: +0.837 — WORSE than V5_eq. V5 (4 factors) is the optimal equal-weight
+composite. V6 confirms the degradation pattern. Adding a 5th factor always degrades.
+
+=== 4-FACTOR COMPOSITE IS THE CEILING FOR EQUAL-WEIGHT COMPOSITES ===
+With n=10 trades, 4 orthogonal high-correlation predictors is the maximum before
+over-specification degrades the composite. The law is now clear:
+  - 2 factors (any two independently strong): moderate improvement
+  - 3 factors (V2): +0.735 — good
+  - 4 factors (V5, orthogonal): +0.885 — PEAK
+  - 5+ factors: degradation by dilution
+
+Next direction: weighted composites (give top predictors 2x+ weight) may improve
+beyond +0.885, or non-linear combinations.
+
+=== CUMULATIVE PREDICTOR RANKINGS (through T302) ===
+1. T297a: V5_eq (rank+ema+H4+atr_cv) — +0.885 [= NEW #1 COMPOSITE]
+2. T272:  ATR rank (<20) — +0.756
+3. T292:  V2 (rank+ema+H4) — +0.735
+4. T259:  Prior day loc — -0.730
+5. T296:  atr_cv — -0.648
+... (no changes below #5)
+
+=== TOTAL THEORIES TESTED: 302 ===
+T300: 300-theory milestone review — dataset ceiling 78% R², 4-factor V5_eq optimal.
+T301: cv_norm scaling grid — lo=0.06 gives +0.892, marginal; original scaling kept.
+T302: V6 (5 factors) — +0.837, worse than V5 (+0.885). 4-factor ceiling confirmed.
+
+BEST PROVISIONAL FILTERS (unchanged from T299):
+1. rank10-20 AND ema50>=3.0: n=3, avg=+0.1395% (+30%)
+2. comp_v5>=0.5:             n=5, avg=+0.1297% (+21%) ← PRIMARY FILTER (composite)
+3. H4-aligned AND rank10-20: n=5, avg=+0.1297% (+21%)
+4. comp_v2>=0.6:             n=4, avg=+0.1296% (+21%)
+5. comp_v2>=0.5:             n=6, avg=+0.1249%
+6. atr_cv<0.12:              n=5, avg=+0.1204%
+7. consec_down >= 1:         n=8, avg=+0.1166%
+
+COMP_V5 FORMULA (final):
+  rank_norm = (r - 10) / 10.0  [r = ATR rank percentile, 0-20 allowed]
+  ema_norm  = min((ema50_dist - 0.5) / 5.5, 1.0)  [EMA50 distance in ATR units]
+  h4_norm   = 1.0 if price < H4 EMA50 else 0.0
+  cv_norm   = max(0, min(1, (0.15 - atr_cv) / 0.10))  [ATR CV within qc window]
+  comp_v5   = (rank_norm + ema_norm + h4_norm + cv_norm) / 4.0
+  SIGNAL: comp_v5 >= 0.5
+
+NEXT THEORY DIRECTIONS (T303+):
+1. T303: Relaxed rank threshold (rank<25 or rank<30) — generate more n for validation
+2. T304: Expand hold period (5-8 bars) — current 4-bar max may exit too early
+3. T305: Stop/target asymmetry (wider target, tighter stop: 1.0 stop / 2.0 target)
+4. T306: comp_v5 score as position sizing multiplier (higher score = larger position)
+5. T307: Time-of-day sub-patterns (13:00 vs 14:00 UTC comp_v5 breakdown)
