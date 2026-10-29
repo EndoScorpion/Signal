@@ -1,0 +1,117 @@
+THEORY ADDENDUM v35 — T280-T282
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T280: TRIPLE CONDITION (loc<0 AND rank10-20 AND ema50>=3.0) ===
+Question: Does combining all three best filters yield a better intersection than any pair?
+
+  All three (loc<0 AND rank10-20 AND ema50>=3.0): n=3, WR=100%, avg=+0.1395%
+    2024-12-10, 2026-02-17, 2026-03-30
+  loc<0 AND rank10-20 (T276 filter):               n=4, WR=100%, avg=+0.1296%
+    2024-12-10, 2026-01-08, 2026-02-17, 2026-03-30
+  rank10-20 AND ema50>=3.0 (T277 filter):          n=3, WR=100%, avg=+0.1395%
+    2024-12-10, 2026-02-17, 2026-03-30
+  loc<0 AND ema50>=3.0:                            n=4, WR=100%, avg=+0.1298%
+    2024-12-10, 2026-02-17, 2026-03-30, 2026-05-14
+  rank10-20 only (T272):                           n=7, WR=100%, avg=+0.1203%
+  neither (rank<10, loc>=0, ema50<3.0):            n=2, WR=100%, avg=+0.0641%
+    2026-02-16, 2026-07-21
+
+KEY FINDING: "All three" = SAME as T277 (rank10-20 AND ema50>=3.0) — identical n=3 and identical avg=+0.1395%.
+Adding loc<0 to T277 does NOT further narrow the group: the T277 trades already satisfy loc<0.
+Specifically: 2024-12-10 (loc=-0.20), 2026-02-17 (loc=-0.94), 2026-03-30 (loc=-4.47) — all three already below prior range.
+
+STRUCTURAL INSIGHT: rank10-20 AND ema50>=3.0 (T277) and loc<0 AND rank10-20 (T276) have OVERLAP:
+{2024-12-10, 2026-02-17, 2026-03-30} are the n=3 in T277, and these are already IN the T276 n=4.
+The fourth T276 trade (2026-01-08, loc=-0.23, ema50_dist=2.94x) doesn't meet ema50>=3.0.
+
+CONCLUSION: T277 (rank10-20 AND ema50>=3.0) is the tighter filter at n=3, avg=+0.1395%.
+The triple condition adds no additional discrimination — the two-factor T277 already captures it.
+NOT a new filter — confirms T277 is the strongest 2-factor combination.
+
+=== T281: HOUR SPLIT (13h vs 14h UTC within the 13-14h window) ===
+  Hour 13h: n=7, WR=100%, avg=+0.1027%
+    2024-12-10, 2024-12-18, 2025-12-30, 2026-02-16, 2026-02-17, 2026-05-14, 2026-07-21
+  Hour 14h: n=3, WR=100%, avg=+0.1175%
+    2026-01-08, 2026-03-30, 2026-08-06
+  Correlation (hour vs pnl): +0.223
+
+KEY FINDING: 14h slightly outperforms 13h (+0.1175% vs +0.1027%), but:
+- n=3 vs n=7 — insufficient to conclude 14h is better
+- +0.223 correlation is weak (7th strongest predictor, below all top filters)
+- 14h is NOT independent of rank: the 3 best trades (2026-03-30, +0.1618%; 2026-01-08, +0.1001%;
+  2026-08-06, +0.0906%) are all rank 10-20. The hour advantage may be rank-confounded.
+- Dropping 13h entirely would cut from n=10 to n=3 — too severe for marginal +14% avg gain
+
+CORRELATION CONTEXT: +0.223 = same order as T253 (intraday drift, +0.227) and T254 (qc, +0.187).
+Not a strong predictor. The 14h hour likely reflects NY open positioning (1h into NY open vs
+the open itself), but the mechanism isn't conclusively separable from rank.
+
+CONCLUSION: Slight 14h advantage is NOT actionable as a standalone filter. n=3 (14h) is too small.
+If rank10-20 is already applied as a filter, the 14h enrichment may be moot (rank explains it).
+NOT recommended as a filter.
+
+=== T282: PRIOR WEEK LOC × RANK INTERACTION ===
+Prior week location (T260, correlation -0.328) × ATR rank (T272, +0.756).
+
+Week_loc<0.3 distribution:
+  2026-02-17: week_loc=-0.189, rank=17.9 → +0.1167%
+  2026-03-30: week_loc=-0.167, rank=14.7 → +0.1618%
+  2026-05-14: week_loc=-0.060, rank=9.9  → +0.1009%
+  2026-01-08: week_loc=0.051,  rank=15.9 → +0.1001%
+  2026-07-21: week_loc=0.118,  rank=6.0  → +0.0803%
+  2025-12-30: week_loc=0.200,  rank=16.3 → +0.1032%
+  (threshold at 0.3 captures above 6)
+
+Interaction results (week_loc<0.3 × rank10-20):
+  week_loc<0.3 AND rank10-20: n=4, WR=100%, avg=+0.1205%
+    2025-12-30, 2026-01-08, 2026-02-17, 2026-03-30
+  week_loc<0.3 only (rank<10): n=2, WR=100%, avg=+0.0906%
+    2026-05-14, 2026-07-21
+  rank10-20 only (week>=0.3):  n=3, WR=100%, avg=+0.1201%
+    2024-12-10, 2024-12-18, 2026-08-06
+  neither:                     n=1, WR=100%, avg=+0.0480%
+    2026-02-16
+
+KEY FINDING: "week_loc<0.3 AND rank10-20" n=4 avg=+0.1205% — marginally better than rank10-20
+alone (+0.1203%). The two combinations (week+rank vs rank-only) are ESSENTIALLY THE SAME avg.
+Prior week location adds near-zero lift when rank is already applied.
+
+REASON: week_loc<0.3 and loc<0 (prior day) are CORRELATED — deeply below prior week range
+typically co-occurs with being below prior day range. T259/T260 capture similar information.
+T259 (prior day) is the stronger predictor (-0.730 vs -0.328) and dominates.
+
+CONCLUSION: week_loc<0.3 adds no incremental value over rank10-20 alone (+0.002% delta).
+T260 is a weaker version of T259 from the same mechanism. NOT a filter.
+
+=== PLATEAU CHECK ===
+Last 2 theory batches (T277-T279, T280-T282):
+- T277: rank10-20 AND ema50>=3.0 — n=3, +0.1395% (+30%) — FILTER CANDIDATE
+- T278: Day-of-week — no filter
+- T279: ATR regime — no filter (universal)
+- T280: Triple condition — confirms T277 (no new filter)
+- T281: Hour split — weak correlation (+0.223), not actionable
+- T282: Week loc × rank — no incremental lift over rank alone
+
+POSSIBLE PLATEAU SIGNAL: T280-T282 yielded no new filter candidates. Both T280 and T282
+are redundant with existing filters. However, not declaring plateau yet — several untested
+angles remain.
+
+REMAINING THEORY DIRECTIONS:
+1. NFP/ECB/CPI macro proximity — trades near high-impact events vs quiet periods
+2. Price structure before signal: consecutive lower highs vs lower lows vs both
+3. Intraday range expansion check: did ATR EXPAND on signal bar vs prior bars?
+4. Volume proxy: body/range ratio as volume proxy (body_atr already tested but differently)
+5. Cross-day session: did H4 trend align with short direction?
+
+=== TOTAL THEORIES TESTED: 282 ===
+T280: Triple condition — confirms T277. rank10-20 AND ema50>=3.0 already includes loc<0.
+T281: Hour split — +0.223 correlation. 14h marginally better but n=3. Not actionable.
+T282: Week loc × rank — no incremental lift. T259 dominates T260.
+
+BEST PROVISIONAL FILTERS (updated):
+1. rank10-20 AND ema50>=3.0:    n=3, avg=+0.1395% (+30% vs +0.1071% baseline)
+2. loc<-0.3 AND rank10-20:      n=2, avg=+0.1393% (+30% — too sparse)
+3. loc<0 AND rank10-20:         n=4, avg=+0.1296% (+21%)
+4. ema50_dist >= 3.0×:          n=4, avg=+0.1298% (+21%)
+5. consec_down >= 1:            n=8, avg=+0.1166% (+8.9% — highest frequency)
