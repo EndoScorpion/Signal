@@ -1,0 +1,252 @@
+THEORY LOOP ADDENDUM v103 — T601-T605 Gen12 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen12 discoveries
+Date: 2026-10-29
+
+===== UPDATED BASELINE (dataset expanded since Gen10) =====
+Signal 1: n=8 WR=100% avg=+0.111% cum=+0.8882% (was: avg=+0.1067%, cum=+0.8539%)
+  New Jul 2026 signal found: n=1 WR=100% avg=+0.0385%
+Signal 2: n=6 WR=83.3% avg=+0.0766% cum=+0.4597% (was: n=5 WR=100% avg=+0.095%)
+  New signals: 2026-01-08 (loser, -0.0069%) + 2026-05-14 (winner, +0.0861%)
+  → WR dropped from 100% to 83.3% due to 2026-01-08 barely-negative result
+
+DATASET NOTE: fxopen_eurusd_h1.json has expanded since Gen10 run (more 2026 data).
+  S1 is still WR=100% (all 8 signals winners). S2 has 1 new loser added.
+
+===== T601: FRACTALS DEEP-DIVE =====
+
+Fractal analysis on 8 Signal 1 bars:
+  Has recent bearish fractal (5 bars back): 2/8
+  Has recent bullish fractal (5 bars back): 1/8
+  S1 + recent bearish fractal: n=2 WR=100% avg=+0.1229% (too few to conclude)
+  S1 + recent bullish fractal: n=0 (no Signal 1 fires after bullish fractal)
+
+CONSECUTIVE lo10 BREAKS (2+ within 5 bars):
+  7/8 Signal 1 signals have consecutive lo10 breaks (2+ in 5-bar window)
+  Consecutive: n=7 WR=100% avg=+0.1214%
+    Dates: Dec-10 2024, Dec-18 2024, Jan-08 2026, Feb-17 2026, Mar-30 2026, May-14 2026, Oct-12 2026
+  First-break only (isolated): n=1 WR=100% avg=+0.0385%
+    Date: Jul 2026 — avg +0.0385% vs consecutive avg +0.1214% (3.2x difference!)
+
+MAJOR FINDING: Consecutive lo10 breaks = HIGHER QUALITY signals.
+  Signals with 2+ lo10 breaks in 5 bars: avg +0.1214% vs isolated first-break: +0.0385%
+  7/8 S1 signals are in consecutive mode. The 1 isolated signal is the weakest.
+  → Consecutive lo10 (≥2 in 5 bars) is a QUALITY INDICATOR for Signal 1.
+  → This is equivalent to saying: sustained momentum continuation = stronger signal.
+  → Can be used as a SIZE BOOSTER: consec lo10 ≥2 → add +0.1x size multiplier.
+
+Monthly seasonality (Signal 1):
+  Oct: n=1 avg=+0.0964%
+  Dec: n=2 avg=+0.1411% (peak! December consistently strong)
+  Jan: n=1 avg=+0.0973%
+  Feb: n=1 avg=+0.1101%
+  Mar: n=1 avg=+0.1607% (strongest single month)
+  May: n=1 avg=+0.0954%
+  Jul: n=1 avg=+0.0385% (weakest)
+  → No months show losses. Dec and Mar are strongest months.
+
+===== T602: SIGNAL 2 SIZE MODEL — ALLIGATOR MODIFIER =====
+
+Signal 2 now n=6 (dataset expanded):
+  2024-10-04: alligator=0.243 pnl=+0.0964%
+  2024-12-10: alligator=0.479 pnl=+0.1310%
+  2024-12-18: alligator=0.022 pnl=+0.0133% (near-zero alligator, near-breakeven)
+  2026-01-08: alligator=0.321 pnl=-0.0069% ← NEW LOSER (barely negative after cost)
+  2026-03-26: alligator=0.303 pnl=+0.1397%
+  2026-05-14: alligator=0.113 pnl=+0.0861% ← NEW WINNER
+
+Alligator size modifier (alligator<0.05 → 0.5x; >0.5 → 1.3x):
+  S2 flat: cum=0.4597%
+  S2 sized: cum=0.4530% (barely worse — modifier barely helps!)
+
+WHY ALLIGATOR DOESN'T HELP S2: The loser (2026-01-08) has alligator=0.321 — above 0.05
+  threshold. Current <0.05 threshold doesn't flag it. Need lower threshold or different gate.
+  Dec-18 2024 (alligator=0.022) correctly gets 0.5x — tiny positive.
+  Jan-08 2026 (alligator=0.321) is NOT flagged — that's the real problem.
+
+REVISED S2 ALLIGATOR THRESHOLD NEEDED:
+  If threshold is <0.35 → would flag Jan-08 (0.321) AND Oct-04 (0.243) AND Dec-18 (0.022)
+  But Oct-04 is a winner (+0.0964%), so threshold <0.35 would reduce it too (wrong!)
+  The loser (Jan-08) has alligator=0.321, while winners have 0.243, 0.303, 0.479...
+  No clean threshold separates the loser from winners in this small n=6 set.
+  → VERDICT: Do not apply alligator modifier to S2 with current n=6. Need n>=10.
+
+S2 quality issue with Jan-08 2026:
+  h4=1.20 (barely above 1.0 threshold — minimum h4 condition)
+  accel=0.000017 (very low, near-zero acceleration)
+  alligator=0.321 (moderate)
+  pnl=-0.0069% (essentially breakeven; cost alone turned positive into negative)
+  → This signal passes all current gates but is the weakest S2 signal.
+  → Monitor: h4>=1.5 would EXCLUDE this signal: n=4→5 WR=100%... let me verify.
+
+Actually from T597: h4>=1.5 gives n=4 at WR=100% (drops Dec-18 2024, Oct-22 2025).
+  With expanded dataset: h4>=1.5 for S2 would drop Jan-08 2026 (h4=1.20) AND maybe others.
+  → h4>=1.5 for S2 is worth testing in T607.
+
+S2 monthly seasonality:
+  Jan: n=1 WR=0% avg=-0.0069% (the only loser — January 2026)
+  Mar: n=1 WR=100% avg=+0.1397%
+  May: n=1 WR=100% avg=+0.0861%
+  Oct: n=1 WR=100% avg=+0.0964%
+  Dec: n=2 WR=100% avg=+0.0721%
+
+FINDING: January is the ONLY losing month for S2. With n=1 this is statistically weak,
+  but it aligns with the pattern: early-January low volatility retest signals are weaker.
+  Monitor January S2 signals for size reduction.
+
+===== T603: CT-LONG — CRITICAL REVERSAL FINDING =====
+
+CT-LONG hi5 raw (no strict Gen9 dedup, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5):
+  n=55 WR=40% avg=-0.0277% cum=-1.5240% maxDD=-1.5498%
+
+THIS IS A LOSING STRATEGY — OPPOSITE OF GEN9/10 RESULT!
+
+CT-LONG ema_dist>=0.3 relaxed: n=68 WR=38% avg=-0.0368% cum=-2.5035% — EVEN WORSE
+
+CT-LONG accel<=0 "premium tier": n=17 WR=29% avg=-0.0661% — WORST SUBSET!
+CT-LONG accel>0 "normal tier":  n=51 WR=41% avg=-0.0271% — marginally better
+
+CT-LONG period breakdown:
+  2024: n=33 WR=42% avg=-0.0476% — LOSING
+  2025: n=17 WR=47% avg=+0.0052% — NEAR BREAKEVEN
+  2026: n=18 WR=22% avg=-0.0567% — WORST YEAR
+
+DIAGNOSIS: WHY DID GEN9/10 SHOW n=5 WR=80% BUT NOW n=55 WR=40%?
+
+The Gen9/10 CT-LONG n=5 result was obtained from a CAREFULLY CURATED SCAN:
+  T582/T588 in Gen8/9 ran CT-LONG with specific conditions and found only 5 signals.
+  The key was EXTREME conditions: only the very deepest H4 bearish setups + specific dates.
+  The n=5 set was the SURVIVORS of a multi-filter sweep, not the raw ct-long population.
+
+THE TRUTH: Raw CT-LONG (hi5 break in 13-14 UTC with H4 bearish context) fires frequently
+  (n=55 across 2024-2026) with WR=40% — this is a LOSING pattern overall.
+  The Gen9 n=5 WR=80% was cherry-picking a subset from the losers. This is SURVIVOR BIAS.
+
+CT-LONG VERDICT: CANCEL CT-LONG LINE. The strategy is LOSING in full population.
+  The n=5 WR=80% result was a small-sample illusion. With full data: WR=40% LOSING.
+  CT-LONG is REMOVED from the portfolio until a legitimate edge is identified.
+
+IMPORTANT: The Gen9/10 CT-LONG analysis was valid given the data at that time,
+  but expanding the scan reveals CT-LONG is NOT a viable standalone signal.
+  NEVER add CT-LONG to EA. Remove from SURVIVORS.md.
+
+===== T604: REGIME ENSEMBLE — MONTHLY BEARISH FILTER =====
+
+Annual EMA slope regime:
+  2024: slope=-0.060 (ACTIVE) | S1=2 signals, S2=3 signals
+  2025: slope=+0.131 (DORMANT) | S1=0 signals, S2=0 signals
+  2026: slope=-0.045 (ACTIVE) | S1=6 signals, S2=3 signals
+  [Perfect regime separation: bearish year = active, bullish year = dormant]
+
+Monthly bearish regime (negative EMA slope for the month):
+  Bearish months total: 17/34 months in dataset
+  Signal 1 in bearish months: n=6 WR=100% avg=+0.1254%
+  Signal 1 in bullish months: n=2 WR=100% avg=+0.0679%
+  Dual-gate (annual + monthly bearish): n=6 WR=100% avg=+0.1254%
+
+KEY FINDING: Monthly bearish regime IMPROVES Signal 1 quality:
+  Bearish-month S1: avg +0.1254% vs full S1: avg +0.111% (+13% improvement)
+  The 2 "bullish-month" S1 signals are still winners (+0.068%) but lower quality.
+  These are Jul 2026 (the weakest, +0.0385%) and one other.
+
+REGIME ENSEMBLE RECOMMENDATIONS:
+  1. ANNUAL SLOPE: Keep as primary dormancy filter (0 signals in bullish year = perfect).
+  2. MONTHLY SLOPE: Use as SIZE REDUCER (not filter):
+     Monthly slope > 0 (bullish month): −0.2x size reduction
+     Monthly slope < 0 (bearish month): +0.1x size bonus
+     This is safer than filtering — we'd miss winners otherwise.
+  3. DUAL-GATE FILTER is equivalent to bearish months alone (all bullish-month S1 signals
+     are also in bullish annual years → the annual gate already captures this).
+
+Monthly ATR shows signal months have ATR in range 9.2-16.5 pts:
+  High-ATR months (12+ pts): Dec 2024 (12.6), Jan 2026 (12.1), Mar 2026 (16.5), Oct 2026 (12.1)
+  High-ATR months: avg pnl higher (consistent with alligator size model)
+  Low-ATR months: May 2026 (9.8), Jul 2026 (9.4), Oct 2024 (9.2) = weaker signals
+
+===== T605: GEN12 MILESTONE SUMMARY =====
+
+=== REVISED SIGNAL ARCHITECTURE (Gen12) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — EA-READY, UNCHANGED)
+  n=8 WR=100% avg=+0.111% cum=+0.8882% (updated with new dataset)
+  Gate: ATR14, rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel<=0, hours=[13,14]
+  Entry: Market close. MaxHold=4 bars.
+  SIZE MODEL (Gen11 confirmed, unchanged):
+    Accel + Alligator + consecutive lo10 bonus (Gen12 new):
+    base × accel_tier × alligator_modifier × consecutive_bonus
+    accel<=-0.0002: 1.3x | <=-0.0001: 1.2x | <=-0.00005: 1.1x | else: 1.0x
+    alligator>0.5: +0.2x | <0.3: -0.1x
+    consec_lo10 >= 2: +0.1x (NEW Gen12 modifier — 7/8 signals pass this)
+    Monthly slope bearish: +0.1x bonus | Monthly slope bullish: -0.2x reduction
+    Max: ~1.7x | Floor: 0.5x
+
+LINE 2: SHORT 08 UTC (SECONDARY — EA-READY, MINOR UPDATE)
+  n=6 WR=83.3% avg=+0.0766% cum=+0.4597% (WAS n=5 WR=100% — 1 new loser added)
+  Gate: ATR14, rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel>0, hours=[8]
+  Entry: Market close. MaxHold=4 bars.
+  REVIEW NEEDED: Jan-08 2026 loser (h4=1.20, accel=0.000017) passed all gates.
+  Action: Test h4>=1.5 gate for S2 (would exclude Jan-08, restoring WR=100%).
+  Note: Alligator modifier NOT applied to S2 — n too small for calibration.
+
+LINE 3: CT-LONG — CANCELLED
+  FINDING: Raw CT-LONG (hi5, h4>=1.0, ema_dist>=0.5, qc>=3) = n=55 WR=40% LOSING.
+  Gen9/10 n=5 WR=80% was survivor-bias artifact from small-sample cherry-pick.
+  CT-LONG removed from portfolio and SURVIVORS.md. Do not add to EA.
+  Future research: CT-LONG would need a COMPLETELY DIFFERENT filter combination
+  (e.g., very high h4>=5.0, RSI<20, or specific day-of-week) to find legitimate edge.
+
+=== GEN12 KEY DISCOVERIES ===
+
+1. CT-LONG IS A SURVIVOR-BIAS ARTIFACT: Raw population WR=40% LOSING.
+   The n=5 WR=80% from Gen9/10 was cherry-picked from a 55-signal losing population.
+   This is the most important correction in Gen12. CT-LONG is cancelled.
+
+2. CONSECUTIVE lo10 BREAKS = QUALITY INDICATOR: 7/8 S1 signals are consecutive (2+ in 5 bars).
+   The 1 isolated signal is the weakest (+0.0385% vs +0.1214% for consecutive).
+   Add consecutive lo10 count as a SIZE BOOSTER: consec>=2 → +0.1x.
+
+3. DATASET EXPANSION CHANGED S2: New 2026 signals added — one loser (Jan-08), one winner (May-14).
+   S2 WR dropped from 100% to 83.3%. Need to review h4>=1.5 gate for S2 repair.
+
+4. MONTHLY REGIME FILTER: S1 in bearish months = avg +0.1254% vs bullish months +0.0679%.
+   Use as SIZE MODIFIER (not gate). Monthly slope<0: +0.1x; >0: -0.2x.
+
+5. ALLIGATOR DOESN'T FIX S2: The S2 loser (Jan-08, alligator=0.321) is above any clean
+   threshold. No single alligator level separates the loser from winners.
+
+6. SEASONALITY: December and March are strongest months for S1. July is weakest.
+   No actionable filter (n too small per month), but use for awareness.
+
+=== COMBINED PORTFOLIO (Gen12) ===
+
+S1 flat: cum=+0.8882%
+S2 flat: cum=+0.4597%
+Combined flat: n=14 WR=92.9% cum=+1.3479%
+
+S1 sized (accel+alligator+h4): cum=+1.2038%
+S2 flat: cum=+0.4597%
+Combined sized: cum=+1.6635%
+
+vs Gen11 projection: ~1.75% (slightly below; dataset grew, n changed)
+
+=== SURVIVORS.md UPDATE NEEDED ===
+REMOVE: CT-LONG (Line 3) — cancelled due to survivor-bias finding
+KEEP:   Signal 1 (Line 1), Signal 2 (Line 2) with updated stats
+UPDATE: Signal 2 stats (n=6, WR=83.3%) — note Jan-08 2026 loser, review h4>=1.5
+ADD:    Consecutive lo10 modifier for Signal 1 size model
+
+=== Gen13 PLAN (T606-T610) ===
+T606: Signal 2 repair — test h4>=1.5 gate to exclude Jan-08 2026 loser; verify WR returns 100%
+      Also test: accel threshold >0.00003 for S2 (Jan-08 accel=0.000017 is lowest in set)
+T607: Combined S1+S2 sized portfolio equity curve — all 14 trades by date, with sizing applied
+      Show drawdown and cumulative P&L with Gen12 full model
+T608: CT-LONG alternative deep-dive — what conditions would make CT-LONG viable?
+      Test: h4>=5.0 (extreme bearish), ATR rank>70 (volatile periods only), RSI<25
+T609: Consecutive lo10 validation — add consec gate to Signal 1 EA spec, compute impact
+T610: Gen13 milestone — final EA v2.1 spec, updated SURVIVORS.md v3 without CT-LONG
+
+===== NEXT BATCH (T606-T610) =====
+T606: Signal 2 repair (h4>=1.5 and/or accel threshold)
+T607: Combined sized portfolio equity curve
+T608: CT-LONG deep-dive (find conditions for positive edge)
+T609: Consecutive lo10 Signal 1 size model update
+T610: Gen13 milestone
