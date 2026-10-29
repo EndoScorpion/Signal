@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-29T03:28Z",
-  "from": "light-config-thread",
+  "timestamp": "2026-10-29T12:19Z",
+  "from": "cloud-fix-desktop",
   "commands": [
     {
-      "id": "cmd-light-cfg-001",
-      "label": "backup-and-write-light-claude-desktop-config",
-      "note": "Backup current config then write lean config with only desktop-commander + filesystem",
-      "command": "powershell -WindowStyle Hidden -Command \"$src='%APPDATA%\\Claude\\claude_desktop_config.json'; $bak='%APPDATA%\\Claude\\claude_desktop_config_full_backup_20261029.json'; Copy-Item $src $bak -Force -ErrorAction SilentlyContinue; $lean='{\\\"mcpServers\\\":{\\\"desktop-commander\\\":{\\\"command\\\":\\\"npx\\\",\\\"args\\\":[\\\"@wonderwhy-er/desktop-commander@latest\\\"]},\\\"filesystem\\\":{\\\"command\\\":\\\"npx\\\",\\\"args\\\":[\\\"-y\\\",\\\"@modelcontextprotocol/server-filesystem\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\Desktop\\\\\\\\hst_work\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\Desktop\\\\\\\\hst_out\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\Desktop\\\\\\\\mt4_tester\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\Desktop\\\\\\\\mt4_tester2\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\Downloads\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\Signal\\\",\\\"C:\\\\\\\\Users\\\\\\\\endos\\\\\\\\AppData\\\\\\\\Roaming\\\\\\\\MetaQuotes\\\\\\\\Terminal\\\\\\\\6278E353D77D4E501C6775ACEC85F415\\\\\\\\MQL4\\\"]}}}'; $lean|Set-Content $src -Encoding UTF8; $r=[PSCustomObject]@{cmd='cmd-light-cfg-001';label='backup-and-write-light-claude-desktop-config';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ')}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; if(-not $j.results){$j|Add-Member -NotePropertyName results -NotePropertyValue @() -Force}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
+      "id": "cmd-lean-cfg-002",
+      "label": "write-lean-claude-desktop-config",
+      "note": "Write lean config with only desktop-commander, then launch Claude Desktop minimized",
+      "command": "powershell -WindowStyle Hidden -Command \"$src='%APPDATA%\\Claude\\claude_desktop_config.json'; $bak='%APPDATA%\\Claude\\claude_desktop_config_backup_20261029b.json'; Copy-Item $src $bak -Force -ErrorAction SilentlyContinue; $lean='{\"mcpServers\":{\"desktop-commander\":{\"command\":\"npx\",\"args\":[\"-y\",\"@wonderwhy-er/desktop-commander@latest\"]}}}'; $lean|Set-Content $src -Encoding UTF8; Start-Sleep 1; explorer 'shell:appsFolder\\AnthropicPBC.Claude_p874v2pg6g7v8!Claude'\"",
       "silent": true
     }
   ],
