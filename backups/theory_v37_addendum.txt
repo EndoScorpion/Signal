@@ -1,0 +1,132 @@
+THEORY ADDENDUM v37 — T286-T288
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T287: TRUE H4 EMA50 (properly aggregated H1->H4) ===
+Methodology: H1 bars resampled to 4h OHLC, EMA50 computed on H4 closes, forward-filled to H1.
+This corrects T285's approximation (H1 EMA200 vs true H4 EMA50).
+
+Per-trade (sorted by h4_dist_true):
+  2026-08-06: h4_dist_true=-5.77× [H4-counter] → +0.0906%
+  2025-12-30: h4_dist_true=-0.31× [H4-counter] → +0.1032%
+  2026-02-16: h4_dist_true=1.09×  [H4-aligned] → +0.0480%  ← worst aligned
+  2024-12-18: h4_dist_true=1.69×  [H4-aligned] → +0.1299%
+  2024-12-10: h4_dist_true=2.32×  [H4-aligned] → +0.1399%
+  2026-07-21: h4_dist_true=2.68×  [H4-aligned] → +0.0803%
+  2026-02-17: h4_dist_true=4.24×  [H4-aligned] → +0.1167%
+  2026-05-14: h4_dist_true=5.57×  [H4-aligned] → +0.1009%
+  2026-03-30: h4_dist_true=6.52×  [H4-aligned] → +0.1618%  ← best
+  2026-01-08: h4_dist_true=7.00×  [H4-aligned] → +0.1001%
+
+Buckets:
+  H4-aligned (below H4 EMA): n=8, avg=+0.1097%
+  H4-counter (above H4 EMA): n=2, avg=+0.0969%
+
+Correlation: +0.356 (slightly lower than T285 approximation at +0.369 — approximation
+was marginally better fit, suggesting H4 EMA50 is roughly equivalent to H1 EMA200 here)
+
+KEY FINDING: True H4 alignment result is nearly identical to T285 approximation:
+- Same 8 trades aligned, same 2 counter (2025-12-30 and 2026-08-06)
+- Correlation +0.356 vs +0.369 — negligible difference
+- The H1 EMA200 approximation was valid
+
+CONCLUSION: H4 alignment confirmed at +0.356 correlation. No improvement from true H4 vs
+approximation. T285 finding holds: H4-aligned trades average +0.1097% vs +0.0969% counter.
+
+=== T286: H4 ALIGNMENT × RANK10-20 INTERACTION ===
+Testing: does H4 alignment combine with rank10-20 to create a better filter than either alone?
+
+  H4-aligned AND rank10-20: n=5, WR=100%, avg=+0.1297%
+    2024-12-10, 2024-12-18, 2026-01-08, 2026-02-17, 2026-03-30
+  H4-aligned only (rank<10): n=3, WR=100%, avg=+0.0764%
+    2026-02-16, 2026-05-14, 2026-07-21
+  rank10-20 only (H4-counter): n=2, WR=100%, avg=+0.0969%
+    2025-12-30, 2026-08-06
+  neither: n=0
+
+KEY FINDING: H4-aligned AND rank10-20 = n=5, avg=+0.1297% (+21% vs baseline)
+
+IMPORTANT COMPARISON:
+  - rank10-20 alone (T272): n=7, avg=+0.1203%
+  - H4 + rank10-20 (T286): n=5, avg=+0.1297% (+7.8% vs rank10-20 alone)
+  - loc<0 + rank10-20 (T276): n=4, avg=+0.1296% (nearly identical to T286 at n=5)
+
+T286 yields n=5 at +0.1297% — a NEW FILTER CANDIDATE:
+  - n=5 is better than T276's n=4 and T277's n=3 (more frequency, similar quality)
+  - Drops the 2 H4-counter trades (2025-12-30, 2026-08-06) which average +0.0969%
+  - Retains 5/7 rank10-20 trades
+
+FILTER COMPARISON (all WR=100%):
+  rank10-20 AND ema50>=3.0:    n=3, +0.1395% — highest avg, lowest frequency
+  loc<0 AND rank10-20:         n=4, +0.1296% — balanced
+  H4-aligned AND rank10-20:    n=5, +0.1297% — slightly better frequency than T276, same avg
+  rank10-20 only:              n=7, +0.1203%
+
+H4+rank10-20 dominates rank10-20 alone by +0.94% avg at the cost of 2 fewer trades per
+~7-year period (n=5 vs n=7, ~0.7/yr vs ~1/yr). Essentially same avg as T276 but higher n.
+
+CONCLUSION: T286 (H4-aligned AND rank10-20) = n=5, avg=+0.1297% — NEW FILTER CANDIDATE.
+Competes with T276 as the best n≥4 filter found. Marginally same avg (+0.1297% vs +0.1296%)
+but one extra trade. This is the best frequency-adjusted filter at n=5.
+
+=== T288: SIGNAL BAR CLOSE LOCATION (0=near low, 1=near high) ===
+Question: Does closing near bar low (strong bear bar) predict better trade?
+
+Per-trade sorted by close_loc:
+  2024-12-10: close_loc=0.229 → +0.1399%  ← lowest close (near bar low)
+  2026-02-17: close_loc=0.300 → +0.1167%
+  2026-08-06: close_loc=0.301 → +0.0906%
+  2026-05-14: close_loc=0.439 → +0.1009%
+  2026-07-21: close_loc=0.556 → +0.0803%
+  2024-12-18: close_loc=0.615 → +0.1299%
+  2025-12-30: close_loc=0.627 → +0.1032%
+  2026-02-16: close_loc=0.667 → +0.0480%  ← worst trade, mid-high close
+  2026-03-30: close_loc=0.702 → +0.1618%  ← BEST trade, closed near HIGH
+  2026-01-08: close_loc=0.854 → +0.1001%  ← highest close (near bar high)
+
+Correlation: -0.131 (WEAK NEGATIVE)
+
+CONTRADICTIONS: The best trade (2026-03-30, +0.1618%) has close_loc=0.702 — closed NEAR HIGH.
+The worst trade (2026-02-16, +0.0480%) has close_loc=0.667 — also near high.
+The lowest close_loc=0.229 (2024-12-10) is the 2nd best trade.
+
+Pattern is not monotonic. The T131 setup requires the bar's LOW to break the lo10 — but the
+bar doesn't need to CLOSE near its low. Price can test low, trigger the setup, then recover
+within the bar. A close near high after a lo10-break is a wick/shadow bar — potentially
+indicating a failed breakdown (price recovered) which may IMPROVE the subsequent reversal.
+
+Threshold tests show minimal discrimination:
+  close_loc<0.4: n=3, avg=+0.1157% vs close_loc>=0.4: n=7, avg=+0.1035% → +1.2% delta, n=3
+
+CONCLUSION: -0.131 correlation — weakest predictor found. Not useful as a filter.
+The bar close location is not meaningful for this setup. Signal bar close position does NOT
+predict trade quality. NOT a filter.
+
+=== CUMULATIVE PREDICTOR RANKINGS (updated through T288) ===
+1. T272: ATR rank (within rank<20) — +0.756
+2. T259: Prior day range location — -0.730
+3. T271: Composite score (T259-weighted) — +0.619
+4. T268: EMA50 distance — +0.463
+5. T285/T287: H4 trend alignment — +0.369/+0.356
+6. T263: Consec down days — +0.356
+7. T284: Consec lower highs — -0.350
+8. T260: Prior week location — -0.328
+9. T256: Signal bar size — -0.300
+10. T253: Intraday drift — +0.227
+11. T281: Hour (13h vs 14h) — +0.223
+12. T254: Compression length qc — +0.187
+13. T283: Bar expansion ratio — -0.199
+14. T288: Bar close location — -0.131
+
+=== TOTAL THEORIES TESTED: 288 ===
+T286: H4-aligned AND rank10-20 — n=5, avg=+0.1297% (+21%). NEW FILTER CANDIDATE (best n≥5).
+T287: True H4 EMA50 confirms T285 result. Approximation was valid.
+T288: Bar close location — -0.131 correlation. Not a filter.
+
+BEST PROVISIONAL FILTERS (updated):
+1. rank10-20 AND ema50>=3.0:    n=3, avg=+0.1395% (+30%) — highest quality, lowest freq
+2. loc<-0.3 AND rank10-20:      n=2, avg=+0.1393% (+30% — too sparse)
+3. H4-aligned AND rank10-20:    n=5, avg=+0.1297% (+21%) — NEW: best n≥5 filter
+4. loc<0 AND rank10-20:         n=4, avg=+0.1296% (+21%)
+5. ema50_dist >= 3.0×:          n=4, avg=+0.1298% (+21%)
+6. consec_down >= 1:            n=8, avg=+0.1166% (+8.9% — highest frequency)
