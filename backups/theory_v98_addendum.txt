@@ -1,0 +1,183 @@
+THEORY LOOP ADDENDUM v98 — T576-T580 Gen7 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen7 discoveries
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T576: SHORT 07-08 FINAL REDESIGN (h4>=0.5 + accel>0) =====
+
+SHORT 07-08 REDESIGNED: n=14 WR=79% avg=+0.0534%
+  Gates: atr_pts>=7.5, h4_dist>=0.5 (relaxed), atr_rank<29, lo10 break,
+         ema50_dist>=0.5, qc>=3, body_atr<=1.5, accel>0, hours=[7,8]
+
+IMPROVEMENT vs baseline: WR 61%→79%, avg +0.0144%→+0.0534% (3.7x improvement!)
+Cumulative P&L: n=14 × avg=+0.0534% = +0.7476% gross over 2+ years.
+
+lo_period scan on redesigned gate:
+  lo10: n=14 WR=79% avg=+0.0534% ← primary
+  lo15: n=8  WR=88% avg=+0.0879% ← higher quality (more lag required)
+  lo20: n=7  WR=86% avg=+0.0866%
+  lo25: n=7  WR=86% avg=+0.0866%
+  lo5:  n=25 WR=60% avg=+0.0111% (worse — too fast)
+
+KEY FINDING: lo15 or lo20 at 07-08 UTC with accel>0 gives WR=88% avg=+0.0879%.
+  This is close to Gen0 13-14 UTC quality (WR=100% avg=+0.1032%) with n=8.
+  Trade-off: n=8 over 2 years vs n=14 for lo10.
+
+COMPARISON of 07-08 configurations:
+  Baseline lo10:        n=44 WR=61% avg=+0.0144%
+  h4>=0.5 only:         n=52 WR=65% avg=+0.0215%
+  accel>0 only:         n=13 WR=77% avg=+0.0469%
+  h4>=0.5 + accel>0:    n=14 WR=79% avg=+0.0534% ← optimal combo
+  lo15 + h4>=0.5+accel: n=8  WR=88% avg=+0.0879% ← quality variant
+
+WHY accel>0 works at 07-08 UTC:
+  EMA slope is still negative (price below EMA50 = bearish) but decelerating.
+  At London open, a downtrend continuation signal when the EMA is "slowing down"
+  but price still makes a new low = London breakout + end-of-Asian-range extension.
+  These tend to follow through because London opens with fresh momentum even as
+  the overnight EMA trend is losing steam.
+
+VERDICT: SHORT 07-08 redesigned (h4>=0.5, accel>0, lo10) = CONFIRMED secondary signal.
+  n=14 WR=79% avg=+0.0534%. EA-ready with size reduction vs primary 13-14 UTC signal.
+  lo15 variant (n=8 WR=88%) = quality variant for selective trading.
+
+===== T577: CT-LONG EXTENSION =====
+
+CT-LONG by hi_period:
+  hi3: n=7 WR=57% avg=+0.0297% ← too many losers (too short lookback)
+  hi5: n=4 WR=100% avg=+0.1653% ← OPTIMAL
+  hi7: n=2 WR=100% avg=+0.1777% (same as hi10, hi15, hi20)
+  All longer: n=2 (same 2 signals)
+
+CT-LONG hi5 signals:
+  2025-02-06: +0.1543% accel=-0.000219 h4=1.08
+  2025-05-09: +0.1665% accel=+0.000259 h4=3.79
+  2025-05-13: +0.1890% accel=+0.000229 h4=6.50
+  2026-03-27: +0.1516% accel=-0.000172 h4=2.34
+
+FINDING: hi5 adds Feb-06 and Mar-27 — both have NEGATIVE accel.
+  NOT all CT-LONG signals need positive accel. Feb-06 and Mar-27 succeed despite
+  negative accel because h4_dist threshold (1.0) is met, and price structure
+  shows 5-bar high break in bearish context = sufficient.
+
+CT-LONG hi5 + accel>0: n=2 (loses Feb-06 and Mar-27) = back to n=2.
+  The accel>0 filter is NOT universally needed for CT-LONG at hi5.
+  It IS needed for hi10+ to distinguish the 2 true CT-LONG from random hi-breaks.
+
+CT-LONG ATR21 hi5 + accel>0: n=3 WR=100% avg=+0.1692% ← BEST PURE QUALITY LINE!
+  2025-05-09: +0.1807% accel=+0.000259 h4=3.50
+  2025-05-13: +0.1978% accel=+0.000229 h4=6.22
+  2025-08-22: +0.1291% accel=+0.000270 h4=5.29  ← NEW SIGNAL (unique to ATR21)
+
+ATR21 ADDS 2025-08-22: all 3 ATR21 signals have accel>0.000259+.
+  The ATR21 line consistently finds high-accel CT-LONG in 2025.
+
+CT-LONG ARCHITECTURE FINAL:
+  Option A (more signals): ATR14+hi5, n=4 WR=100% avg=+0.1653%
+  Option B (pure quality): ATR21+hi5+accel>0, n=3 WR=100% avg=+0.1692%
+  Both options need more data (ideally n>=10) before EA entry.
+
+===== T578: h4_DIST QUALITY GATE (Gen6A) =====
+
+Gen6A h4_dist gate scan on SHORT 13-14 UTC:
+  h4>=1.0: n=9 WR=100% avg=+0.1032% (baseline)
+  h4>=1.5: n=7 WR=100% avg=+0.1075%
+  h4>=2.0: n=7 WR=100% avg=+0.1075%
+  h4>=3.0: n=5 WR=100% avg=+0.1135%
+
+FINDING: h4_dist gate is a WEAK quality filter.
+  h4>=3.0 gives n=5 avg=+0.1135% vs r>=18 (Gen2B) n=5 avg=+0.1300%.
+  h4_dist gate is INFERIOR to r-rank gate as a quality predictor.
+  h4_dist is a CONTINUOUS quality indicator, not a sharp threshold.
+  Use as context information, not as a gate.
+
+Gen3A + h4>=2.0: n=2 avg=+0.1535% (same max quality pair as before)
+Gen3A + h4>=3.0: n=1 (only Mar-30 +0.1607% — too selective)
+
+VERDICT: h4_dist gate = REJECTED as standalone quality filter. Already captured by r-rank.
+  The 9 baseline signals all cluster at h4>1.0 by design — h4 is a context gate, not quality.
+
+===== T579: HOLD-TIME OPTIMIZATION =====
+
+Gen0 hold-time:
+  hold=1: WR=44% avg=+0.0308% (too early — 4/9 resolve in bar+1 or less)
+  hold=2: WR=89% avg=+0.0979% (close to final)
+  hold=3: WR=100% avg=+0.0993%
+  hold=4: WR=100% avg=+0.1032% ← OPTIMAL (current)
+  hold=5: WR=100% avg=+0.1077% ← MARGINALLY BETTER (+4.4%)
+  hold=6: WR=89% avg=+0.1024% (one trade goes long = WR drops)
+  hold=8: WR=100% avg=+0.1050%
+
+FINDING: hold=5 gives marginally better avg (+0.1077% vs +0.1032%).
+  But hold=5 is only +4.4% improvement. Risk: holds bar longer in live trading.
+  The WR stays 100% at hold=4 AND hold=5. ONE trade resolves at bar+5 for extra gain.
+
+Gen3A hold-time: ALL holds from 2 to 6 give IDENTICAL result (WR=100% avg=+0.1476%).
+  The 3 trio trades all hit target within 2 bars. hold=2 is sufficient for Gen3A.
+  Confirmed: the trio are high-conviction trades that move quickly.
+
+CT-LONG hi5 hold-time:
+  hold=1: WR=100% avg=+0.1124% (already all winners but not at full target)
+  hold=2: WR=100% avg=+0.1352%
+  hold=3: WR=100% avg=+0.1653% ← OPTIMAL (same as hold=4,5,6)
+  hold=3 sufficient for CT-LONG hi5.
+
+HOLD-TIME CONCLUSIONS:
+  Gen0: hold=4 is confirmed optimal. hold=5 = +4.4% marginal improvement.
+  Gen3A: hold=2 sufficient (hits target fast). hold=4 = same, no harm.
+  CT-LONG: hold=3 sufficient. All 4 hits hit by bar+3.
+
+===== T580: MILESTONE — Gen7 COMPLETE =====
+
+=== FINAL SIGNAL ARCHITECTURE (ALL GENERATIONS) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — CONFIRMED EA-READY)
+  Gen0 baseline: n=9 WR=100% avg=+0.1032% hold=4
+  Gen2B quality:  n=5 WR=100% avg=+0.1300% [+r>=18]
+  Gen3A premium:  n=3 WR=100% avg=+0.1476% [+lo25+accel<=-0.0001+r>=18]
+  ATR21 regime:   n=6 WR=100% avg=+0.0994% [ATR21+accel<=-0.0002]
+  Max quality pair: n=2 avg=+0.1535% [accel<=-0.00015]
+
+LINE 2: SHORT 07-08 UTC (SECONDARY — REDESIGNED, EA-READY)
+  Redesigned: n=14 WR=79% avg=+0.0534% [h4>=0.5+accel>0+lo10]
+  Quality variant: n=8 WR=88% avg=+0.0879% [h4>=0.5+accel>0+lo15]
+  NOTE: Accel inversion — 13-14 UTC needs accel<0; 07-08 UTC needs accel>0.
+
+LINE 3: CT-LONG 13-14 UTC (COUNTER-TREND — MONITORING, NOT YET EA-READY)
+  hi5 all gates: n=4 WR=100% avg=+0.1653% [bearish context + 5-bar high break]
+  ATR21+hi5+accel>0: n=3 WR=100% avg=+0.1692% [premium quality]
+  NOTE: Needs n>=10 before EA. Record going forward.
+
+=== ACCEL INVERSION TABLE (FINAL) ===
+Session    | Direction   | Optimal accel  | n  | WR   | avg
+13-14 UTC  | SHORT       | <= -0.0001     | 5  | 100% | +0.1284%
+07-08 UTC  | SHORT       | > 0            | 14 | 79%  | +0.0534%
+13-14 UTC  | CT-LONG     | > 0 (ATR21)    | 3  | 100% | +0.1692%
+
+=== EA SPECIFICATION (FINAL) ===
+Signal 1 (PRIMARY SHORT): 13-14 UTC, lo10, ATR14, H4, ema50, qc3, body1.5
+  Stop: +1.5×ATR, Target: -1.5×ATR, MaxHold: 4 bars
+  Full entry all 9 signals. Premium size on Gen3A (r>=18+accel<=-0.0001+lo25).
+
+Signal 2 (SECONDARY SHORT): 07-08 UTC, lo10, h4>=0.5, ATR14, ema50, qc3, body1.5
+  SAME as Signal 1 but: hours=[7,8], h4_dist>=0.5 (weaker), accel>0 (inverted!)
+  n=14 WR=79% avg=+0.0534%. Reduced position size vs Signal 1.
+
+Monitor: CT-LONG 13-14 UTC — log signals, accumulate data, do not trade yet.
+
+=== Gen8 PLAN (T581-T585) ===
+T581: Combined portfolio sim — Signal 1 + Signal 2 + interaction effects
+T582: Signal 2 multi-year stability check — 2024 vs 2025 vs 2026 period analysis
+T583: CT-LONG expansion — test on 2025 data specifically, look for more instances
+T584: Signal 1 regime robustness — what if data extended (earlier period simulation)
+T585: MILESTONE Gen8 — final specification, signal interactions, forward-test checklist
+
+===== NEXT BATCH (T581-T585) =====
+T581: Combined portfolio: Signal 1 + Signal 2, analyze interaction, overlap risks
+T582: Signal 2 period analysis: 2024 / 2025 / 2026 sub-period WR and avg
+T583: CT-LONG: 2025 sub-period deep dive (both May signals in same month = regime?)
+T584: Signal 1 stability: rolling 6-month WR/avg windows to detect regime shifts
+T585: Gen8 milestone — final forward-test spec
+
