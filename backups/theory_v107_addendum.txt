@@ -1,0 +1,216 @@
+THEORY LOOP ADDENDUM v107 — T621-T625 Gen16 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen16 discoveries
+Date: 2026-10-29
+
+===== BASELINE (Gen15 confirmed) =====
+Signal 1: n=8 WR=100% avg=+0.111% cum=+0.8882% flat / +1.3267% sized (hold=4)
+Signal 2: n=5 WR=100% avg=+0.0933% cum=+0.4628% flat
+Combined S1+S2: n=13 WR=100% maxDD=0 cum=+1.7895%
+
+===== T621: GATE RELAXATION STUDY =====
+
+Individual relaxations (each alone):
+  S1 baseline:          n=8 WR=100% avg=+0.1101% cum=+0.8810%
+  S1 ema_dist>=0.4:     n=8 WR=100% avg=+0.1101% cum=+0.8810%  ← NO CHANGE
+  S1 qc>=2:             n=8 WR=100% avg=+0.1101% cum=+0.8810%  ← NO CHANGE
+  S1 h4>=0.5:           n=8 WR=100% avg=+0.1101% cum=+0.8810%  ← NO CHANGE
+  S1 all relaxed:       n=9 WR=100% avg=+0.1022% cum=+0.9202%  ← 1 new signal
+
+FINDING: Individual gate relaxations (ema_dist, qc, h4) produce ZERO new signals.
+  The gates are NOT the binding constraint — the accel<=0 + lo10 + rank<29 combination
+  is the actual filter that limits signal count. The relaxed gates have no incremental impact.
+
+  Only simultaneous triple relaxation unlocks 1 new signal. That signal's pnl:
+  0.9202 - 0.8810 = +0.0392% (barely above cost = 0.0392% vs cost 0.008%)
+  The new signal is profitable but marginal — 3 gates must all be relaxed to find it.
+  This is NOT a clean edge — it's a borderline trade requiring lower standards across the board.
+
+GATE RELAXATION VERDICT:
+  Do NOT relax any gate. The binding constraint is on momentum indicators (accel, lo10),
+  not quality gates (dist, qc, h4). The gates are already calibrated correctly.
+  The dataset simply does not have more high-quality signals in 2024-2026.
+  DECISION: Keep all canonical gates. Do not relax to chase marginal signals.
+
+INSIGHT: This confirms the signal architecture is TIGHT. The gates are not over-restrictive —
+  relaxing them does nothing because the momentum conditions are the true filter.
+  Every signal that passes all gates has genuine bearish momentum conviction.
+
+===== T622: EXIT OPTIMIZATION =====
+
+Hold period comparison (S1, n=8 all win):
+  hold=2: cum=+0.881% sized=+1.3267%
+  hold=3: cum=+0.870% sized=+1.3187%  ← WORST (slight dip at 3-bar mark)
+  hold=4: cum=+0.881% sized=+1.3267%  ← CURRENT (same as hold=2)
+  hold=5: cum=+0.921% sized=+1.3549%  ← BEST (+2.8% flat, +2.1% sized)
+  hold=6: cum=+0.921% sized=+1.3549%  ← Same as hold=5 (all trades resolve by bar 5)
+
+Per-signal hold=3 vs hold=4 breakdown:
+  All signals IDENTICAL between hold=3 and hold=4 EXCEPT Jul-21:
+  Jul-21: hold3=+0.0262%, hold4=+0.0376% (+0.0114% improvement at bar 4)
+  All other signals hit stop or target within 3 bars, then stay at same price through bar 4.
+
+HOLD=5 vs HOLD=4 ANALYSIS:
+  flat improvement: 0.9213% - 0.8810% = +0.0403% (over 8 trades)
+  sized improvement: 1.3549% - 1.3267% = +0.0282%
+  hold=5 and hold=6 are identical → all trades resolve by bar 5 maximum
+  The improvement comes from 1-2 signals that reach a better exit on bar 5 vs bar 4
+  (price continues falling through bar 4, reaches better level by bar 5 close)
+
+EXIT OPTIMIZATION DECISION:
+  SWITCH S1 MaxHold from 4 to 5 bars. WR stays 100% (all still win at hold=5).
+  Improvement: +0.0282% sized (+2.1%), +0.0403% flat (+4.6%).
+  No downside: hold=5 never creates a loser from a hold=4 winner.
+
+  UPDATED S1 SPEC: MaxHold = 5 bars (not 4).
+
+  UPDATED S1 PERFORMANCE:
+  flat:  cum=+0.9213% (was +0.8882%)
+  sized: cum=+1.3549% (was +1.3267/1.3368%)
+
+Per-signal note: Jul-21 improves the most from extended hold (+0.0114% from bar 4 to bar 5 range).
+The signal with the weakest initial momentum benefits most from waiting for the delayed move.
+
+===== T623: S2 ALLIGATOR SIZE MODEL =====
+
+S2 alligator-tiered size model: alligator>0.3→1.2x | 0.1-0.3→1.0x | <0.1→0.8x
+
+Per signal:
+  2024-10-04: alligator=0.243 size=1.0x pnl=+0.0957% → +0.0957%
+  2024-12-10: alligator=0.479 size=1.2x pnl=+0.1305% → +0.1566%
+  2024-12-18: alligator=0.022 size=0.8x pnl=+0.0130% → +0.0104%
+  2026-03-26: alligator=0.303 size=1.2x pnl=+0.1386% → +0.1663%
+  2026-05-14: alligator=0.113 size=1.0x pnl=+0.0850% → +0.0850%
+
+S2 flat cum:  +0.4628%
+S2 sized cum: +0.5140%
+Improvement:  +0.0512% (+11% relative improvement!)
+
+Mechanism:
+  Dec-18 (alligator=0.022) = near-flat EMAs = weakest signal → reduced to 0.8x ✓
+  Dec-10 and Mar-26 = strong EMA separation → boosted to 1.2x, high pnl ✓
+  The alligator spread correctly ranks S2 signal quality: highly spread = strong downtrend
+  = the 08 UTC accel>0 reversal bump is a larger deviation = stronger mean reversion.
+  Near-zero alligator = EMAs converging = less trend fuel = weaker signal.
+
+S2 ALLIGATOR SIZE MODEL DECISION:
+  ADOPT provisionally. Clear directional logic, +11% improvement on n=5 WR=100%.
+  Flag: n=5 is small. Formalize when n>=8 with new 2026 data.
+
+  UPDATED S2 SPEC:
+    SIZE: alligator>0.3 → 1.2x | 0.1-0.3 → 1.0x | <0.1 → 0.8x
+    Baseline: 1.0x flat (unchanged for new signals until alligator is computed)
+
+===== T624: H4 EMA RETEST SHORT THEORY =====
+
+Theory: In bearish context, when price bounces UP to H4 EMA50 supply zone (h4_dist_atr < 0.8),
+  enter SHORT at the resistance = supply-zone selling after failed recovery.
+
+Results:
+  H4 retest (h4<0.8, accel<=0, rank<40): n=2 WR=50% avg=+0.0193% cum=+0.0387%
+  H4 retest tight (h4<0.5):              n=2 WR=50% avg=+0.0193% cum=+0.0387%
+  H4 retest + lo10 break:                n=0 (no signals)
+
+Two signals only:
+  2024-09-04: h4=0.045 pnl=-0.1232% (LOSER — very near EMA, strong upside bounce)
+  2024-12-16: h4=0.374 pnl=+0.1618% (WINNER)
+
+H4 RETEST VERDICT: CANCELLED (n=2, WR=50%, statistically meaningless).
+  Sep-04 2024 is a significant loser (-0.1232%) — price was approaching EMA and continued up.
+  The theory assumes the EMA acts as resistance, but the Sep-04 case shows price broke above.
+  The signal only fires twice in 2.5 years — extremely rare = inherently untestable with current data.
+  WHY IT'S RARE: Our existing signal requires h4_dist_atr>=1.0 (price far below EMA).
+  The retest theory requires h4_dist_atr<0.8 (price near EMA). These are complementary zones.
+  The overlap with our bearish regime gates (annual_slope<=0) further limits signals.
+
+  POSSIBLE GEN17 VARIANT: H4 retest as LONG signal (price approaching H4 EMA from above
+  in bullish context) — but this is opposite of our SHORT bias. Skip for now.
+
+===== T625: GEN16 MILESTONE SUMMARY =====
+
+=== FINAL SIGNAL ARCHITECTURE (Gen16) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — UPDATED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel<=0, hours=[13,14]
+  Regime: Skip if annual EMA slope > 0
+  MaxHold: 5 bars (UPDATED from 4)
+
+  PERFORMANCE (updated):
+    flat:  cum=+0.9213% (was +0.8882%, +3.7% improvement)
+    sized: cum=+1.3549% (was +1.3267/1.3368%)
+
+  SIZE MODEL (unchanged from Gen13):
+    Base: accel<=-0.0002→1.3x, <=-0.0001→1.2x, <=-0.00005→1.1x, else→1.0x
+    + alligator>0.5 ATR: +0.2x
+    - alligator<0.3 ATR: -0.1x
+    + consec_lo10>=2: +0.1x
+    + monthly_slope<0: +0.1x / - monthly_slope>0: -0.2x
+    Floor: 0.5x
+
+LINE 2: SHORT 08 UTC (SECONDARY — UPDATED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel>0, hours=[8],
+        monthly_slope<0 (Gen14)
+  MaxHold: 4 bars (unchanged — insufficient data to test S2 exit optimization)
+
+  PERFORMANCE (updated):
+    flat:  cum=+0.4628%
+    sized: cum=+0.5140% (Gen16 alligator model)
+
+  SIZE MODEL (Gen16 PROVISIONAL):
+    alligator>0.3 → 1.2x | 0.1-0.3 → 1.0x | <0.1 → 0.8x
+
+LINE 3: CT-LONG — CANCELLED
+LINE 4: HI5 SHORT TRAP — CANCELLED
+LINE 5: H4 EMA RETEST SHORT — CANCELLED (n=2)
+
+=== GEN16 KEY DISCOVERIES ===
+
+1. GATE RELAXATION: ARCHITECTURE IS CORRECT AS-IS.
+   Individual gate relaxations add zero new signals. Only triple-simultaneous relaxation
+   adds 1 marginal signal (+0.0392%). The momentum gates (accel, lo10) are the binding filters.
+
+2. HOLD=5 OPTIMAL for S1: +2.1% sized improvement over hold=4.
+   All 8 signals still 100% WR at hold=5. Maximum hold = 5 bars hereafter.
+   hold=6 adds nothing more (all trades resolve by bar 5).
+
+3. S2 ALLIGATOR SIZE MODEL: +11% improvement (+0.0512%).
+   alligator>0.3 = strong trend momentum = higher S2 quality.
+   alligator<0.1 = flat EMAs = weaker signal = 0.8x reduction.
+
+4. H4 EMA RETEST: Only n=2 in dataset, WR=50%, inconclusive. Cancelled.
+
+=== COMBINED PORTFOLIO (Gen16) ===
+
+S1 sized (hold=5 updated): cum=+1.3549%
+S2 sized (alligator model): cum=+0.5140%
+Combined both sized:        cum=+1.8689%
+n=13 WR=100% maxDD=0
+
+vs Gen15 (+1.7895%): improvement +0.0794% (+4.4%)
+vs Gen14 (+1.8034%): improvement +0.0655% (hold=5 + S2 alligator vs S2 monthly gate)
+
+Progressive improvement history:
+  Gen10 flat:     +1.3291%
+  Gen11 sized:    +1.2293% (S1 flat combined)
+  Gen13:          +1.7965% (S1 full size model + S2 flat)
+  Gen14:          +1.8034% (S2 monthly slope repair)
+  Gen15:          +1.8034% (no change — no additive improvements)
+  Gen16:          +1.8689% (hold=5 + S2 alligator size model)
+  Total gain from optimization: +0.5398% vs Gen10 flat (+40.6%)
+
+=== Gen17 PLAN (T626-T630) ===
+T626: S1 hold=5 vs hold=4 per-signal deep-dive — which signals benefit from bar 5?
+      Correlate with: accel strength, alligator, consec — does stronger momentum need more time?
+T627: S2 hold optimization — test hold=3,4,5 for S2 signal
+      S2 is a different signal type (accel>0 = bounce) — may resolve faster than S1
+T628: Bollinger Band squeeze — test if low BBand width at signal bar predicts breakout quality
+      atr_rank<15 combined with BB squeeze as size modifier
+T629: VOLUME PROXY — EURUSD has no volume data. Test bid-ask spread proxy via body_atr patterns
+      High body_atr = real momentum (not noise). Test body_atr>0.5 vs <0.3 quality split
+T630: Gen17 milestone — EA v2.4 spec with hold=5, S2 alligator model, SURVIVORS.md v6
+
+===== NEXT BATCH (T626-T630) =====
+T626: S1 bar=5 momentum correlation
+T627: S2 exit optimization
+T628: BB squeeze size modifier
+T629: Body momentum proxy
+T630: Gen17 milestone
