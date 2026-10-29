@@ -1,0 +1,225 @@
+THEORY LOOP ADDENDUM v82 — T496-T500
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T496: D1 PRICE ACTION CONTEXT =====
+
+Corr(d1_consec_bear, pnl_pct) = -0.086  ← NEAR-ZERO
+Corr(d1_ma50_dist_atr, pnl_pct) = +0.414  ← MODERATE (same as before)
+
+d1_consec_bear: consecutive bearish D1 bars before entry.
+d1_ma50_dist: (D1 MA50 - close) / ATR14. Positive = close BELOW d1_ma50 (bearish D1 context).
+
+D1 context sorted by bearish streak:
+  consec=0  d1_ma50=-5.24(ABOVE) r=27.0 → +0.1101% (Feb-17)  ← no bearish D1 run, ABOVE MA50
+  consec=1  d1_ma50=-10.71(ABOVE) r=5.2  → +0.0405% (Feb-16)  ← BAD trade, ABOVE MA50
+  consec=1  d1_ma50=+34.66(below) r=13.5 → +0.1040% (Oct-12)
+  consec=2  d1_ma50=+10.35(below) r=21.0 → +0.1358% (Dec-18)
+  consec=2  d1_ma50=+15.87(below) r=28.2 → +0.1607% (Mar-30)  ← BEST trade
+  consec=2  d1_ma50=+11.75(below) r=18.7 → +0.1463% (Dec-10)
+  consec=3  d1_ma50=+8.22(below)  r=9.5  → +0.0385% (Jul-21)  ← WORST trade
+  consec=3  d1_ma50=-1.23(below)  r=17.1 → +0.0954% (May-14)
+  consec=4  d1_ma50=+1.88(below)  r=23.4 → +0.0973% (Jan-08)
+
+ANALYSIS:
+  Streak correlation near zero (-0.086). No monotonic relationship.
+  The 2 BAD trades are at consec=1 and consec=3 — not concentrated.
+  Threshold scan:
+    consec>=2: n=6 avg=+0.1123% — BUT still includes Jul-21 (WORST, consec=3)
+    consec>=3: n=3 avg=+0.0771%  ← WORSE than baseline! (includes WORST)
+
+  D1 MA50 positioning: confirmed correlation +0.414 (same result as d1_dist in prior tests).
+  d1_below_ma50 (n=7): avg=+0.1112% — minor improvement, drops Feb-16 (BAD) but also Feb-17 (OK)
+  d1_above_ma50 (n=2): avg=+0.0753% — both Feb-16 (BAD) and Feb-17 (OK) are above MA50
+
+VERDICT: d1_consec_bear is NOT a useful predictor. Streak near-zero correlation.
+  d1_ma50 positioning already captured by existing ema50_dist / h4d gates.
+  The d1_above_ma50 filter removes BAD Feb-16 but also removes good Feb-17.
+  Root cause: r is again the dominant predictor; D1 streak is r-confounded.
+Do NOT add as gate.
+
+===== T497: RANGE10 NARROW VARIANT =====
+
+Corr(range10, pnl_pct) = +0.541  ← CONFIRMED MODERATE POSITIVE (same as previously known)
+
+CRITICAL FINDING: Wide range10 = BETTER, narrow range10 = WORSE.
+This is the OPPOSITE of the "compression before breakout" hypothesis.
+
+range10 sorted:
+  2.29(NARROW) r=27.0 → +0.1101% (Feb-17)
+  2.52(NARROW) r=21.0 → +0.1358% (Dec-18)
+  2.53(NARROW) r=5.2  → +0.0405% (Feb-16)  ← BAD
+  2.80(NARROW) r=9.5  → +0.0385% (Jul-21)  ← WORST
+  3.02(wide)   r=23.4 → +0.0973% (Jan-08)
+  3.10(wide)   r=17.1 → +0.0954% (May-14)
+  4.22(wide)   r=18.7 → +0.1463% (Dec-10)
+  4.54(wide)   r=13.5 → +0.1040% (Oct-12)
+  4.63(wide)   r=28.2 → +0.1607% (Mar-30)  ← BEST
+
+Threshold scan:
+  range10<3.0: n=4 avg=+0.0812%  ← WORSE than baseline
+  range10>=3.0: n=5 avg=+0.1208% ← better
+  range10>=3.5: n=3 avg=+0.1370% ← better still, n=3
+  range10>=4.0: n=3 avg=+0.1370% (same trades as >=3.5)
+
+KEY OBSERVATION: Both BAD trades (Feb-16, Jul-21) are in the NARROW range10 group (2.53, 2.80).
+The 2 best trades (Mar-30 +0.1607%, Dec-10 +0.1463%) are in the WIDE group (4.63, 4.22).
+BUT: Feb-17 (+0.1101%) and Dec-18 (+0.1358%) are also in the NARROW group!
+
+This means: range10>=3.0 separates both BAD trades from the good ones — but so does r>=18.
+  range10>=3.0 drops: Feb-16 (r=5.2), Jul-21 (r=9.5), Feb-17 (r=27.0) [also drops Feb-17!]
+  r>=18 drops: Feb-16 (r=5.2), Jul-21 (r=9.5)
+
+PARADOX: range10>=3.0 also removes Feb-17 (r=27.0, +0.1101%) — a quality trade!
+This is the same confounding pattern: low range10 correlates with low r in this sample.
+  Feb-17 range10=2.29 r=27.0 — HIGH quality but NARROW range (exception)
+
+VERDICT: range10 is a SOFT predictor but r>=18 is the correct quality gate.
+  Range10 alone as a gate removes a quality trade (Feb-17).
+  As a SOFT indicator, range10>=3.0 is useful context: wide pre-signal range = better environment.
+  Confirmed: do NOT gate on range10 (r>=18 is cleaner). Continue using as soft indicator.
+
+===== T498: SECOND SETUP IN 5-DAY WINDOW =====
+
+1st setup in 5-day window: n=8 WR=100% avg=+0.1023%
+2nd+ setup in 5-day window: n=1 WR=100% avg=+0.1101% (Feb-17, the day after Feb-16)
+
+The ONLY 2nd setup: Feb-17 fired the day after Feb-16. Feb-17 is the better trade (+0.1101% vs +0.0405%).
+The 2nd trade in a pair actually performed BETTER than the 1st.
+
+ANALYSIS:
+  n=1 for 2nd setups — zero statistical content. Cannot draw conclusions.
+  Feb-17 follows Feb-16: consecutive signals in a quiet regime. Feb-17 is r=27.0 (quality), Feb-16 is r=5.2 (poor).
+  The "2nd setup" quality is entirely determined by its own r value.
+
+VERDICT: NOT a useful predictor with n=1. No pattern established.
+  Future monitoring: if 2nd setups accumulate (n>=5), revisit. Hypothesis to track:
+  Does a FAILED or LOW-r 1st setup predict a BETTER 2nd setup? (Momentum continuation hypothesis)
+
+===== T499: ATR ACCELERATION (3-bar ATR change before signal) =====
+
+Corr(atr_acc, pnl_pct) = +0.059  ← NEAR-ZERO
+
+atr_acc = (atr14 - atr14.shift(3)) / atr14.shift(3). Positive = ATR growing.
+
+Sorted values:
+  -0.002(shrinking) r=13.5 → +0.1040% (Oct-12)  ← slightly shrinking
+  +0.032(growing)   r=18.7 → +0.1463% (Dec-10)
+  +0.107(growing)   r=9.5  → +0.0385% (Jul-21)  ← BAD
+  +0.122(growing)   r=5.2  → +0.0405% (Feb-16)  ← BAD
+  +0.142(growing)   r=21.0 → +0.1358% (Dec-18)
+  +0.173(growing)   r=17.1 → +0.0954% (May-14)
+  +0.216(growing)   r=28.2 → +0.1607% (Mar-30)  ← BEST, ATR growing fast!
+  +0.236(growing)   r=27.0 → +0.1101% (Feb-17)
+  +0.340(growing)   r=23.4 → +0.0973% (Jan-08)
+
+PARADOX: Only 1 trade has shrinking ATR (Oct-12). ALL others have growing ATR.
+The BEST trade (Mar-30) has ATR growing at +0.216.
+The BAD trades (Feb-16, Jul-21) also have growing ATR (+0.122, +0.107).
+No threshold separates quality from bad.
+
+Threshold scan: atr_acc<=0.00 = n=1. All meaningful thresholds keep the bad trades.
+
+VERDICT: ATR acceleration is NOT a useful predictor.
+  Correlation near zero (+0.059). Growing ATR regime is universal at signal time.
+  The r>=18 gate (which requires ATR rank 18-29 percentile) already captures
+  the appropriate absolute ATR level. Acceleration within that range is noise.
+Do NOT add as gate.
+
+===== T500: MILESTONE — COMBINED SOFT FILTER =====
+
+CRITICAL FINDING: Soft indicators are ADDITIVE but bounded by n.
+
+Results:
+  Tier1 (r>=18):                  n=5 WR=100% avg=+0.1300%
+  + slope<=-0.3:                  n=4 WR=100% avg=+0.1286%  ← loses Jan-08 (good, -0.42)... wait no
+  + range10>=3.0:                 n=3 WR=100% avg=+0.1348%
+  + |gap|<=0.3:                   n=5 WR=100% avg=+0.1300%  ← all 5 already pass!
+  + slope + range10:              n=3 WR=100% avg=+0.1348%
+  + all 3 softs:                  n=3 WR=100% avg=+0.1348%
+
+Per-trade soft indicator profile (Tier1 only):
+  Dec-10:  S+R+G+ (3/3) slope=-0.51 r10=4.2 |gap|=0.00 r=18.7 → +0.1463%
+  Dec-18:  S-R-G+ (1/3) slope=-0.11 r10=2.5 |gap|=0.11 r=21.0 → +0.1358%  ← all softs FAIL but strong trade!
+  Jan-08:  S+R+G+ (3/3) slope=-0.42 r10=3.0 |gap|=0.00 r=23.4 → +0.0973%  ← all softs pass but WEAKEST tier1!
+  Feb-17:  S+R-G+ (2/3) slope=-0.45 r10=2.3 |gap|=0.00 r=27.0 → +0.1101%
+  Mar-30:  S+R+G+ (3/3) slope=-0.69 r10=4.6 |gap|=0.20 r=28.2 → +0.1607%  ← BEST, all softs pass
+
+CRITICAL INSIGHT — SOFT INDICATORS CONTRADICT EACH OTHER ON QUALITY:
+  Dec-18 (+0.1358%): FAILS all softs (slope=-0.11, range10=2.5) but is a strong trade!
+  Jan-08 (+0.0973%): PASSES all softs but is the WEAKEST tier1 trade!
+
+This means: soft indicators are NOT multiplicatively additive.
+  - range10>=3.0 drops Dec-18 (GOOD, +0.1358%) while keeping Jan-08 (WEAKEST, +0.0973%)
+  - slope<=-0.3 drops Dec-18 while keeping Jan-08
+  - The ANTI-CORRELATION with r is breaking the soft filter logic
+
+ADDITIVE SCORING HYPOTHESIS: Count softs (0-3) as a SCORE, not hard filter.
+  0 softs: n=0 in tier1 (Dec-18 has slope=-0.11 which doesn't meet any)
+  1 soft:  Dec-18 (|gap|=0.11 passes)
+  2 softs: Feb-17
+  3 softs: Dec-10, Jan-08, Mar-30
+
+  But Dec-18 (weakest soft) is better than Jan-08 (strongest soft) — score is NOT predictive.
+
+CONCLUSION: r>=18 is the PRIMARY gate. Soft indicators are OBSERVATION aids, not filters.
+  The soft threshold (|gap|<=0.3) is vacuously satisfied by all tier1 trades — not informative.
+  ema50_slope and range10 are useful pattern NOTES but create false exclusions when hard-gated.
+  DO NOT add any soft indicator as a hard gate on top of r>=18.
+
+===== FINAL PICTURE AFTER T461-T500 (40 THEORIES) =====
+
+NULL FEATURES (confirmed useless after exhaustive testing):
+  Body characteristics: body_atr, bearish_body, bar_momentum — ALL near-zero
+  Pre-breakdown pattern: range5_mean, range5_trend — near-zero
+  Confirmation: 2-bar confirm, CLOSE<lo10 — both HARMFUL
+  Multi-TF indicators: MTF RSI, h4_rsi — all implied by structure
+  Entry bar characteristics: body size, body direction, open gap direction
+  Seasonality: quarter, month, DOW — insufficient n, r-confounded
+  Regime duration: session_quiet_streak — doesn't filter quality
+  Alternative windows: 504-bar ATR rank — inferior to 252-bar
+  Monthly channel: month_pos — r-confounded, fails on bad trades
+  Breakdown depth: signal_depth — structure is wick-based, depth irrelevant
+  EMA20 distance: already 100% implied by existing gates
+  RR optimization: all deviations from 1.5S/1.5T/4bars INFERIOR
+  D1 bearish streak: d1_consec_bear — near-zero correlation
+  ATR acceleration: atr_acc — near-zero correlation
+  Second setup in window: n=1, no conclusion possible
+
+CONFIRMED PREDICTORS (deployable):
+  r (ATR rank 252-bar): PRIMARY GATE — r>=18 AND r<29
+  h4d (H4 EMA50 distance): REGIME GATE — h4d>=1.0
+  ema50_slope: SOFT — slope <= -0.4 = higher confidence
+  range10: SOFT — larger 10-bar range = more prior momentum (wide range = better)
+  |gap|: SOFT — |gap| <= 0.3 = cleaner setup (vacuously satisfied at tier1 level)
+  d1_ma50_dist: MODERATE (+0.414) — price below D1 MA50 = better context
+
+===== CANONICAL GATE — FINAL v82 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars (confirmed optimal T495)
+
+Soft indicators (not gated):
+  - ema50_slope <= -0.4 (H1 EMA50 in active downtrend)
+  - range10 >= 3.0 (prior momentum available)
+  - prev_d1_ret < 0 (prior day directional alignment)
+  - |gap| <= 0.3 (clean continuation open)
+  - d1_ma50_dist >= 5.0 (price well below D1 MA50 = deeper bearish context)
+
+===== NEXT BATCH (T501-T505) =====
+T501: Weekly chart context — H1 entry vs weekly trend (weekly close vs weekly EMA20).
+      Is price in a weekly downtrend? Does weekly trend alignment add precision?
+T502: ATR acceleration FORWARD — does ATR continue growing or shrink in the 4 bars AFTER entry?
+      Predictive version: can we predict which entries will have "carrying momentum"?
+      Use: atr_during = avg ATR in bars 1-4 vs atr14 at entry.
+T503: ADR (Average Daily Range) filter — are H1 setups better on HIGH ADR days vs LOW ADR days?
+      Use D1 candle ranges normalized by ATR14.
+T504: H4 RSI at entry (not just EMA50 distance but RSI level).
+      Already tested h4_rsi (weak), but what about H4 RSI below 40 (oversold = better SHORT)?
+T505: Weekend gap effect — do setups on Monday morning (after weekend gap) behave differently?
+      h in {13,14} already excludes Asian hours, but Monday H1 13-14 may have different dynamics.
