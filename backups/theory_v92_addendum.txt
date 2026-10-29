@@ -1,0 +1,160 @@
+THEORY LOOP ADDENDUM v92 — T546-T550 CLONE-GEN Branch E/F + Gen3 PLAN
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T546: ATR21 PARALLEL LINE — standalone analysis =====
+
+ATR21+accel<=-0.0002 standalone: n=6 WR=100% avg=+0.0994%
+Per-year: {2024:1, 2025:2, 2026:3}
+
+Full trade list:
+  2024-12-10: +0.1445% r=10.3  ← shared with ATR14
+  2025-07-10: +0.1476% r=26.2  ← UNIQUE to ATR21 (best 2025!)
+  2025-08-18: +0.0283% r=28.2  ← UNIQUE to ATR21
+  2026-03-30: +0.1550% r=22.2  ← shared with ATR14
+  2026-05-14: +0.0163% r=23.8  ← shared with ATR14
+  2026-10-12: +0.1049% r=11.5  ← shared with ATR14
+
+Overlap with ATR14 baseline: 4 trades (Dec-10, Mar-30, May-14, Oct-12)
+UNIQUE to ATR21 line: 2025-07-10 and 2025-08-18
+
+NOTE: Dec-10 r changes from 18.7 (ATR14) to 10.3 (ATR21) — different rank calibrations.
+NOTE: ATR21+accel drops Dec-18 (Jan-08, Feb-16, Feb-17, Jul-21 also absent).
+  This confirms ATR21 is a DIFFERENT REGIME LINE, not a superset of ATR14.
+
+VERDICT: ATR21+accel<=-0.0002 is CONFIRMED as a valid parallel signal line.
+  Adds 2 genuine 2025 signals not accessible from ATR14.
+  Run as SEPARATE line from ATR14 primary.
+
+===== T547: Gen2A — lo25 + accel<=-0.0001 =====
+
+Gen2A: n=5 WR=100% avg=+0.1284%
+Per-year: {2024:2, 2026:3}
+
+Full trade list:
+  2024-12-10: +0.1463% r=18.7 accel=-0.000424  ← full-momentum
+  2024-12-18: +0.1358% r=21.0 accel=-0.000127  ← full-momentum
+  2026-03-30: +0.1607% r=28.2 accel=-0.000341  ← BEST TRADE
+  2026-05-14: +0.0954% r=17.1 accel=-0.000130  ← included (r<18 but ok)
+  2026-10-12: +0.1040% r=13.5 accel=-0.000293  ← included (r<18 but ok)
+
+KEY: Removes {Feb-16 r=5.2, Jul-21 r=9.5} (low quality) AND {Jan-08, Feb-17} (marginal accel).
+  Only 5 remain, all 100% WR. Best 5 trades by quality.
+  May-14 and Oct-12 survive despite r<18 because accel is strong.
+
+OBSERVATION: May-14 accel=-0.000130 > -0.0002 threshold but passes -0.0001 gate.
+  This is the trade that entry-shift=1 lost (May-14 adverse gap open).
+  Quality is real; the only risk is timing.
+
+===== T548: BRANCH E — ema50_period clone (Gen1) =====
+
+CRITICAL FINDING: ema50 PERIOD IS COMPLETELY INSENSITIVE.
+
+ema20 = ema34 = ema50 = ema100 = ema200:
+  All produce IDENTICAL 9 trades (same dates)
+  All n=9 WR=100% avg=+0.1032%
+  Shared trades between ema34 and ema50: 9 (zero unique in either direction)
+
+WHY: The ema50_dist gate (>= 0.5 ATR) is satisfied by ALL EMA periods for the same 9 bars.
+  The relative distance relationship is robust regardless of EMA length.
+  The gate is a surrogate for "price is significantly below any trend line" — insensitive to period.
+
+VERDICT: Branch E = NO IMPROVEMENT. ema50_period is a NON-VARIABLE.
+  Lock ema50 period = 50 permanently. No need to clone this dimension.
+  This simplifies the clone tree significantly.
+
+===== T549: BRANCH F — higher TF period clone (Gen1) =====
+
+HTF=2h:  n=9 WR=89%  avg=+0.0726%  ← WORSE (adds 2025-02-18 LOSER, drops Dec-18)
+HTF=4h:  n=9 WR=100% avg=+0.1032%  ← GEN0 BASELINE (optimal)
+HTF=6h:  n=9 WR=100% avg=+0.0992%  ← different set (adds May-26, drops Dec-18, Feb-16)
+HTF=8h:  n=9 WR=100% avg=+0.0992%  ← same as 6h
+HTF=12h: n=9 WR=100% avg=+0.0992%  ← same as 6h
+
+H6=H8=H12 trade set: {Dec-10, Dec-18, Jan-08, Feb-17, Mar-30, May-14, May-26, Jul-21, Oct-12}
+  KEY DIFFERENCE: Drops Feb-16 (r=5.2 bad trade), ADDS 2026-05-26 (new trade!)
+  These act as a slightly BETTER quality filter than H4 (removes Feb-16)
+  But lower avg (+0.0992% vs +0.1032%) because May-26 pulls down.
+
+H2: adds 2025-02-18 as a LOSER (bad 13-14 bar that doesn't qualify at H4/H6/H8/H12).
+  H2 context is too noisy — admits false signals.
+
+VERDICT: H4 is optimal for primary line. H2 degrades. H6/H8/H12 are alternate clones.
+  INTERESTING: H6/H8/H12 naturally removes Feb-16 (the r=5.2 bad trade)!
+  Branch F WINNER: H4 (Gen0 unchanged). H6 = interesting Gen1 variant.
+  H6 adds May-26 (unknown quality) while removing Feb-16 (known loser).
+
+NOTE: May-26 2026 trade not in ATR14 baseline. Quality TBD — worth investigation.
+
+===== T550: MILESTONE — FULL CLONE TREE SUMMARY + Gen3 PLAN =====
+
+=== COMPLETE GEN0/GEN1 TREE ===
+
+Gen0 (primary): lo10/ATR14/ema50/H4 → n=9 WR=100% avg=+0.1032%
+
+Gen1 Branch A (lo_period): lo25 WINNER → n=7 WR=100% avg=+0.1214% (+18%)
+Gen1 Branch B (ATR_period): ATR14 unchanged; ATR21 = PARALLEL REGIME LINE
+Gen1 Branch C (qc_window): INSENSITIVE (qc5-qc20 identical)
+Gen1 Branch D (entry_shift): shift=0 (close) OPTIMAL
+Gen1 Branch E (ema50_period): INSENSITIVE (ema20-ema200 identical) ← NEW
+Gen1 Branch F (HTF_period): H4 OPTIMAL; H6/H8/H12 = minor alt variant ← NEW
+
+NON-VARIABLES IDENTIFIED (lock permanently):
+  - qc_window (5-20 identical)
+  - ema50_period (20-200 identical)
+  - entry_shift (close optimal)
+
+=== Gen2 BEST CANDIDATES (confirmed) ===
+
+Gen2A: lo25 + accel<=-0.0001: n=5 WR=100% avg=+0.1284%
+  Trades: Dec-10, Dec-18, Mar-30, May-14, Oct-12
+
+Gen2B: lo25 + r>=18: n=5 WR=100% avg=+0.1300% (BEST Gen2)
+  Trades: Dec-10, Dec-18, Jan-08, Feb-17, Mar-30
+  (Different 5 than Gen2A!)
+
+ATR21 Parallel: ATR21+accel<=-0.0002: n=6 WR=100% avg=+0.0994%
+  2 unique 2025 signals: Jul-10 and Aug-18
+
+=== Gen3 PLAN (3 variables from Gen0) ===
+
+Gen3 must combine 2+ Gen1 winners or Gen2 winners:
+
+Gen3A: lo25 + accel<=-0.0001 + r>=18
+  Combines Gen2A + Gen2B. Likely n=3 (Dec-10, Dec-18, Mar-30 only = full-momentum trio)
+  Expected: n=3 WR=100% avg=+0.1476%+ (the trio)
+
+Gen3B: lo25 + accel<=-0.0001 + w_below=1
+  Combines lo25+accel with w_below gate
+  Expected: n=3-4 WR=100% (subset of Gen2A)
+
+Gen3C: lo25 + r>=18 + H6
+  lo25 + r-gate + alternate HTF (H6 removes Feb-16 naturally)
+  Expected: n=4-5 WR=100% avg high
+
+Gen3D: ATR21 + lo25 + accel<=-0.0002
+  Double quality gate on the 2025 regime line
+  Expected: very high quality but low n
+
+Gen3E: lo25 + accel<=-0.0001 + ema50_accel_magnitude (top quartile)
+  Rank-based accel gate on lo25
+
+PRIORITY ORDER: Gen3A first (highest likely avg), then Gen3B, Gen3C.
+
+=== SIGNAL LINE ARCHITECTURE (current) ===
+
+LINE 1 (Primary ATR14):
+  Entry: Gen0 n=9. Quality: Gen2B n=5.
+  Full-momentum: r>=18+accel<=-0.0001 n=3 (Dec-10, Dec-18, Mar-30)
+
+LINE 2 (ATR21 2025 regime):
+  Entry: ATR21+accel<=-0.0002 n=6.
+  Unique 2025: Jul-10, Aug-18.
+
+NEXT BATCHES:
+T551-T555: Gen3 batch — run Gen3A/B/C/D/E, report full-momentum survivors, identify Gen4 plan.
+T556-T560: May-26 trade investigation (H6 signal), lo25+H6 clone, more 2026 regime mapping.
+
