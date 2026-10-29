@@ -1,40 +1,12 @@
 {
-  "timestamp": "2026-10-28T18:41Z",
-  "from": "cloud-relay-listener",
+  "timestamp": "2026-10-29T02:01Z",
+  "from": "cloud-colors-thread",
   "commands": [
     {
-      "id": "cmd-019",
-      "label": "usb-backup",
-      "note": "Back up D: files to C:\\Temp\\usb_backup before wiping. No UAC.",
-      "command": "powershell -WindowStyle Hidden -Command \"New-Item -ItemType Directory -Force 'C:\\Temp\\usb_backup' | Out-Null; Copy-Item 'D:\\alpine-standard-3.24.3-x86_64.iso' 'C:\\Temp\\usb_backup\\' -Force -ErrorAction SilentlyContinue; Copy-Item 'D:\\claude_boot' 'C:\\Temp\\usb_backup\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-019';label='usb-backup';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');backed_up=(Get-ChildItem 'C:\\Temp\\usb_backup' -Recurse | Measure-Object).Count}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-020",
-      "label": "ventoy-fresh-install",
-      "note": "Fresh Ventoy on D: (wipes D:). Searches common paths; if not found, downloads from GitHub. UAC will appear - click Yes.",
-      "command": "powershell -WindowStyle Hidden -Command \"$paths=@('C:\\Ventoy\\Ventoy2Disk.exe','C:\\Temp\\Ventoy2Disk.exe','C:\\Temp\\usb_backup\\ventoy\\Ventoy2Disk.exe') + (Get-ChildItem $env:USERPROFILE\\Downloads,'C:\\Users\\endos\\Desktop' -Filter 'Ventoy2Disk.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -Expand FullName); $exe=$paths|Where-Object{$_ -and (Test-Path $_)}|Select-Object -First 1; if(-not $exe){$zip='C:\\Temp\\ventoy_dl.zip'; Invoke-WebRequest 'https://github.com/ventoy/Ventoy/releases/download/v1.1.05/ventoy-1.1.05-windows.zip' -OutFile $zip -UseBasicParsing; Expand-Archive $zip 'C:\\Temp\\ventoy_dl' -Force; $exe=Get-ChildItem 'C:\\Temp\\ventoy_dl' -Filter 'Ventoy2Disk.exe' -Recurse | Select-Object -First 1 -Expand FullName}; if($exe){Start-Process $exe -ArgumentList '/I D:' -Verb RunAs -Wait; $st='launched'}else{$st='not_found'}; $r=[PSCustomObject]@{cmd='cmd-020';label='ventoy-fresh-install';status=$st;exe=$exe;ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ')}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
-      "silent": false
-    },
-    {
-      "id": "cmd-021",
-      "label": "usb-restore",
-      "note": "Restore alpine ISO + claude_boot back to D: after Ventoy install completes. No UAC.",
-      "command": "powershell -WindowStyle Hidden -Command \"Copy-Item 'C:\\Temp\\usb_backup\\alpine-standard-3.24.3-x86_64.iso' 'D:\\' -Force -ErrorAction SilentlyContinue; Copy-Item 'C:\\Temp\\usb_backup\\claude_boot' 'D:\\claude_boot' -Recurse -Force -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-021';label='usb-restore';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ');d_root=(Get-ChildItem 'D:\\' | Select-Object -Expand Name)}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-006",
-      "label": "watchdog-reg",
-      "note": "Register Cloud_DC_Watchdog scheduled task.",
-      "command": "powershell -WindowStyle Hidden -Command \"$action=New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -NonInteractive -File C:\\Users\\endos\\claude_watchdog.ps1';$trigger1=New-ScheduledTaskTrigger -AtLogOn;$trigger2=New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 15) -Once -At (Get-Date);Register-ScheduledTask -TaskName Cloud_DC_Watchdog -Action $action -Trigger $trigger1,$trigger2 -RunLevel Highest -Force\"",
-      "silent": true
-    },
-    {
-      "id": "cmd-005",
-      "label": "defender-excl",
-      "note": "Add Defender exclusions for Signal/relay folders.",
-      "command": "powershell -WindowStyle Hidden -Command \"Add-MpPreference -ExclusionPath 'C:\\Users\\endos\\Signal','C:\\Users\\endos\\relay','C:\\Signal' -ErrorAction SilentlyContinue\"",
+      "id": "cmd-022",
+      "label": "install-claude-colors-v2",
+      "note": "Install updated claude_field_colors_v2.user.js into Tampermonkey scripts folder. Fixes field borders + Claude icon visibility under black-green-2 theme.",
+      "command": "powershell -WindowStyle Hidden -Command \"$src='https://raw.githubusercontent.com/EndoScorpion/signal/relay/relay/claude_field_colors_v2.user.js'; $dst='C:\\Users\\endos\\AppData\\Roaming\\Tampermonkey\\scripts'; if(-not (Test-Path $dst)){New-Item -ItemType Directory -Force $dst | Out-Null}; Invoke-WebRequest $src -OutFile (Join-Path $dst 'claude_field_colors_v2.user.js') -UseBasicParsing -ErrorAction SilentlyContinue; $r=[PSCustomObject]@{cmd='cmd-022';label='install-claude-colors-v2';status='done';ts=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ')}; $p='relay\\from_cli.json'; $j=if(Test-Path $p){Get-Content $p -Raw|ConvertFrom-Json}else{[PSCustomObject]@{results=@();updated=''}}; $j.results+=$r; $j.updated=(Get-Date -Format 'yyyy-MM-ddTHH:mmZ'); $j|ConvertTo-Json -Depth 10|Set-Content $p\"",
       "silent": true
     }
   ],
