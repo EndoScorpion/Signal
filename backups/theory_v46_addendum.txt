@@ -1,0 +1,197 @@
+THEORY ADDENDUM v46 — T316-T320
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T316: PRIOR BAR DIRECTION (bar i-1) ===
+
+Test: does the direction of the bar immediately before the signal bar (i-1) predict PnL?
+
+  Prior bar bearish (close<open): n=9, WR=100%, avg=+0.1090%
+  Prior bar bullish (close>open): n=1, WR=100%, avg=+0.0906%
+  Prior bar bearish corr with pnl: +0.181
+  Prior bar body size corr with pnl: −0.026
+
+The one bullish prior bar case (2026-08-06): the signal bar itself is also bearish
+(close<open), so a bullish prior bar followed by a bearish breakout bar is rare.
+
+KEY FINDINGS:
+1. 9/10 trades are preceded by a bearish bar. Near-universal pattern.
+2. Correlation +0.181 for prior-bar-bearish: real but weak (< all V5 components).
+3. Prior bar body size has no correlation (−0.026) — magnitude doesn't matter.
+4. The one bullish prior bar trade is still a winner (+0.0906%) — no evidence that
+   a bullish prior bar disqualifies the setup.
+
+INSIGHT: The setup naturally requires a sequence of declining bars (compression
+period), so a bearish prior bar is nearly inevitable. It's a structural consequence
+of the qc (consecutive low-ATR bars) and lo10 break conditions — not an independent
+predictor.
+
+CONCLUSION: T316 INCONCLUSIVE. Prior bar direction is near-constant (9/10 bearish)
+and provides no independent filtering value. The +0.181 correlation is structurally
+induced, not a new signal. No filter warranted.
+
+=== T317: EMA_DIST>=3.0 + comp_v5>=0.5 COMBINATION FILTER ===
+
+Test: do the two best single filters (ema_dist≥3.0 from T310 and comp_v5≥0.5 from T297a)
+combine to produce a better subset?
+
+  ema_dist>=3.0 only:       n=4, avg=+0.1298%  (+21% vs base)
+  comp_v5>=0.5 only:        n=5, avg=+0.1297%  (+21% vs base)
+  BOTH (intersection):      n=3, avg=+0.1395%  (+30% vs base)  ← BEST SUBSET
+  ema3+ but v5<0.5:         n=1, avg=+0.1009%  (2026-05-14)
+  v5+ but ema3<3.0:         n=2, avg=+0.1150%  (2024-12-18, 2026-01-08)
+
+Intersection trades (the 3 that pass both):
+  2026-03-30: ema=4.58×, v5=0.789 → +0.1618%  ← best trade overall
+  2026-02-17: ema=3.69×, v5=0.700 → +0.1167%
+  2024-12-10: ema=3.31×, v5=0.583 → +0.1399%  ← avg = +0.1395%
+
+KEY FINDINGS:
+1. BOTH filters combined: n=3, avg=+0.1395% — the best average of any filter combo
+   found so far. +30% above base, same as the pure ema_dist≥3.0 AND rank10-20 combo
+   from T305 (which also gave n=3 avg +0.1395%).
+2. The 3 intersection trades are among the 4 highest-PnL trades overall.
+3. Trade excluded by both-filter criterion:
+   - 2026-05-14 (ema3+ only, v5=0.447): passes ema but not V5 → +0.1009% (decent)
+   - 2024-12-18 (v5+ only, ema=0.83×): high V5 despite near-EMA entry → +0.1299%
+   - 2026-01-08 (v5+ only, ema=2.94×): just misses ema threshold → +0.1001%
+4. The two filters are PARTIALLY overlapping but not identical. ema_dist≥3.0 is a
+   component of comp_v5 (via ema_norm), so some overlap is expected.
+
+CONCLUSION: T317 USEFUL. Both-filter combination (ema_dist≥3.0 AND comp_v5≥0.5)
+gives the highest average at n=3 (+0.1395%). However n=3 is very small and may
+overfit. The practical recommendation remains comp_v5≥0.5 (n=5, +0.1297%) as it
+captures more trades with nearly identical avg. For a "premium" quality gate, the
+both-filter combination is the tightest valid criterion.
+
+=== T318: qc EXACT DISTRIBUTION ===
+
+Hypothesis: The qc (consecutive ATR<20 bars) threshold may be set at qc≥3 in the
+code but actual trade qc values may be much higher.
+
+  qc distribution:
+    qc=9:  n=1 (2026-02-16, +0.0480% — worst trade)
+    qc=10: n=1 (2025-12-30, +0.1032%)
+    qc=11: n=1 (2026-03-30, +0.1618% — best trade)
+    qc=13: n=1 (2026-08-06, +0.0906%)
+    qc=14: n=1 (2024-12-10, +0.1399%)
+    qc=15: n=2 (2026-01-08 +0.1001%, 2026-07-21 +0.0803%)
+    qc=16: n=2 (2024-12-18 +0.1299%, 2026-05-14 +0.1009%)
+    qc=30: n=1 (2026-02-17, +0.1167% — longest compression streak)
+
+  qc range: 9–30, median: 14.5
+  qc corr with pnl: +0.187
+
+CRITICAL FINDING: THE MINIMUM ACTUAL qc IS 9, NOT 3.
+The qc≥3 threshold in the code is COMPLETELY NON-BINDING — every single trade that
+fires already has qc≥9. The setup naturally requires a much longer compression
+window than the code demands. The typical compression run is 9–16 bars.
+
+WHY: The lo10 break condition requires price to fall below the 10-bar minimum. After
+9+ bars of compression (all with ATR rank<20), the price coil is tight enough that
+one decisive move breaks lo10. Shorter compression runs (qc=3-8) don't produce lo10
+breaks because price hasn't been sufficiently coiled. The qc threshold is effectively
+already enforced by the lo10 condition.
+
+IMPLICATION FOR qc=2 RELAXATION (from T308/T313):
+The qc=2 trade (2026-10-12) has exactly qc=2 — anomalously low. It passed all
+other filters and is a high-quality trade (V5=0.722) but is structurally unusual.
+The qc distribution shows it's an outlier relative to the 9+ bar baseline. Worth
+monitoring but not generalizing.
+
+qc correlation (+0.187) is positive but weak: longer compression runs don't strongly
+predict better PnL (best trade is qc=11, worst is qc=9 — near the same range).
+
+CONCLUSION: T318 MAJOR FINDING. qc≥3 is a phantom threshold — all trades have qc≥9.
+The lo10 break is the real binding gate. No action required (the setup already ensures
+high qc naturally). The effective minimum is qc≈9 bars of compression before lo10 break.
+
+=== T319: ROLLING FREQUENCY / CLUSTERING ===
+
+  Trade dates sorted: 2024-12-10, 2024-12-18, 2025-12-30, 2026-01-08, 2026-02-16,
+                      2026-02-17, 2026-03-30, 2026-05-14, 2026-07-21, 2026-08-06
+
+  Inter-trade gaps: min=1d, max=377d, median=39d, mean=67.1d
+  Gaps <7d (same week): 1  (2026-02-16→17, gap=1d)
+  Gaps 7-30d (1 month): 3
+  Gaps >30d:            5
+
+  The only within-week cluster: 2026-02-16 and 2026-02-17 (consecutive trading days).
+    2026-02-16: rank=2.8, ema=1.88×, pnl=+0.0480% (worst)
+    2026-02-17: rank=17.9, ema=3.69×, pnl=+0.1167% (better)
+    Two different compression windows firing on consecutive days — not the same setup.
+    The 1-trade-per-day dedup means these are separate calendar days.
+
+  Gap corr with next-trade PnL: −0.046 (near zero — wait time doesn't predict quality)
+
+  EXPECTED TRADE FREQUENCY: ~3-4 trades/year based on n=10 over ~2.8 years (2024-2026).
+    2024: n=2 (Dec only)
+    2025: n=1 (Dec)
+    2026: n=7 (Jan-Aug) ← elevated frequency in 2026
+
+  The 2026 acceleration is notable: 7 trades in 8 months vs 3 in 14 months (2024-2025).
+  This may reflect more frequent ATR compression windows in 2026.
+
+CONCLUSION: T319 INCONCLUSIVE. Trade clustering is minimal (one consecutive-day pair).
+Frequency is accelerating in 2026 but n=10 is too small to determine if this is
+structural or random. No clustering filter warranted.
+
+=== T320: PRIOR DAY HIGH/CLOSE RELATIVE POSITION ===
+
+Test: is the signal bar close below/above prior day high and prior day close?
+(Prior day = calendar day i-1; prior day close = last bar of that day.)
+
+  All 9 trades with prior day data: close BELOW prior day high AND prior day close.
+  This is 100% prevalence — every qualifying signal is in continuation/breakdown mode.
+
+Interpretation:
+- Every signal closes BELOW prior day's entire candle (both high and close).
+- This is structurally required: we're entering SHORT setups after a lo10 break.
+  If price is below prior day close AND prior day high, it means:
+  (a) We're in a multi-day down move (not just an intraday dip)
+  (b) The compression period has been declining or flat below prior day levels
+  (c) The signal bar extends the breakdown further
+
+CONCLUSION: T320 TRIVIAL. 100% prevalence means this is not a filter — it's an
+implicit consequence of the setup's directional nature (short entry on lo10 break
+in a downtrend). No new predictive value. The finding confirms setup coherence
+(all entries are in genuine downtrend conditions) but adds no filtering power.
+
+=== CUMULATIVE FINDINGS SUMMARY (T316-T320) ===
+T316: Prior bar direction — 9/10 bearish (structural consequence of qc). Corr=+0.181.
+      Not a new predictor. No filter.
+T317: BOTH ema_dist≥3.0 AND comp_v5≥0.5: n=3, avg=+0.1395% — tightest valid filter.
+      Practical recommendation remains comp_v5≥0.5 (n=5 +0.1297%).
+T318: MAJOR — qc minimum is actually 9, not 3. qc≥3 is phantom. lo10 break is the
+      real gate. All trades have qc 9-30, median 14.5.
+T319: No meaningful clustering. One consecutive-day pair (Feb 16-17, 2026).
+      Frequency accelerating in 2026 but n=10 prevents conclusions.
+T320: ALL trades below prior day H AND C — trivial structural consequence. No filter.
+
+=== UPDATED BEST PROVISIONAL FILTERS ===
+1. BOTH ema_dist>=3.0 AND comp_v5>=0.5:  n=3, avg=+0.1395% (+30%) ← TIGHTEST
+2. rank10-20 AND ema50>=3.0:              n=3, avg=+0.1395% (+30%)
+3. comp_v5>=0.5:                          n=5, avg=+0.1297% (+21%) ← PRIMARY
+4. H4-aligned AND rank10-20:              n=5, avg=+0.1297% (+21%)
+5. comp_v2>=0.6:                          n=4, avg=+0.1296% (+21%)
+
+=== KEY STRUCTURAL INSIGHTS FROM T318 ===
+The qc (consecutive compression bars) threshold reveals:
+  - qc≥3 in code: phantom gate — all trades at qc=9-30
+  - Effective natural minimum: qc≈9 (enforced by lo10 break physics)
+  - Compression duration is self-selecting — the lo10 condition weeds out short runs
+  - This means the setup is MORE conservative than coded: true effective qc_min≈9
+
+=== NEXT THEORY DIRECTIONS (T321+) ===
+1. T321: Day-of-week analysis (Mon/Tue/Wed/Thu/Fri) — do certain weekdays have higher quality?
+2. T322: Prior week performance context (was EURUSD trending down prior week?)
+3. T323: ATR value absolute (not rank) at entry — is absolute ATR correlated with pnl?
+4. T324: EMA50 slope at entry (positive/negative/flat) — H1 EMA50 direction
+5. T325: Breakout magnitude (how far below lo10 does the signal bar close?)
+
+=== TOTAL THEORIES TESTED: 320 ===
+T316: Prior bar direction — structural, not predictive. No filter.
+T317: Both-filter combo — n=3 avg +0.1395%. Valid tightest filter.
+T318: qc min=9, not 3. qc≥3 is phantom. lo10 enforces natural minimum.
+T319: No clustering. Frequency accelerating 2026.
+T320: Prior day context — trivially always below prior H and C.
