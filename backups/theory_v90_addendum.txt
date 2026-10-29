@@ -1,0 +1,138 @@
+THEORY LOOP ADDENDUM v90 — T536-T540 CLONE-GEN BATCH Gen1
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== CLONE-GEN METHODOLOGY =====
+Gen0 = original: {lo10, ATR14, qc_window=10, shift=0}
+Gen1 = one variable changed at a time (4 branches tested)
+Gen2 = two variables changed (winner of Gen1 × Gen1)
+Winners reset as new Gen0 for their own clone tree.
+
+===== T536: BRANCH A — lo_period clone (Gen1) =====
+
+Sweep: lo5 to lo25 (10 is Gen0):
+  lo5:  n=10 WR=90%  avg=+0.0677%  ← ADDS 2025-04-25 (LOSER), degrades
+  lo7:  n=9  WR=100% avg=+0.1032%  ← identical to lo10 (same 9 trades)
+  lo8:  n=9  WR=100% avg=+0.1032%  ← identical
+  lo10: n=9  WR=100% avg=+0.1032%  ← GEN0 BASELINE
+  lo12: n=9  WR=100% avg=+0.1032%  ← identical (same 9 trades)
+  lo15: n=9  WR=100% avg=+0.1032%  ← identical
+  lo20: n=8  WR=100% avg=+0.1110%  ← FILTERS OUT Feb-16 (BAD), avg improves!
+  lo25: n=7  WR=100% avg=+0.1214%  ← FILTERS OUT Feb-16 AND Jan-08, avg improves more!
+
+KEY FINDING: lo period is INSENSITIVE from lo7 to lo15 — identical 9 trades.
+  lo5 ADDS a 2025 loser (Apr-25) — shorter lookback admits noise.
+  lo20+ FILTERS OUT bad trades (Feb-16 first, then Jan-08) as they don't break
+  the wider lo20/lo25 range (tighter recent-low condition).
+
+DISCOVERY: lo20 acts as a QUALITY FILTER — equivalent to the r>=18 gate but
+  through a different mechanism (wider lookback = only strongest breaks qualify).
+  lo25: avg=+0.1214% vs lo10: avg=+0.1032% (+18% improvement, n=7)
+  Both: 100% WR. lo25 removes 2 profitable trades but raises average.
+
+VERDICT: lo20 and lo25 are SOFT-UPGRADE clones.
+  lo25 at n=7 = 100% WR, avg=+0.1214% — Gen1 BRANCH A WINNER.
+  The lo10→lo25 change is a valid quality filter (same mechanism as r>=18 but orthogonal).
+  Do NOT hard-replace lo10 — it screens away profitable trades.
+  Recommend: add lo20/lo25 as a soft "extreme break" filter alongside r>=18.
+
+===== T537: BRANCH B — ATR period clone (Gen1) =====
+
+Sweep: ATR7 to ATR50:
+  ATR7:  n=3  WR=100% avg=+0.0650%  ← different 3 trades (Feb-16, Apr-03, Oct-12!)
+  ATR10: n=5  WR=100% avg=+0.0769%
+  ATR14: n=9  WR=100% avg=+0.1032%  ← GEN0 BASELINE
+  ATR21: n=15 WR=80%  avg=+0.0595%  ← ADDS 6 new trades including 2025 trades!
+  ATR28: n=20 WR=80%  avg=+0.0547%
+  ATR50: n=31 WR=74%  avg=+0.0419%
+
+CRITICAL FINDING: ATR21 UNLOCKS 2025 TRADES!
+  ATR21 trades include: 2025-03-26, 2025-07-10, 2025-08-18 — THREE 2025 signals!
+  The 2025 regime gap (zero trades with ATR14) dissolves with ATR21.
+  Longer ATR period = smoother rank = lower threshold for atr_rank<29 gate = more signals.
+
+  But ATR21 WR drops to 80% (3 losers in 15 trades). New trades at lower quality.
+
+ATR7: completely different trade set — only 3 trades, 2 are different from ATR14.
+  ATR7 is too noisy (responsive to short-term spikes, less stable rank).
+
+VERDICT: ATR14 CONFIRMED BEST for current gate design.
+  ATR21 adds 2025 coverage but at the cost of WR (80% vs 100%).
+  ATR21 branch is a SEPARATE CLONE LINE to investigate — different regime, different trades.
+  BRANCH B WINNER: ATR14 (Gen0 unchanged). ATR21 = interesting Gen1 variant with 2025 data.
+
+===== T538: BRANCH C — qc_window clone (Gen1) =====
+
+Sweep: qc_window 3 to 20:
+  qc_w3:  n=8  WR=100% avg=+0.0991%  ← drops one trade
+  qc_w5:  n=9  WR=100% avg=+0.1032%  ← identical to qc10
+  qc_w7:  n=9  WR=100% avg=+0.1032%  ← identical
+  qc_w10: n=9  WR=100% avg=+0.1032%  ← GEN0 BASELINE
+  qc_w12: n=9  WR=100% avg=+0.1032%  ← identical
+  qc_w15: n=9  WR=100% avg=+0.1032%  ← identical
+  qc_w20: n=9  WR=100% avg=+0.1032%  ← identical
+
+FINDING: qc_window is COMPLETELY INSENSITIVE from qc5 to qc20 — all produce identical 9 trades.
+  The qc>=3 minimum threshold is the binding constraint, not the window size.
+  qc_w3 drops one trade (slightly tighter count with shorter window).
+
+VERDICT: qc_window does NOT matter between 5 and 20. The qc>=3 threshold is what counts.
+  Potential future test: qc threshold (qc>=1, qc>=2, qc>=4) rather than window.
+  BRANCH C: no improvement found. Gen0 unchanged.
+
+===== T539: BRANCH D — entry shift clone (Gen1) =====
+
+shift=0 (close of signal bar): n=9 WR=100% avg=+0.1032% ← GEN0 BASELINE
+shift=1 (open of bar+1):        n=9 WR=89%  avg=+0.0818%
+
+Difference: May-14 becomes a LOSS (-0.1092%) with next-bar-open entry.
+  All other 8 trades identical. May-14 had an adverse gap open on bar+1.
+
+VERDICT: Entering at close of signal bar is OPTIMAL. Next-bar open is worse.
+  The close-of-bar entry is already "confirmed" by the lo10 break being in the same bar.
+  Waiting for next open introduces timing risk.
+
+===== T540: MILESTONE — Gen1 WINNER SUMMARY =====
+
+Branch A winner: lo25 → n=7 WR=100% avg=+0.1214% (↑ from +0.1032%)
+Branch B winner: ATR14 (unchanged) — ATR21 is a separate research line
+Branch C winner: qc_w5-20 all identical — no improvement
+Branch D winner: shift=0 (original close entry) — unchanged
+
+GEN2 CANDIDATE: lo25 + ATR14 = {lo25, ATR14, qc10, shift=0}
+  Result: n=7 WR=100% avg=+0.1214% — same as Branch A winner alone
+  (lo25 already contains the ATR14 signals; combining both doesn't change the set)
+
+NEW CLONE LINES IDENTIFIED:
+  1. lo25 line: stronger break filter, higher avg, lower n (7 vs 9)
+  2. ATR21 line: more signals including 2025, but lower WR (80%)
+     → investigate ATR21 with quality sub-gates to restore WR
+
+===== NEW INSIGHTS THIS BATCH =====
+  1. lo period is INSENSITIVE from lo7 to lo15 — identical 9 trades
+  2. lo25 acts as an implicit quality filter (same effect as r>=18 from different direction)
+  3. ATR21 UNLOCKS 2025 — 3 new 2025 trades found (Mar-26, Jul-10, Aug-18)
+  4. ATR21 degrades WR to 80% — needs sub-gating to use
+  5. qc_window insensitive across all tested values (qc5-qc20 = identical)
+  6. Entry shift: close is optimal, next-bar open loses May-14
+  7. Gen2 plan: lo25+ATR14 = identical to lo25 alone (no compounding effect)
+
+===== ATR21 BRANCH — NEW PRIORITY =====
+ATR21 produces 2025 trades! These 3 new 2025 signals need investigation:
+  2025-03-26, 2025-07-10, 2025-08-18
+
+  Questions:
+  - What is their quality (r, ema50_dist, etc)?
+  - Can r>=18 sub-gate restore WR to 100% within ATR21?
+  - Are these genuine lo10 breaks in the 13-14 UTC window with ATR21 regime?
+
+NEXT BATCH (T541-T545):
+  T541: ATR21 deep dive — per-trade analysis of all 15 trades
+        What are the 6 new trades? Can quality gates restore WR?
+  T542: ATR21 + r-gate — test r>=15, r>=18, r>=20 within ATR21
+  T543: lo25 line — add accel<=-0.0001 and w_below sub-gates (extend quality filtering)
+  T544: qc threshold test — qc>=1, qc>=2, qc>=4 (window irrelevant, threshold matters)
+  T545: MILESTONE — Gen1 tree complete, Gen2 plan with best survivors
