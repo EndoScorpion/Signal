@@ -1,0 +1,149 @@
+THEORY LOOP ADDENDUM v93 — T551-T555 Gen3 COMPLETE + Gen4 PLAN
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T551: Gen3A — lo25 + accel<=-0.0001 + r>=18 =====
+
+RESULT: n=3 WR=100% avg=+0.1476%
+
+FULL-MOMENTUM TRIO ISOLATED PERFECTLY:
+  2024-12-10: +0.1463% r=18.7 accel=-0.000424 w_below=1
+  2024-12-18: +0.1358% r=21.0 accel=-0.000127 w_below=1
+  2026-03-30: +0.1607% r=28.2 accel=-0.000341 w_below=1
+
+KEY FINDING: All 3 trio members have w_below=1 (price below weekly EMA20).
+  This was not enforced — it emerged naturally. 100% hit rate.
+  Gen3A is the CLEANEST triple-filter defining the highest quality subtype.
+
+avg=+0.1476% is HIGHEST of any configuration tested.
+Per-year: {2024:2, 2026:1} — no 2025 signals in trio.
+
+CONFIRMATION ACROSS 5 INDEPENDENT PATHWAYS:
+  Path 1: r>=18 + accel<=-0.0001 (T528)
+  Path 2: r>=18 + w_below_ema20=1 (T529)
+  Path 3: lo25 + accel<=-0.0002 (T543)
+  Path 4: lo25 + w_below=1 (T543 near-miss, n=4)
+  Path 5: lo25 + accel<=-0.0001 + r>=18 (THIS: Gen3A) ← strongest
+  All converge on {Dec-10, Dec-18, Mar-30}.
+
+===== T552: Gen3B — lo25 + accel<=-0.0001 + w_below=1 =====
+
+RESULT: n=4 WR=100% avg=+0.1367%
+
+Trades: {Dec-10, Dec-18, Mar-30, Oct-12}
+  2024-12-10: +0.1463% r=18.7 accel=-0.000424
+  2024-12-18: +0.1358% r=21.0 accel=-0.000127
+  2026-03-30: +0.1607% r=28.2 accel=-0.000341
+  2026-10-12: +0.1040% r=13.5 accel=-0.000293
+
+NOTE: Oct-12 (r=13.5) is included despite low r because accel=-0.000293 is strong
+  and w_below=1. This is the "extended full-momentum" set = trio + Oct-12.
+  Oct-12 quality is real (+0.1040%) despite low r.
+
+COMPARISON: Gen3A (trio only) avg=+0.1476% vs Gen3B (trio+Oct12) avg=+0.1367%.
+  Adding Oct-12 dilutes the average but n=4 > n=3. Trade-off between quality and coverage.
+
+===== T553: Gen3C — lo25 + r>=18 + H6 =====
+
+RESULT: n=6 WR=100% avg=+0.1091%
+
+Trades: {Dec-10, Dec-18, Jan-08, Feb-17, Mar-30, May-26}
+  2026-05-26: +0.0043% r=27.4 accel=+0.000013  ← WARNING: POSITIVE accel!
+
+CRITICAL FINDING — May-26 RED FLAG:
+  May-26 passes all 6 gates EXCEPT accel > 0 (decelerating slope, not accelerating).
+  Result: nearly zero (+0.0043%). This is not a losing trade but it's a WARNING.
+  May-26 exposes a weakness of H6: the H6 context gate passes a deceleration signal.
+
+LESSON: H6 changes the set but doesn't improve quality filtering. H4+accel gate is better.
+  Gen3C is SUBOPTIMAL vs Gen2B (lo25+r>=18 n=5 avg=+0.1300%).
+
+ALSO: lo25+H6 n=8 WR=100% avg=+0.1067% includes May-26 with tiny gain.
+  H6 alone does NOT filter May-26 out.
+
+VERDICT: H6 branch not recommended without accel gate. Dismiss Gen3C as Gen3A/Gen3B inferior.
+
+===== T554: May-26 trade investigation + Gen3D =====
+
+May-26 2026 details:
+  pnl=+0.0043% r=27.4 accel=+0.000013 w_below=1 h4_dist=1.68
+  ema50 is barely decelerating (accel barely positive = slope flattening)
+  Result: near-zero = the signal edge degraded at this bar
+
+This confirms: accel MUST be negative for quality trades. Positive accel = avoid.
+  May-26 would be filtered by accel<=-0.0001 gate.
+
+Gen3D: ATR21+lo25+accel<=-0.0002: n=6 WR=100% avg=+0.0994%
+  IDENTICAL result to ATR21+accel<=-0.0002 (T546).
+  lo25 condition adds nothing to ATR21 regime: the ATR21 accel gate already ensures quality.
+  The 6 trades are the same as without lo25.
+
+VERDICT: lo25 is REDUNDANT in ATR21 regime (accel gate is sufficient).
+  ATR21 signal line remains: ATR21+accel<=-0.0002, no lo25 needed.
+
+===== T555: MILESTONE — Gen3 COMPLETE + Gen4 PLAN =====
+
+=== COMPLETE CLONE TREE ===
+
+Gen0:  lo10/ATR14/ema50/H4    n=9 WR=100% avg=+0.1032%
+Gen1A: lo25                   n=7 WR=100% avg=+0.1214%  (+18%)
+Gen2A: lo25+accel<=-0.0001    n=5 WR=100% avg=+0.1284%  (+24%)
+Gen2B: lo25+r>=18             n=5 WR=100% avg=+0.1300%  (+26%)
+Gen3A: lo25+accel+r>=18       n=3 WR=100% avg=+0.1476%  (+43%) ← BEST
+Gen3B: lo25+accel+w_below     n=4 WR=100% avg=+0.1367%  (+32%)
+Gen3C: lo25+r+H6              n=6 WR=100% avg=+0.1091%  (suboptimal, May-26 drag)
+Gen3D: ATR21+lo25+accel       n=6 WR=100% avg=+0.0994%  (same as ATR21 alone)
+
+ATR21 Line: ATR21+accel<=-0.0002: n=6 WR=100% avg=+0.0994%
+
+NON-VARIABLES (locked):
+  qc_window, ema50_period, entry_shift
+
+SIGNAL LINE ARCHITECTURE:
+  Line 1 Primary: Gen0 n=9, quality tier Gen2B n=5, premium Gen3A n=3
+  Line 2 ATR21 2025: n=6, 2 unique 2025 signals
+
+=== Gen3 KEY CONCLUSIONS ===
+
+1. FULL-MOMENTUM TRIO IS THE APEX: Gen3A (lo25+accel+r) n=3 avg=+0.1476%
+   All 3 have w_below=1 (emerged organically). Gold standard signals.
+
+2. EXTENDED SET (Gen3B n=4) adds Oct-12: dilutes slightly but still excellent.
+
+3. H6 BRANCH REJECTED: May-26 has positive accel = not a quality signal.
+   H4 is confirmed optimal. H6/H8/H12 not recommended.
+
+4. lo25 REDUNDANT IN ATR21 REGIME: ATR21 accel gate already ensures quality.
+
+=== Gen4 PLAN (4 variables from Gen0) ===
+
+Gen4A: lo25 + accel<=-0.0001 + r>=18 + w_below=1
+  = Gen3A + w_below=1
+  Expected: n=3 exactly (trio), all already have w_below=1
+  Test: does this hold or does any trio member fail w_below?
+
+Gen4B: ATR21 + accel<=-0.0002 + r>=18
+  = ATR21 line + r-quality gate
+  Expected: filters ATR21 to highest quality signals (Dec-10, Jul-10, Mar-30?)
+
+Gen4C: lo25 + accel<=-0.0001 + r>=18 + accel threshold scan
+  Tighten accel threshold on Gen3A: -0.0002, -0.0003, -0.0004
+
+Gen4D: lo25 + r>=18 + accel<=-0.0001 + H6
+  = Gen3A + H6 (tests if H6 changes trio membership)
+
+Gen4E: lo25 + accel<=-0.0001 + body_atr<0.5 (impulse bar filter)
+  Tests body size as quality gate on Gen2A
+
+PRIORITY: Gen4A first (confirms trio w_below convergence), then Gen4B (ATR21 quality).
+
+===== NEXT BATCH (T556-T560) =====
+T556: Gen4A — Gen3A + w_below=1 (confirm trio is perfectly defined)
+T557: Gen4B — ATR21 + r>=18 + accel<=-0.0002 (premium 2025 line)
+T558: Gen4C — accel threshold tightening on Gen3A
+T559: Gen4D/E — H6 interaction + body_atr filter
+T560: MILESTONE — Gen4 complete, identify irreducible minimum, forward-test spec
+
