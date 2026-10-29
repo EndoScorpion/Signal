@@ -1,0 +1,246 @@
+THEORY LOOP ADDENDUM v79 — T481-T485
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T481: ENTRY BAR BODY SIZE =====
+
+Corr(body_atr, pnl_pct) = -0.032 (NEAR ZERO — not predictive)
+
+body_atr values at each trade (sorted by body size, ascending):
+  body_atr=0.101 r=28.2 → +0.1607%  ← best trade, SMALLEST body (barely moved)
+  body_atr=0.110 r=21.0 → +0.1358%
+  body_atr=0.179 r=5.2  → +0.0405%  (bad r trade)
+  body_atr=0.333 r=23.4 → +0.0973%
+  body_atr=0.447 r=13.5 → +0.1040%
+  body_atr=0.597 r=9.5  → +0.0385%  (bad r trade)
+  body_atr=0.760 r=27.0 → +0.1101%
+  body_atr=0.865 r=17.1 → +0.0954%
+  body_atr=0.926 r=18.7 → +0.1463%  ← 2nd best trade, LARGEST body
+
+Body threshold scan:
+  body_atr>=0.2: n=6 avg=+0.0986%  (removes 3 small-body trades)
+  body_atr<=0.5: n=5 avg=+0.1077%  (small body only — very slight improvement)
+  body_atr<=1.5: n=9 avg=+0.1032%  (baseline — all pass existing <=1.5 gate)
+
+OBSERVATION: The best trade (2026-03-30, +0.1607%) has body_atr=0.101 (tiny body = doji-like),
+but the 2nd best (2024-12-10, +0.1463%) has body_atr=0.926 (large body). This is contradictory
+— there is no consistent body size pattern for good trades.
+
+VERDICT: Body size (body_atr) is NOT predictive of outcome (corr=-0.032). The existing
+body_atr<=1.5 gate is already in place as a cap (prevents extreme moves). No improvement
+from adding a minimum body size or a tighter maximum. The correlation is noise.
+Do NOT add body_atr as a quality gate. Current cap <=1.5 is sufficient and correct.
+
+===== T482: BAR RANGE SPREAD (h-l)/ATR — VOLUME PROXY =====
+
+Corr(bar_range_atr, pnl_pct) = -0.312 (weak negative — wider bar range = SLIGHTLY WORSE)
+
+bar_range values at each trade (sorted ascending):
+  1.022 r=28.2 → +0.1607%  ← best, narrowest bar range
+  1.051 r=13.5 → +0.1040%
+  1.077 r=5.2  → +0.0405%  (bad trade, narrow range)
+  1.184 r=23.4 → +0.0973%
+  1.333 r=18.7 → +0.1463%
+  1.425 r=21.0 → +0.1358%
+  1.520 r=27.0 → +0.1101%
+  1.543 r=17.1 → +0.0954%
+  1.791 r=9.5  → +0.0385%  ← worst, widest bar range
+
+OBSERVATION: Weak negative correlation — wider bar range = slightly worse outcome on average.
+This makes intuitive sense: a very wide bar on entry (large H-L spread) means more volatility
+at the moment of entry, which is contradictory to the "quiet" context the setup seeks.
+
+Threshold scan highlights:
+  bar_range<=1.5: n=6 avg=+0.1141%  ← slight improvement (drops 2026-07-21 wide bar)
+  bar_range>=1.3: n=5 avg=+0.1052%  ← no improvement (keeps wide bars)
+
+PROBLEM: bar_range<=1.5 improves average by dropping 2026-07-21 (r=9.5, bad trade), but
+this is the same trade r>=18 already drops. Confound again.
+
+VERDICT: bar_range_atr correlation (-0.312) is weak and confounded with r.
+The 2 outliers (narrowest=best trade, widest=worst trade) drive the correlation.
+Do NOT add bar_range as a gate — it adds no value beyond r>=18.
+Soft note: very wide entry bars (>1.5×ATR on H-L) are a mild negative indicator.
+
+===== T483: 2-BAR CONFIRMATION (next bar also closes below lo10) =====
+
+Standard (bar i close): n=9 avg=+0.1032%
+2-bar confirm (filter — keep only if next c<lo10): n=5 avg=+0.1017%
+
+Trades dropped by 2-bar confirm (4 trades):
+  2024-12-10: → +0.1463%  ← GOOD trade dropped
+  2024-12-18: → +0.1358%  ← GOOD trade dropped
+  2026-01-08: → +0.0973%  ← decent trade dropped
+  2026-02-16: → +0.0405%  ← bad trade correctly dropped
+
+VERDICT: 2-bar confirmation is HARMFUL. It drops 3 good trades and only 1 bad trade.
+The n=5 average (+0.1017%) is LOWER than baseline (+0.1032%). This is because the filter
+drops the 2 highest-quality IS trades (Dec 2024).
+
+CRITICAL FINDING: Entering on bar i+1 (delayed entry after confirmation) is much worse:
+  n=5, WR=80%, avg=+0.0254%
+  One clear LOSS: 2026-03-30 → -0.0410% (best original trade becomes a loser after delay)
+  Why: the 1.5×ATR target is measured from the DELAYED entry price. After the price already
+  moved down (confirming the breakdown), the target is harder to reach, and stop is tighter
+  relative to remaining move. Confirmation kills the edge by entering AFTER the move.
+
+MECHANISM: The lo10 break IS the signal — entering at the break point captures the initial
+momentum. Waiting for a 2nd close below lo10 means entering AFTER that momentum and getting
+worse price. This destroys the edge.
+
+CONCLUSION: Original entry (first bar that crosses lo10 at h=13-14) is correct and optimal.
+Do NOT add any 2-bar confirmation requirement. Immediate entry at the lo10 break is the edge.
+
+===== T484: EMA50 H1 SLOPE (5-bar normalized) ★ NOTABLE ★ =====
+
+Corr(ema50_slope, pnl_pct) = -0.518 (NOTABLE — steeper falling EMA = better)
+
+ALL 9 trades have NEGATIVE EMA slope (price falling, H1 EMA50 pointing down).
+slope = (EMA50_now - EMA50_5bars_ago) / ATR14 — all negative confirms bearish trend.
+
+EMA slope at each trade (sorted by slope, most negative = steepest):
+  slope=-0.6879 r=28.2 → +0.1607%  ← best trade, steepest falling EMA
+  slope=-0.6506 r=13.5 → +0.1040%
+  slope=-0.5206 r=17.1 → +0.0954%
+  slope=-0.5081 r=18.7 → +0.1463%  ← 2nd best trade, also steep
+  slope=-0.4470 r=27.0 → +0.1101%
+  slope=-0.4174 r=23.4 → +0.0973%
+  slope=-0.2098 r=5.2  → +0.0405%  ← bad trade, FLAT slope
+  slope=-0.2087 r=9.5  → +0.0385%  ← worst trade, FLAT slope
+  slope=-0.1126 r=21.0 → +0.1358%  ← EXCEPTION: r=21, great trade despite flat slope
+
+CRITICAL PATTERN: The 2 worst trades (r=5.2, r=9.5) have the FLATTEST EMA slopes (-0.21, -0.21).
+The 2 best trades have the STEEPEST slopes (-0.69, -0.51).
+Corr=-0.518 is the 4th-strongest correlation found (after ATR14, r, 4-day ATR).
+
+EXCEPTION: 2024-12-18 has slope=-0.1126 (flat) but is a great trade (+0.1358%).
+This trade has r=21.0 and is one of the 2024 IS trades — it's a quality trade despite flat slope.
+So slope is NOT a hard gate (the exception is a high-r trade).
+
+Threshold scan:
+  slope<=-0.5: n=4 avg=+0.1266%  (drops 5 trades: keeps steepest 4)
+  slope<=-0.3: n=6 avg=+0.1190%  (drops the 3 flattest trades)
+  slope<=-0.1: n=9 avg=+0.1032%  (all pass — no filter effect)
+  slope<=0.0:  n=9 avg=+0.1032%  (same)
+
+USING slope<=-0.3 (6 trades, avg=+0.1190%):
+Drops: 2026-02-16 (r=5.2, bad), 2026-07-21 (r=9.5, bad), 2024-12-18 (r=21.0, GOOD!).
+Same problem — it drops a good trade (Dec-18) while removing the bad ones.
+r>=18 already handles the bad trades WITHOUT dropping Dec-18.
+
+REDUNDANCY CHECK: Is slope<=-0.3 a new filter or another redundant expression?
+  Slope<=-0.3 n=6 trades (drops r=5.2, r=9.5, r=21.0)
+  r>=18 n=5 trades (drops r=5.2, r=9.5)
+  They are NOT identical — slope<=-0.3 additionally drops 2024-12-18 (r=21.0, a GOOD trade).
+  slope<=-0.3 is MORE restrictive than r>=18 AND costs a good trade. Inferior.
+
+  Slope<=-0.5 n=4: avg=+0.1266% but n=4 too small for gating.
+
+VERDICT: ema50_slope corr=-0.518 is NOTABLE but adds no gate beyond r>=18.
+The 2 worst trades have flat slope (≥-0.25), but they are already removed by r>=18.
+The exception (Dec-18: flat slope, great trade) would be incorrectly removed.
+SOFT positive indicator: slope<=-0.4 (steep downtrend) = higher confidence, but NOT a hard gate.
+This is the 4th-ranked correlation overall and confirms the setup benefits from strong downtrend.
+
+INSIGHT: Flat slope + low r = "market is trying to consolidate/reverse" — these are the
+lower-quality setups. Steep slope + high r = "genuine bearish momentum continuation" = best edge.
+The r>=18 gate already captures this by requiring momentum percentile, but slope gives a second
+independent angle on trend strength.
+
+===== T485: QUIET STREAK (consecutive quiet bars before entry) =====
+
+Corr(quiet_streak, pnl_pct) = -0.492 (NOTABLE — more consecutive quiet bars = WORSE!)
+
+Quiet streak values (consecutive quiet bars immediately before entry):
+  streak=0 qc=5 r=18.7 → +0.1463%  (2024-12-10)
+  streak=0 qc=4 r=21.0 → +0.1358%  (2024-12-18)
+  streak=0 qc=5 r=23.4 → +0.0973%  (2026-01-08)
+  streak=0 qc=7 r=5.2  → +0.0405%  (2026-02-16, bad)
+  streak=0 qc=6 r=28.2 → +0.1607%  (2026-03-30, best)
+  streak=0 qc=3 r=17.1 → +0.0954%  (2026-05-14)
+  streak=1 qc=5 r=27.0 → +0.1101%  (2026-02-17)
+  streak=1 qc=5 r=13.5 → +0.1040%  (2026-10-12)
+  streak=2 qc=8 r=9.5  → +0.0385%  (2026-07-21, WORST)
+
+KEY FINDING: 6 of 9 trades have streak=0 (NO consecutive quiet bars immediately before entry).
+The worst trade (2026-07-21) has streak=2 AND qc=8 — most "quiet" of all setups, yet worst trade.
+The best trade (2026-03-30) has streak=0, qc=6 — quiet bars scattered, not consecutive.
+
+PARADOX: Requiring quiet streak >= 1 gives n=3 avg=+0.0842% — WORSE than baseline (+0.1032%)!
+This is because the streak>=1 group is dominated by 2026-07-21 (streak=2, +0.0385%).
+
+INTERPRETATION: The qc (rolling 10-bar quiet count) already captures "quiet context" correctly.
+A HIGH consecutive streak (like streak=2, qc=8) actually indicates excessive consolidation —
+the market has been TOO quiet for TOO long, which may signal weakening momentum (lower ATR,
+lower energy for the target move). The qc<=6 gate (already known equivalent of r>=18) captures
+this: qc=8 (streak=2 trade) is the worst performer.
+
+The best setups have MIXED quiet context (qc=3-6, streak=0) — quiet bars scattered over
+10 bars, not necessarily all at the end. This is actually the optimal setup shape:
+consolidation over recent history, but with some movement still occurring.
+
+Streak + r>=18: streak>=1 + r>=18 = n=1 (only 2026-02-17). Too restrictive.
+
+VERDICT: quiet_streak is NOT a useful gate. Requiring consecutive quiet bars HURTS performance.
+The existing rolling qc>=3 is the correct quiet-band measure. Do NOT require consecutive streaks.
+The -0.492 correlation is interesting but in the WRONG direction for gating — more consecutive
+quiet = worse trades. Keep qc (rolling) and do NOT add streak requirement.
+
+===== CORRELATION RANKINGS — COMPLETE TABLE (v79) =====
+Rank | Feature           | Corr   | Gate?   | Status
+1    | composite_score   | +0.970 | NO      | IS only, overfit
+2    | exit_bar          | -0.841 | NO      | post-hoc
+3    | ATR14             | +0.898 | YES     | r>=18 (equiv) — TIER 1
+4    | r (ATR rank)      | +0.795 | YES     | r>=18 AND r<29 — PRIMARY
+5    | 4-day ATR         | +0.698 | NO      | captured by ATR14
+6    | range10           | +0.541 | SOFT+   | larger prior swing = better
+7    | qc (OOS)          | -0.741 | equiv   | redundant with r>=18
+8    | ema50_slope (NEW) | -0.518 | SOFT-   | flat slope = weaker trade (NOT hard gate)
+9    | h1_rsi            | -0.489 | NO      | all already <50; no actionable threshold
+10   | quiet_streak (NEW)| -0.492 | NO      | more streak = WORSE (use rolling qc only)
+11   | |prev_d1_ret|     | +0.465 | NO      | soft preference
+12   | prev_d1_ret       | -0.437 | NO      | soft preference
+13   | d1_dist           | +0.414 | NO      | covered by h4d gate
+14   | ATR slope         | +0.383 | NO      | structural artifact
+15   | d1_rsi            | -0.294 | NO      | weak, implied by structure
+16   | bar_range_atr(NEW)| -0.312 | NO      | confounded with r
+17   | DOW               | ~0     | NO      | no pattern Mon-Thu
+18   | h4_rsi            | -0.067 | NO      | near-zero
+19   | atr_5b_change     | +0.062 | NO      | near-zero, structural noise
+20   | body_atr          | -0.032 | cap only| existing <=1.5 gate sufficient
+21   | bearish_body      | ~0     | NO      | no directional edge
+
+===== CANONICAL GATE — FINAL v79 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars
+
+Soft positive indicators (no gate):
+  - range10 >= 4.0 (large 10-bar price swing before setup)
+  - prev_d1_ret < 0 (prior day was down)
+  - h1_rsi < 30 (more oversold = better, but NOT a hard threshold)
+  - ema50_slope <= -0.4 (steep H1 downtrend = stronger momentum — NEW, T484)
+
+Hard gates tested and rejected (T481-T485):
+  body_atr gate: corr=-0.032, no edge
+  bar_range gate: confounded with r
+  2-bar confirmation: HARMFUL — drops good trades, delayed entry destroys edge
+  ema50_slope gate: drops good trade (Dec-18), inferior to r>=18
+  quiet_streak gate: MORE streak = WORSE performance
+
+===== NEXT BATCH (T486-T490) =====
+T486: EMA20 H1 cross — does the entry bar need price to be below EMA20 (faster trend)?
+      The EMA50 filter is already in place. EMA20 would be a tighter short-term trend filter.
+T487: Pre-breakdown volume shape (bars -5 to -1) — using bar_range_atr as volume proxy:
+      Is there a pattern in the H-L spread sequence before the lo10 break?
+T488: Intraday momentum: price change within the signal bar (c - o as % of ATR).
+      Does the signal bar need to be accelerating DOWN (large open-to-close drop)?
+T489: Sector/time positioning — does the setup quality correlate with
+      time-of-year? (Q1 Jan-Mar vs Q4 Oct-Dec, historically more EURUSD trending)
+T490: Gap-open detection — does the EURUSD H1 open price deviate significantly from
+      prior close? Gaps would affect the lo10 break signal quality (fake breakdowns).
