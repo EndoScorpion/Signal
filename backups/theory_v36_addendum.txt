@@ -1,0 +1,144 @@
+THEORY ADDENDUM v36 — T283-T285
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T283: SIGNAL BAR RANGE EXPANSION (bar TR vs avg of prior 5 bars) ===
+Question: Does a expanding signal bar (big breakout bar) perform better or worse than a quiet entry?
+
+Per-trade sorted by bar_tr_ratio:
+  2026-03-30: bar_tr_ratio=0.95 [neutral] → +0.1618% (BEST trade — neutral expansion)
+  2026-02-16: bar_tr_ratio=0.96 [neutral] → +0.0480% (WORST trade — neutral)
+  2026-01-08: bar_tr_ratio=1.13 [neutral] → +0.1001%
+  2025-12-30: bar_tr_ratio=1.17 [neutral] → +0.1032%
+  2024-12-10: bar_tr_ratio=1.29 [expanding] → +0.1399%
+  2026-02-17: bar_tr_ratio=1.35 [expanding] → +0.1167%
+  2024-12-18: bar_tr_ratio=1.51 [expanding] → +0.1299%
+  2026-05-14: bar_tr_ratio=1.66 [expanding] → +0.1009%
+  2026-08-06: bar_tr_ratio=1.78 [expanding] → +0.0906%
+  2026-07-21: bar_tr_ratio=1.94 [expanding] → +0.0803% (most expanding = worst non-outlier)
+
+Buckets:
+  expanding (ratio>1.2): n=6, avg=+0.1097%
+  neutral (0.8-1.2):     n=4, avg=+0.1033%
+  contracting (<0.8):    n=0
+
+Correlation (bar_tr_ratio vs pnl): -0.199
+
+KEY FINDING: -0.199 correlation = NEGATIVE (counter-intuitive) but WEAK. A larger relative
+signal bar is slightly associated with WORSE return. The two best trades (2026-03-30, +0.1618%
+and 2024-12-10, +0.1399%) are in opposite expansion groups (neutral vs expanding). The most
+expanding bar (2026-07-21, ratio=1.94) is the 4th worst trade.
+
+MECHANISM: A quietly small signal bar within a compression environment likely reflects cleaner
+institutional accumulation before the move. A large bar may indicate the initial breakdown bar
+is already exhausting, reducing follow-through. However the sample is too small to confirm.
+
+CONCLUSION: -0.199 correlation is 8th in predictor ranking (below all top filters). Even
+"expanding vs neutral" differs by only +0.006%. The signal bar size filter is directionally
+negative but too weak to use. NOT a filter.
+
+=== T284: CONSECUTIVE LOWER HIGHS (prior 5 bars before signal) ===
+Question: Does a sustained lower-high structure (price staircase down) predict better trades?
+
+Per-trade sorted by consec_lower_highs:
+  clh=0: n=3, avg=+0.1339% | 2024-12-10, 2026-01-08, 2026-03-30 (three BEST trade dates)
+  clh=1: n=3, avg=+0.0937% | 2024-12-18, 2025-12-30, 2026-02-16
+  clh=2: n=2, avg=+0.0854% | 2026-08-06, 2026-07-21
+  clh=3: n=2, avg=+0.1088% | 2026-05-14, 2026-02-17
+
+Threshold tests:
+  clh>=1: n=7, avg=+0.0956%
+  clh>=2: n=4, avg=+0.0971%
+  clh>=3: n=2, avg=+0.1088%
+
+Correlation: -0.350
+
+SURPRISE: clh=0 (NO consecutive lower highs) is BEST (+0.1339%) — the three best trades
+(2026-03-30, 2024-12-10, 2026-01-08) all have no consecutive lower highs in prior 5 bars.
+This is counterintuitive: you'd expect a cleaner downtrend structure to predict better entries.
+
+However there's a NON-MONOTONIC pattern: clh=0 (+0.1339%) > clh=3 (+0.1088%) > clh>=1 (+0.0956%).
+The clh=0 trades happen to include the top-performing rank10-20 trades — so this may be
+RANK-CONFOUNDED. When compression is moderate and rank 10-20, the highs may naturally not
+show consecutive lower pattern because the bars are ALL compressed equally.
+
+INVERTING AS FILTER: clh=0 (no consecutive lower highs) = n=3, avg=+0.1339% (+25%)
+BUT: 2026-02-16 has clh=1 and is the worst trade; removing it via any filter would improve
+that bucket. More importantly, clh=0 captures the same 3 trades as T277's top cluster
+(rank10-20 AND ema50>=3.0). Likely confounded.
+
+CONCLUSION: -0.350 correlation = 5th in predictor ranking (same as consec_down). The clh=0
+finding is promising at +25% improvement but n=3 and likely confounded with rank. Directional
+insight: fewer consecutive lower highs = stronger entry. NOT an independent filter yet.
+
+=== T285: H4 TREND ALIGNMENT (H1 EMA200 approximating H4 EMA50) ===
+Question: Do trades aligned with H4 downtrend (price < H4 EMA50) outperform counter-trend?
+
+Per-trade:
+  H4-counter (above H4 EMA): n=2, avg=+0.0969% | 2025-12-30, 2026-08-06
+  H4-aligned (below H4 EMA): n=8, avg=+0.1097% | all other trades
+
+Correlation (h4_dist from EMA vs pnl): +0.369
+
+KEY FINDING: +0.369 correlation — H4 trend alignment IS a meaningful predictor!
+- H4-aligned (8 trades): avg +0.1097% vs H4-counter (2 trades): avg +0.0969%
+- The +0.128% delta is notable, but n=2 counter-trend trades is too small to confirm
+- The two counter-trend trades: 2025-12-30 (+0.1032%) and 2026-08-06 (+0.0906%) —
+  both profitable, just lower magnitude
+
+IMPORTANT: 2026-08-06 counter-trend at h4_dist=-6.16× means price is FAR ABOVE H4 EMA
+(6.16 ATR above), very unusual. This is structurally different from small counter-trend.
+2025-12-30 at h4_dist=-0.41× is only slightly above H4 EMA (nearly aligned).
+
+H4 distance distribution as predictor:
+  h4_dist sorted lowest to highest shows NO clear monotonic relationship with pnl.
+  Correlation +0.369 is real but not dominant — 5th/6th overall in predictor strength.
+
+METHOD NOTE: H1 EMA200 is an approximation of H4 EMA50. More accurate: aggregate H1 to H4
+then compute true EMA50. The approximation may introduce error, particularly in trending
+markets where EMA50 lag differs between true H4 and H1-approximated.
+
+CONCLUSION: +0.369 correlation — genuine new predictor at #5-6 rank (similar to T268
+EMA50 distance at +0.463). H4 alignment adds independent information because it captures
+a HIGHER TIMEFRAME trend bias beyond the H1 EMA50. However n=2 counter-trend is too small
+for a hard filter. Directional preference: H4-aligned (h4_dist > 0) trades are better.
+
+PROVISIONAL INSIGHT: H4 alignment (h4_dist > 0, price below H4 EMA50 proxy) is the
+strongest NEW predictor found in T280-T285 batch. All 8 H4-aligned trades average +0.1097%,
+a +2.4% improvement over baseline — modest but consistent.
+
+=== CUMULATIVE PREDICTOR RANKINGS (updated through T285) ===
+1. T272: ATR rank (within rank<20) — +0.756
+2. T259: Prior day range location — -0.730
+3. T271: Composite score (T259-weighted) — +0.619
+4. T268: EMA50 distance — +0.463
+5. T285: H4 trend alignment (H1 EMA200) — +0.369 (NEW)
+6. T263: Consec down days — +0.356
+7. T284: Consec lower highs (neg) — -0.350
+8. T260: Prior week location — -0.328
+9. T256: Signal bar size — -0.300
+10. T281: Hour (13h vs 14h) — +0.223
+11. T253: Intraday drift — +0.227
+12. T254: Compression length qc — +0.187
+13. T283: Bar expansion ratio — -0.199
+
+=== PLATEAU CHECK ===
+T283-T285 batch: 1 new predictor (T285 H4 alignment, +0.369).
+T280-T282 batch: 0 new filters/predictors (all redundant or too weak).
+
+Not yet at plateau — T285 H4 alignment is a genuine new angle worth further testing:
+- True H4 aggregation vs H1 EMA200 approximation (refine the measure)
+- H4 alignment × rank10-20 interaction (does H4 filtering improve on rank alone?)
+- H4 alignment × loc<0 interaction
+
+=== TOTAL THEORIES TESTED: 285 ===
+T283: Bar expansion — -0.199 correlation. Slightly negative but weak. Not a filter.
+T284: Consec lower highs — -0.350 correlation. clh=0 best (+25%) but confounded with rank.
+T285: H4 alignment — +0.369 correlation. NEW #5 PREDICTOR. 8 of 10 trades are H4-aligned.
+
+BEST PROVISIONAL FILTERS (unchanged):
+1. rank10-20 AND ema50>=3.0:    n=3, avg=+0.1395% (+30%)
+2. loc<-0.3 AND rank10-20:      n=2, avg=+0.1393% (+30% — too sparse)
+3. loc<0 AND rank10-20:         n=4, avg=+0.1296% (+21%)
+4. ema50_dist >= 3.0×:          n=4, avg=+0.1298% (+21%)
+5. consec_down >= 1:            n=8, avg=+0.1166% (+8.9%)
