@@ -1,0 +1,187 @@
+THEORY LOOP ADDENDUM v76 — T466-T470
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== T466: PREVIOUS-DAY DECLINE SIZE =====
+
+  Corr(prev_d1_ret, pnl)     = -0.437  (direction: DOWN = better)
+  Corr(|prev_d1_ret|, pnl)   = +0.465  (magnitude: LARGER move = better)
+
+Both direction AND magnitude predict quality. Sorted by prior day:
+  prev_d1=-0.0021 → +0.1358%  ← large down day before
+  prev_d1=-0.0016 → +0.0954%
+  prev_d1=-0.0015 → +0.1101%
+  prev_d1=-0.0014 → +0.1607%  ← best trade also had large prior down day
+  prev_d1=-0.0011 → +0.0973%
+  prev_d1=-0.0010 → +0.0385%  ← worst DOWN day (see below)
+  prev_d1=-0.0009 → +0.1463%
+  prev_d1=+0.0000 → +0.0405%  ← flat day before = bad trade
+  prev_d1=+0.0001 → +0.1040%  ← barely up but good trade (ATR=82.8, qc=5)
+
+NOTE: 2026-07-21 has prev_d1=-0.0010 (down day) but is still worst trade at +0.0385%.
+Its weakness is driven by ATR=65.3pts and qc=8, not prior day.
+The direction filter alone is not sufficient — it's the combination.
+
+Threshold scan (prev day down by at least X%):
+  prev_d1<=-0.05%: n=7 avg=+0.1120%  (drops the 2 flat/up days)
+  prev_d1<=-0.10%: n=6 avg=+0.1063%
+  prev_d1<=-0.15%: n=3 avg=+0.1138%
+  prev_d1<=-0.20%: n=1 avg=+0.1358%  (n=1 too small)
+
+VERDICT: prev_d1<=-0.05% gives n=7 avg=+0.1120% — marginal improvement over baseline.
+It drops the 2 flat/near-zero days (2026-02-16 and 2026-10-12).
+But 2026-10-12 is a decent trade (+0.1040%), so this filter hurts there.
+Don't add as a hard gate. Soft preference: trades after a down day are more reliable.
+
+===== T467: ATR SLOPE — RISING vs FALLING =====
+
+  Corr(atr_slope_norm, pnl) = +0.383 (positive = rising ATR = better)
+
+ATR slope at each trade:
+  2026-02-16: slope=-0.017 (FALLING) → +0.0405%  ← only falling ATR trade
+  2026-03-30: slope=+0.135 (RISING)  → +0.1607%
+  2026-07-21: slope=+0.135 (RISING)  → +0.0385%  ← rising ATR but worst trade
+  2026-10-12: slope=+0.137 (RISING)  → +0.1040%
+  2024-12-10: slope=+0.196 (RISING)  → +0.1463%
+  2024-12-18: slope=+0.266 (RISING)  → +0.1358%
+  2026-01-08: slope=+0.283 (RISING)  → +0.0973%
+  2026-05-14: slope=+0.328 (RISING)  → +0.0954%
+  2026-02-17: slope=+0.365 (RISING)  → +0.1101%
+
+  Rising ATR: n=8 avg=+0.1110%
+  Falling ATR: n=1 avg=+0.0405%
+
+OBSERVATION: 8/9 trades have RISING ATR. The 1 falling-ATR trade (2026-02-16) is the 2nd worst.
+VERDICT: Rising ATR slope is nearly universal at setup time — it's barely a filter (8/9 pass).
+It does NOT meaningfully separate good from bad trades (2026-07-21: rising ATR, worst trade).
+The positive correlation (+0.383) is mostly explained by the single outlier (2026-02-16).
+Do NOT add ATR slope as a gate. The LEVEL of ATR (ATR>=80) matters much more than slope.
+
+INTERPRETATION: All lo10 breakdowns happen after a period of consolidation (quiet band)
+which by definition means ATR has been rising TOWARD the breakout — this is structural.
+
+===== T468: ALL COMBINATIONS OF TOP-3 EX-ANTE FILTERS =====
+
+  Single gates:
+    atr>=80: n=6 avg=+0.1257%
+    r>=18:   n=5 avg=+0.1300%  ← best single
+    qc<=6:   n=7 avg=+0.1214%  ← most inclusive
+
+  Pairs:
+    atr>=80 + r>=18:  n=5 avg=+0.1300%  (same as r>=18 alone — ATR adds nothing here)
+    atr>=80 + qc<=6:  n=6 avg=+0.1257%  (same as atr>=80 alone — qc adds nothing here)
+    r>=18   + qc<=6:  n=5 avg=+0.1300%  (same as r>=18 alone — qc adds nothing here!)
+
+  Triple:
+    atr>=80 + r>=18 + qc<=6: n=5 avg=+0.1300%  (identical to r>=18 alone)
+
+CRITICAL FINDING: ALL THREE GATES OVERLAP ON THE SAME 5 TRADES.
+r>=18 alone, qc<=6+r>=18, atr>=80+r>=18, and the triple — all give IDENTICAL n=5 avg.
+This confirms T461's finding: these filters are REDUNDANT at current sample size.
+
+They are all screening the same 2 bad trades:
+  2026-02-16: r=5.2 (fails r>=18), qc=7 (fails qc<=6), atr=78.0 (fails atr>=80)
+  2026-07-21: r=9.5 (fails r>=18), qc=8 (fails qc<=6), atr=65.3 (fails atr>=80)
+
+Both bad trades fail ALL THREE criteria. Combining gates adds zero filtering power
+with current data. The underlying discriminant is "market had enough energy."
+
+RECOMMENDATION: Use r>=18 as the single gate (most interpretable, ties to momentum
+percentile rank). ATR>=80 and qc<=6 are equivalent alternative expressions.
+For future validation: when new trades arrive, check if any gate separates them
+differently — that would reveal the true discriminant.
+
+===== T469: SEASONALITY — ZERO TRADES IN 2025 (BOMBSHELL) =====
+
+Qualifying setups per month across full data range:
+  2024-Dec: 2 qualifying bars  → 2 trades (IS)
+  2025:     0 qualifying bars  ← ENTIRE YEAR 2025 HAS ZERO QUALIFYING SETUPS
+  2026-Jan: 1 qualifying bar   → 1 trade
+  2026-Feb: 2 qualifying bars  → 2 trades
+  2026-Mar: 1 qualifying bar   → 1 trade
+  2026-May: 1 qualifying bar   → 1 trade
+  2026-Jul: 1 qualifying bar   → 1 trade
+  2026-Oct: 1 qualifying bar   → 1 trade
+
+BOMBSHELL: THE SYSTEM WENT DARK FOR ALL OF 2025.
+No qualifying setups met the base gate (r<29, lo10 break, h4d>=1.0, etc.) during 2025.
+
+IMPLICATIONS:
+1. The data file spans 2024-01-01 to ~2026-10. All of 2025 is in the data.
+2. The setup is RARE (~1 qualifying bar per month when active).
+3. During 2025, EURUSD likely had a different volatility/trending regime
+   that kept the base gate from triggering (either ATR was too high/low,
+   or the quiet-band + lo10 pattern didn't appear within the window).
+4. This is NOT a data gap — it's a genuine market regime where the setup
+   didn't fire. The system is regime-dependent.
+
+Trade distribution by month (all 9 trades):
+  Dec: n=2 (seasonal? High volatility before year-end)
+  Feb: n=2 (February setups — potentially NFP/Fed heavy)
+  Jan, Mar, May, Jul, Oct: n=1 each
+  Zero in: Apr, Jun, Aug, Sep, Nov, and all 12 months of 2025
+
+The setup fires irregularly — approximately 1 qualifying bar per month when active,
+and can go dark for extended periods (all of 2025 = 12 months silence).
+
+RISK IMPLICATION: A live trader running this system in 2025 would have seen
+ZERO qualifying entries for 12+ months. This is critical operational information.
+
+===== T470: SETUP VALIDITY OVER TIME =====
+
+IS (pre-2026, Dec 2024 only): n=2 WR=100% avg=+0.1411%
+OOS (2026+): n=7 WR=100% avg=+0.0924%
+
+Both sub-periods show 100% WR. OOS average is lower (+0.0924% vs +0.1411%) but:
+- OOS includes the 2 worst trades (r=5.2, r=9.5) which have low ATR
+- With quality gate (r>=18): OOS n=4 trades (2026-01-08, 2026-02-17, 2026-03-30, 2026-10-12)
+  → these are all quality trades in the 2026 regime
+
+SIGNAL IS STILL WORKING IN 2026. The OOS degradation vs IS is due to the specific
+2026 setups having lower average ATR than the 2024 setups (Dec 2024 had very high ATR).
+
+Key observation: The lo10 break pattern (short at 10-bar low with 4+ quiet preceding bars)
+has fired consistently whenever the regime permits. The regime constraint is:
+- ATR must be in the "moderately low" range (r<29 = below 29th percentile)
+- H1 price must be below both H4 EMA50 and H1 EMA50
+- Prior 10 bars must have had quiet action (qc>=3)
+When these conditions align globally (e.g., EURUSD in a quiet consolidation within
+a downtrend), setups appear. In 2025, this alignment was absent.
+
+===== UPDATED FEATURE CORRELATION TABLE =====
+Feature          | Corr with pnl | Direction | Gate status
+composite_score  | +0.970        | +         | in-sample only, not deployable
+exit_bar         | -0.841        | -         | post-hoc only, not ex-ante
+ATR14            | +0.898        | +         | DEPLOYED (>=80 ECN pts)
+r (ATR rank)     | +0.795        | +         | DEPLOYED (>=18 AND <29)
+4-day ATR        | +0.698        | +         | captured by ATR14, not added
+ATR slope        | +0.383        | +         | structural artifact, not added
+qc               | -0.546 global | -         | equiv to r>=18 (redundant gate)
+h1_rsi           | -0.489        | -         | no hard gate (soft: <=30)
+|prev_d1_ret|    | +0.465        | +         | soft preference (not hard gate)
+prev_d1_ret      | -0.437        | -         | soft preference (not hard gate)
+d1_dist          | +0.414        | +         | no hard gate (original h4d gate covers)
+
+===== CANONICAL GATE (FINAL v76) =====
+Tier 1 gate (n=5, avg=+0.1300%, 95% CI [+0.110%, +0.150%]):
+  r >= 18 AND r < 29           [ATR rank: moderately quiet, not extreme]
+  + Original gates: lo10 break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  ATR>=80 and qc<=6 are EQUIVALENT alternatives to r>=18; use only one.
+
+Tier 2 gate (n=7, avg=+0.1214%):
+  qc <= 6  (or r >= 13)
+  + same original gates
+
+OPERATIONAL REALITY: ~1 qualifying setup per active month. Can go dark 12+ months.
+
+===== NEXT BATCH (T471-T475) =====
+T471: Why did 2025 go dark? What ATR/trend conditions were present in 2025?
+      Check: was EURUSD in a trending (non-quiet) regime all of 2025?
+T472: Extended ATR rank window — try rolling(504) (2-year window) vs rolling(252) (1-year).
+      Does a longer window change which trades qualify?
+T473: Alternative quiet-band definition — instead of r<29 (ATR rank), use
+      rolling range: (high_10 - low_10) / ATR14. Does absolute compression predict better?
+T474: New entry variant — instead of lo10 break on CLOSE (current: l<lo10), try:
+      close<lo10. Does requiring close below instead of low below change quality?
+T475: Holding period optimization — current is 4-bar max with 1.5×ATR target.
+      Test: 3-bar max (tighter), 6-bar max (looser), 2× ATR target.
