@@ -1,0 +1,203 @@
+THEORY ADDENDUM v52 — T346-T350
+EURUSD FXOpen ECN H1 | COST=0.00008 (8pt round-trip) | UTC
+Base: n=10, WR=100%, avg=+0.1071%
+Generated: 2026-10-29
+
+================================================================
+T346: EXTENDED HOLD — 6 BARS vs 4 BARS
+================================================================
+
+Hold=4: n=10, WR=100%, avg=+0.1071%
+Hold=6: n=10, WR= 90%, avg=+0.1015%
+
+Per-trade pnl delta (h6 vs h4):
+  All 9 target hits: h6 = h4 (already hit by bar 2 or earlier, no change)
+  2026-02-16 (timeout at h4): h4=+0.0480% → h6=-0.0080% (STOP HIT at bar 6!)
+
+Exit breakdown for h6:
+  target:  n=9, avg=+0.1137% (unchanged)
+  timeout: n=1, avg=-0.0080% (timeout trade BECAME STOP at bar 5-6!)
+
+INTERPRETATION:
+- Extending to 6 bars HURTS the weakest trade (2026-02-16, lowest v6a=0.149)
+- The timeout trade, which barely ended positive at h4, becomes a stop hit at h6
+- All successful trades (9/9) already exited by bar 2 or earlier — extra bars add nothing
+- FINDING: h6 is strictly WORSE than h4. The 4-bar hold is optimal.
+- Lesson: this setup wins fast or not at all. Extra time = more retracement risk.
+
+================================================================
+T347: VOL-ADJUSTED TARGET — 2.0× ATR ON HIGH VOL SETUPS
+================================================================
+
+Equal target (1.5×): n=10, WR=100%, avg=+0.1071%
+Vol-adj target:      n=10, WR= 90%, avg=+0.0773%
+
+HIGH vol (2.0× tgt): n=4, avg=+0.0626%  ← WORSE than base
+LOW  vol (1.5× tgt): n=6, avg=+0.0872%  ← unchanged
+
+Per-trade delta (vol-adj vs base):
+  2024-12-10 (HIGH 2×): +0.1399% → +0.1891% Δ=+0.0493%   ← improved
+  2024-12-18 (HIGH 2×): +0.1299% → +0.1759% Δ=+0.0460%   ← improved
+  2026-02-17 (HIGH 2×): +0.1167% → -0.1327% Δ=-0.2494%   ← STOP HIT (big miss)
+  2026-03-30 (HIGH 2×): +0.1618% → +0.0180% Δ=-0.1438%   ← timeout (target never hit)
+
+Exit breakdown for vol-adj:
+  target:  n=7, avg=+0.1200%
+  stop:    n=1, avg=-0.1327%  (2026-02-17 reversed before 2× target)
+  timeout: n=2, avg=+0.0330%  (2026-03-30 best setup, best PnL, target too far)
+
+INTERPRETATION:
+- 2× ATR target works for Dec 2024 (strong compressed moves) but FAILS for:
+  * 2026-02-17: price reversed after 1× gain, stop hit at -0.1327%
+  * 2026-03-30 (v6a=0.831, BEST setup): never reached 2× — timeout at only +0.0180%
+- The 2 biggest improved trades (+0.049%, +0.046%) don't offset the 2 big losses
+- FINDING: Vol-adjusted target (2.0×) is HARMFUL. 1.5× is the correct target for all setups.
+- Lesson: the setup generates a momentum burst of ~1.5× ATR, not a sustained trend.
+  2× is too ambitious; the price often reverses after reaching ~1×–1.5×.
+
+================================================================
+T348: TIGHTER STOP — 1.0× ATR vs 1.5× ATR
+================================================================
+
+Stop=1.5×: n=10, WR=100%, avg=+0.1071%
+Stop=1.0×: n=10, WR= 40%, avg=-0.0036%
+
+Per-trade delta (stop=1.0 vs stop=1.5):
+  2024-12-10: base +0.1399% → tight -0.1066% Δ=-0.2464%  ← STOP HIT
+  2024-12-18: base +0.1299% → tight -0.0999% Δ=-0.2298%  ← STOP HIT
+  2025-12-30: base +0.1032% → tight +0.1032% Δ=0           (no change)
+  2026-01-08: base +0.1001% → tight -0.0801% Δ=-0.1802%  ← STOP HIT
+  2026-02-16: base +0.0480% → tight -0.0743% Δ=-0.1223%  ← STOP HIT
+  2026-02-17: base +0.1167% → tight +0.1167% Δ=0           (no change)
+  2026-03-30: base +0.1618% → tight +0.1618% Δ=0           (no change)
+  2026-05-14: base +0.1009% → tight -0.0806% Δ=-0.1814%  ← STOP HIT
+  2026-07-21: base +0.0803% → tight -0.0669% Δ=-0.1471%  ← STOP HIT
+  2026-08-06: base +0.0906% → tight +0.0906% Δ=0           (no change)
+
+Exit breakdown for 1.0× stop:
+  target: n=4, avg=+0.1181%
+  stop:   n=6, avg=-0.0847%  ← 6 of 10 trades stopped out!
+
+INTERPRETATION:
+- 1.0× stop catastrophic: 60% stop rate, avg PnL turns negative (-0.0036%)
+- The setup REQUIRES full 1.5× retracement room — the lo10 break on the entry bar
+  itself often causes a 0.5-1.0× initial retracement before the continuation
+- FINDING: 1.0× stop is definitively WORSE. 1.5× is correct (or wider is acceptable).
+- Lesson: The lo10 break entry style works on retracement entries where price
+  initially wicks against you by up to 1.5× ATR before reversing down.
+
+KEY INSIGHT from T347+T348 together:
+  ASYMMETRIC STRUCTURE: Setup has wide stop but tight target (1.5×/1.5×) and wins
+  because the momentum burst happens FAST (bar 1-2). The system does NOT benefit from
+  wider targets or tighter stops. The RR looks like 1:1 but the 100% WR makes it highly
+  profitable. Do not tamper with the 1.5×/1.5× geometry.
+
+================================================================
+T349: ENTRY BAR CLOSE POSITION
+================================================================
+
+close_pos corr with pnl: +0.131  (very weak — near null)
+Range: 0.146 – 0.771
+(0=close at high / 1=close at low of entry bar)
+
+bar_range_pts corr with pnl: +0.728  ← STRONG (redundant with ATR)
+
+Per-trade (sorted by close_pos):
+  2026-01-08: close_pos=0.146 range=9.6pts v6a=0.455 → +0.1001%
+  2026-03-30: close_pos=0.298 range=13.1pts v6a=0.831 → +0.1618%  ← best setup
+  2026-02-16: close_pos=0.333 range=8.4pts v6a=0.149 → +0.0480%  ← worst
+  2025-12-30: close_pos=0.373 range=11.0pts v6a=0.345 → +0.1032%
+  2024-12-18: close_pos=0.385 range=14.3pts v6a=0.586 → +0.1299%
+  2026-07-21: close_pos=0.444 range=11.7pts v6a=0.227 → +0.0803%
+  2026-05-14: close_pos=0.561 range=12.3pts v6a=0.408 → +0.1009%
+  2026-08-06: close_pos=0.699 range=13.3pts v6a=0.166 → +0.0906%
+  2026-02-17: close_pos=0.700 range=14.0pts v6a=0.649 → +0.1167%
+  2024-12-10: close_pos=0.771 range=14.4pts v6a=0.613 → +0.1399%
+
+Close position bins:
+  Near high (0.00-0.33): n=2, avg=+0.1310%
+  Mid-bar   (0.33-0.67): n=5, avg=+0.0924%
+  Near low  (0.67-1.00): n=3, avg=+0.1157%
+
+bar_range_pts is STRONG (+0.728) but this is redundant with ATR absolute (already in V6a)
+close_pos has no predictive value (+0.131)
+
+INTERPRETATION:
+- The entry bar close position (near hi vs near lo) does not predict trade outcome
+- bar_range_pts is just ATR in points — already captured by V6a/V7 composite
+- FINDING: Close position within entry bar is NULL predictor. Skip from all future models.
+- Note: The lo10 break means the LOW is the entry trigger; close anywhere within the bar
+  is acceptable — the key is where the bar LOW went, not where it closed.
+
+================================================================
+T350: CROSS-DAY CONTINUATION
+================================================================
+
+After prior target hit: n=0
+No prior target hit:    n=10, avg=+0.1071%
+
+INTERPRETATION:
+- Zero qualifying setups occurred on the day after a prior target hit
+- This means: each of the 10 trades in the sample had no qualifying setup on the following day
+- This is because: after a target hit, ATR rank often rises above 20 on the next bar
+  (the compression window is disrupted by the big move) — so the r<20 filter naturally
+  prevents same-week continuation setups
+- FINDING: Cross-day continuation is non-testable (n=0). The system self-resets naturally.
+- Alternative interpretation: the compression (qc>=3 consecutive bars with r<20) takes
+  days to re-establish — consistent with median qc=14.5 (14.5 hours = ~2 trading days)
+
+================================================================
+SUMMARY — UPDATED FINDINGS THROUGH T350
+================================================================
+
+DEFINITIVE PARAMETER TESTS:
+  Hold period: 4 bars optimal (6 bars hurts weakest trade)
+  Stop multiple: 1.5× ATR required (1.0× catastrophic: 60% stop rate)
+  Target multiple: 1.5× ATR optimal (2.0× hurts best setups)
+  Entry bar position: null (close_pos corr=+0.131)
+  Cross-day continuation: non-testable (n=0, system self-resets)
+
+CONFIRMED GEOMETRY: 1.5×ATR stop / 1.5×ATR target / 4-bar hold
+This is RR=1:1 but 100% WR → positive edge. DO NOT CHANGE.
+
+PREDICTOR RANKINGS (final through T350):
+  Individual:
+    1. ATR absolute:           +0.912
+    2. V5 composite:           +0.885
+    3. bar_range_pts:          +0.728 (=ATR, redundant)
+    4. ATR rank:               +0.756
+    5. EMA50 slope:            -0.702
+    6. Prior week direction:   -0.595
+    7. Compression ATR slope:  -0.569
+    8. Exit bar timing:        -0.464 (result, not input)
+    9. H4 dist quality:        +0.356
+   10. Prior lo10 break:       +0.294
+   11. Seasonality/month:      +0.253
+   12. Hour of day:            +0.223
+   13. qc length:              +0.187
+   14. Close position:         +0.131
+   15. Directional accuracy:   -0.105
+   16. Bar body size:          -0.097
+   17. Day of week:            -0.096
+
+  Composites:
+    V7 (V5+ATR_abs+slope_norm): +0.937 ← BEST
+    V6a (V5+ATR_abs):           +0.920
+    V5:                         +0.885
+
+BEST PRACTICAL FILTERS (final through T350):
+  1. v6a>=0.50: n=4, avg=+0.1371% (+28%) ← PRIMARY GATE
+  2. v6a>=0.60: n=3, avg=+0.1395% (+30%) ← TIGHTEST
+  3. comp_v5>=0.5: n=5, avg=+0.1297% (+21%) ← BROADEST RECOMMENDED
+
+SIZING FROM T343 (V7 quartile scoring):
+  Q1 (v7<0.309):  skip or 0.5× lot
+  Q2 (v7<0.454):  0.75× lot
+  Q3 (v7<0.579):  1.0× lot
+  Q4 (v7>=0.579): 1.5× lot
+
+T351: 2D filter grid — what is the optimal (V6a, ATR_abs) joint threshold?
+T352: EMA50 slope direction as binary filter (slope>0 = bullish EMA = better short environment?)
+T353: ATR deceleration rate — slope as continuous predictor at different qc windows (3,5,7,10 bars)
+T354: Weekly cycle — Monday entry vs mid-week (Mon/Tue vs Wed/Thu/Fri)
+T355: Higher hold count filter — require qc>=15 (vs current gate qc>=3)
