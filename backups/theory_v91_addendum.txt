@@ -1,0 +1,128 @@
+THEORY LOOP ADDENDUM v91 — T541-T545 CLONE-GEN Gen1 COMPLETE + Gen2 PLAN
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T541: ATR21 DEEP-DIVE =====
+
+ATR21 produces 15 trades: 9 from ATR14 + 6 NEW trades.
+The 6 NEW trades (not in ATR14):
+
+  2024-10-08: LOSS -0.0182% r=29.0 accel=-0.000146  ← just outside rank<29 gate normally
+  2024-10-09: WIN  +0.1126% r=21.4 accel=-0.000004  ← good result
+  2025-03-26: LOSS -0.1594% r=14.3 accel=+0.000031  ← ONLY POSITIVE ACCEL in full set (decelerating!)
+  2025-07-10: WIN  +0.1476% r=26.2 accel=-0.000339  ← STRONG, high-quality
+  2025-08-18: WIN  +0.0283% r=28.2 accel=-0.000234  ← mild win
+  2026-07-06: LOSS -0.1196% r=15.9 accel=-0.000145  ← losing despite negative accel
+
+CRITICAL FINDING: 2025-03-26 has POSITIVE accel (+0.000031) = decelerating slope.
+  This is the ONLY trade in the full ATR21 set with positive accel.
+  It's also the worst performer (-0.1594%). Confirms accel<0 is essential.
+
+2025 trades accessible via ATR21:
+  2025-03-26: LOSS (accel>0, low r=14.3) — filtered by accel gate
+  2025-07-10: WIN +0.1476% r=26.2 accel=-0.000339 — HIGH QUALITY!
+  2025-08-18: WIN +0.0283% r=28.2 accel=-0.000234 — moderate quality
+
+KEY: 2025 trades exist with ATR21! Jul-10 is a STRONG signal (accel=-0.000339, r=26.2).
+
+ALSO: ATR21 changes the r-values of existing ATR14 trades:
+  Dec-10 r goes from 18.7 (ATR14) to 10.3 (ATR21) — crosses below r>=18 threshold!
+  This means r-gate with ATR21 uses different calibration. ATR14 r-rank preferred.
+
+===== T542: ATR21 + r-gate =====
+
+r-gate alone doesn't restore 100% WR in ATR21:
+  ATR21 r>=18: n=6 WR=83% avg=+0.0736%  ← still 1 loser (Oct-08)
+
+accel<=-0.0002 restores 100% WR:
+  ATR21 accel<=-0.00020: n=6 WR=100% avg=+0.0994%
+
+Detail: ATR21 accel<=-0.0002 (n=6 100% WR):
+  All 6 trades are accelerating strongly. This is the tight accel filter.
+  But avg (+0.0994%) is LESS than ATR14 baseline (+0.1032%).
+
+ATR21 r>=18 + accel<=-0.0001 (n=5, WR=80%):
+  Oct-08 is a loser despite r=29 and accel=-0.000146.
+  Jul-10 2025 is in this set (+0.1476%) — the best 2025 trade.
+
+VERDICT: ATR21 branch yields 2025 access but at lower average quality.
+  The 2025-Jul-10 signal is genuinely high quality (+0.1476%, accel=-0.000339).
+  Recommend treating ATR21+accel<=-0.0002 as a SEPARATE parallel signal line.
+
+===== T543: lo25 LINE — quality sub-gates =====
+
+lo25 baseline: n=7 WR=100% avg=+0.1214%
+  All 7 trades: Dec-10, Dec-18, Jan-08, Feb-17, Mar-30, May-14, Oct-12
+  (Removed: Feb-16 r=5.2 and Jul-21 r=9.5 — both low quality)
+
+lo25 with sub-gates (all maintain 100% WR):
+  lo25+accel<=-0.0001: n=5 WR=100% avg=+0.1284%  ← removes Jan-08, May-14
+  lo25+accel<=-0.0002: n=3 WR=100% avg=+0.1370%  ← strong trio
+  lo25+r>=18:          n=5 WR=100% avg=+0.1300%  ← removes Jul-21 sub-r and May-14
+  lo25+w_below=1:      n=4 WR=100% avg=+0.1367%  ← Dec-10,Dec-18,Mar-30,Oct-12
+
+KEY: lo25+accel<=-0.0002 (n=3 avg=+0.1370%) = Dec-10, Dec-18, Mar-30
+  These are the same "full-momentum" trio! lo25 acts as orthogonal quality filter.
+  The full-momentum subtype is robust: identified by multiple independent gates.
+
+===== T544: qc THRESHOLD TEST =====
+
+qc threshold is INSENSITIVE from qc>=0 to qc>=4:
+  qc>=0: n=9 WR=100% avg=+0.1032%
+  qc>=1: n=9 WR=100% avg=+0.1032%
+  qc>=2: n=9 WR=100% avg=+0.1032%
+  qc>=3: n=9 WR=100% avg=+0.1032%  ← current baseline
+  qc>=4: n=8 WR=100% avg=+0.1042%  ← drops one trade, marginal improvement
+
+qc>=5 and above drops profitable trades.
+qc threshold <3 adds no trades (all 9 existing trades already have qc>=3).
+
+VERDICT: qc is essentially a binary gate — all good trades have qc>=3 naturally.
+  The qc>=3 threshold is a noise filter that happens to be non-binding for this signal.
+  Raising qc>=4 removes one trade with minimal benefit. Keep qc>=3.
+
+===== T545: MILESTONE — Gen1 COMPLETE, Gen2 PLAN =====
+
+GEN1 TREE COMPLETE:
+  Gen0 (original): n=9  WR=100% avg=+0.1032%
+  Branch A (lo25): n=7  WR=100% avg=+0.1214%  ← WINNER
+  Branch B (ATR21): n=15 WR=80%  avg=+0.0595%  ← separate line, unlocks 2025
+  Branch C (qc_w): unchanged (insensitive)
+  Branch D (shift): unchanged (close entry optimal)
+
+GEN2 CANDIDATES (2 variables from Gen0):
+  Gen2A: lo25+accel<=-0.0001: n=5 WR=100% avg=+0.1284%  ← quality improvement
+  Gen2B: lo25+r>=18:          n=5 WR=100% avg=+0.1300%  ← quality improvement
+  Gen2C: ATR21+accel<=-0.0002: n=6 WR=100% avg=+0.0994%  ← 2025 trades, lower avg
+
+FULL-MOMENTUM TRIO CONFIRMED BY 4 INDEPENDENT PATHS:
+  Path 1: r>=18 + accel<=-0.0001
+  Path 2: r>=18 + w_below_ema20=1
+  Path 3: lo25 + accel<=-0.0002
+  Path 4: lo25 + w_below=1 (n=4, 3 of the trio + Oct-12)
+  Consistently identifies {Dec-10, Dec-18, Mar-30} as highest quality subtype.
+
+ATR21 2025 LINE:
+  2025-Jul-10: +0.1476% r=26.2 accel=-0.000339 — matches full-momentum quality
+  2025-Aug-18: +0.0283% r=28.2 accel=-0.000234 — moderate
+  Both accessible with ATR21+accel<=-0.0002 (6 trades, 100% WR, avg=+0.0994%)
+
+CLONE-GEN RULES APPLIED:
+  1. lo period: insensitive 7-15, narrows at lo20+ (quality filter)
+  2. ATR period: ATR14 optimal for primary line; ATR21 = separate regime line
+  3. qc threshold: insensitive (binary gate, already non-binding)
+  4. Entry shift: close optimal
+  5. Winners (lo25) reset as new Gen0 for their own tree ✓
+
+===== NEXT BATCH (T546-T550) =====
+T546: ATR21 signal line — build a PARALLEL SIGNAL with ATR21+accel<=-0.0002
+      Test as standalone: does it work independently? Per-period breakdown.
+T547: Gen2A (lo25+accel<=-0.0001) deep-dive — which 5 trades? Per-year breakdown.
+T548: NEW BRANCH — ema50 period clone (ema20 vs ema50 vs ema100 vs ema200)
+      The ema50_dist gate uses ema50. Does a different period improve separation?
+T549: NEW BRANCH — H4 period clone (h4_dist uses H4 resample + EMA50).
+      Test: H8 vs H4 vs H2 higher-timeframe context.
+T550: MILESTONE — full clone tree summary, identify Gen3 plan.
