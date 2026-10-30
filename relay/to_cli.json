@@ -1,12 +1,13 @@
 {
   "commands": [
     {
-      "id": "cmd-lean-cfg-003",
-      "label": "write-lean-claude-desktop-config",
-      "note": "Backup then write lean config with only desktop-commander, then launch Claude Desktop",
-      "command": "powershell -WindowStyle Hidden -Command \"$p=[System.Environment]::ExpandEnvironmentVariables('%APPDATA%\\\\Claude\\\\claude_desktop_config.json'); $b=[System.Environment]::ExpandEnvironmentVariables('%APPDATA%\\\\Claude\\\\claude_desktop_config_bak_1030.json'); Copy-Item $p $b -Force -ErrorAction SilentlyContinue; '{\\\"mcpServers\\\":{\\\"desktop-commander\\\":{\\\"command\\\":\\\"npx\\\",\\\"args\\\":[\\\"-y\\\",\\\"@wonderwhy-er/desktop-commander@latest\\\"]}}}' | Set-Content $p -Encoding UTF8; Start-Sleep 2; explorer 'shell:appsFolder\\AnthropicPBC.Claude_p874v2pg6g7v8!Claude'\"",
-      "silent": true
+      "id": "cmd-ram-001",
+      "type": "kill_node",
+      "desc": "Kill all node.exe processes and report RAM freed",
+      "script": "$before = (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory; taskkill /f /im node.exe 2>&1; $after = (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory; $freed = [math]::Round(($after - $before)/1024); Write-Host ('RAM freed: ' + $freed + ' MB | Free now: ' + [math]::Round($after/1024) + ' MB')",
+      "priority": "HIGH"
     }
   ],
-  "updated": "2026-10-30T14:52:00Z"
+  "updated": "2026-10-30T14:58:00Z",
+  "note": "Kill node.exe, report RAM freed."
 }
