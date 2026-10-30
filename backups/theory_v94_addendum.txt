@@ -1,0 +1,145 @@
+THEORY LOOP ADDENDUM v94 — T556-T560 Gen4 COMPLETE + Gen5 LONG DIRECTION
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T556: Gen4A — Gen3A + w_below=1 =====
+
+RESULT: n=3 WR=100% avg=+0.1476% — IDENTICAL to Gen3A
+
+Gen4A == Gen3A (trio exactly): CONFIRMED
+  All 3 trio members already have w_below=1.
+  w_below=1 is a CONSEQUENCE of the trio, not an additional filter.
+
+CONCLUSION: w_below is REDUNDANT as a 4th gate when lo25+accel+r>=18 are active.
+  The trio is perfectly defined by 3 gates. 4th gate adds nothing.
+  w_below can be used as a DIAGNOSTIC SIGNAL for quality but not as a filter.
+
+===== T557: Gen4B — ATR21 + accel<=-0.0002 + r>=18 =====
+
+RESULT: n=4 WR=100% avg=+0.0868%
+
+Trades:
+  2025-07-10: +0.1476% r=26.2 accel=-0.000339  ← UNIQUE 2025
+  2025-08-18: +0.0283% r=28.2 accel=-0.000234  ← UNIQUE 2025
+  2026-03-30: +0.1550% r=22.2 accel=-0.000341
+  2026-05-14: +0.0163% r=23.8 accel=-0.000202
+
+FINDING: Adding r>=18 to ATR21 line removes Dec-10 (ATR21 r=10.3) but KEEPS 2025 trades.
+  This is the PREMIUM 2025 line: only high-r signals.
+  But avg drops to +0.0868% (May-14 +0.0163% drags it down).
+  ATR21 without r-gate (n=6 avg=+0.0994%) is actually better overall.
+
+CONCLUSION: r-gate hurts ATR21 line. Keep ATR21+accel<=-0.0002 as-is (n=6).
+
+===== T558: Gen4C — accel threshold tightening =====
+
+Scan: lo25+r>=18+accel <= threshold:
+
+  accel<=-0.0001:  n=3 avg=+0.1476%  {Dec-10, Dec-18, Mar-30}
+  accel<=-0.00015: n=2 avg=+0.1535%  {Dec-10, Mar-30}  ← Dec-18 dropped (accel=-0.000127)
+  accel<=-0.0002:  n=2 avg=+0.1535%  {Dec-10, Mar-30}
+  accel<=-0.0003:  n=2 avg=+0.1535%  {Dec-10, Mar-30}
+  accel<=-0.0004:  n=1 avg=+0.1463%  {Dec-10 only}
+  accel<=-0.0005:  n=0
+
+MAXIMUM QUALITY PAIR: {Dec-10, Mar-30}
+  Dec-10 2024: +0.1463% accel=-0.000424 (strongest)
+  Mar-30 2026: +0.1607% accel=-0.000341 (best result)
+  avg=+0.1535% — HIGHEST average of any configuration
+
+NOTE: Dec-18 (accel=-0.000127) sits between -0.0001 and -0.00015.
+  It's the "weakest" trio member by accel but still a strong +0.1358% trade.
+  Whether to use trio (n=3) or pair (n=2) depends on trading frequency preference.
+
+VERDICT: lo25+r>=18+accel<=-0.00015 = n=2 avg=+0.1535% = maximum quality.
+  But n=2 over 2 years is NOT enough for statistical confidence.
+  TRIO (n=3) remains the practical premium tier.
+
+===== T559: Gen4D/E — body_atr and slope gates =====
+
+body_atr filter on Gen3A:
+  body<=0.3: n=2 (drops Mar-30 body≈1.1)
+  body<=1.0: n=3 (same as Gen3A)
+  body<=1.5: n=3 (same as Gen3A)
+
+  FINDING: body_atr gate drops Mar-30 at thresholds below 1.1.
+  Mar-30 is the best trade (+0.1607%). body_atr is COUNTERPRODUCTIVE as a quality filter.
+  Keep body<=1.5 (Gen0 baseline). Do NOT tighten.
+
+Slope gate on Gen3A:
+  slope<=-0.0001: n=3 (same trio, all pass)
+  slope<=-0.0002: n=2 (drops Dec-18, slope=-0.000189) avg=+0.1535%
+
+  Slope<=-0.0002 gives same pair as accel<=-0.00015. Slope and accel are correlated.
+  No new information from slope gate.
+
+ATR rank ceiling:
+  r<25: n=2 (drops Mar-30 r=28.2) — counterproductive (drops best trade)
+  r<29: n=3 (full trio) — optimal ceiling
+
+VERDICT: Gen3A ceiling gates are all counterproductive. Keep r<29 (Gen0).
+
+===== T560: MILESTONE — Gen4 COMPLETE ===
+
+=== FULL CLONE TREE (final Gen0→Gen4) ===
+
+Gen0:  lo10/ATR14/H4            n=9 WR=100% avg=+0.1032%
+Gen1A: lo25                     n=7 WR=100% avg=+0.1214%
+Gen2A: lo25+accel<=-0.0001      n=5 WR=100% avg=+0.1284%
+Gen2B: lo25+r>=18               n=5 WR=100% avg=+0.1300%
+Gen3A: lo25+accel+r>=18         n=3 WR=100% avg=+0.1476%  ← PREMIUM TRIO
+Gen4A: Gen3A+w_below=1          n=3 WR=100% avg=+0.1476%  (=Gen3A, converged)
+Gen4C: lo25+r>=18+accel<=-0.00015  n=2 WR=100% avg=+0.1535% ← MAX QUALITY PAIR
+
+ATR21 Line: ATR21+accel<=-0.0002 n=6 WR=100% avg=+0.0994%
+Gen4B: ATR21+r>=18              n=4 WR=100% avg=+0.0868% (suboptimal)
+
+NON-VARIABLES CONFIRMED: qc_window, ema50_period, entry_shift, w_below (at Gen3A level)
+
+=== CONVERGENCE ANALYSIS ===
+The SHORT signal exploration has CONVERGED:
+  - Trio (n=3) is the apex quality set; 4th gate only confirms it
+  - Maximum quality pair (n=2) exists but sample too small for confidence
+  - All reasonable gate combinations explored
+  - H6 rejected; ATR21 is separate regime; ema50_period locked; entry_shift locked
+
+SHORT SIGNAL ARCHITECTURE (FINAL):
+  ALL signals: n=9 WR=100% avg=+0.1032% (live: wait for 13-14 UTC conditions)
+  QUALITY tier: n=5 WR=100% avg=+0.1300% (lo25+r>=18)
+  PREMIUM trio: n=3 WR=100% avg=+0.1476% (lo25+accel+r>=18)
+  2025 REGIME: n=6 WR=100% avg=+0.0994% (ATR21+accel<=-0.0002)
+
+=== Gen5 PLAN — LONG DIRECTION ===
+
+PRIMARY EXPLORATION: EURUSD FXOpen ECN LONG signal (mirror image)
+
+HYPOTHESIS: If SHORT lo10-break at 13-14 UTC works, LONG hi10-break at same
+  session should have symmetric properties.
+
+LONG signal mirror:
+  - hi_n = max of prior 10 bar HIGHS (shift 1)
+  - Entry: when bar['h'] > bar['hi_n'] (new 10-bar HIGH break)
+  - ema50_dist < -0.5 (price 0.5+ ATR ABOVE EMA50, bullish context)
+  - h4_dist_atr < -1.0 (price 1+ ATR ABOVE H4 EMA50)
+  - atr_rank < 29 (same)
+  - body_atr <= 1.5 (same)
+  - qc >= 3 (same)
+  - 13-14 UTC (same session)
+  - Entry: LONG at close
+  - Stop: entry - 1.5×ATR
+  - Target: entry + 1.5×ATR
+  - Max hold: 4 bars
+
+SECONDARY: Session clone — test 05-06 UTC (Asian session open) and 08-09 UTC (London fix)
+  with SHORT signal logic. 13-14 UTC may not be special; or it may be (NYFX open).
+
+===== NEXT BATCH (T561-T565) =====
+T561: LONG signal baseline — hi10 break at 13-14 UTC, bullish context
+T562: LONG + quality gates — accel, r, w_above_ema20
+T563: SHORT session clone — test 05-06 UTC, 08-09 UTC hours
+T564: Long + Short combined portfolio sim
+T565: MILESTONE — LONG + SHORT architecture, combined edge
+

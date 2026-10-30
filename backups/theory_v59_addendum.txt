@@ -1,0 +1,133 @@
+Theory Loop v59 Addendum — T381-T385
+Generated: 2026-10-29
+Branch: claude/project-thread-yi2gia
+Data: FXOpen EURUSD ECN H1 UTC, COST=0.00008
+
+⚠ DATASET REFRESH NOTE: Base n changed 10→5 vs prior cycle (T376-T380).
+Cause: data file now extends to Oct 2026 (new bars since last cycle),
+altering rolling ATR rank and H4 EMA50 values for historical dates.
+NEW trade found: 2026-10-12 (h=14, v6a=0.663). Old runs had slightly
+different H4 EMA50 alignment values — 6 trades dropped from base.
+Current base (n=5): WR=100%, avg=+0.0948%
+Current trades: 2024-12-10, 2026-02-16, 2026-05-14, 2026-07-21, 2026-10-12
+
+=================================================================
+T381: H4 STRONG ALIGNMENT — h4_dist_atr CORRELATION
+=================================================================
+  h4_dist_atr corr with pnl: +0.475 (moderate, BEST single corr this cycle)
+
+  All 5 trades have h4_dist_atr>0 (all properly aligned, no counter-trend cases)
+  Threshold scan:
+    h4_dist>=0.0: n=5, avg=+0.0948%
+    h4_dist>=2.0: n=4, avg=+0.1065% (+12% lift, drops weakest trade)
+    h4_dist>=3.0: n=2, avg=+0.1139% (+20% lift, drops to n=2)
+    h4_dist>=5.0: n=2, avg=+0.1139% (same 2 trades)
+
+  Per-trade:
+    2026-02-16: h4_dist=1.191 ATR → +0.0480% (lowest h4, lowest return)
+    2024-12-10: h4_dist=2.705 ATR → +0.1540%
+    2026-07-21: h4_dist=2.739 ATR → +0.0440% ← anomaly (high h4_dist, low return)
+    2026-10-12: h4_dist=5.670 ATR → +0.1162%
+    2026-05-14: h4_dist=6.004 ATR → +0.1116%
+
+  Note: 2026-07-21 breaks the monotone rank (h4_dist=2.739, return=+0.044%)
+  This is likely a high-h4_dist but low-v6a case (v6a=0.376).
+  Combined: h4_dist>=2.0 AND v6a>=0.50: n=2, avg=+0.1328%
+
+CONCLUSION: Moderate +0.475 correlation. h4_dist_atr>=2.0 adds +12% lift.
+At n=5 this is provisional. Confirm at larger n. Add h4_dist_atr to V7 as V10.
+
+=================================================================
+T382: HOUR SPLIT — 13 UTC vs 14 UTC
+=================================================================
+  Hour 13: n=4, WR=100%, avg=+0.0894%
+  Hour 14: n=1, WR=100%, avg=+0.1162%
+  Hour 14 appears slightly better but n=1 is null.
+
+  Hour 13 + v6a>=0.50: n=2, avg=+0.1328%
+  Hour 14 + v6a>=0.50: n=1, avg=+0.1162%
+
+CONCLUSION: No meaningful hour split at n=5. Keep h=13 OR h=14 in base filter.
+Note: in prior sessions (n=10 dataset), h14 had better returns but also n<5.
+
+=================================================================
+T383: MONTHLY SEASONALITY
+=================================================================
+  month corr with pnl: +0.745 (HIGH — but n=5 all different months)
+  Feb: n=1, avg=+0.0480% (weakest)
+  May: n=1, avg=+0.1116%
+  Jul: n=1, avg=+0.0440% (weakest)
+  Oct: n=1, avg=+0.1162%
+  Dec: n=1, avg=+0.1540% (strongest)
+
+  HIGH CORR IS SPURIOUS: n=5 with one trade per month, corr is just
+  reflecting the v6a ordering coincidentally. Dec being strongest = Dec
+  trade happened to have highest v6a (0.750). Not actionable.
+
+CONCLUSION: Month seasonality corr=+0.745 is spurious at n=5.
+Flag for re-test at n>=30. Q4 (Oct/Dec) appears strong but need more data.
+
+=================================================================
+T384: RANGE RATIO — BAR RANGE / ATR AT ENTRY
+=================================================================
+  range_ratio = (bar_high - bar_low) / ATR14
+  Range: 1.051 to 1.791 (all >1.0 — entry bars are "full ATR" expansions)
+  range_ratio corr with pnl: -0.231 (weak negative — wider range = worse?)
+
+  Low range_ratio (tight bar):
+    2026-10-12: range_ratio=1.051 → +0.1162%
+    2026-02-16: range_ratio=1.077 → +0.0480%
+  High range_ratio (wide bar):
+    2026-07-21: range_ratio=1.791 → +0.0440%
+    2026-05-14: range_ratio=1.543 → +0.1116%
+
+  No clear pattern (2026-02-16 weak despite tight range).
+  Anomaly: 2026-07-21 has largest range AND worst return — but same trade
+  that breaks h4_dist monotonicity. Low v6a=0.376 explains it.
+
+CONCLUSION: range_ratio corr=-0.231 weak, confounded by v6a. Not actionable.
+
+=================================================================
+T385: QC DEPTH TIERS
+=================================================================
+  qc corr with pnl: -0.223 (weak negative — counter-intuitive)
+
+  Tier breakdown:
+    qc 3-9:   n=1 (qc=5)  avg=+0.1162%
+    qc 10-14: n=1 (qc=14) avg=+0.0480%
+    qc 15-19: n=3 (qc=16/19/19) avg=+0.1032%
+
+  qc<10 (shallow): n=1, avg=+0.1162%
+  qc>=10 (deep):   n=4, avg=+0.0894%
+  qc>=10 + v6a>=0.50: n=2, avg=+0.1328%
+
+  The qc=5 (shallow) trade has v6a=0.663 → +0.1162%.
+  The qc=14 (medium) trade has v6a=0.309 → +0.0480% (low v6a explains weakness).
+  Negative corr is confounded by v6a.
+
+CONCLUSION: qc depth alone not predictive. v6a already incorporates cv_norm
+which captures ATR stability (related to qc). No new qc filter needed.
+
+=================================================================
+CYCLE SUMMARY T381-T385
+=================================================================
+  T381: h4_dist_atr corr=+0.475 ← BEST SIGNAL THIS CYCLE ✅
+  T382: Hour split insignificant at n=5
+  T383: Month corr=+0.745 SPURIOUS (n=5, 1 trade/month)
+  T384: Range ratio corr=-0.231 weak, confounded
+  T385: QC depth corr=-0.223 confounded by v6a
+
+ACTIONABLE (T381):
+  h4_dist_atr is a new promising predictor (+0.475 corr).
+  h4_dist_atr>=2.0 → n=4, +12% lift over base.
+  This is the H4 EMA50 distance in ATR units.
+  Propose V10 = (V7*5 + h4_dist_norm) / 6.0 where
+  h4_dist_norm = min(h4_dist_atr / 6.0, 1.0)
+  → Test in T386.
+
+NEXT THEORIES (T386-T390):
+  T386: V10 composite (add h4_dist_atr to V7)
+  T387: Combined gate — ATR>=7.5 AND h4_dist>=2.0 ATR
+  T388: Monthly Q4 filter (Oct/Nov/Dec — re-examine with more data)
+  T389: Pre-setup volatility ratio (setup ATR / 6-month avg ATR)
+  T390: Exit bar timing — do early exits (bar 0/1) predict outcome?

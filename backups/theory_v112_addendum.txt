@@ -1,0 +1,264 @@
+THEORY LOOP ADDENDUM v112 — T646-T650 Gen21 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen21 discoveries
+Date: 2026-10-29
+
+===== BASELINE (Gen16/Gen17-Gen20 unchanged) =====
+Signal 1: n=8 WR=100% PF=∞ avg=+0.1152% cum=+0.9213% flat / +1.3549% sized (hold=5)
+Signal 2: n=5 WR=100% PF=∞ avg=+0.0926% cum=+0.4628% flat / +0.5140% sized (alligator model)
+Combined S1+S2 sized: n=13 WR=100% maxDD=0 cum=+1.8689%
+
+===== T646: 2023 DATA STRESS TEST =====
+
+FXOpen ECN dataset starts: 2024-01-01. 2023 data rows: 0.
+
+FINDING: The FXOpen ECN H1 dataset at fxopen_eurusd_h1.json begins 2024-01-01.
+  There is NO 2023 data available for stress testing. The dataset is 2024-2026 only.
+  This explains why all prior theory work found the dataset starts cleanly in Jan 2024.
+
+  S1 by year WITHOUT annual regime gate (confirming gate logic):
+    2023: n=0 (no data)
+    2024 (slope=-5.96%): n=2 WR=100% avg=+0.1407% cum=+0.2813%
+    2025 (slope=+13.07%): n=0 WR=N/A (gated by bullish slope correctly)
+    2026 (slope=-4.50%): n=6 WR=100% avg=+0.1067% cum=+0.6399%
+
+  The 2025 annual gate kills all 0 S1 signals from the dataset perspective too.
+  Without the regime gate, 2025 produced 0 candidate signals anyway (other gates
+  filtered them all). The annual_slope gate is thus both defensive AND structurally
+  aligned with the data.
+
+T646 VERDICT: DATASET LIMITATION DISCOVERED.
+  Cannot run 2023 out-of-sample test — data unavailable.
+  The architecture is validated on 2024-2026 only.
+  For live EA deployment, the annual_slope gate handles regime identification
+  correctly (2025 bullish year correctly excluded). The dataset period is sufficient
+  to establish the signal architecture; expanding backward would require sourcing
+  additional FXOpen ECN H1 data from before 2024.
+
+IMPLICATION FOR EA: The EA v2.4 spec notes "backtest 2024-01 to 2026-10" as the
+  only validated data range. Live trading in a future bearish regime (annual_slope<=0)
+  is the target operating condition.
+
+===== T647: ACCEL WINDOW SENSITIVITY =====
+
+S1+S2 combined performance by accel window (slope/accel period):
+
+  accel_window=3:  S1 n=9 WR=88.9% avg=+0.0963% sized=+1.1946%
+                   S2 n=2 WR=100%   avg=+0.0903% sized=+0.1806%
+                   Combined: +1.3752%  ← LOSER added to S1, S2 loses 3 signals
+
+  accel_window=5 (canonical):
+                   S1 n=8 WR=100%   avg=+0.1152% sized=+1.3549%
+                   S2 n=5 WR=100%   avg=+0.0926% sized=+0.5140%
+                   Combined: +1.8689%  ← BEST quality (WR=100% both)
+
+  accel_window=7:  S1 n=7 WR=100%   avg=+0.1205% sized=+1.3139%
+                   S2 n=8 WR=87.5%  avg=+0.0748% sized=+0.6084%
+                   Combined: +1.9223%  ← Higher combined (+0.0534%) but S2 loses WR
+
+  accel_window=10: S1 n=6 WR=83.3%  avg=+0.0929% sized=+0.9247%
+                   S2 n=9 WR=77.8%  avg=+0.0522% sized=+0.4535%
+                   Combined: +1.3782%  ← Worst — quality collapses
+
+Signal overlap analysis:
+  accel=3 adds 1 new S1 signal (2026-05-26) that is a LOSER → WR drops 100%→88.9%
+  accel=7 removes Jul-21 from S1 (weakest signal) but adds 3 new S2 signals
+    (some of which are losers → S2 WR drops 100%→87.5%)
+  accel=10 loses canonical signals AND adds losers in both S1 and S2
+
+CRITICAL FINDING: accel_window=7 shows combined +1.9223% vs +1.8689% canonical (+0.0534%).
+  However: this gain comes from adding 3 new S2 signals at 87.5% WR (1 loser added).
+  The gain is purely from increased leverage/exposure, NOT quality improvement.
+  The 1 S2 loser at accel=7 implies the sign reversal detection window of 7 bars
+  is too slow — it misidentifies still-falling momentum as exhaustion in some cases.
+  This is exactly the same pattern seen in T628 (BB squeeze): leverage artifact.
+
+ACCEL WINDOW VERDICT: accel_window=5 IS OPTIMAL.
+  - Produces highest single-signal quality (100% WR for both S1 and S2)
+  - 5-bar window captures the medium-term momentum direction change correctly
+  - 3-bar = too reactive (noisy, adds S1 loser)
+  - 7-bar = too slow (adds S2 losers, WR drops)
+  - 10-bar = too slow (quality collapses in both signals)
+  The 5-bar window for both slope and acceleration aligns with the structural
+  signal timeframe: 5 H1 bars = 5 hours = roughly one trading session.
+  Momentum changes at the session level, not the minute level, not the daily level.
+  DO NOT change accel_window from 5.
+
+===== T648: EMA21 vs EMA50 FOR H1 TREND CONTEXT =====
+
+S1+S2 combined performance by EMA period:
+
+  EMA21: S1 n=8 WR=100% IDENTICAL avg=+0.1152% sized=+1.4139%
+         S2 n=3 WR=100%            avg=+0.0940% sized=+0.3334%
+         Combined: +1.7473%  ← LOSES 2 S2 signals vs EMA50
+
+  EMA34: S1 n=8 WR=100% IDENTICAL avg=+0.1152% sized=+1.3645%
+         S2 n=4 WR=100%            avg=+0.0918% sized=+0.4183%
+         Combined: +1.7828%  ← LOSES 1 S2 signal vs EMA50
+
+  EMA50 (canonical):
+         S1 n=8 WR=100%            avg=+0.1152% sized=+1.3549%
+         S2 n=5 WR=100%            avg=+0.0926% sized=+0.5140%
+         Combined: +1.8689%  ← BEST
+
+  EMA89: S1 n=8 WR=100% IDENTICAL avg=+0.1152% sized=+1.3011%
+         S2 n=4 WR=100%            avg=+0.0831% sized=+0.3574%
+         Combined: +1.6585%  ← LOSES 1 S2 signal, lower S2 avg
+
+KEY FINDING: S1 is COMPLETELY INVARIANT to EMA period choice across 21-89 period range.
+  All 4 EMA periods produce the identical set of 8 S1 signals at identical performance.
+  This is structural: S1 signals occur when price is so far below the EMA (all ema_dist
+  values are 0.76-4.05 ATR) that small differences in EMA value don't affect crossing.
+
+S2 is sensitive to EMA period:
+  EMA50 maximizes S2 signal count (n=5) while maintaining WR=100%.
+  Shorter EMAs (21, 34) lose S2 signals — the monthly_slope gate becomes stricter
+  because faster EMAs react to local bullish bounces, making monthly_slope>0
+  when EMA50 still reads it as bearish.
+  Longer EMAs (89) lose S2 signals differently — the ema50_dist gate is harder to
+  satisfy since EMA89 is smoother and further from price.
+
+EMA VERDICT: Keep EMA50 as canonical period.
+  - S1 is invariant (no change possible)
+  - S2 is maximized at EMA50 with maintained WR=100%
+  - EMA50 is the correct medium-term trend reference for H1 EURUSD
+    (50 H1 bars = ~2 trading days of context)
+
+===== T649: S1+S2 SAME-DAY INTERACTION =====
+
+Same-day occurrences (S2 fires 08 UTC, S1 fires 13-14 UTC same calendar day):
+  2024-12-10: S2@08=+0.1305%  S1@13=+0.1459%  ← Both winners
+  2024-12-18: S2@08=+0.0130%  S1@13=+0.1354%  ← Both winners (S2 marginal)
+  2026-05-14: S2@08=+0.0850%  S1@13=+0.0943%  ← Both winners
+
+  3 of 5 S2 signals occur on a day that also has an S1 signal.
+  2 of 8 S1 signals occur on a day that also has an S2 signal.
+
+TEMPORAL ANALYSIS:
+  S2 MaxHold = 4 bars → closes at 12 UTC at latest (bars: 09, 10, 11, 12 UTC)
+  S1 fires at 13-14 UTC → AFTER S2 is guaranteed closed
+  There is NO mechanical position overlap between S1 and S2 on the same day.
+  They are sequential shorts, not concurrent. Capital is recycled between them.
+
+QUALITY ANALYSIS:
+  S2 signals on same-day-as-S1:   avg = (0.1305 + 0.0130 + 0.0850) / 3 = +0.0762%
+  S2 signals on non-same-day:     avg = (0.0957 + 0.1386) / 2 = +0.1172%
+
+  S2 quality is LOWER on days that also have an S1 signal (+0.0762% vs +0.1172%).
+  This makes sense structurally: on same-day dates, the market is in a bearish
+  momentum state that attracts BOTH an 08 UTC exhaustion bounce (S2) AND a 13-14 UTC
+  continuation short (S1). The S2 bounce is weaker on these days because the bearish
+  trend is stronger — the exhaustion bounce is shallower.
+
+  However: ALL 3 same-day S2 signals are still profitable (all winners), so the
+  weaker quality is not a signal quality problem, just a natural relationship.
+
+SAME-DAY VERDICT: No change to architecture.
+  - S1+S2 same-day is mechanically sound (sequential, no overlap)
+  - Same-day S2 is slightly weaker quality but remains WR=100%
+  - Adding a "same-day S2 exclusion" would remove 3 profitable S2 signals
+    for no gain in WR (already 100%) and a loss of +0.228% cumulative
+  - The natural clustering suggests these are the most bearish regime days —
+    strong enough to attract both a morning exhaustion short AND an afternoon
+    momentum short. Keep both.
+
+CAPITAL EFFICIENCY NOTE:
+  On same-day S1+S2 dates, capital cycles: S2 at 08 UTC → exit by 12 UTC →
+  deploy S1 at 13 UTC. With 0.1 lot on each, there is no leverage conflict.
+  For an EA, these can both fire independently with no position management complexity.
+
+===== T650: GEN21 MILESTONE SUMMARY =====
+
+=== FINAL SIGNAL ARCHITECTURE (Gen21 = Gen20 = Gen16, CONFIRMED AGAIN) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — UNCHANGED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body_atr<=1.5, lo10, accel<=0, hours=[13,14]
+  Regime: Skip if annual_slope > 0
+  MaxHold: 5 bars
+  PERFORMANCE: flat=+0.9213% sized=+1.3549% PF=∞ WR=100% n=8
+
+LINE 2: SHORT 08 UTC (SECONDARY — UNCHANGED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body_atr<=1.5, lo10, accel>0,
+        hours=[8], monthly_slope<0
+  MaxHold: 4 bars
+  PERFORMANCE: flat=+0.4628% sized=+0.5140% PF=∞ WR=100% n=5
+
+COMBINED: flat=+1.3841% sized=+1.8689% n=13 WR=100% maxDD=0
+
+=== GEN21 KEY DISCOVERIES ===
+
+1. DATASET STARTS 2024-01-01: No pre-2024 FXOpen ECN data available.
+   The 2023 stress test was not possible. The architecture is validated on
+   the 2024-2026 bearish regime period only. For extended validation, additional
+   historical FXOpen ECN H1 data would be required.
+
+2. ACCEL WINDOW 5 IS OPTIMAL: Both shorter (3-bar) and longer (7, 10-bar) windows
+   reduce quality. accel=3 adds S1 loser. accel=7 adds S2 losers. The 5-bar window
+   corresponds to one H1 trading session — the natural granularity of momentum change.
+   accel_window=5 confirmed optimal and should not be changed.
+
+3. EMA50 IS OPTIMAL: S1 is completely invariant (identical 8 signals) across EMA21-89.
+   S2 is maximized at EMA50 (n=5 WR=100%). Shorter EMAs lose S2 signals via
+   monthly_slope gate interaction. EMA50 confirmed as canonical period.
+
+4. SAME-DAY S1+S2 IS VALID: 3 of 13 total signals are same-day pairs (S2@08, S1@13).
+   No temporal overlap (S2 closes by 12 UTC, S1 fires at 13+). All 3 same-day
+   S2 signals are profitable. Same-day S2 quality is slightly lower (+0.076% vs +0.117%)
+   reflecting stronger bearish regimes that attract sequential shorts.
+   Architecture unchanged — both signals are valid and independent.
+
+5. FIVE-GEN NULL: Gen17, Gen18, Gen19, Gen20, Gen21 all return no architecture change.
+   The signal set is complete for the 2024-2026 FXOpen ECN H1 EURUSD dataset.
+   Five consecutive null generations confirm deep architecture stability.
+
+=== ARCHITECTURE STABILITY ASSESSMENT ===
+
+Ten parameters tested across 50 theory tests (T611-T650):
+  - Indicators: BB squeeze (null), body_atr (null), lo window (null), BB band width (null)
+  - Time: hours 9-17 UTC (all fail), hold 3-6 bars (5 and 4 confirmed optimal)
+  - Regime: annual gate (confirmed), monthly gate (confirmed)
+  - EMA: periods 21-89 (50 optimal)
+  - Accel: windows 3-10 (5 optimal)
+  - Gates: qc, ema_dist, rank, body (all at natural minimums)
+  - Interactions: S1+S2 same-day (valid, no change)
+
+Zero improvements adopted since Gen16. The architecture has reached a convergence
+point where no additional parameter changes can improve quality within the 2024-2026
+dataset. This is the expected outcome for a fully optimized signal set.
+
+=== GEN22 POTENTIAL DIRECTIONS ===
+
+The dataset is exhausted for parameter-space exploration. Future Gen22 options:
+1. NEW DATA SOURCE: Obtain pre-2024 FXOpen ECN H1 data for extended OOS validation
+2. NEW INSTRUMENT: EURUSD at different timeframe (M15, M30, H4) — requires new architecture
+3. MULTI-INSTRUMENT: Test architecture on correlated pairs (GBPUSD, EURJPY)
+   NOTE: HARD CONSTRAINT remains — only EURUSD FXOpen ECN until changed
+4. ALTERNATIVE ENTRY: Replace close-of-bar entry with limit orders (e.g., entry at
+   previous lo10 level), potentially improving avg entry price
+5. LIVE MONITORING: With EA v2.4 spec complete, focus shifts to MT4 implementation
+   and live signal monitoring
+
+RECOMMENDATION: Signal research loop should pause here. Architecture is complete.
+  Next priority = EA v2.4 implementation via LocalThug MT4 spec (nomem6_243).
+  Gen22 can resume with new data or new instrument if warranted.
+
+=== PROGRESSIVE IMPROVEMENT (complete history) ===
+  Gen10 flat:  +1.3291%
+  Gen13:       +1.7965% (S1 size model)
+  Gen14:       +1.8034% (S2 monthly slope gate)
+  Gen16:       +1.8689% (S1 hold=5 + S2 alligator model)
+  Gen17-Gen21: +1.8689% (FIVE-gen null validation)
+  Total gain:  +0.5398% vs Gen10 flat (+40.6%)
+
+===== GEN22 PLAN (T651-T655) =====
+T651: Pre-2024 data acquisition attempt — identify source for FXOpen ECN H1 pre-2024
+T652: Alternative entry mechanics — limit order entry vs close-of-bar
+T653: Exit optimization — asymmetric targets (2x ATR vs 1.5x ATR)
+T654: Multi-timeframe confirmation — H4 close bar as S1 confirmation filter
+T655: Gen22 milestone + final SURVIVORS.md update
+
+===== NEXT BATCH (T651-T655) =====
+T651: Pre-2024 data acquisition
+T652: Limit order entry
+T653: Asymmetric exits
+T654: H4 close confirmation
+T655: Gen22 milestone

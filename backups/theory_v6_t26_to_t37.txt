@@ -1,0 +1,129 @@
+# Theory Batch v6 — Theories 26–37
+*Date: 2026-10-17 | Data: FXOpen ECN EURUSD H1 | Method: dual feedback loop*
+
+---
+
+## Quick Summary
+
+| Theory | Concept | n | PF | Verdict |
+|--------|---------|---|-----|---------|
+| T26 | T25 narrower ATR band (5-15th pct) | 10 | 2.41 | REJECTED (n too small, worse than T25) |
+| T27 | T3 + weekly open direction aligned | 18 | 3.46 | BORDERLINE (n=18, filter too aggressive) |
+| T28 | T25 with 5+ quiet bars (vs 3+) | 22 | 3.20 | REJECTED (slightly worse than T25 <20) |
+| T29/T27b | T3 fighting weekly trend | 47 | 1.72 | REJECTED |
+| T30 | T25 Hour 13 UTC only | 10 | 5.79 | N TOO SMALL |
+| T31 | T25 + prior day trend alignment | 7/15 | 5.32/2.69 | N TOO SMALL |
+| T32 | London exhaustion stall reversal | 0 | N/A | NO SETUP — threshold too tight |
+| **T33** | **T25 + CCI(14) aligned gate** | **21** | **3.67** | **BORDERLINE — CCI is implicit in T25** |
+| T34 | CCI extreme + ATR compression standalone | 35 | 2.30 | REJECTED (2024 PF=0.60, inconsistent) |
+| T35 | London momentum continuation Mon-Wed | 382 | 0.90 | REJECTED (flat across all thresholds) |
+| T37 | T25 + price near 20-bar extreme | 12 | 3.83 | N TOO SMALL (borderline concept) |
+
+---
+
+## Key Finding: CCI is Implicit in T25
+
+**T33 discovery:** When CCI(14) gate (>100 aligned with breakout direction) applied to T25:
+- 21 of 23 T25 trades ALREADY have CCI>100 aligned with breakout
+- 1 trade has CCI in neutral zone (-100 to +100) — this trade is a loser
+- 0 trades have CCI counter-aligned
+
+**Conclusion:** ATR compression breakouts during the 13-17 UTC window are structurally correlated with CCI extremes. The compression itself creates the CCI condition. CCI gate adds marginal value (PF 3.41→3.67) but is NOT an independent filter.
+
+**Why this happens:** When price compresses into an ATR rank <20th pct for 3+ bars during peak liquidity, market participants who read momentum indicators like CCI are simultaneously building up extreme readings. The breakout then fires at the precise moment both conditions are satisfied — they co-occur by construction.
+
+---
+
+## Theory 33 — T25 + CCI Confirmation
+
+**Concept:** T25 (T7 Mon-Wed ATR compression breakout 13-17 UTC) with explicit CCI(14) alignment gate.
+
+**Results:**
+- Overall: n=21, WR=71.4%, avg=+0.063%/trade, PF=3.67
+- 2024: n=4, WR=50%, PF=1.08
+- 2025: n=9, WR=77.8%, PF=8.13
+- 2026: n=8, WR=75%, PF=4.58
+
+**vs T25:** n goes from 23→21 (removes 2 trades, both near-neutral CCI), PF improves 3.41→3.67.
+
+**Caution:** CCI is a derived property of T25 — adding it explicitly is redundant but tightening. Small n improvement over T25. Use T25 as canonical; treat CCI alignment as a confirmation, not a new signal.
+
+---
+
+## Theory 34 — CCI Extreme + ATR Compression (Standalone)
+
+**Concept:** During 13-17 UTC Mon-Wed, ATR rank <20th pct + CCI(14) > 100 (long) or <-100 (short), enter at close following CCI direction.
+
+**Results:**
+- Overall: n=35, WR=65.7%, avg=+0.044%, PF=2.30
+- 2024: n=6, PF=0.60 (FAILS)
+- 2025: n=14, PF=2.17
+- 2026: n=15, PF=8.38
+
+**REJECTED:** 2024 is negative (PF=0.60). Broader than T25 (includes non-breakout bars), weaker overall edge. CCI extreme without a breakout trigger = noise.
+
+---
+
+## Theory 35 — London Momentum Continuation Mon-Wed
+
+**Concept:** If London 07-13 UTC moves >0.5×ATR directionally, follow that direction 13-17 UTC.
+
+**Results:** n=382, WR=51%, PF=0.90. Flat across all thresholds (0.3x, 0.5x, 0.8x, 1.0x, 1.5xATR all produce PF 0.80-0.93).
+
+**REJECTED:** London momentum does NOT continue into NY on EURUSD. The NY session is an independent institutional event, not a London continuation. This was partially explored in T16/T17 (NY fade, PF 1.10) — that was slightly better than this continuation test, confirming NY is genuinely mean-reverting vs London but not enough edge to trade.
+
+---
+
+## Theory 27 — T3 + Weekly Open Direction Filter
+
+**Concept:** T3 (Mon+Thu session divergence) only when London direction aligns with the current week's open-to-now trend.
+
+**Results — aligned with weekly trend:** n=18, WR=50%, PF=3.46
+**Results — fighting weekly trend:** n=47, WR=40.4%, PF=1.72
+
+**Learning:** The weekly open filter cuts T3 from n=65 to n=18 — too aggressive. The aligned group has better PF (3.46 vs 2.17) but n is too small. The reject group (fighting weekly trend, n=47) still has PF=1.72 — not worthless.
+
+**BORDERLINE:** The weekly trend alignment direction is a real effect but the filter is too aggressive (cuts 72% of trades). Needs 5yr data to confirm with adequate n.
+
+---
+
+## Theory 37 — T25 Near 20-Bar Extreme
+
+**Concept:** T25 breakout entry is valid ONLY when price at entry is within 0.5×ATR of the 20-bar high/low.
+
+**Results:** n=12, WR=66.7%, PF=3.83. 2025 PF=65.54 (only winners), 2026 PF=2.0.
+
+**N TOO SMALL:** n=12 over 2.5 years is ~5/yr. Interesting concept (breakout from multi-period extreme = high-conviction level), but statistically inactionable.
+
+---
+
+## Session Window Lesson (T35 Confirmation)
+
+T35 definitively killed London momentum continuation as a concept: **382 trades at PF=0.90 across all thresholds.** This confirms the earlier T7 session analysis result — the 13-17 UTC window is structurally special because it resets from London, not because it extends it. The NY participants trade their own book, not London's.
+
+---
+
+## Surviving Theories (Updated)
+
+| Theory | Concept | n | PF | 2025 PF | 2026 PF | Status |
+|--------|---------|---|-----|---------|---------|--------|
+| T3 | Session divergence Mon+Thu, London 3-bar | 65 | 2.17 | 2.54 | 3.24 | SURVIVES |
+| T7 | ATR compression breakout 13-17 UTC | 40 | 2.42 | 4.12 | 2.32 | SURVIVES |
+| T25 | T7 Mon+Tue+Wed only | 23 | 3.41 | 8.63 | 3.51 | SURVIVES — best |
+| T33 | T25 + CCI(14) aligned | 21 | 3.67 | 8.13 | 4.58 | SURVIVES (subset of T25) |
+
+**T25 remains canonical.** T33 is T25 with minor tightening via CCI (which is redundant). No new survivor theories in this batch.
+
+---
+
+## What This Batch Taught
+
+1. **CCI is not independent of ATR compression breakouts.** 21/23 T25 trades already satisfy CCI>100. The compression creates the CCI extreme — they're two readings of the same phenomenon.
+2. **London momentum does not continue into NY.** 382 trade sample, PF=0.90. NY = independent session. T7/T25's mechanism is specifically about *compression during* NY overlap, not continuation from London.
+3. **ATR band tightening reduces n without improving PF.** T25's <20th pct threshold is optimal. Narrower bands (5-15, <10) reduce n and add noise.
+4. **Weekly open direction is a real effect on T3.** But cuts 72% of trades — needs more data before acting.
+5. **Price near 20-bar extreme during compression (T37) is interesting.** n=12 is too thin but the concept has theoretical merit: breakouts from multi-period extremes during peak liquidity carry more conviction.
+
+---
+
+*Not financial advice. All surviving theories borderline n — validate on 5yr data when available.*

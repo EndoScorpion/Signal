@@ -1,0 +1,184 @@
+THEORY LOOP ADDENDUM v97 — T571-T575 Gen6 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen6 discoveries
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T571: CT-LONG VALIDATION + QUALITY FILTERS =====
+
+CT-LONG baseline (BEARISH context + hi10 break, 13-14 UTC):
+  n=2 WR=100% avg=+0.1777% (confirmed)
+  2025-05-09: +0.1665% r=1.2 accel=+0.000259 h4_dist=3.79
+  2025-05-13: +0.1890% r=15.5 accel=+0.000229 h4_dist=6.50
+
+CRITICAL CT-LONG PROPERTIES (both signals):
+  1. POSITIVE accel (EMA slope accelerating UP): both accel>0.0002 = EMA REVERSING
+  2. VERY HIGH h4_dist_atr: 3.79 and 6.50 = EXTREMELY below H4 EMA (deeply bearish context)
+  3. accel gate: CT-LONG+accel>0 = n=2 (ALL baseline signals have positive accel)
+     CT-LONG+accel flat = n=0. Confirms: EMA must be TURNING UP for CT-LONG to work.
+
+KEY DISCOVERY: accel gate INVERTS between SHORT and CT-LONG:
+  SHORT: accel <= -0.0001 (EMA accelerating DOWN = momentum confirmation)
+  CT-LONG: accel > 0 (EMA beginning to TURN UP = reversal confirmation)
+  Same 13-14 UTC session, same structural context, OPPOSITE accel direction.
+
+CT-LONG hi5 (5-bar high break): n=4 WR=100% avg=+0.1653% ← ADDS 2 MORE SIGNALS!
+  Using hi5 instead of hi10 lowers the bar for the HIGH break → fires earlier in move.
+  4 signals, WR=100%, avg=+0.1653% — excellent despite smaller hi requirement.
+
+CT-LONG ATR21: n=3 WR=100% avg=+0.1692% ← ADDS 1 MORE SIGNAL (3 total)!
+  ATR21 smooths out the volatility check → picks up a 3rd CT-LONG opportunity.
+
+CT-LONG h4_dist thresholds: all pass h4>=2.5 (both signals at 3.79 and 6.50)
+  Adding h4>=2.0 or h4>=2.5 = same n=2. Both CT-LONG signals are deeply bearish.
+
+CT-LONG r-rank: May-09 has r=1.2 (very low vol — drops out at r>=10)
+  CT-LONG+r>=10: n=1 (only May-13). r-gate HURTS CT-LONG (opposite of SHORT where r>=18 helps).
+
+VERDICT: CT-LONG architecture:
+  Primary definition: SAME bearish gates as SHORT but hi_break instead of lo_break
+  Key differentiator: accel > 0 (EMA turning up = reversal momentum)
+  Extended via hi5: n=4 WR=100% avg=+0.1653%
+  Extended via ATR21: n=3 WR=100% avg=+0.1692%
+  Need n>=10 for EA. Direction: monitor, extend data horizon.
+
+===== T572: SHORT LONDON OPEN REDESIGN (07-08 UTC) =====
+
+Baseline: SHORT lo10 07-08 UTC n=44 WR=61% avg=+0.0144%
+
+EMA dist scan: tighter dist SLIGHTLY better but not meaningfully different.
+  ema_dist>=1.5: n=35 WR=63% avg=+0.0171% (marginal improvement)
+
+H4 dist scan: WEAKER h4 gate is better!
+  h4>=0.5: n=52 WR=65% avg=+0.0215% ← BEST (lower threshold = more signals, higher WR)
+  h4>=1.0: n=44 WR=61% avg=+0.0144% (baseline)
+  h4>=1.5: n=40 WR=55% avg=+0.0045% (WORSE)
+
+FINDING: At London open, price doesn't need to be as far below H4 EMA.
+  The London open SHORT fires EARLIER in the bearish trend (less extended from EMA).
+  Lower h4 gate = better WR at 07-08 UTC. Opposite of 13-14 UTC.
+
+ACCEL DISCOVERY AT 07-08 UTC:
+  SHORT 07-08+accel>0: n=13 WR=77% avg=+0.0469% ← BEST CONFIGURATION!
+  SHORT 07-08+accel<=-0.00005: n=24 WR=67% avg=+0.0259%
+
+CRITICAL FINDING: POSITIVE accel works for SHORT at 07-08 UTC too!
+  07-08 SHORT + accel>0: WR=77% avg=+0.0469%
+  07-08 SHORT + accel<=0: WR=55% avg=+0.0058%
+
+WHY: London open (07-08 UTC) with accel>0 means:
+  EMA slope is still negative (price below EMA, bearish) but DECELERATING.
+  Price has been in a downtrend but momentum is slowing = London continuation + retest.
+  The London open provides a fresh directional push even as the EMA is turning.
+
+ACCEL INVERSION PATTERN:
+  13-14 UTC SHORT: accel<=-0.0001 (accelerating down = best quality)
+  07-08 UTC SHORT: accel>0 (decelerating down but price still breaks lo10 = early)
+  13-14 UTC CT-LONG: accel>0 (EMA turning up = reversal confirmed)
+  All three have different optimal accel conditions. Session matters.
+
+07-08 SHORT with h4>=0.5 + accel>0 (best combo):
+  Need to test in T576. Prediction: n~8-10, WR~80%, avg~+0.05%
+
+lo_period scan: lo10 is optimal at 07-08 UTC (lo5=worse, lo15/lo20/lo25=worse)
+  lo10 is the right period for London open too.
+
+VERDICT: SHORT 07-08 UTC with POSITIVE accel is the redesigned gate:
+  n=13 WR=77% avg=+0.0469% — meaningful but still well below 13-14 UTC quality.
+  Tag: SHORT 07-08 + accel>0 = new secondary candidate.
+
+===== T573: PORTFOLIO SIMULATION =====
+
+SHORT 13-14 UTC: n=9 WR=100% avg=+0.1032% cum=+0.9286%
+SHORT 07-08 UTC: n=44 WR=61% avg=+0.0144% cum=+0.6334% max_DD=0.4893%
+Combined:        n=53 WR=68% avg=+0.0295% cum=+1.5621%
+
+Same-day overlap: 6 days (includes Dec-10, Dec-18, Jan-08, Feb-17, May-14, Oct-12)
+  These 6 days fire BOTH sessions — possible double exposure risk.
+
+PORTFOLIO FINDING: Adding 07-08 to 13-14 increases total cum P&L by +0.6334%
+  but at the cost of: WR drops from 100% to 68%, avg drops from +0.1032% to +0.0295%.
+  The 07-08 line is profitable but noisy.
+
+If 07-08 uses accel>0 gate (n=13 WR=77% avg=+0.0469% cum~+0.61%):
+  Combined would be: n=22 WR=86% avg≈+0.0697% — much better WR.
+
+VERDICT: Portfolio viable if 07-08 is filtered with accel>0.
+  Unfiltered 07-08 adds noise. Need to test redesigned 07-08 in T576.
+
+===== T574: REGIME DETECTION =====
+
+SHORT 13-14 UTC by ATR rank band:
+  r=[0,10):  n=2 avg=+0.0395% ← weakest (Feb-16 r=5.2, Jul-21 r=9.5)
+  r=[10,20): n=3 avg=+0.1153%
+  r=[20,29): n=4 avg=+0.1260% ← strongest (all Gen3A signals here)
+
+CONFIRMED: r-rank is a quality proxy. Higher r = better avg. Consistent with Gen2B/Gen3A.
+
+SHORT 13-14 UTC by EMA50 slope:
+  slope<-0.0005: n=2 avg=+0.1535% ← MAX QUALITY PAIR {Dec-10, Mar-30}
+  slope<-0.0002: n=4 avg=+0.1017%
+  slope<-0.0001: n=3 avg=+0.0716%
+
+CONFIRMED: Steeper EMA slope = better signal quality. Consistent with accel gate logic.
+  The max quality pair {Dec-10, Mar-30} identified in T558 shows up in BOTH accel AND slope gates.
+
+SHORT 13-14 UTC by acceleration:
+  accel<-0.0003: n=2 avg=+0.1535% ← same max quality pair!
+  accel<-0.0001: n=3 avg=+0.1117%
+  accel in [-0.0001,0): n=4 avg=+0.0716%
+
+CONFIRMED: accel is the best individual quality predictor (same as Gen3A finding).
+
+SHORT 13-14 UTC by h4_dist:
+  h4=[3.0,10): n=5 avg=+0.1135% ← deeply below H4 EMA = best quality
+  h4=[1.0,1.5): n=2 avg=+0.0881% ← shallowest dist = weakest
+
+FINDING: h4_dist>=3.0 captures 5 of 9 signals at avg=+0.1135%.
+  Adding h4_dist as a QUALITY gate (h4>=3.0) could be Gen6A filter.
+  BUT: this is a new gate — needs validation that it doesn't overfit.
+
+REGIME SUMMARY:
+  Quality predictors (in order of importance): accel < slope < r_rank < h4_dist
+  All correlate: a deeply bearish, strongly accelerating EUR downtrend = best SHORT.
+  The full-momentum trio always sits at the intersection of all quality bands.
+
+===== T575: MILESTONE — Gen6 COMPLETE =====
+
+=== FINAL SIGNAL ARCHITECTURE (Gen0-Gen6) ===
+
+PRIMARY LINE: SHORT 13-14 UTC
+  Gen0 baseline: n=9 WR=100% avg=+0.1032%
+  Gen2B quality: n=5 WR=100% avg=+0.1300%
+  Gen3A premium: n=3 WR=100% avg=+0.1476%
+
+NEW DISCOVERIES (Gen5-Gen6):
+  CT-LONG 13-14 UTC (hi5 variant): n=4 WR=100% avg=+0.1653% (needs more data)
+  SHORT 07-08 UTC + accel>0:        n=13 WR=77% avg=+0.0469% (redesigned candidate)
+
+REGIME INSIGHT (T574):
+  Quality band: steep slope + strong accel + moderate r + deep h4 = premium signal
+  All four quality predictors converge on same trades (trio + Oct-12)
+
+ACCEL INVERSION TABLE:
+  Session    | Direction | Optimal accel  | n  | WR    | avg
+  -----------|-----------|----------------|----+-------+--------
+  13-14 UTC  | SHORT     | <= -0.0001     | 5  | 100%  | +0.1284%
+  07-08 UTC  | SHORT     | > 0            | 13 | 77%   | +0.0469%
+  13-14 UTC  | CT-LONG   | > 0.0002       | 2  | 100%  | +0.1777%
+
+=== Gen7 PLAN (T576-T580) ===
+T576: SHORT 07-08 redesign final — h4>=0.5 + accel>0 combo test
+T577: CT-LONG extension — hi3 hi5 with ATR21, accel>0 filter
+T578: h4_dist quality gate test — h4>=2.0 or h4>=3.0 as Gen6A filter
+T579: SHORT hold-time optimization — max_hold=2,3,4,5,6 bars at 13-14 UTC
+T580: MILESTONE Gen7 — EA parameter finalization, combined architecture
+
+===== NEXT BATCH (T576-T580) =====
+T576: SHORT 07-08 final redesign: h4>=0.5 + accel>0 + various lo_periods
+T577: CT-LONG extension: hi3, hi5, ATR21, accel>0 — maximize n while WR=100%
+T578: h4_dist Gen6A quality gate: h4>=2.0 or >=3.0 on 13-14 UTC SHORT
+T579: Hold-time optimization: test 2-6 bars on Gen0, Gen2B, Gen3A
+T580: Gen7 milestone — EA spec, combined architecture, final summary
+

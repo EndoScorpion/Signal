@@ -1,0 +1,143 @@
+THEORY ADDENDUM v38 — TZ AUDIT + T289-T290
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== TZ AUDIT: FXOpen ECN H1 UTC TIMESTAMP VERIFICATION ===
+
+DATA CONFIRMED: All timestamps are UTC (pd.to_datetime(..., utc=True), tz=UTC shown).
+  First bar: 2024-01-01 18:00:00+00:00
+  Last bar:  2026-10-16 21:00:00+00:00
+  Total bars: 17,247
+
+Hour distribution: 24h coverage, 720-728 bars per hour.
+  Slightly lower at 22h (630) and 23h (670) — expected FXOpen Sunday open gap.
+  No zero hours — continuous UTC coverage across full trading week.
+
+Day-of-week: Mon-Fri dominant. 88 Sunday bars (late Sunday NY session open ~21-23h UTC). Zero Saturday.
+
+DST check: All 6 US/EU DST transition dates (2024-2026) show exactly 1 bar (midnight Sunday)
+  or 0 bars — normal weekend open behavior. NO DST-induced duplicates, gaps or hour shifts.
+  CONCLUSION: FXOpen ECN data has NO DST artifacts. Timestamps are clean UTC.
+
+SIGNAL TRADE TZ VERIFICATION:
+All 10 T131+EMA50 signal trades verified:
+  Hours: [13, 14] UTC only — PASS
+  Weekend trades: 0 — PASS
+  All fall on weekdays (Mon-Thu) — PASS
+
+Per-trade verified timestamps:
+  2024-12-10: 13:00 UTC, Tue, rank=15.5, H4=aligned → +0.1399%
+  2024-12-18: 13:00 UTC, Wed, rank=16.7, H4=aligned → +0.1299%
+  2025-12-30: 13:00 UTC, Tue, rank=16.3, H4=counter → +0.1032%
+  2026-01-08: 14:00 UTC, Thu, rank=15.9, H4=aligned → +0.1001%
+  2026-02-16: 13:00 UTC, Mon, rank=2.8,  H4=aligned → +0.0480%
+  2026-02-17: 13:00 UTC, Tue, rank=17.9, H4=aligned → +0.1167%
+  2026-03-30: 14:00 UTC, Mon, rank=14.7, H4=aligned → +0.1618%
+  2026-05-14: 13:00 UTC, Thu, rank=9.9,  H4=aligned → +0.1009%
+  2026-07-21: 13:00 UTC, Tue, rank=6.0,  H4=aligned → +0.0803%
+  2026-08-06: 14:00 UTC, Thu, rank=11.9, H4=counter → +0.0906%
+
+TZ AUDIT CONCLUSION: PASS. FXOpen ECN H1 data is UTC-clean with no DST artifacts.
+The 13-14h UTC window correctly targets the London-NY overlap (13:00-17:00 UTC).
+All signal trade timestamps verified. No corrections needed.
+
+=== WIN LOGIC RE-AUDIT: 2024-26 REGIME (post-TZ-correction) ===
+
+All trades are in 2024-26 regime (data starts 2024-01-01). n=10, WR=100%, avg=+0.1071%.
+Key filters re-verified on UTC-correct data:
+  rank10-20 AND H4-aligned: n=5, avg=+0.1297%  ← T286 filter confirmed UTC-correct
+  Full trade table above shows H4 and rank values consistent with prior theory results.
+
+WIN LOGIC AUDIT CONCLUSION: All T285-T288 H4/rank findings confirmed TZ-correct.
+No recalculation needed. T286 filter (n=5, +0.1297%) stands.
+
+=== T289: NFP PROXIMITY (trade in first-Friday-of-month NFP week) ===
+Question: Do trades near NFP (Non-Farm Payroll, first Fri of month) differ in performance?
+
+  NFP week (trade within same week as first Friday):
+    n=2: 2024-12-10 (+0.1399%), 2026-01-08 (+0.1001%) → avg=+0.1200%
+  Non-NFP week:
+    n=8: all other trades → avg=+0.1039%
+
+Correlation (nfp_week binary vs pnl): +0.211
+
+KEY FINDING: +0.211 correlation — WEAK positive for NFP week. Only n=2 NFP trades,
+making this statistically meaningless. The two NFP trades happen to include the
+best trade (2024-12-10, +0.1399%) and one average trade (2026-01-08, +0.1001%).
+
+MECHANISM: NFP releases create volatility spikes. The setup requires compression
+(ATR rank<20) — which means NFP trades occur BEFORE the NFP release (compression
+during the week), not on NFP Friday itself. Signal occurs 13-14h UTC; NFP is
+typically 13:30h UTC. So a 13h signal on NFP Friday would precede NFP by 30 min.
+BUT: the two NFP-WEEK trades are 2024-12-10 (Tuesday) and 2026-01-08 (Thursday) —
+neither is on the NFP Friday itself. The setup compression precludes NFP-day entries.
+
+CONCLUSION: +0.211 correlation — 11th/14th in predictor ranking (weak).
+NFP proximity is not a meaningful filter. n=2 NFP trades too small. NOT a filter.
+
+NOTE: NFP week definition uses "trade falls in week containing first Friday of month".
+A stricter "days from NFP Friday" metric might show something with more trades.
+
+=== T290: PRIOR BAR RANGE (bar immediately before signal vs ATR14) ===
+Question: Does the range of the bar just before the signal predict performance?
+
+Per-trade sorted by prior_range_ratio:
+  2026-02-17: prior_range_ratio=0.84 [mid] → +0.1167%
+  2026-07-21: prior_range_ratio=0.88 [mid] → +0.0803%
+  2025-12-30: prior_range_ratio=0.93 [mid] → +0.1032%
+  2024-12-10: prior_range_ratio=1.13 [mid] → +0.1399%  ← best mid
+  2026-05-14: prior_range_ratio=1.13 [mid] → +0.1009%
+  2026-08-06: prior_range_ratio=1.22 [large] → +0.0906%
+  2024-12-18: prior_range_ratio=1.44 [large] → +0.1299%
+  2026-02-16: prior_range_ratio=1.90 [large] → +0.0480%  ← worst
+  2026-03-30: prior_range_ratio=2.21 [large] → +0.1618%  ← BEST trade, large prior bar
+  2026-01-08: prior_range_ratio=2.65 [large] → +0.1001%
+
+Correlation: +0.071 (ESSENTIALLY ZERO)
+
+FINDING: No relationship. The prior bar range does not predict signal bar quality.
+Best trade (2026-03-30, +0.1618%) has large prior bar (2.21×). Worst trade (2026-02-16,
++0.0480%) also large (1.90×). The prior bar range is structurally uncorrelated.
+
+Threshold tests show ±0.002% differences — noise level.
+
+CONCLUSION: +0.071 correlation = weakest predictor found to date (below T288 at -0.131).
+Prior bar range is USELESS as a predictor. NOT a filter.
+
+=== CUMULATIVE PREDICTOR RANKINGS (updated through T290) ===
+1. T272: ATR rank (within rank<20) — +0.756
+2. T259: Prior day range location — -0.730
+3. T271: Composite score (T259-weighted) — +0.619
+4. T268: EMA50 distance — +0.463
+5. T285/T287: H4 trend alignment — +0.369/+0.356
+6. T263: Consec down days — +0.356
+7. T284: Consec lower highs — -0.350
+8. T260: Prior week location — -0.328
+9. T256: Signal bar size — -0.300
+10. T253: Intraday drift — +0.227
+11. T281: Hour (13h vs 14h) — +0.223
+12. T289: NFP proximity — +0.211
+13. T254: Compression length qc — +0.187
+14. T283: Bar expansion ratio — -0.199
+15. T288: Bar close location — -0.131
+16. T290: Prior bar range — +0.071
+
+=== TOTAL THEORIES TESTED: 290 ===
+TZ Audit: PASS. FXOpen ECN data confirmed UTC-clean. All signal timestamps correct.
+T289: NFP proximity — +0.211 correlation. n=2 NFP trades. Weak. NOT a filter.
+T290: Prior bar range — +0.071 correlation. Essentially zero. NOT a filter.
+
+BEST PROVISIONAL FILTERS (unchanged from T288):
+1. rank10-20 AND ema50>=3.0:    n=3, avg=+0.1395% (+30%) — highest quality, lowest freq
+2. loc<-0.3 AND rank10-20:      n=2, avg=+0.1393% (+30% — too sparse)
+3. H4-aligned AND rank10-20:    n=5, avg=+0.1297% (+21%) — best n≥5 filter
+4. loc<0 AND rank10-20:         n=4, avg=+0.1296% (+21%)
+5. ema50_dist >= 3.0×:          n=4, avg=+0.1298% (+21%)
+6. consec_down >= 1:            n=8, avg=+0.1166% (+8.9% — highest frequency)
+
+NEXT THEORY DIRECTIONS (T291+):
+1. T291: DAY-BEFORE SIGNAL DIRECTION — did price trend down the prior session bar?
+2. T292: MULTI-FACTOR COMPOSITE SCORE (rank + ema_dist + H4 alignment combined)
+3. T293: PRIOR 3-BAR BODY DOMINANCE — what fraction of prior 3 bars were bearish?
+4. T294: COMPRESSION UNIFORMITY — variance of ATR within qc window (all bars similar vs one spike)
+5. T295: MARKET SESSION SPLIT — check if 13h (London close) vs 14h (early NY) behaves differently by H4 alignment

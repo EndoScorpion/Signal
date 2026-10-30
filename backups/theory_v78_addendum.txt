@@ -1,0 +1,262 @@
+THEORY LOOP ADDENDUM v78 — T476-T480
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T476: ENTRY TIMING — DAY OF WEEK =====
+
+Trade list (all 9):
+  2024-12-10 (Tuesday)  h=13 r=18.7 → +0.1463%
+  2024-12-18 (Wednesday) h=13 r=21.0 → +0.1358%
+  2026-01-08 (Thursday) h=14 r=23.4 → +0.0973%
+  2026-02-16 (Monday)   h=13 r=5.2  → +0.0405%
+  2026-02-17 (Tuesday)  h=13 r=27.0 → +0.1101%
+  2026-03-30 (Monday)   h=14 r=28.2 → +0.1607%
+  2026-05-14 (Thursday) h=13 r=17.1 → +0.0954%
+  2026-07-21 (Tuesday)  h=13 r=9.5  → +0.0385%
+  2026-10-12 (Monday)   h=14 r=13.5 → +0.1040%
+
+Day of week breakdown:
+  Monday:    n=3 avg=+0.1017%  (2026-02-16, 2026-03-30, 2026-10-12)
+  Tuesday:   n=3 avg=+0.0983%  (2024-12-10, 2026-02-17, 2026-07-21)
+  Wednesday: n=1 avg=+0.1358%  (2024-12-18)
+  Thursday:  n=2 avg=+0.0964%  (2026-01-08, 2026-05-14)
+  Friday:    n=0
+
+OBSERVATION: No Friday trades ever qualify. All 4 days (Mon-Thu) show similar averages
+(0.0964% - 0.1358%). No meaningful day-of-week pattern with n=9.
+Wednesday looks best (+0.1358%) but n=1 — cannot conclude anything.
+
+CONSECUTIVE-DAY NOTE: 2026-02-16 (Monday) and 2026-02-17 (Tuesday) are consecutive days.
+  Feb-16: r=5.2 → +0.0405% (bad)
+  Feb-17: r=27.0 → +0.1101% (good)
+Different quality — not because of day order, but because r=5.2 vs r=27.0 (the r>=18 gate
+already handles this distinction correctly).
+
+VERDICT: No actionable day-of-week pattern. No Fridays is a structural observation (likely
+coincidence in n=9 sample). Keep hours {13, 14} for all Mon-Thu. Cannot restrict days further.
+
+===== T477: H4 EMA50 DISTANCE DEEP DIVE =====
+
+Corr(h4d, pnl_pct) = +0.214 (weak positive)
+
+h4d values at each trade (sorted by h4d):
+  h4d=1.191 r=5.2  → +0.0405%  (2026-02-16 — low r trade)
+  h4d=1.359 r=21.0 → +0.1358%  (2024-12-18)
+  h4d=2.705 r=18.7 → +0.1463%  (2024-12-10)
+  h4d=2.739 r=9.5  → +0.0385%  (2026-07-21 — low r trade)
+  h4d=4.007 r=27.0 → +0.1101%  (2026-02-17)
+  h4d=4.782 r=28.2 → +0.1607%  (2026-03-30)
+  h4d=5.670 r=13.5 → +0.1040%  (2026-10-12)
+  h4d=5.696 r=23.4 → +0.0973%  (2026-01-08)
+  h4d=6.004 r=17.1 → +0.0954%  (2026-05-14)
+
+H4D threshold scan:
+  h4d>=1.0: n=9 WR=100% avg=+0.1032%  ← baseline
+  h4d>=1.5: n=7 WR=100% avg=+0.1075%  (drops 2026-02-16 r=5.2 bad + one borderline)
+  h4d>=2.0: n=7 WR=100% avg=+0.1075%  (same 7 as >=1.5)
+  h4d>=2.5: n=7 WR=100% avg=+0.1075%  (same 7 as >=1.5)
+  h4d>=3.0: n=5 WR=100% avg=+0.1135%  (drops 2 low-h4d trades)
+  h4d>=4.0: n=5 WR=100% avg=+0.1135%  (same 5 as >=3.0)
+
+CRITICAL FINDING: h4d>=1.5 drops EXACTLY the same 2 bad trades as r>=18!
+  Dropped at h4d>=1.5:
+    2026-02-16: h4d=1.191, r=5.2  → +0.0405%  (SAME trade that r>=18 drops)
+    2026-07-21: h4d=2.739, r=9.5  → +0.0385%  ← WAIT — 2026-07-21 has h4d=2.739 > 1.5!
+
+Re-check: h4d>=1.5 gives n=7 (drops only 2026-02-16). But 2026-07-21 (h4d=2.739) is NOT
+dropped by h4d>=1.5. So h4d>=1.5 drops only 1 bad trade (the r=5.2 one).
+h4d>=3.0 gives n=5 avg=+0.1135% — drops 2026-02-16 (h4d=1.191) and 2026-07-21 (h4d=2.739).
+This is the same 2 trades that r>=18 drops! So h4d>=3.0 is ALSO equivalent to r>=18!
+
+REDUNDANCY CONFIRMED AGAIN: h4d>=3.0, r>=18, atr>=80, qc<=6 — all four filter the same 2 bad trades.
+h4d is ANOTHER expression of the same latent "market has enough energy" discriminant.
+
+h4d SOFT SIGNAL: weak positive correlation (+0.214). Deeper below H4 EMA50 does not clearly
+predict better outcomes — the 2 highest h4d trades (5.696, 6.004) are mediocre (+0.0973%, +0.0954%).
+Best trade (2026-03-30 +0.1607%) has h4d=4.782 — not the deepest.
+
+VERDICT: h4d>=1.0 (existing gate) is sufficient — it ensures the regime filter fires.
+h4d>=3.0 is equivalent to r>=18 but less interpretable. Do NOT raise h4d threshold.
+The h4d correlation (+0.214) is weak and non-monotonic — deeper H4D does not systematically
+predict better trades. Keep existing h4d>=1.0 gate. Use r>=18 as the single quality gate.
+
+===== T478: PRE-SETUP ATR PATTERN (5-bar ATR change) =====
+
+Corr(atr_5b_change%, pnl) = +0.062 (NEAR ZERO — not predictive)
+
+ATR 5-bar change at each trade (sorted):
+  -7.5%: r=13.5 → +0.1040%  (ATR declining slightly before setup)
+  +5.2%: r=5.2  → +0.0405%  (bad trade, rising ATR)
+  +9.8%: r=17.1 → +0.0954%
+  +10.9%: r=18.7 → +0.1463%
+  +12.4%: r=21.0 → +0.1358%
+  +17.2%: r=28.2 → +0.1607%  (best trade, strongest ATR rise)
+  +19.8%: r=9.5  → +0.0385%  (worst trade, also strong ATR rise — confound)
+  +20.8%: r=27.0 → +0.1101%
+  +21.1%: r=23.4 → +0.0973%
+
+OBSERVATION: 8 of 9 trades have positive atr_5b_change (ATR rising over 5 bars before entry).
+This is already known (T467 found ATR slope is structural — the quiet-band compression
+followed by lo10 break naturally involves rising ATR). Corr=+0.062 confirms it adds no signal.
+
+The best (2026-03-30, +17.2%) and worst (2026-07-21, +19.8%) trades both have similar
+ATR 5-bar change — they are indistinguishable on this metric. The discriminant is r (5.2 vs 28.2).
+
+VERDICT: atr_pct_change_5b is NOT predictive (corr=+0.062). Near-zero correlation.
+Do NOT add as a gate or soft indicator. The r>=18 gate already handles quality discrimination.
+The 5-bar ATR rise is structural noise from the setup definition itself.
+
+===== T479: BEARISH BODY FILTER (entry bar close < open) =====
+
+Direction split:
+  Bearish body (c<o): n=7 avg=+0.0994%
+  Bullish body (c>o): n=2 avg=+0.1166%
+
+All trades with body direction:
+  2024-12-10 BEAR: r=18.7 → +0.1463%
+  2024-12-18 BULL: r=21.0 → +0.1358%
+  2026-01-08 BULL: r=23.4 → +0.0973%
+  2026-02-16 BEAR: r=5.2  → +0.0405%
+  2026-02-17 BEAR: r=27.0 → +0.1101%
+  2026-03-30 BEAR: r=28.2 → +0.1607%
+  2026-05-14 BEAR: r=17.1 → +0.0954%
+  2026-07-21 BEAR: r=9.5  → +0.0385%
+  2026-10-12 BEAR: r=13.5 → +0.1040%
+
+PARADOX: Bullish body (c>o) average is HIGHER (+0.1166%) than bearish body (+0.0994%)!
+This is counterintuitive — we might expect a bearish bar to confirm the short direction,
+but the 2 bullish-body trades (Dec-18 and Jan-08) are both quality trades.
+
+EXPLANATION: n=2 bullish-body trades is too small for conclusions. The 2 bullish trades
+happen to be r=21.0 and r=23.4 — both are Tier 1 quality (r>=18). The better average
+for bullish body is driven purely by r quality, not body direction.
+
+Bearish-only subset: includes both bad trades (r=5.2, r=9.5). So the lower average for
+bearish body is explained by the 2 bad trades both having bearish bars.
+
+VERDICT: Body direction is NOT a useful filter. The apparent bullish-body advantage is
+entirely explained by the r>=18 quality gate — bullish trades happen to be high-r trades.
+With r>=18 applied, the bearish vs bullish split would be irrelevant (r>=18 already handles it).
+Do NOT add bearish body as a gate. The lo10 break inherently requires a bearish close
+(must close below the 10-bar low to trigger) — a bearish body is partially redundant with
+the signal definition itself. Keep the existing setup as-is.
+
+NOTE: 7 of 9 entry bars are bearish (78%). This is expected given the lo10 break signal —
+breaking a new low typically involves a bearish bar. The 2 bullish bars still trigger because
+the LOW dips below lo10 even though the close recovers.
+
+===== T480: MULTI-TIMEFRAME RSI ALIGNMENT =====
+
+Individual RSI correlations with pnl:
+  Corr(h1_rsi, pnl) = -0.489  ← known, previously tracked
+  Corr(h4_rsi, pnl) = -0.067  ← near-zero
+  Corr(d1_rsi, pnl) = -0.294  ← weak negative
+
+RSI values at each trade (sorted by h1_rsi, ascending = more oversold):
+  2026-03-30: h1=16.9 h4=21.6 d1=28.7 → +0.1607%  ← best trade, most oversold h1
+  2026-10-12: h1=18.1 h4=14.5 d1=17.9 → +0.1040%
+  2024-12-10: h1=19.3 h4=22.9 d1=44.0 → +0.1463%
+  2026-05-14: h1=23.2 h4=13.5 d1=30.4 → +0.0954%
+  2026-02-17: h1=23.8 h4=3.0  d1=49.0 → +0.1101%
+  2026-01-08: h1=31.5 h4=29.4 d1=14.0 → +0.0973%
+  2026-07-21: h1=31.6 h4=30.9 d1=39.1 → +0.0385%  ← worst, h1=31.6 (less oversold)
+  2026-02-16: h1=36.2 h4=17.3 d1=47.8 → +0.0405%  ← bad trade, h1=36.2 (least oversold)
+  2024-12-18: h1=39.9 h4=27.6 d1=18.0 → +0.1358%  ← exception: h1=39.9 but great trade
+
+OBSERVATION: h4_rsi shows remarkable values. 2026-02-17 has h4_rsi=3.0 (extremely oversold
+on 4-hour) and 2026-10-12 has h4_rsi=14.5. Yet h4_rsi has near-zero correlation with pnl (+0.067).
+This means H4 RSI extreme oversoldness is not predictive — the variation is dominated by other factors.
+
+d1_rsi: Wide range (14.0 to 49.0) — no clear pattern. 2024-12-18 has d1_rsi=18.0 (very oversold)
+and is a great trade (+0.1358%). 2026-02-17 has d1_rsi=49.0 (barely bearish) yet also good (+0.1101%).
+
+RSI alignment tests (all pass n=9 — all 9 trades have RSI below 50 on all timeframes):
+  h1<50 + h4<50 + d1<50: n=9 avg=+0.1032%  (no filtering — all already below 50)
+  h4<50 + d1<50: n=9 avg=+0.1032%           (same)
+  h1<40 + h4<45: n=9 avg=+0.1032%           (all pass — h1 max is 39.9, h4 max is 30.9)
+
+INSIGHT: ALL 9 trades already have ALL timeframe RSIs below 50! This means MTF RSI alignment
+<50 is already baked into the signal structure. The existing gates (ema50_dist>=0.5, h4d>=1.0,
+lo10 break) naturally enforce bearish context which ensures RSI is below 50 on all TFs.
+
+RSI in combination with r>=18:
+  R>=18 + h4_rsi<50: n=5 avg=+0.1300% (same as r>=18 alone — all r>=18 trades have h4<50)
+  R>=18 + d1_rsi<50: n=5 avg=+0.1300% (same as r>=18 alone — all r>=18 trades have d1<50)
+
+VERDICT: MTF RSI adds NO value as a gate — all qualifying trades already have all RSIs <50.
+The h1_rsi correlation (-0.489) is real but h1_rsi cannot be gated because:
+  - Best exception: h1=39.9 → +0.1358% (good trade, high h1 RSI)
+  - Below h1<20: only n=2 (not enough sample)
+  - It is collinear with other features (h1_rsi low ↔ deep price drop ↔ lo10 break)
+h4_rsi (-0.067) and d1_rsi (-0.294): No gating potential, too weak.
+
+Do NOT add any RSI gate. RSI is already implied by the existing setup structure.
+
+===== UPDATED GATE STATUS TABLE =====
+Feature           | Corr pnl | Gate?   | Status
+composite_score   | +0.970   | NO      | IS only, overfit
+exit_bar          | -0.841   | NO      | post-hoc
+ATR14             | +0.898   | YES     | r>=18 (equiv) — TIER 1
+r (ATR rank)      | +0.795   | YES     | r>=18 AND r<29 — PRIMARY GATE
+4-day ATR         | +0.698   | NO      | captured by ATR14
+range10           | +0.541   | SOFT+   | larger range = better (no threshold gate)
+qc                | -0.546   | equiv   | redundant with r>=18
+h1_rsi            | -0.489   | NO      | no actionable threshold (best trade has h1=39.9)
+|prev_d1_ret|     | +0.465   | NO      | soft preference
+prev_d1_ret       | -0.437   | NO      | soft preference
+d1_dist           | +0.414   | NO      | covered by h4d gate
+ATR slope         | +0.383   | NO      | structural artifact
+h4_dist_atr       | KEY      | YES     | >=1.0 — REGIME GATE (h4d>=3.0 equiv to r>=18)
+d1_rsi            | -0.294   | NO      | weak, implied by setup structure
+DOW               | ~0       | NO      | no pattern (Mon-Thu all similar)
+h4_rsi            | -0.067   | NO      | near-zero
+atr_5b_change     | +0.062   | NO      | near-zero, structural artifact
+bearish_body      | ~0       | NO      | no directional edge
+2yr window (504)  | WORSE    | NO      | 252-bar window superior
+CLOSE<lo10        | WORSE    | NO      | LOW<lo10 superior
+
+===== CANONICAL GATE — FINAL v78 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars
+
+Equivalents (all filter same 2 bad trades — use r>=18 as simplest):
+  atr >= 80 ECN pts  ≡  r >= 18  ≡  qc <= 6  ≡  h4d >= 3.0
+
+Soft positive indicators (no gate):
+  - range10 >= 4.0 (large 10-bar price swing before setup)
+  - prev_d1_ret < 0 (prior day was down)
+  - h1_rsi < 30 (more oversold = better, but NOT a hard threshold)
+
+OPERATIONAL NOTES:
+  - Zero qualifying setups in all of 2025 (regime was bullish, h4d mean=-0.890)
+  - Setup fires ~1×/month when active; can go silent 12+ months
+  - All qualifying bars: Mon–Thu, h=13 or h=14
+  - MTF RSI alignment <50 already satisfied by all qualifying setups — no additional gate needed
+  - Day-of-week: no pattern (Mon-Thu all equivalent)
+  - ATR rising 5 bars before entry: structural noise, not predictive
+
+===== KNOWLEDGE CONSOLIDATION (T476-T480) =====
+T476: No day-of-week pattern. Mon-Thu all valid. No Fridays (coincidence at n=9).
+T477: h4d>=3.0 ≡ r>=18 (another equivalent). Raising h4d threshold from 1.0 adds nothing new.
+T478: 5-bar pre-setup ATR change is near-zero corr — structural noise. Do not use.
+T479: Body direction not predictive. Bullish body advantage = r quality confound. Do not gate.
+T480: MTF RSI <50 already baked into setup structure. No RSI gate needed on any timeframe.
+
+===== NEXT BATCH (T481-T485) =====
+T481: Entry bar body size — does body_atr (relative to ATR) predict outcome within the
+      existing setup? Best trades have body_atr near what value? Correlation analysis + threshold.
+T482: Volume proxy — use (h-l)/ATR as a bar-range spread metric (ECN data has no volume).
+      Does the relative bar range on the entry bar predict outcome quality?
+T483: Multi-bar confirmation — require the bar AFTER lo10 break to also close below lo10.
+      Does a 2-bar confirmation improve quality? What is the n impact?
+T484: Trend strength — EMA50 H1 slope (current vs 5 bars ago). Does rising trend on H1
+      (price falling, EMA slope pointing down) predict better short trades?
+T485: Cross-bar quiet-band pattern — are the 3-6 quiet bars immediately before entry
+      consistently the best quiet-band pattern? Test: require quiet_bar streak >= 2 (consecutive
+      quiet bars before entry) vs the existing rolling qc>=3.

@@ -1,0 +1,154 @@
+THEORY ADDENDUM v40 — T294-T296
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T296: COMPRESSION UNIFORMITY (ATR coefficient of variation within qc window) ===
+THIS IS A MAJOR FINDING.
+
+Metric: atr_cv = std(ATR within qc window) / mean(ATR within qc window)
+  Low CV = all bars in compression window had similar ATR (uniform compression)
+  High CV = ATR varied a lot within the window (uneven compression, possibly one spike)
+
+Per-trade sorted by atr_cv (most uniform to most variable):
+  2026-03-30: atr_cv=0.055 [moderate] → +0.1618%  ← BEST trade, most uniform
+  2025-12-30: atr_cv=0.082 [moderate] → +0.1032%
+  2024-12-18: atr_cv=0.091 [moderate] → +0.1299%
+  2026-08-06: atr_cv=0.102 [variable] → +0.0906%
+  2026-02-17: atr_cv=0.107 [variable] → +0.1167%
+  2024-12-10: atr_cv=0.123 [variable] → +0.1399%
+  2026-07-21: atr_cv=0.125 [variable] → +0.0803%
+  2026-05-14: atr_cv=0.134 [variable] → +0.1009%
+  2026-02-16: atr_cv=0.142 [variable] → +0.0480%  ← WORST trade, 2nd most variable
+  2026-01-08: atr_cv=0.150 [variable] → +0.1001%  ← most variable
+
+Correlation: -0.648 ← THIRD STRONGEST PREDICTOR EVER
+
+KEY FINDING: -0.648 = strong negative correlation between ATR variability and return.
+More uniform compression (lower CV) = better expected trade. This makes deep intuitive
+sense:
+  - Uniform compression = truly quiet market, all bars similarly small
+  - Variable compression = some bars larger than others; could mean partial breaks
+    in the quiet period, less reliable setup
+  - The best trade (2026-03-30, +0.1618%) has the lowest CV (0.055)
+  - Worst in the 0.0-0.1 group: the 3 moderate trades average +0.1316%
+  - Variable group (CV>=0.1): avg +0.0966%
+
+Threshold analysis:
+  atr_cv < 0.12: n=5, avg=+0.1204% vs atr_cv>=0.12: n=5, avg=+0.0938% → +0.027% delta
+  atr_cv < 0.08: n=1 (just 2026-03-30 at +0.1618%) — too sparse
+
+FILTER CANDIDATE: atr_cv < 0.12 → n=5, avg=+0.1204% (+12.4% vs baseline)
+Better than consec_down>=1 (+8.9%) but weaker than rank+H4+ema combos (+21%).
+
+MECHANISM: Uniform compression signals genuine quiet/consolidation. Variable compression
+suggests the compression period had at least one episode of volatility — the lo10 break
+may be triggering after a more chaotic baseline. Pure consolidation boxes break more
+reliably than choppy compressions.
+
+COMPARISON WITH T292 COMPOSITE V2:
+  comp_v2 >= 0.5 (n=6, avg=+0.1249%) already includes 2026-03-30 (highest score, lowest CV).
+  But atr_cv is INDEPENDENT of comp_v2's three factors (rank, ema_dist, H4).
+  2024-12-10: comp=0.686 but atr_cv=0.123 (variable) — high composite, variable compression
+  Adding atr_cv as T296 standalone: n=5 at atr_cv<0.12 vs n=6 at comp>=0.5 — different trades.
+
+CONCLUSION: -0.648 correlation — **NEW #3 PREDICTOR** (rank: +0.756, comp_v2: +0.735, T296: -0.648).
+atr_cv < 0.12 is a new independent filter. The compression uniformity captures something
+the existing filters don't — the QUALITY of the quiet period, not just its duration (qc)
+or depth (rank). NEW FILTER CANDIDATE at n=5, +0.1204%.
+
+=== T294: COMPOSITE V3 (rank + ema_dist + H4 + loc = 4 factors) ===
+comp_v3 = (rank_norm + ema_norm + h4_norm + loc_norm) / 4
+
+Correlation: +0.689 (DOWN from V2's +0.735)
+
+Per-trade sorted by comp_v3:
+  2026-08-06: comp_v3=0.188 (loc=-0.26) → +0.0906%
+  2025-12-30: comp_v3=0.279 (loc=-0.18) → +0.1032%
+  2026-02-16: comp_v3=0.281 (loc=-0.30) → +0.0480%  ← stays near bottom (rank too low)
+  2026-07-21: comp_v3=0.371 (loc=-0.30) → +0.0803%
+  2024-12-18: comp_v3=0.565 (loc=-0.27) → +0.1299%
+  2026-05-14: comp_v3=0.657 (loc=-0.62) → +0.1009%
+  2026-01-08: comp_v3=0.758 (loc=-0.73) → +0.1001%
+  2024-12-10: comp_v3=0.765 (loc=-0.70) → +0.1399%
+  2026-03-30: comp_v3=0.803 (loc=-0.91) → +0.1618%
+  2026-02-17: comp_v3=0.841 (loc=-1.44) → +0.1167%  ← rises relative to V2
+
+Threshold tests:
+  comp_v3>=0.4: n=6, avg=+0.1249% (same 6 trades as comp_v2>=0.5)
+  comp_v3>=0.5: n=6, avg=+0.1249%
+
+KEY FINDING: Adding loc (prior day range location) HURTS the composite (+0.689 vs +0.735).
+The loc factor dilutes the V2 signal. This is surprising given T259's strong -0.730 standalone
+correlation. The reason: loc_norm caps negative loc at -0.5 ATR (norm=1.0 for loc<-0.5), which
+over-saturates the factor for the deepest trades. The loc factor assignment isn't calibrated
+optimally for this combination.
+
+CONCLUSION: V3 with 4 equal-weight factors is WORSE than V2 with 3 factors. The pure 3-factor
+composite (rank+ema+H4) at +0.735 is the better formulation. The addition of loc adds noise
+rather than signal at equal weighting.
+
+=== T295: COMPOSITE V4 (rank + ema_dist + H4 + loc + consec_down = 5 factors) ===
+Correlation: +0.577 (further degradation from V3's +0.689)
+
+KEY FINDING: More factors = worse composite. V4 (+0.577) < V3 (+0.689) < V2 (+0.735).
+Adding consec_down (T263 standalone +0.356) further dilutes the signal. The extra factors
+introduce more variance than they explain.
+
+MECHANISM: With n=10 trades, each additional factor in an equal-weight composite adds
+0.1 weight to a potentially noise-contributing variable. V2's three factors (rank, ema, H4)
+happen to be the tightest cluster of high-correlation predictors. Adding lower-correlation
+predictors dilutes, not enhances.
+
+CONCLUSION: V2 remains the optimal equal-weight composite. V3/V4 are inferior.
+Alternative: WEIGHTED composite (giving T272 rank more weight) may improve on V2.
+NOT new filters — V2 remains the reference composite.
+
+=== COMPOSITE CORRELATION SUMMARY ===
+V2 (rank+ema+H4):           +0.735  ← OPTIMAL
+V3 (V2 + loc):              +0.689  ← worse
+V4 (V3 + consec_down):      +0.577  ← much worse
+INSIGHT: The 3-factor V2 is the ceiling for equal-weight composites with these predictors.
+
+=== CUMULATIVE PREDICTOR RANKINGS (updated through T296) ===
+1. T272: ATR rank (within rank<20) — +0.756
+2. T292: Composite V2 (rank+ema+H4) — +0.735
+3. T296: Compression uniformity (atr_cv) — -0.648 ← NEW #3
+4. T259: Prior day range location — -0.730 [note: near #3 standalone but not composited well]
+5. T271: Composite score (T259-weighted) — +0.619
+6. T268: EMA50 distance — +0.463
+7. T285/T287: H4 trend alignment — +0.356
+8. T263: Consec down days — +0.356
+9. T284: Consec lower highs — -0.350
+10. T260: Prior week location — -0.328
+11. T256: Signal bar size — -0.300
+12. T253: Intraday drift — +0.227
+13. T281: Hour (13h vs 14h) — +0.223
+14. T289: NFP proximity — +0.211
+15. T293: Prior 3-bar bearish — +0.205
+16. T254: Compression length qc — +0.187
+17. T283: Bar expansion ratio — -0.199
+18. T291: Prior 5-bar direction — -0.156
+19. T288: Bar close location — -0.131
+20. T290: Prior bar range — +0.071
+
+=== TOTAL THEORIES TESTED: 296 ===
+T294: Composite V3 (4 factors) — +0.689. Worse than V2 at +0.735. Not an improvement.
+T295: Composite V4 (5 factors) — +0.577. Further degradation. Not a filter.
+T296: ATR compression uniformity — -0.648. **NEW #3 PREDICTOR**. n=5 at atr_cv<0.12: +0.1204%.
+
+BEST PROVISIONAL FILTERS (updated):
+1. rank10-20 AND ema50>=3.0:    n=3, avg=+0.1395% (+30%) — highest quality
+2. loc<-0.3 AND rank10-20:      n=2, avg=+0.1393% (too sparse)
+3. H4-aligned AND rank10-20:    n=5, avg=+0.1297% (+21%) — best n≥5
+4. comp_v2>=0.6:                n=4, avg=+0.1296% (+21%) — composite filter
+5. loc<0 AND rank10-20:         n=4, avg=+0.1296% (+21%)
+6. ema50_dist >= 3.0×:          n=4, avg=+0.1298% (+21%)
+7. comp_v2>=0.5:                n=6, avg=+0.1249% (+16.6%)
+8. atr_cv<0.12:                 n=5, avg=+0.1204% (+12.4%) ← NEW independent filter
+9. consec_down >= 1:            n=8, avg=+0.1166% (+8.9% — highest frequency)
+
+NEXT THEORY DIRECTIONS (T297+):
+1. T297: Composite V2 + atr_cv — combine the top 3-4 predictors optimally
+2. T298: atr_cv × rank10-20 interaction (does uniform compression compound with rank?)
+3. T299: Weighted composite (give rank 2x weight vs ema and H4 1x)
+4. T300: The 300th theory milestone review — what's the ceiling of this dataset?

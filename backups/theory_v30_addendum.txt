@@ -1,0 +1,76 @@
+THEORY ADDENDUM v30 — T265-T267
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-18
+
+=== T265: PRIOR 3-DAY RANGE CONTRACTION (daily ATR-adjusted ranges shrinking?) ===
+Question: Are the 3 prior days showing range contraction (each day smaller than the last)?
+A 3-day tightening squeeze → more pent-up energy → stronger T131 signal?
+
+Results:
+  3-day contracting=True (d1 < d2 < d3): n=2, WR=100%, avg=+0.1310%
+    2026-01-08: ranges 3.33→5.74→6.16 ATR (daily ranges shrinking toward signal)  +0.1001%
+    2026-03-30: ranges 0.42→3.85→4.15 ATR (extreme contraction day before signal)  +0.1618% (best)
+  3-day contracting=False: n=8, WR=100%, avg=+0.1012%
+
+Correlation (range_trend vs pnl): -0.235 (weak negative — contraction direction slightly better)
+
+CONCLUSION: 3-day range contraction n=2 is far too small for conclusions, though both
+trades are winners. The best trade (2026-03-30) has extreme daily range contraction
+(0.42 ATR on the signal's prior day = barely any range the day before). This is
+consistent with the compression mechanism — H1 ATR compression (qc bars) corresponds
+to daily range contraction when extreme. Not a separate filter; largely inherent to
+the ATR compression already required.
+
+=== T266: SIGNAL HOUR BREAKDOWN (13h vs 14h UTC) ===
+Question: Do 13h and 14h signals have different performance profiles?
+(T211 tested hours broadly; this is the T131+EMA50 subset specifically.)
+
+Results:
+  Hour 13h: n=7, WR=100%, avg=+0.1027%, avg_ema50_dist=2.43×
+    Dates: 2024-12-10, 2024-12-18, 2025-12-30, 2026-02-16, 2026-02-17, 2026-05-14, 2026-07-21
+  Hour 14h: n=3, WR=100%, avg=+0.1175%, avg_ema50_dist=2.75×
+    Dates: 2026-01-08, 2026-03-30, 2026-08-06
+
+Hour 14h trades have HIGHER avg (+0.1175% vs +0.1027%) and higher avg EMA50 distance
+(2.75× vs 2.43×). The 14h signal is rarer (3 vs 7) but shows better performance.
+
+CONCLUSION: 14h signals slightly outperform 13h signals in the T131+EMA50 subset.
+The difference is likely explained by EMA50 distance: 14h signals accumulate more
+downside drift (avg 2.75× vs 2.43×) because they occur later in the session.
+NOT a separate filter — all win regardless. The 13h/14h distinction is largely
+explained by the EMA50 distance already captured in the main setup.
+Both hours valid; no reason to prefer or exclude either.
+
+=== T267: NEXT-DAY RETEST SHORT (enter SHORT at 13h on day AFTER T131+EMA50 signal) ===
+Hypothesis: If T131+EMA50 fires today, does compression persist to the next day?
+If so, a next-day entry at 13h (same conditions: compressed, below EMA50) provides
+a "second bite" without requiring the lo10 break again.
+
+Results (n=1 signal found):
+  2026-02-17 (following 2026-02-16 signal): pnl=+0.1167%
+  WR=100% but n=1 is completely insufficient.
+
+Context: The 2026-02-16 → 2026-02-17 pair is interesting — two back-to-back T131+EMA50
+signals on consecutive days! Both win. But T267 logic only fires when the NEXT DAY meets
+all conditions (compressed, below EMA50) — and only 1 such case exists in the sample.
+T131+EMA50 signals are simply too rare (~5/year) for next-day compression to persist.
+
+CONCLUSION: T267 infrastructure works but n=1 makes it completely untestable.
+The one case (2026-02-17 following 2026-02-16) is already captured as a separate
+T131+EMA50 signal in the main system. No new information.
+Note: The consecutive signal pair 2026-02-16/2026-02-17 is already in the T131+EMA50
+sample — it represents TWO separate qualifying events on consecutive days.
+RULED OUT due to n=1.
+
+=== TOTAL THEORIES TESTED: 267 ===
+T265: 3-day range contraction n=2 — too sparse, largely inherent to ATR compression.
+T266: 14h signals slightly better than 13h (+0.1175% vs +0.1027%) — explained by higher
+ema50_dist at 14h. Both valid. No separate filter needed.
+T267: Next-day retest n=1 — untestable.
+
+SYNTHESIS (T253-T267 combined):
+1. The EMA50 distance is ALREADY the best single predictor — higher dist = better avg.
+2. T259 (-0.730 correlation) confirms prior-day structure breakdown is the mechanism.
+3. T263 (consec_down >= 1 provisional) shows +8.9% avg improvement but small sample.
+4. The lo10 break is ESSENTIAL (T255 confirmed removing it kills edge: PF=1.08 at n=48).
+5. T131+EMA50 as specified is at/near the optimal configuration.

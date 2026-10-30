@@ -1,0 +1,213 @@
+THEORY LOOP ADDENDUM v110 — T636-T640 Gen19 COMPLETE
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | Gen19 discoveries
+Date: 2026-10-29
+
+===== BASELINE (Gen16 unchanged) =====
+Signal 1: n=8 WR=100% avg=+0.1152% cum=+0.9213% flat / +1.3549% sized (hold=5)
+Signal 2: n=5 WR=100% avg=+0.0926% cum=+0.4628% flat / +0.5140% sized (alligator model)
+Combined S1+S2 sized: n=13 WR=100% maxDD=0 cum=+1.8689%
+
+===== T636: GATE THRESHOLD SENSITIVITY (qc, ema_dist) =====
+
+S1 QC threshold sweep:
+  qc>=1: n=8 WR=100% avg=+0.1152% cum=+0.9213% sized=+1.3549%  ← SAME
+  qc>=2: n=8 WR=100% avg=+0.1152% cum=+0.9213% sized=+1.3549%  ← SAME
+  qc>=3 (canonical): n=8 WR=100% avg=+0.1152% cum=+0.9213% sized=+1.3549%
+  qc>=4: n=2 WR=100% avg=+0.1025% cum=+0.2050% sized=+0.2787%  ← REMOVES 6 signals
+  qc>=5: n=0 (no signals reach max score)
+
+S1 ema_dist threshold sweep:
+  ema_dist>=0.2: n=8 SAME
+  ema_dist>=0.3: n=8 SAME
+  ema_dist>=0.5 (canonical): n=8 WR=100% avg=+0.1152% cum=+0.9213% sized=+1.3549%
+  ema_dist>=0.7: n=8 SAME (all pass)
+  ema_dist>=1.0: n=7 WR=100% avg=+0.1123% cum=+0.7859% sized=+1.1788%  ← removes Dec-18
+
+Per-signal qc and ema_dist:
+  2024-12-10: qc=3 ema_dist=3.021
+  2024-12-18: qc=3 ema_dist=0.762  ← ONLY signal with ema_dist<1.0
+  2026-01-08: qc=4 ema_dist=2.616
+  2026-02-17: qc=4 ema_dist=3.330
+  2026-03-30: qc=3 ema_dist=4.048
+  2026-05-14: qc=3 ema_dist=3.646
+  2026-07-21: qc=3 ema_dist=1.873
+  2026-10-12: qc=3 ema_dist=3.399
+
+FINDINGS:
+1. QC: All 8 signals have qc exactly {3, 4}. qc<=2 admits nothing new (no signal fires with
+   qc<3 given other gates). qc>=4 removes 6 of 8 signals. The range [3, 4] is the natural
+   floor for this signal type.
+
+2. ema_dist: 7 of 8 signals have ema_dist>1.0 — price is more than 1x ATR below EMA50.
+   Only Dec-18 is at 0.762 (the minimum). This means signals naturally fire when price is
+   EXTREMELY far from EMA50 (3-4x ATR below for most). The ema_dist>=0.5 gate is
+   essentially irrelevant — all signals cleared it by 50%+.
+
+GATE THRESHOLD VERDICT: Both qc>=3 and ema_dist>=0.5 are at the correct natural limits.
+  They cannot be relaxed (no new signals) or tightened (removes valid winners without
+  quality improvement). The gates are descriptively accurate constraints, not active filters.
+  The REAL filter is the intersection of h4, accel, lo10, and rank — the structural
+  momentum conditions that produce the signal.
+
+KEY STRUCTURAL INSIGHT (Gen19):
+  S1 characteristic profile:
+  - qc: 3-4 (all 5 sub-conditions partially met; body_atr and lo10 break always ✓)
+  - ema_dist: 0.762 to 4.048 ATR (price far below EMA, often extreme)
+  - h4: 2.082 to 7.463 ATR (always extreme H4 distance — real structural bearishness)
+  - accel: -0.00002 to -0.00042 (always negative momentum acceleration)
+  These form a tight multivariate profile. The gates accurately describe the signal
+  archetype, not arbitrary filters.
+
+===== T637: S2 RANK SCOPE EXPANSION =====
+
+S2 atr_rank threshold sweep:
+  rank<20: n=5 WR=100% avg=+0.0926% cum=+0.4628% sized=+0.514%  ← SAME (all S2 signals rank<20)
+  rank<25: n=5 WR=100% avg=+0.0926% cum=+0.4628% sized=+0.514%  ← SAME
+  rank<29 (canonical): n=5 WR=100% avg=+0.0926% cum=+0.4628% sized=+0.514%
+  rank<35: n=6 WR=83.3% avg=+0.0722% cum=+0.4333% sized=+0.4786%  ← adds loser
+  rank<40: n=6 WR=83.3% avg=+0.0722% cum=+0.4333% sized=+0.4786%  ← same loser
+
+New signal at rank<35 (not in canonical):
+  2024-02-14: rank=32.5 pnl=-0.0295% alligator=0.507  ← LOSER
+
+KEY FINDING: All 5 canonical S2 signals have atr_rank<20 (very compressed volatility).
+  The rank<29 threshold is a superset of where S2 naturally fires.
+  Tightening to rank<20 would not lose any signals.
+  Expanding to rank<35 adds one loser (Feb-14: rank=32.5).
+  S2 fires in compressed ATR environments — consistent with bounce mechanics:
+  bounces occur when trend has compressed ATR through persistent grinding.
+
+S2 RANK VERDICT: Keep rank<29. Natural signal zone is rank<20, no change needed.
+  Do NOT expand to rank<35 (adds loser). Tightening to rank<20 would be valid
+  but adds no practical value (the canonical set is already within rank<20).
+
+===== T638: MONTHLY SLOPE THRESHOLD FOR S2 =====
+
+S2 monthly_slope threshold sweep:
+  monthly_slope<0 (canonical):      n=5 WR=100% avg=+0.0926% cum=+0.4628% sized=+0.514%
+  monthly_slope<-0.00005:           n=5 WR=100% avg=+0.0926% cum=+0.4628% sized=+0.514%  ← SAME
+  monthly_slope<-0.0001:            n=4 WR=100% avg=+0.0945% cum=+0.3778% sized=+0.4291%
+  monthly_slope<-0.0002:            n=2 WR=100% avg=+0.1172% cum=+0.2343% sized=+0.262%
+  monthly_slope<-0.0005:            n=0
+
+Per-signal monthly slopes:
+  2024-10-04: -0.000259 (strong bearish)
+  2024-12-10: -0.000147 (moderate bearish)
+  2024-12-18: -0.000147 (same month)
+  2026-03-26: -0.000245 (strong bearish)
+  2026-05-14: -0.000051 (barely bearish — just crosses zero)
+
+FINDING: May-14 has the weakest monthly slope (-0.000051), barely bearish.
+  Its pnl=+0.0850% is the second weakest winner in S2.
+  Tightening to monthly_slope<-0.0001 removes May-14: n drops 5→4,
+  cumulative drops 0.4628%→0.3778% — net NEGATIVE impact despite quality gain.
+  The stricter threshold removes a profitable trade.
+
+MONTHLY SLOPE VERDICT: Keep monthly_slope<0. Any stricter threshold removes valid winners
+  and reduces total return. The current binary threshold (bearish vs bullish month) is optimal.
+  The gate's purpose is to exclude bullish monthly context (Jan-08 2026 loser),
+  not to rank degrees of bearishness. Purpose achieved at current threshold.
+
+===== T639: CONSECUTIVE lo10 AS QUALITY FILTER =====
+
+S1 consec_lo10 breakdown:
+  consec=1: n=1 avg=+0.0778% (Jul-21)
+  consec=2: n=3 avg=+0.1135% (Dec-18, Jan-08, Feb-17)
+  consec=3: n=4 avg=+0.1258% (Dec-10, Mar-30, May-14, Oct-12)
+
+Quality gradient: consec=1 (+0.0778%) < consec=2 (+0.1135%) < consec=3 (+0.1258%)
+  Clear monotonic positive relationship. More consecutive lo10 breaks = stronger momentum
+  continuation = better signal quality. Each step up adds ~+0.0120% average quality.
+
+As strict gate:
+  consec>=1 (current): n=8 WR=100% avg=+0.1152% cum=+0.9213% sized=+1.3549%
+  consec>=2: n=7 WR=100% avg=+0.1205% cum=+0.8434% sized=+1.3004%
+  consec>=3: n=4 WR=100% avg=+0.1258% cum=+0.5030% sized=+0.8457%
+
+ANALYSIS: consec>=2 gate removes Jul-21 (consec=1, pnl=+0.0778%) but reduces cumulative
+  from 0.9213% to 0.8434%. The quality improvement (+0.0053% avg) doesn't compensate
+  for the cumulative loss (-0.0779%). Jul-21 is a valid profitable trade.
+
+CONSEC VERDICT: No hard gate change. The existing size model already implements
+  the consec quality signal as +0.1x modifier for consec>=2, which is correct.
+  The modifier rewards high-consec without excluding low-consec winners.
+  The quality gradient (1→2→3) validates the existing approach.
+
+CONSEC INSIGHT: Jul-21 (consec=1) is the only signal without momentum continuation.
+  It also has the weakest accel (-0.00002) and lowest alligator (0.149).
+  The size model gives it: base 1.0x (weak accel) - 0.1x (low alligator) + 0.1x (monthly<0)
+  = 1.0x effective. This is already the minimum size we'd want for this quality level.
+
+===== T640: GEN19 MILESTONE SUMMARY =====
+
+=== FINAL SIGNAL ARCHITECTURE (Gen19 — NO CHANGES FROM GEN16) ===
+
+LINE 1: SHORT 13-14 UTC (PRIMARY — UNCHANGED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel<=0, hours=[13,14]
+  Regime: Skip if annual EMA slope > 0
+  MaxHold: 5 bars
+
+LINE 2: SHORT 08 UTC (SECONDARY — UNCHANGED)
+  GATE: rank<29, h4>=1.0, ema_dist>=0.5, qc>=3, body<=1.5, lo10, accel>0, hours=[8],
+        monthly_slope<0
+  MaxHold: 4 bars
+
+Combined: n=13 WR=100% maxDD=0 cum=+1.8689%
+
+=== GEN19 KEY DISCOVERIES ===
+
+1. GATE REDUNDANCY CONFIRMED: qc>=3 and ema_dist>=0.5 gates are at natural minimums.
+   All signals already exceed these thresholds substantially (ema_dist 0.76-4.05,
+   qc all 3-4). The active filters are h4, accel, lo10, rank.
+
+2. S2 FIRES IN RANK<20: All 5 canonical S2 signals have atr_rank<20. S2 is a
+   compressed-volatility bounce signal. rank<29 is a conservative superset.
+
+3. MONTHLY SLOPE BINARY IS OPTIMAL: May-14 (slope=-0.000051) is a valid winner
+   despite barely-bearish monthly context. Any stricter threshold reduces returns.
+
+4. CONSEC QUALITY GRADIENT: consec 1→2→3 maps to quality 0.0778→0.1135→0.1258%.
+   The size model (+0.1x for consec>=2) correctly rewards this without hard-gating.
+
+5. THIRD CONSECUTIVE NULL GEN: Gen17, Gen18, Gen19 all returned unchanged architecture.
+   The system is complete and well-optimized for the 2024-2026 EURUSD FXOpen ECN dataset.
+
+=== ARCHITECTURE COMPLETENESS ASSESSMENT (Gen19) ===
+
+After 10 theory batches (T611-T640), the architecture has converged. Every major
+parameter class has been validated:
+  - Gate thresholds: qc, ema_dist, h4, rank, body_atr — all at natural limits
+  - Time parameters: hours (13-14 confirmed), hold (5 for S1, 4 for S2 confirmed)
+  - Regime filters: annual slope, monthly slope — both calibrated correctly
+  - Size model: accel/alligator/consec/monthly for S1, alligator for S2 — both validated
+  - Technical indicators: BB squeeze, body_atr, lo window — all null
+
+  The architecture is not over-specified or under-specified.
+  It correctly identifies the n=13 EURUSD H1 bearish SHORT opportunities in the 2024-2026
+  bearish regime with 100% WR and net cumulative gain of +1.8689%.
+
+=== PROGRESSIVE IMPROVEMENT (complete history) ===
+  Gen10 flat:  +1.3291%
+  Gen13:       +1.7965% (S1 full size model + S2 flat)
+  Gen14:       +1.8034% (S2 monthly slope repair, +0.4%)
+  Gen16:       +1.8689% (hold=5 + S2 alligator, +3.6%)
+  Gen17-Gen19: +1.8689% (null — triple validation of architecture)
+  Total gain from Gen10: +0.5398% (+40.6%)
+
+=== Gen20 PLAN (T641-T645) ===
+T641: S2 annual regime gate test — does S2 need the annual slope gate?
+      (S2 already has monthly_slope gate — is annual_slope redundant for S2?)
+T642: New hour window exploration — 09, 10, 15, 16 UTC as potential Line 3
+      Research: which hours have enough data to test a new signal type?
+T643: body_atr gate sensitivity — body_atr<=1.5 (current) vs <=1.0 vs <=2.0 for S1+S2
+      Is the body gate actually binding? Are any signals near the 1.5 threshold?
+T644: Combined signal stats with PF and max adverse excursion analysis
+      Compute profit factor and MAE for S1/S2 as EA pre-live metrics
+T645: Gen20 milestone + EA v2.4 spec finalization + SURVIVORS.md v6
+
+===== NEXT BATCH (T641-T645) =====
+T641: S2 annual regime
+T642: New hour exploration
+T643: Body gate sensitivity
+T644: PF + MAE analysis
+T645: Gen20 milestone + EA v2.4 + SURVIVORS v6

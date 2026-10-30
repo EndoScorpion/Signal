@@ -1,0 +1,219 @@
+THEORY LOOP ADDENDUM v85 — T511-T515
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | SHORT direction confirmed
+Date: 2026-10-29
+
+===== BASELINE (SHORT, n=9, confirmed) =====
+n=9 WR=100% avg=+0.1032% (unchanged)
+
+===== T511: bc10 WITHIN TIER1 =====
+
+Tier1 (r>=18) bc10 profile:
+  bc10=7 r=21.0 → +0.1358% (Dec-18)
+  bc10=8 r=18.7 → +0.1463% (Dec-10)
+  bc10=10 r=23.4 → +0.0973% (Jan-08)
+  bc10=10 r=27.0 → +0.1101% (Feb-17)
+  bc10=10 r=28.2 → +0.1607% (Mar-30)
+
+Corr(bc10, pnl_pct) within tier1 = -0.339
+
+Threshold scan within tier1:
+  r>=18 + bc10<=7: n=1 avg=+0.1358%
+  r>=18 + bc10<=8: n=2 avg=+0.1411%  ← fresher signal, n too small
+
+KEY OBSERVATION: bc10<=8 captures Dec-10 (+0.1463%) and Dec-18 (+0.1358%) — the 2nd and 3rd best trades
+in the full baseline. However n=2 only. The bc10=10 trades include Mar-30 (+0.1607%, BEST trade) —
+proving bc10 alone cannot screen within tier1 without removing the best trade.
+
+The -0.339 correlation within tier1 is WEAKER than the -0.479 across all 9 trades.
+The fresh signal mechanism (bc10<=8 = recently crossed below EMA50) is captured more directly by T515.
+
+VERDICT: bc10 has moderate negative correlation within tier1 (-0.339) but n=2 is too small to gate.
+  Fresh signal (bc10<=8) is an INTERESTING but UNCONFIRMABLE pattern at this sample size.
+  NOT a gate. Tracks nicely with T515 (cross_age).
+
+===== T512: RANGE5 =====
+
+Corr(range5, pnl_pct) = +0.179  ← NEAR-ZERO (much weaker than range10 = +0.541)
+
+Range5 sorted:
+  1.64(narrow) r=21.0 → +0.1358% (Dec-18)  ← STRONG trade, very narrow r5
+  2.01(narrow) r=9.5  → +0.0385% (Jul-21)   ← BAD
+  2.07(narrow) r=17.1 → +0.0954% (May-14)
+  2.29(narrow) r=27.0 → +0.1101% (Feb-17)
+  2.43(narrow) r=13.5 → +0.1040% (Oct-12)
+  2.53(wide)   r=5.2  → +0.0405% (Feb-16)   ← BAD
+  2.57(wide)   r=18.7 → +0.1463% (Dec-10)
+  2.69(wide)   r=23.4 → +0.0973% (Jan-08)
+  2.78(wide)   r=28.2 → +0.1607% (Mar-30)   ← BEST
+
+CONTRAST with range10: range10 correlation = +0.541. Range5 = +0.179.
+The 10-bar window is far more informative than the 5-bar window.
+
+KEY PARADOX: Dec-18 (+0.1358%) has range5=1.64 (VERY NARROW) but is a strong trade.
+  Jul-21 (BAD) also has narrow range5=2.01.
+  Feb-16 (BAD) has wide range5=2.53 — opposite of range10 pattern.
+
+This means range5 is largely NOISE. The 5-bar window is too recent to capture the "momentum space"
+that range10 measures. Range10 already accounted for pre-signal range.
+
+VERDICT: range5 is NOT useful. Correlation near-zero (+0.179).
+  Range10 (the 10-bar version, corr=+0.541) is confirmed superior.
+  Do NOT replace or add range5 as gate.
+
+===== T513: WICK RATIOS =====
+
+Correlations:
+  upper_wick: +0.268  ← WEAK POSITIVE (larger upper wick = better SHORT — bearish rejection)
+  lower_wick: -0.245  ← WEAK NEGATIVE (larger lower wick = worse — bullish support present)
+  body_frac:  +0.055  ← near-zero
+
+Wick profile sorted by upper_wick:
+  UW=0.00 LW=0.44 BF=0.56 r=17.1 → +0.0954% (May-14)   ← NO upper wick
+  UW=0.08 LW=0.23 BF=0.69 r=18.7 → +0.1463% (Dec-10)
+  UW=0.11 LW=0.56 BF=0.33 r=9.5  → +0.0385% (Jul-21)   ← BAD — LARGE lower wick
+  UW=0.15 LW=0.57 BF=0.28 r=23.4 → +0.0973% (Jan-08)   ← LARGE lower wick
+  UW=0.17 LW=0.67 BF=0.17 r=5.2  → +0.0405% (Feb-16)   ← BAD — LARGEST lower wick
+  UW=0.20 LW=0.70 BF=0.10 r=28.2 → +0.1607% (Mar-30)   ← BEST — large lower wick too!
+  UW=0.20 LW=0.30 BF=0.50 r=27.0 → +0.1101% (Feb-17)
+  UW=0.29 LW=0.29 BF=0.43 r=13.5 → +0.1040% (Oct-12)
+  UW=0.38 LW=0.54 BF=0.08 r=21.0 → +0.1358% (Dec-18)   ← LARGEST upper wick
+
+CRITICAL PARADOX: Lower wick correlation = -0.245 BUT Mar-30 (BEST, +0.1607%) has lower_wick=0.70 (LARGEST).
+  Feb-16 (BAD, +0.0405%) also has lower_wick=0.67. The correlation is r-confounded again.
+
+Upper wick: weak positive trend but Dec-10 (+0.1463%) has UW=0.08 (tiny) — no clean gate.
+  upper_wick>=0.15: n=5 avg=+0.1102% — marginal improvement, but includes both BAD trades.
+
+VERDICT: Wick ratios are WEAK predictors.
+  upper_wick: soft positive (+0.268) — larger upper wick suggests bearish rejection present
+  lower_wick: soft negative (-0.245) BUT r-confounded (Mar-30 BEST has LARGEST lower wick)
+  body_frac: near-zero — irrelevant
+  Do NOT gate on wick ratios. Note lower_wick paradox as r-confounding example.
+
+===== T514: ENTRY BAR DIRECTION =====
+
+Corr(bar_oc_dist, pnl_pct) = -0.045  ← NEAR-ZERO
+
+Bar direction split:
+  Bearish entry bar: n=7 WR=100% avg=+0.0994%
+  Bullish entry bar: n=2 WR=100% avg=+0.1166%  ← BULLISH bars BETTER?
+
+All trades (sorted by oc_dist):
+  Jan-08 BULLISH oc=-0.33 r=23.4 → +0.0973%   ← bullish close, good trade
+  Dec-18 BULLISH oc=-0.11 r=21.0 → +0.1358%   ← bullish close, great trade
+  Mar-30 bearish oc=+0.10 r=28.2 → +0.1607%   ← barely bearish, BEST trade
+  Feb-16 bearish oc=+0.18 r=5.2  → +0.0405%   ← BAD
+  Oct-12 bearish oc=+0.45 r=13.5 → +0.1040%
+  Jul-21 bearish oc=+0.60 r=9.5  → +0.0385%   ← WORST
+  Feb-17 bearish oc=+0.76 r=27.0 → +0.1101%
+  May-14 bearish oc=+0.87 r=17.1 → +0.0954%
+  Dec-10 bearish oc=+0.93 r=18.7 → +0.1463%
+
+COUNTER-INTUITIVE FINDING: Bullish entry bars (n=2) avg=+0.1166% > bearish entry bars avg=+0.0994%.
+  The lo10 LOW break condition already confirms bearish PRICE ACTION (new 10-bar low hit).
+  Entry bar BODY direction is irrelevant — the critical signal is the break, not the bar color.
+  Strongly bearish body (oc_dist=0.93, Dec-10) is also a great trade. Correlation near-zero confirms.
+
+VERDICT: Entry bar direction is NOT predictive. Correlation = -0.045.
+  The lo10 LOW break is the signal; bar close direction is noise.
+  Do NOT gate on bar_bearish or bar_oc_dist.
+
+===== T515: EMA50 CROSS AGE =====
+
+Corr(ema50_cross_age, pnl_pct) = +0.149  ← NEAR-ZERO (but pattern visible)
+
+Cross age at each trade (sorted):
+  age=6  bc10=8  r=18.7 → +0.1463% (Dec-10)   ← 6 bars since cross
+  age=6  bc10=7  r=21.0 → +0.1358% (Dec-18)   ← 6 bars since cross (same session!)
+  age=10 bc10=10 r=13.5 → +0.1040% (Oct-12)
+  age=15 bc10=10 r=5.2  → +0.0405% (Feb-16)   ← BAD, still fresh at age=15
+  age=29 bc10=10 r=9.5  → +0.0385% (Jul-21)   ← WORST, aged
+  age=39 bc10=10 r=27.0 → +0.1101% (Feb-17)   ← good trade, old cross
+  age=53 bc10=10 r=23.4 → +0.0973% (Jan-08)
+  age=61 bc10=10 r=17.1 → +0.0954% (May-14)
+  age=72 bc10=10 r=28.2 → +0.1607% (Mar-30)   ← BEST, very old cross (age=72!)
+
+KEY INSIGHT: Dec-10 and Dec-18 both cross_age=6 AND bc10={8,7} — they fired only 6 bars after
+  the H1 close first broke below EMA50. They are literally the START of a new bearish H1 regime.
+
+PARADOX: Mar-30 (BEST, +0.1607%) has cross_age=72 — 72 bars after the original cross.
+  This DESTROYS the "fresher cross = better" hypothesis.
+
+  Feb-16 (BAD) has cross_age=15 — fresh but bad.
+  Jul-21 (WORST) has cross_age=29 — aged but still worse than most old crosses.
+
+Threshold scan:
+  cross_age<=10: n=3 avg=+0.1287%  ← includes Oct-12 (+0.1040%) not just the two Dec trades
+  cross_age<=20: n=4 avg=+0.1066%  ← also includes BAD Feb-16
+  cross_age>=50: n=3 avg=+0.1178%  ← OLD crosses: Jan-08, May-14, Mar-30 — also decent!
+
+STRUCTURAL INSIGHT: The correlation is near-zero because BOTH fresh (age<=10) AND very old (age>=50)
+  crosses produce good trades. The WORST trades are MID-AGE (age=15-39). This is a U-SHAPE not linear.
+  U-shape hypothesis: fresh = regime start (strong) OR old = entrenched (strong). Middle = transition noise.
+
+  But with n=9 this could easily be random. Cannot confirm U-shape pattern.
+
+VERDICT: cross_age is NOT a useful gate. Correlation near-zero (+0.149).
+  The U-shape hypothesis (fresh or old = good, mid = bad) is interesting but unconfirmable at n=9.
+  Key insight: Dec-10 and Dec-18 are regime-start trades (age=6) — this explains bc10={8,7}.
+  Mar-30 (BEST) is entrenched regime trade (age=72) — different mechanism, same good outcome.
+  Do NOT gate on ema50_cross_age. Note U-shape hypothesis for future research (n>30 needed).
+
+===== SUMMARY T511-T515 =====
+
+NULL FEATURES (confirmed this batch):
+  range5: +0.179 near-zero (range10 is superior, +0.541)
+  body_frac: +0.055 near-zero (wick ratios)
+  bar_oc_dist / bar_bearish: -0.045 near-zero (entry bar direction)
+  ema50_cross_age: +0.149 near-zero (U-shape hypothesis unconfirmable at n=9)
+
+SOFT FEATURES (confirmed weak, not gateable):
+  upper_wick: +0.268 (bearish rejection signal, but r-confounded)
+  lower_wick: -0.245 (support present signal, but Mar-30 contradiction)
+  bc10 within tier1: -0.339 (fresher signal, but n=2 too small)
+
+PREVIOUSLY CONFIRMED (unchanged):
+  r (ATR rank): PRIMARY GATE +0.795
+  range10: SOFT +0.541
+  ema50_slope: SOFT -0.518
+  |gap|: SOFT -0.511
+  d1_ma50_dist: MODERATE +0.414
+  bc10 (all trades): SOFT REVERSE -0.479
+
+NEW INSIGHTS:
+  1. Dec-10 and Dec-18 are REGIME-START trades: H1 EMA50 cross was only 6 bars prior.
+     bc10={8,7} and cross_age=6 are the same signal expressed differently.
+  2. U-shape hypothesis for cross_age: fresh(<10) AND old(>50) produce better than mid (15-40).
+     Cannot confirm at n=9.
+  3. Entry bar body direction is irrelevant once lo10 break is confirmed.
+  4. range5 is inferior to range10 — 10-bar window captures "momentum space" better.
+
+===== CANONICAL GATE — FINAL v85 (UNCHANGED) =====
+Tier 1 (n=5, WR=100%, avg=+0.1300%, CI [+0.110%, +0.150%]):
+  Original gates: lo10 LOW break, h4d>=1.0, ema50_dist>=0.5, qc>=3, body_atr<=1.5, h in {13,14}
+  Quality gate: r >= 18 (ATR rank 252-bar)
+  ATR window: 252-bar (1-year)
+  Target: 1.5×ATR, stop: 1.5×ATR, max hold: 4 bars (confirmed optimal T495)
+
+Soft indicators (not gated):
+  - ema50_slope <= -0.4 (H1 EMA50 in active downtrend)
+  - range10 >= 3.0 (prior momentum available)
+  - prev_d1_ret < 0 (prior day directional alignment)
+  - |gap| <= 0.3 (clean continuation open)
+  - d1_ma50_dist >= 5.0 (price well below D1 MA50)
+  - w_below_ema20 = 1 (weekly trend aligned, new v84)
+  - bc10 <= 8 (fresh signal / regime start, new v84)
+
+===== NEXT BATCH (T516-T520) =====
+T516: Multi-bar confirmation variant — does requiring a SECOND lo10 break within 3 bars improve quality?
+      The setup fires on bar 1; test if requiring bar 1 OR bar 2 to also break a new lo10 adds anything.
+T517: Volume analog — can we approximate institutional activity?
+      Proxy: spike in tr (true range) relative to atr14 AS a momentum indicator, separate from entry ATR.
+      Use max(tr[i-5:i-1]) / atr14 as a "tr spike" indicator.
+T518: FOMC/NFP proximity filter — are signals near high-impact events systematically different?
+      Approximate: 1st Friday of month = NFP. Last Wed of month = FOMC (rough).
+      Flag trades within ±2 bars of these.
+T519: Multi-TF alignment — D1 closes vs D1 EMA50 AND D1 EMA20. Is the D1 in a "trending" structure?
+      D1 EMA20 < D1 EMA50 = bearish EMA cross = trend confirmed.
+T520: MILESTONE — comprehensive re-scan of ALL tested indicators to update correlation rankings and
+      find any interaction effects between top predictors (r, range10, bc10, w_ema20_dist).

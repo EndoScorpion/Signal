@@ -1,0 +1,177 @@
+THEORY LOOP ADDENDUM v70 — T436-T440
+EURUSD FXOpen ECN H1 UTC | COST=0.00008 | r<29 canonical gate set
+Date: 2026-10-29
+
+===== BASELINE (locked) =====
+r<29 + h4d>=1.0 + ATR>=7.5 + lo10_LOW + ema_dist>=0.5 + qc>=3 + body_atr<=1.5 + h in {13,14}
+n=8  WR=100%  avg=+0.1103%
+All 8 trades:
+  2024-12-10 h=13: r=18.7 ATR=10.8 h4d=2.705 slope=-0.256 → +0.1459%
+  2024-12-18 h=13: r=21.0 ATR=10.0 h4d=1.359 slope=-0.258 → +0.1354%
+  2026-01-08 h=14: r=23.4 ATR=8.1  h4d=5.696 slope=-0.767 → +0.0962%
+  2026-02-16 h=13: r=5.2  ATR=7.8  h4d=1.191 slope=-0.055 → +0.0392%
+  2026-02-17 h=13: r=27.0 ATR=9.2  h4d=4.007 slope=-0.559 → +0.1088%
+  2026-03-30 h=14: r=28.2 ATR=12.8 h4d=4.782 slope=-0.521 → +0.1596%
+  2026-05-14 h=13: r=17.1 ATR=8.0  h4d=6.004 slope=-0.866 → +0.0943%
+  2026-10-12 h=14: r=13.5 ATR=8.3  h4d=5.670 slope=-0.708 → +0.1032%
+
+===== T436: H1 EMA50 SLOPE =====
+Question: Does H1 EMA50 slope (16-bar lookback / ATR) add predictive value?
+Computation: h1_slope = (ema50 - ema50.shift(16)) / atr14
+
+ALL 8 r<29 trades have h1_slope < 0:
+  range: -0.866 to -0.055 (all negative)
+  The gate h1_slope<0 is NON-BINDING (doesn't filter any trades)
+
+Threshold scan:
+  h1_slope <= 0.0:  n=8 WR=100% avg=+0.1103% (no change)
+  h1_slope <=-0.3:  n=6 WR=100% avg=+0.1163%
+  h1_slope <=-0.5:  n=6 WR=100% avg=+0.1180%
+  h1_slope <=-0.7:  n=4 WR=100% avg=+0.1135%
+
+Correlation(h1_slope, pnl) = -0.222 (weak)
+
+VERDICT: Non-binding gate; h1 slope adds no filtering power here. All trades
+already occur when H1 EMA is declining. Confirmed redundant.
+
+===== T437: QC PATTERN ANALYSIS =====
+Question: Does qc level correlate with outcome? Any optimal threshold?
+
+QC distribution (all 8 r<29 trades):
+  qc=3: 1 trade → +0.0943%
+  qc=4: 2 trades → +0.1354%, +0.0392%
+  qc=5: 3 trades → +0.1459%, +0.0962%, +0.1088%
+  qc=6: 1 trade → +0.1596%
+  qc=7: 1 trade → +0.1032%
+
+By exit type:
+  Target exits (n=7): avg_qc=4.71  avg_pnl=+0.1119%
+  Timeout exits (n=1): qc=7 → +0.1032%
+  NOTE: The timeout trade (2026-10-12) has HIGHEST qc but still profitable
+
+Threshold scan:
+  qc>=3: n=8 WR=100% avg=+0.1103%
+  qc>=4: n=7 WR=100% avg=+0.1126%
+  qc>=5: n=6 WR=100% avg=+0.1088% (note: drops slightly, removes 2026-02-16 and 2026-02-17 partially)
+
+Correlation(qc, pnl) = -0.273 (weak negative)
+→ More quiet bars does NOT clearly improve outcomes; slight negative correlation
+
+VERDICT: qc>=3 is the correct baseline. Tightening to qc>=4 drops 1 trade with
+modest improvement. qc=7 timeout trade is profitable, so high qc is not harmful.
+No strong optimization signal here.
+
+===== T438: D1 MA50 FILTER (MOST INTERESTING) =====
+Question: Does price position relative to Daily MA50 predict better outcomes?
+
+D1 MA50 computation:
+  d1_close = df['c'].resample('1D').last().ffill()
+  d1_ma50 = d1_close.rolling(50).mean()
+  df['d1_dist'] = (d1_ma50 - close) / atr14   # positive = price BELOW D1 MA50
+  df['d1_slope'] = (d1_ma50 - d1_ma50.shift(20)) / atr14   # 20 D1 bars lookback
+
+Trade breakdown:
+  Price BELOW D1 MA50 (d1_dist > 0): n=5
+    2024-12-10: d1_dist=+2.12 d1_slope=-0.016 → +0.1459%
+    2024-12-18: d1_dist=+0.08 d1_slope=-0.018 → +0.1354%
+    2026-03-30: d1_dist=+0.45 d1_slope=-0.022 → +0.1596%
+    2026-05-14: d1_dist=+1.73 d1_slope=-0.018 → +0.0943%
+    2026-10-12: d1_dist=+0.77 d1_slope=+0.030 → +0.1032%
+  → n=5 WR=100% avg=+0.1277%
+
+  Price ABOVE D1 MA50 (d1_dist < 0): n=3
+    2026-01-08: d1_dist=-0.51 → +0.0962%
+    2026-02-16: d1_dist=-0.53 → +0.0392%
+    2026-02-17: d1_dist=-1.06 → +0.1088%
+  → n=3 WR=100% avg=+0.0814%
+
+D1 slope filter (d1_slope <= 0, falling D1 MA50):
+  n=4 WR=100% avg=+0.1360%:
+    2024-12-10: +0.1459%
+    2024-12-18: +0.1354%
+    2026-03-30: +0.1596%
+    2026-05-14: +0.0943%
+
+Combined filter (below D1 MA50 AND D1 slope falling):
+  n=4 WR=100% avg=+0.1360% (same as slope alone since 2026-10-12 has d1_slope>0)
+
+BEST D1-FILTERED SET:
+  r<29 + d1_below_ma + d1_slope<=0: n=4 WR=100% avg=+0.1360%
+  vs baseline: avg +0.1103% (+0.0257% improvement)
+
+VERDICT: Most interesting new finding. D1 MA50 below + falling = stronger trades
+on average. BUT n=4 is borderline for robustness. The 3 "above D1" trades are also
+all winners — filtering them removes real edge. Treat as a quality refinement not
+a hard gate. Worth continued monitoring as more data arrives.
+
+CAUTION: With n=4 this is high risk of overfitting. The 2025 gap means no
+2025 IS data for D1 filter. The 2024 trades are 2/4 of the filtered set.
+
+===== T439: CONSECUTIVE DAY CLUSTERING =====
+Question: When 2 trades occur on consecutive days (2026-02-16/17), does order matter?
+
+Consecutive pair found:
+  2026-02-16 h=13: +0.0392% (lower pnl)
+  2026-02-17 h=13: +0.1088% (higher pnl)
+
+Day-of-week distribution:
+  Mon: 0, Tue: 1, Wed: 1, Thu: 3, Fri: 3 (including 2026-02-17 which is a Thursday)
+  No Monday trades in baseline set.
+
+Gap between consecutive trades:
+  min: 1 day, max: 232 days
+  avg: 66 days
+
+Correlation(days_since_prev_trade, pnl) = -0.081 (near zero, not informative)
+
+VERDICT: No clustering signal. The consecutive pair doesn't indicate a "second
+day is better" effect — it's likely coincidence with n=1 consecutive instance.
+
+===== T440: BODY_ATR vs EXIT TYPE =====
+Question: Does candle body size predict exit type (target vs timeout)?
+
+Body_atr distribution:
+  Timeout exits: n=1, body=0.179 (SMALLEST body)
+  Target exits: n=7, bodies: 0.355-0.784, avg=0.506
+
+Correlation(body_atr, pnl) = +0.056 (near zero)
+
+VERDICT: The one timeout trade has the smallest body, suggesting weak candles
+may reach timeout more often. But n=1 timeout is insufficient for conclusion.
+body_atr<=1.5 gate is appropriate — no improvement from tightening.
+
+===== COMBINED SYSTEM COMPARISON =====
+  r<29 baseline:                      n=8 WR=100% avg=+0.1103%
+  r<29 + h1_slope<=-0.5:             n=6 WR=100% avg=+0.1180%
+  r<29 + d1_below_ma:                n=5 WR=100% avg=+0.1277%
+  r<29 + d1_slope<=0:                n=4 WR=100% avg=+0.1360%
+  r<29 + d1_below_ma + d1_slope<=0:  n=4 WR=100% avg=+0.1360%
+  r<29 + qc>=5:                      n=6 WR=100% avg=+0.1088%  [worse]
+  r<29 + |h4_slope|>=0.1:            n=7 WR=100% avg=+0.1205%  [from T435]
+
+===== VERDICTS =====
+- h1_slope: CONFIRMED REDUNDANT
+- qc: NO OPTIMIZATION (qc>=3 is correct)
+- D1 MA50: MOST ACTIONABLE NEW FINDING — below D1 MA50 + falling slope improves avg
+  but reduces n. Treat as quality filter, not hard gate.
+- Body_atr: NO CHANGE (gate correct as-is)
+- Consecutive clustering: NO SIGNAL
+
+===== NEXT BATCH (T441-T445) =====
+T441: D1 MA50 IS/OOS split — does D1 filter pass both periods?
+T442: D1 distance threshold — does deeper below D1 MA50 predict better outcomes?
+T443: H4+D1 double-timeframe alignment — both EMA/MA falling simultaneously
+T444: QC negative-correlation deep dive — qc=3 vs qc=7 profiles
+T445: Multi-gate optimization at r<29 — best combo of D1, |h4_slope|, qc
+
+===== CANONICAL GATE SET (unchanged) =====
+1. ATR >= 7.5 pts
+2. h4_dist_atr >= 1.0
+3. ATR rank < 29%
+4. lo10 LOW-break: bar['l'] < bar['lo10']
+5. ema50_dist >= 0.5 ATR
+6. qc >= 3 (rolling 10-bar count of prior quiet bars)
+7. body_atr <= 1.5
+8. h in {13, 14} UTC
+9. 1/day dedup
+10. 1.5×ATR stop / 1.5×ATR target / 4-bar max hold

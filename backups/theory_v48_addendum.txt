@@ -1,0 +1,242 @@
+THEORY ADDENDUM v48 — T326-T330
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T326: V6 COMPOSITE CANDIDATES ===
+
+CRITICAL FINDING: V6a (V5 + ATR_abs) achieves corr=+0.920 — HIGHEST COMPOSITE CORRELATION FOUND.
+This beats V5_eq (+0.885) by +0.035.
+
+Variant results:
+  V5_eq (reference):          corr=+0.885
+  V6a (V5 + ATR_abs_norm):    corr=+0.920  ← NEW BEST
+  V6_top2 (V5 + ATR + slope): corr=+0.903
+  V6_full (V5 + all 3):       corr=+0.887  (diluted by prior_wk — adds noise)
+  V6b (V5 + EMA_slope):       corr=+0.874  (WORSE than V5!)
+  V6c (V5 + prior_wk):        corr=+0.860  (WORSE than V5!)
+
+KEY INSIGHT — THE DILUTION EFFECT:
+Adding EMA_slope or prior_week_ret ALONE to V5 actually DEGRADES the correlation below V5.
+Only ATR_abs improves V5 when added as a single new factor. Why:
+- ATR_abs has a near-monotonic relationship with PnL (highest corr in study: +0.912)
+- EMA_slope and prior_week_ret have strong but not monotonic relationships
+- When combined into V6_full (all 3), the dilution partially cancels out
+- V5 already captures EMA-related information via ema_norm and rank_norm components;
+  adding EMA slope creates redundancy that hurts ordering at the margin
+
+ORDERING IMPROVEMENT (V6a):
+The ordering is nearly perfect in V6a — the worst trade (2026-02-16 +0.0480%) correctly
+sits at the bottom (v6a=0.149), and the best trade (2026-03-30 +0.1618%) at the top
+(v6a=0.831). Only the 2026-08-06 case (v6a=0.166, pnl=+0.0906%) is slightly out of
+sequence with 2026-02-16 — same issue as in V5.
+
+FILTER THRESHOLDS FOR V6a:
+  V6a>=0.40: n=7, avg≈+0.1218% (+14% vs base)
+  V6a>=0.50: n=5, avg≈+0.1297% (same as V5>=0.5 — same trades pass)
+  V6a>=0.60: n=3, avg=+0.1395% (+30% vs base)  ← TIGHTEST VALID
+
+The V6a>=0.60 threshold selects the same 3 trades as rank10-20+ema3+:
+  2026-03-30: v6a=0.831, pnl=+0.1618%
+  2026-02-17: v6a=0.649, pnl=+0.1167%
+  2024-12-10: v6a=0.613, pnl=+0.1399%
+
+NOTE ON NORMALIZATION:
+The ATR_abs_norm uses min-max scaling on observed trades (5.9–11.3pts). This creates
+look-ahead bias in any real-time application. In live use, normalization should use
+a rolling window estimate of ATR_abs range. However the direction (higher ATR = higher
+score) is robust without normalization.
+
+FORMULA (V6a):
+  atr_abs_norm = (atr_abs - atr_obs_min) / (atr_obs_max - atr_obs_min)
+  comp_v6a = (rank_norm + ema_norm + h4_norm + cv_norm + atr_abs_norm) / 5.0
+
+CONCLUSION: T326 MAJOR FINDING. V6a (V5 + ATR_abs) is the new best composite at +0.920.
+Adding ATR absolute as a 5th factor improves over V5_eq. Adding EMA slope or prior week
+direction DEGRADES the composite — their marginal information is already partially
+captured by V5 components. V6a should replace V5 as the primary composite going forward.
+
+=== T327: ATR ABSOLUTE FILTER THRESHOLDS (detailed) ===
+
+Full threshold sweep:
+  ATR>=6.0pts: n=9, WR=100%, avg=+0.1101%  (+3% vs base n=10)
+  ATR>=6.5pts: n=9, WR=100%, avg=+0.1101%
+  ATR>=7.0pts: n=7, WR=100%, avg=+0.1218%  (+14% vs base)
+  ATR>=7.5pts: n=4, WR=100%, avg=+0.1371%  (+28% vs base)
+  ATR>=8.0pts: n=4, WR=100%, avg=+0.1371%
+  ATR>=8.5pts: n=3, WR=100%, avg=+0.1439%  (+34% vs base)  ← BEST RATIO
+  ATR>=9.0pts: n=3, WR=100%, avg=+0.1439%
+
+KEY FINDINGS:
+1. ATR>=7.5pts: n=4, avg=+0.1371% — the sweet spot for freq vs quality.
+   Excludes 6 lower-quality trades (ATR 5.9-7.4pts) while keeping 4 high-quality ones.
+2. ATR>=8.5pts: n=3, avg=+0.1439% (+34% vs base) — the tightest practical filter.
+   Same as ATR>=9.0 since there are no trades in the 8.5-9.0 range.
+   These 3 trades: 2024-12-10 (9.9pts), 2024-12-18 (9.2pts), 2026-03-30 (11.3pts).
+3. Best bin range: n=4 at ATR>=7.5pts covers all HIGH regime trades.
+4. The ATR threshold at 7.5pts exactly splits the LOW/HIGH volatility regimes (T330).
+
+FILTER RECOMMENDATION:
+  ATR>=7.5pts: n=4, avg=+0.1371% (+28%) — best balance of n and quality.
+  ATR>=8.5pts: n=3, avg=+0.1439% (+34%) — best avg but very tight.
+  Practical recommendation: use ATR>=7.5pts as a supplementary filter to comp_v5>=0.5.
+
+CONCLUSION: T327 USEFUL. ATR>=7.5pts is the recommended threshold — better than
+the previously noted ATR>7pts (+14%) or ATR>8pts (+27%) from T323. The 7.5pt level
+aligns perfectly with the high/low vol regime boundary.
+
+=== T328: EMA SLOPE + ATR ABS COMBINATION ===
+
+Two-condition filter results:
+  ATR>=7pts AND slope<=-2pts/5h: n=5, WR=100%, avg=+0.1239%  (+16% vs base)
+  ATR>=8pts AND slope<=-3pts/5h: n=3, WR=100%, avg=+0.1395%  (+30% vs base)
+  ATR>=7pts only (slope not steep): n=2, avg=+0.1166%
+  Neither condition:               n=3, avg=+0.0730%
+
+Per-trade (ATR>=7 AND slope<=-2pts):
+  2026-01-08: ATR=7.2pts, slope=-3.4pts/5h → +0.1001%
+  2026-05-14: ATR=7.3pts, slope=-4.2pts/5h → +0.1009%
+  2026-02-17: ATR=8.3pts, slope=-4.1pts/5h → +0.1167%
+  2024-12-10: ATR=9.9pts, slope=-5.5pts/5h → +0.1399%
+  2026-03-30: ATR=11.3pts, slope=-8.8pts/5h → +0.1618%
+
+KEY FINDINGS:
+1. ATR>=8 AND slope<=-3: n=3, avg=+0.1395% — same avg as the tightest V5 combination.
+   These are the 3 highest-ATR trades with the steepest slopes. High overlap with
+   best-performing trades overall.
+2. Neither condition (low ATR + shallow slope): n=3, avg=+0.0730% — the weakest group.
+   These are the "noise" setups: 2026-07-21 (+0.0803%), 2026-08-06 (+0.0906%),
+   2026-02-16 (+0.0480%).
+3. Combined score (ATR_norm × slope_norm) correlation = +0.788 — strong but below
+   individual ATR (+0.912) or V6a (+0.920).
+4. Average combo ((ATR_norm + slope_norm)/2) correlation = +0.858 — close to V5.
+
+WHY THE COMBINATION DOESN'T BEAT V6a:
+Both ATR_abs and EMA_slope point to the same underlying regime — periods of high absolute
+volatility also tend to have steeper trending EMAs. They are correlated, so combining
+them via multiplication or averaging doesn't add new information beyond ATR_abs alone.
+
+CONCLUSION: T328 CONFIRMS ATR abs dominance. The ATR>=8 AND slope<=-3 combination
+gives the best avg (+0.1395%) but the same 3 trades as other tight filters. The
+combination doesn't beat V6a as a composite. Use as an alternative simple binary filter.
+
+=== T329: PRIOR WEEK + comp_v5 COMBINATION ===
+
+  BOTH prior_wk<0 AND v5>=0.5: n=4, avg=+0.1329%  (+24% vs base)  ← KEY RESULT
+  prior_wk<0 only:              n=0  (all prior_wk<0 trades also pass v5>=0.5!)
+  v5>=0.5 only (prior_wk>=0):  n=1, avg=+0.1167%  (2026-02-17)
+  neither:                      n=5, avg=+0.0846%
+
+STRUCTURAL FINDING: Every prior-week-DOWN trade also passes comp_v5>=0.5.
+This means adding the prior week filter to the v5>=0.5 group reduces n from 5→4
+by excluding 2026-02-17 (prior_wk=+0.43%, v5=0.700).
+
+The 4-trade intersection:
+  2026-01-08: v5=0.508, wkret=-0.46% → +0.1001%
+  2024-12-18: v5=0.580, wkret=-0.59% → +0.1299%
+  2024-12-10: v5=0.583, wkret=-0.14% → +0.1399%
+  2026-03-30: v5=0.789, wkret=-0.70% → +0.1618%
+  (avg = +0.1329%)
+
+vs. comp_v5>=0.5 alone (n=5, avg=+0.1297%):
+Adding the prior_week filter: +24% avg but only slightly above v5>=0.5 (+24% vs +21%).
+The excluded trade (2026-02-17, +0.1167%) is above base avg but below the filtered avg.
+
+KEY INSIGHT: The prior week filter and comp_v5 filter are partially redundant.
+The comp_v5>=0.5 filter already captures most of the best setups; adding prior_wk<0
+is a marginal tightening that sacrifices one moderate-quality trade for a slight avg lift.
+
+CONCLUSION: T329 MARGINAL. Prior_wk<0 AND v5>=0.5: n=4 avg=+0.1329% vs v5>=0.5 alone
+n=5 avg=+0.1297%. The improvement is minimal (+0.0032% avg). Not recommended as a
+standalone new filter — the V6a composite already encodes ATR_abs which is the dominant
+predictor. Keep prior_wk as context/annotation rather than a hard filter.
+
+=== T330: VOLATILITY REGIME ANALYSIS ===
+
+TWO CLEAN REGIMES CONFIRMED:
+
+  LOW VOL regime  (ATR<7.5pts):  n=6, WR=100%, avg=+0.0872%
+    2026-07-21: ATR=5.9pts → +0.0803%
+    2026-08-06: ATR=6.6pts → +0.0906%
+    2026-02-16: ATR=6.6pts → +0.0480%
+    2026-01-08: ATR=7.2pts → +0.1001%
+    2026-05-14: ATR=7.3pts → +0.1009%
+    2025-12-30: ATR=7.4pts → +0.1032%
+
+  HIGH VOL regime (ATR>=7.5pts): n=4, WR=100%, avg=+0.1371%
+    2026-02-17: ATR=8.3pts → +0.1167%
+    2024-12-18: ATR=9.2pts → +0.1299%
+    2024-12-10: ATR=9.9pts → +0.1399%
+    2026-03-30: ATR=11.3pts → +0.1618%
+
+REGIME CONTRAST: HIGH vol avg (+0.1371%) is +57% above LOW vol avg (+0.0872%).
+This is the LARGEST regime contrast found for any binary split of the data.
+
+IMPORTANT: All HIGH vol trades are from late 2024 / early 2026 (winter months, specific
+market events). All LOW vol trades are from mid-2026 (summer/fall, calmer market).
+This may partly reflect temporal clustering, not just ATR-level selection.
+
+CROSS-PREDICTOR CORRELATION MATRIX (all 10 trades):
+  rank:              +0.756  ← already in V5
+  ema50_dist:        +0.463  ← already in V5
+  comp_v5:           +0.885  ← primary composite
+  atr_abs:           +0.912  ← strongest individual predictor
+  ema50_slope:       −0.702  ← 4th strongest
+  prior_week_ret:    −0.595  ← 6th strongest
+
+CONCLUSION: T330 CONFIRMS REGIME STRUCTURE. The 7.5pt ATR boundary cleanly splits
+low vs high quality setups. HIGH vol regime (n=4 avg +0.1371%) represents premium
+setups. LOW vol regime setups still win (WR=100%) but avg is 57% lower. The regime
+boundary is robust and actionable.
+
+=== UPDATED BEST FILTERS (through T330) ===
+
+COMPOSITE RANKING:
+  V6a (V5 + ATR_abs_norm): corr=+0.920  ← NEW PRIMARY COMPOSITE
+  V5_eq:                    corr=+0.885  (still valid, simpler formula)
+  V6_top2 (V5+ATR+slope):   corr=+0.903  (good but normalization complexity)
+
+FILTER PERFORMANCE (filter → n, avg, %above base):
+  ATR>=8.5pts OR >=9.0pts: n=3, avg=+0.1439% (+34%)  ← TIGHTEST
+  V6a>=0.60:               n=3, avg=+0.1395% (+30%)
+  ATR>=7.5pts:             n=4, avg=+0.1371% (+28%)
+  prior_wk<0 AND v5>=0.5:  n=4, avg=+0.1329% (+24%)
+  comp_v5>=0.5:            n=5, avg=+0.1297% (+21%)  ← PRIMARY FILTER (most trades)
+  V6a>=0.50:               n=5, avg=+0.1297% (+21%)  (same trades as v5>=0.5)
+
+KEY INSIGHT: Multiple filters converge on the same premium trades:
+  - The top 3 trades (2026-03-30, 2024-12-10, 2024-12-18) pass EVERY tight filter.
+  - These are all HIGH vol regime, high V5, prior week DOWN.
+  - The tightest valid filter with n>=3 gives +0.1439% avg.
+
+RECOMMENDED FILTER HIERARCHY (live use):
+  1. ALWAYS apply comp_v5>=0.5 (PRIMARY) — n=5, avg=+0.1297%
+  2. OPTIONAL: also require ATR>=7.5pts for premium trades — n=4, avg=+0.1371%
+  3. OPTIONAL: also require prior_wk<0 — n=4, avg=+0.1329%
+  Conditions 2 and 3 both select same 4 of the n=5 trades but with different exclusions.
+
+=== CUMULATIVE FINDINGS SUMMARY (T326-T330) ===
+T326: V6a (V5 + ATR_abs): corr=+0.920 — NEW BEST COMPOSITE. Adding EMA_slope or
+      prior_week alone degrades V5. ATR_abs is the only 5th factor that improves it.
+T327: ATR>=7.5pts: n=4 avg=+0.1371% (+28%) — sweet spot threshold.
+      ATR>=8.5pts: n=3 avg=+0.1439% (+34%) — tightest valid filter.
+T328: ATR>=8 AND slope<=-3: n=3 avg=+0.1395%. Combination confirms but doesn't beat V6a.
+      "Neither" group (n=3 avg=+0.0730%) = noise tier of the setup.
+T329: prior_wk<0 AND v5>=0.5: n=4 avg=+0.1329%. Marginal vs v5 alone (+0.003% avg).
+      All prior-week-down trades already pass v5>=0.5 — near-redundant filters.
+T330: REGIME CONFIRMED. HIGH vol (ATR>=7.5): n=4 avg=+0.1371%. LOW vol: n=6 avg=+0.0872%.
+      57% avg difference. High vol regime is premium; low vol still profitable.
+
+=== NEXT THEORY DIRECTIONS (T331+) ===
+1. T331: V6a threshold optimization — does V6a>=0.55 or 0.65 improve over 0.60?
+2. T332: ATR_abs in raw (non-normalized) form as standalone filter vs V6a composite
+3. T333: Regime-conditioned V5 — compute V5 separately for HIGH/LOW vol periods
+4. T334: H4 alignment quality — when H4 EMA is far above (2.0×+ ATR4h), is quality better?
+5. T335: Compression pattern shape — do "accelerating" compressions (ATR trending down
+         within the qc window) outperform "flat" ones?
+
+=== TOTAL THEORIES TESTED: 330 ===
+T326: V6a (+0.920) — best composite, ATR_abs as 5th factor. EMA/prior_wk dilute V5.
+T327: ATR threshold — 7.5pts sweet spot (+28%), 8.5pts tightest (+34%).
+T328: ATR+slope combo — confirms but doesn't improve over V6a alone.
+T329: prior_wk + v5 combo — marginal improvement, near-redundant with v5 filter.
+T330: Regime confirmed — HIGH (ATR>=7.5) vs LOW vol, 57% avg gap.

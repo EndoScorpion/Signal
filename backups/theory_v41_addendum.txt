@@ -1,0 +1,180 @@
+THEORY ADDENDUM v41 — T297-T299
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-29
+
+=== T297a: COMPOSITE V5 EQUAL (rank + ema_dist + H4 + atr_cv_inv = 4 factors) ===
+THIS IS THE BIGGEST FINDING YET.
+
+atr_cv_inv normalization: cv_norm = max(0, min(1, (0.15 - atr_cv) / 0.10))
+  atr_cv = 0.05 (most uniform) → cv_norm = 1.0
+  atr_cv = 0.15 (most variable) → cv_norm = 0.0
+  atr_cv = 0.10 → cv_norm = 0.50
+
+comp_v5 = (rank_norm + ema_norm + h4_norm + cv_norm) / 4
+
+Per-trade sorted by comp_v5:
+  2026-02-16: v5=0.153 (cv=0.142, cv_n=0.08) → +0.0480%  ← worst, low cv_n AND low V2
+  2026-08-06: v5=0.176 (cv=0.102, cv_n=0.48) → +0.0906%
+  2026-07-21: v5=0.284 (cv=0.125, cv_n=0.25) → +0.0803%
+  2025-12-30: v5=0.361 (cv=0.082, cv_n=0.68) → +0.1032%
+  2026-05-14: v5=0.447 (cv=0.134, cv_n=0.16) → +0.1009%
+  2026-01-08: v5=0.508 (cv=0.150, cv_n=0.00) → +0.1001%
+  2024-12-18: v5=0.580 (cv=0.091, cv_n=0.59) → +0.1299%
+  2024-12-10: v5=0.583 (cv=0.123, cv_n=0.27) → +0.1399%
+  2026-02-17: v5=0.700 (cv=0.107, cv_n=0.43) → +0.1167%
+  2026-03-30: v5=0.789 (cv=0.055, cv_n=0.95) → +0.1618%  ← best
+
+Correlation: +0.885 ← NEW ALL-TIME #1 COMPOSITE (exceeds even raw rank at +0.756!)
+
+THRESHOLD ANALYSIS:
+  v5>=0.5: n=5, avg=+0.1297% (+21% vs baseline) — same quality as H4+rank10-20
+  v5>=0.6: n=2, avg=+0.1393% (+30%) — very sparse, same as best binary combo
+  v5>=0.4: n=6, avg=+0.1249%
+
+KEY INSIGHT: Why does adding atr_cv as 4th factor IMPROVE correlation, when adding loc (T294)
+and consec_down (T295) DEGRADED it?
+
+ANSWER — Factor independence hierarchy:
+  T296 atr_cv: INDEPENDENT of rank/ema/H4. It measures compression quality (how uniform the
+    quiet period was). The other 3 factors don't capture this at all. Signal: clean, genuine
+    quiet vs. noisy/partial quiet.
+  T259 loc: PARTIALLY correlated with the setup — entries below EMA50 are already biased
+    toward negative loc. Adds redundant signal, dilutes.
+  T263 consec_down: weakly correlated with direction already implied by ema_dist>0.5. Dilutes.
+
+atr_cv is the ONLY factor that is both high-correlation AND genuinely orthogonal to the
+existing 3 V2 factors. That is why V5 improves while V3/V4 degraded.
+
+REVISED COMPOSITE DEGRADATION LAW:
+Equal-weight composites improve when adding genuinely orthogonal high-correlation factors.
+They degrade when adding redundant or partially correlated factors. The test:
+- Is the new factor's variance explained by the existing composite? (low R² = orthogonal)
+- Is the new factor's standalone correlation high enough to contribute?
+  Threshold appears to be ~0.6+ standalone for meaningful improvement.
+
+CONCLUSION: V5_eq at +0.885 is the new optimal equal-weight composite.
+comp_v5>=0.5: n=5, avg=+0.1297% (+21%) — strongest n=5 filter found.
+
+=== T297c: COMPOSITE V5 HALF (V2 + atr_cv_inv at 0.5x weight) ===
+comp_v5_half = (rank_norm + ema_norm + h4_norm + 0.5*cv_norm) / 3.5
+
+Correlation: +0.826 — better than V2 (+0.735) but worse than V5_eq (+0.885)
+CONCLUSION: atr_cv contributes more at full equal weight than at half weight.
+The 4-factor equal composite is better than a partial-weight version.
+
+=== T299: WEIGHTED COMPOSITE (rank 2x, ema 1x, H4 1x) ===
+comp_v2_rk2 = (2*rank_norm + ema_norm + h4_norm) / 4
+
+Correlation: +0.821 — improves on V2 (+0.735) but weaker than V5_eq (+0.885).
+
+Per-trade sorted by v2_rk2:
+  2026-02-16: -0.049 (rank=2.8) → +0.0480%  ← very low rank dragged to clear bottom
+  2026-08-06:  0.105 (rank=11.9) → +0.0906%
+  2026-07-21:  0.119 (rank=6.0)  → +0.0803%
+  2025-12-30:  0.346 (rank=16.3) → +0.1032%
+  2026-05-14:  0.405 (rank=9.9)  → +0.1009%
+  2024-12-18:  0.598 (rank=16.7) → +0.1299%
+  2024-12-10:  0.652 (rank=15.5) → +0.1399%
+  2026-01-08:  0.655 (rank=15.9) → +0.1001%
+  2026-03-30:  0.670 (rank=14.7) → +0.1618%
+  2026-02-17:  0.788 (rank=17.9) → +0.1167%
+
+Threshold: >=0.5: n=5, avg=+0.1297% — same quality as H4+rank10-20 filter.
+
+KEY FINDING: Doubling rank weight helps (+0.821 vs +0.735) but adding atr_cv at equal
+weight (+0.885) is more powerful than doubling rank. The rank predictor is already
+well-represented; additional compression quality information adds more.
+
+CONCLUSION: +0.821. Improves V2 but V5_eq is superior. V2_rk2 is a valid 2nd-best.
+
+=== T298: INTERACTION — V2 × atr_cv_inv PRODUCT ===
+cv_interaction = comp_v2 × cv_norm (product of V2 score and compression quality)
+
+Correlation: +0.814 — better than V2 but worse than V5_eq.
+
+Notable: 2026-01-08 has cv_norm=0.00 (atr_cv=0.150, worst compression) → product=0.000
+despite V2=0.677. This penalizes high-V2 trades with poor compression quality.
+
+Top product scores:
+  2026-03-30: v2×cv=0.697 (V2=0.737, cv=0.95) → +0.1618% ← only really high-quality both
+  >=0.3: n=3, avg=+0.1361%
+
+CONCLUSION: +0.814. The product penalizes trades where one factor is near zero, creating
+a "both must be good" gate. Useful for highest-quality filter but V5_eq is more robust.
+
+=== T298b: FILTER INTERACTION — rank10-20 AND atr_cv<0.12 ===
+rank>=10 alone:             n=7, avg=+0.1203%
+atr_cv<0.12 alone:          n=5, avg=+0.1204%
+rank>=10 AND atr_cv<0.12:   n=5, avg=+0.1204%
+
+KEY FINDING: The rank>=10 condition is REDUNDANT with atr_cv<0.12.
+All 5 trades passing atr_cv<0.12 also have rank>=10. The 2 extra rank>=10 trades
+(failing atr_cv) are: 2026-01-08 (atr_cv=0.150) and 2026-05-14 (atr_cv=0.134).
+The atr_cv<0.12 filter fully subsumes the rank>=10 condition (at n=5 level).
+
+This makes sense: uniform compression windows (low CV) tend to also be higher-rank
+periods (rank is ATR percentile; consistently low ATR = high rank).
+
+=== COMPOSITE CORRELATION SUMMARY ===
+T297a V5_eq (rank+ema+H4+atr_cv, equal):   +0.885  ← NEW #1 COMPOSITE
+T297c V5_half (V2+cv at 0.5x):              +0.826
+T299  V2_rk2 (rank 2x):                     +0.821
+T298  V2×cv_inv product:                    +0.814
+V2   (rank+ema+H4 equal):                  +0.735  ← OLD BEST
+
+=== CUMULATIVE PREDICTOR RANKINGS (updated through T299) ===
+1. T297a: Composite V5_eq (rank+ema+H4+atr_cv) — +0.885 ← NEW #1
+2. T272:  ATR rank (within rank<20) — +0.756
+3. T292:  Composite V2 (rank+ema+H4) — +0.735
+4. T296:  Compression uniformity (atr_cv) — -0.648
+5. T259:  Prior day range location — -0.730
+6. T271:  Composite score (T259-weighted) — +0.619
+7. T268:  EMA50 distance — +0.463
+8. T285/T287: H4 trend alignment — +0.356
+9. T263:  Consec down days — +0.356
+10. T284: Consec lower highs — -0.350
+11. T260: Prior week location — -0.328
+12. T256: Signal bar size — -0.300
+13. T253: Intraday drift — +0.227
+14. T281: Hour (13h vs 14h) — +0.223
+15. T289: NFP proximity — +0.211
+16. T293: Prior 3-bar bearish — +0.205
+17. T254: Compression length qc — +0.187
+18. T283: Bar expansion ratio — -0.199
+19. T291: Prior 5-bar direction — -0.156
+20. T288: Bar close location — -0.131
+21. T290: Prior bar range — +0.071
+
+=== TOTAL THEORIES TESTED: 299 ===
+T297a: Composite V5_eq — +0.885. **NEW #1 COMPOSITE**. comp_v5>=0.5: n=5, +0.1297%.
+T297c: V5_half — +0.826. Better than V2, worse than V5_eq.
+T298:  V2×cv_inv product — +0.814. Better than V2.
+T298b: rank10-20 AND atr_cv<0.12 — same 5 trades as atr_cv<0.12. Redundant filter.
+T299:  Weighted V2 (rank 2x) — +0.821. Better than V2.
+
+BEST PROVISIONAL FILTERS (updated):
+1. comp_v5>=0.6:            n=2, avg=+0.1393% (+30%) — ultra-high quality, too sparse
+2. rank10-20 AND ema50>=3.0: n=3, avg=+0.1395% (+30%) — highest quality n≥3
+3. comp_v5>=0.5:            n=5, avg=+0.1297% (+21%) ← NEW BEST n≥5 COMPOSITE FILTER
+4. H4-aligned AND rank10-20: n=5, avg=+0.1297% (+21%) — ties with comp_v5>=0.5
+5. comp_v2>=0.6:            n=4, avg=+0.1296% (+21%)
+6. loc<0 AND rank10-20:     n=4, avg=+0.1296% (+21%)
+7. ema50_dist >= 3.0×:      n=4, avg=+0.1298% (+21%)
+8. comp_v2>=0.5:            n=6, avg=+0.1249%
+9. atr_cv<0.12:             n=5, avg=+0.1204%
+10. consec_down >= 1:       n=8, avg=+0.1166% (highest frequency)
+
+KEY FORMULA — Composite V5_eq:
+  rank_norm = (r - 10) / 10.0
+  ema_norm  = min((ema50_dist - 0.5) / 5.5, 1.0)
+  h4_norm   = 1.0 if H4-aligned else 0.0
+  cv_norm   = max(0, min(1, (0.15 - atr_cv) / 0.10))
+  comp_v5   = (rank_norm + ema_norm + h4_norm + cv_norm) / 4.0
+  Signal filter: comp_v5 >= 0.5
+
+NEXT THEORY DIRECTIONS (T300+):
+1. T300: 300-THEORY MILESTONE REVIEW — dataset ceiling, what's left to test?
+2. T301: comp_v5 with OPTIMIZED cv_norm scaling (what if cutoffs aren't 0.05/0.15?)
+3. T302: V5 + loc (5th factor) — does T259 add anything at full V5 quality?
+4. T303: V5 × loc interaction (does high-V5 + negative loc produce ultra-high-quality?)
+5. T304: MULTI-FILTER COMBINATION — comp_v5>=0.5 AND additional binary (e.g. + consec_down)

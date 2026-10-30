@@ -1,0 +1,128 @@
+THEORY ADDENDUM v33 — T274-T276
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-18
+
+=== T274: ATR RANK SUB-RANGE (rank15-20 vs rank10-15 vs rank<10) + RANK TREND ===
+
+Sub-range breakdown:
+  rank<10:   n=3, WR=100%, avg=+0.0764%, avg_rank=6.2  | 2026-02-16, 2026-05-14, 2026-07-21
+  rank10-15: n=2, WR=100%, avg=+0.1262%, avg_rank=13.3 | 2026-03-30, 2026-08-06
+  rank15-20: n=5, WR=100%, avg=+0.1180%, avg_rank=16.4 | 2024-12-10, 2024-12-18, 2025-12-30, 2026-01-08, 2026-02-17
+
+KEY FINDING: The rank10-20 advantage found in T272 does NOT further split into
+rank10-15 vs rank15-20 in a clean monotonic way. Both sub-ranges beat rank<10:
+  - rank10-15: +0.1262% (n=2 — too sparse for firm conclusions)
+  - rank15-20: +0.1180% (n=5 — more reliable)
+  - rank<10:   +0.0764% (n=3 — weakest)
+
+The rank10-15 edge (+0.1262%) looks better but n=2 (2026-03-30 at +0.1618% and
+2026-08-06 at +0.0906%) — one outlier heavily influences the mean. Cannot confirm
+rank10-15 > rank15-20 at this sample size.
+
+RANK TREND (falling vs flat/rising): ALL 10 trades are "flat_rising" — rank is NOT
+falling in any of the 10 signal bars (measured vs 5 bars prior). The setup requires
+active compression already being maintained, not compression that just ended. This
+is structurally expected: if rank were falling, the compression phase may be ending.
+No contrast available — this is simply a property of T131+EMA50 trades.
+
+CONCLUSION: The key breakpoint is rank<10 vs rank>=10 (confirmed from T272). Sub-splitting
+10-15 vs 15-20 is too sparse (n=2 vs n=5). Keep the rank>=10 threshold from T272.
+
+=== T275: COMPOSITE SCORE THRESHOLD ===
+T271 composite score (T259-weighted: 50% prior_loc, 30% ema50_dist, 20% consec_down).
+
+Score distribution with PnL:
+  2026-08-06: score=0.009, rank=11.9, prior_loc=0.24 → +0.0906%
+  2024-12-18: score=0.068, rank=16.7, prior_loc=0.23 → +0.1299%
+  2026-02-16: score=0.102, rank=2.8,  prior_loc=0.20 → +0.0480%  ← worst
+  2025-12-30: score=0.139, rank=16.3, prior_loc=0.32 → +0.1032%
+  2026-07-21: score=0.318, rank=6.0,  prior_loc=0.20 → +0.0803%
+  2024-12-10: score=0.355, rank=15.5, prior_loc=-0.20 → +0.1399%
+  2026-05-14: score=0.401, rank=9.9,  prior_loc=-0.12 → +0.1009%
+  2026-02-17: score=0.412, rank=17.9, prior_loc=-0.94 → +0.1167%
+  2026-01-08: score=0.430, rank=15.9, prior_loc=-0.23 → +0.1001%
+  2026-03-30: score=1.000, rank=14.7, prior_loc=-4.47 → +0.1618%  ← best
+
+Threshold results:
+  score > 0.3: n=6, WR=100%, avg=+0.1166%  (+8.9% vs baseline)
+  score > 0.4: n=4, WR=100%, avg=+0.1199%  (+11.9% vs baseline)
+  score > 0.5: n=1, WR=100%, avg=+0.1618%  (just the best trade — not a threshold)
+
+IMPORTANT ANOMALY: 2024-12-18 (score=0.068) returns +0.1299% — above average despite
+low score. Score doesn't capture everything. Its prior_loc=0.23 is NOT below prior day's
+range, but the ema50_dist=0.83× is also low. Both factors point against quality, yet the
+trade wins well. This is unexplained by current predictors.
+
+CONCLUSION: score > 0.3 threshold (n=6) gives +0.1166% avg — identical to the consec_down>=1
+filter from T263. The "score > 0.5" result (n=1) is just the 2026-03-30 outlier and not
+useful as a threshold. The composite score is not meaningfully better than the individual
+T259 or T272 predictors as a hard filter. Best practical threshold is score > 0.3 or 0.4,
+which roughly captures "not the bottom 4 trades."
+
+=== T276: TOP-2 PREDICTOR INTERACTION (prior_loc < -0.3 AND rank10-20) ===
+Test: combining T259 (prior_day_loc) and T272 (ATR rank) together.
+
+  Both conditions (loc<-0.3 AND rank10-20): n=2, WR=100%, avg=+0.1393%
+    2026-02-17: rank=17.9, prior_loc=-0.94 → +0.1167%
+    2026-03-30: rank=14.7, prior_loc=-4.47 → +0.1618%
+
+  Only rank10-20 (loc>=-0.3): n=5, WR=100%, avg=+0.1127%
+    2024-12-10, 2024-12-18, 2025-12-30, 2026-01-08, 2026-08-06
+
+  Neither (rank<10): n=3, WR=100%, avg=+0.0764%
+    2026-02-16, 2026-05-14, 2026-07-21
+
+  Only loc<-0.3 (rank<10): n=0 — no trades with loc<-0.3 have rank<10
+
+SURPRISE: No trade has both loc<-0.3 AND rank<10. When price is deeply below prior day's
+range (loc < -0.3), ATR rank is always 10-20 — never ultra-compressed. The two conditions
+are CORRELATED: extreme prior_day breakdown naturally co-occurs with moderate ATR rank.
+
+Looser threshold (loc<0, any below prior range) AND rank10-20:
+  n=4, WR=100%, avg=+0.1296%
+  2024-12-10: rank=15.5, prior_loc=-0.20 → +0.1399%
+  2026-01-08: rank=15.9, prior_loc=-0.23 → +0.1001%
+  2026-02-17: rank=17.9, prior_loc=-0.94 → +0.1167%
+  2026-03-30: rank=14.7, prior_loc=-4.47 → +0.1618%
+
+KEY FINDING — BEST FILTER COMBINATION FOUND:
+"loc < 0 AND rank10-20" = n=4, WR=100%, avg=+0.1296% (+21% vs baseline +0.1071%)
+This equals the EMA50 >=3.0× filter in improvement magnitude but uses the two strongest
+predictors (T259 + T272) instead of T268. Same n=4 and same +21% improvement.
+
+The loc < -0.3 strict filter gives avg +0.1393% (+30%) but n=2 — too sparse for confidence.
+
+STRUCTURAL INSIGHT: Prior day range breakdown (loc<0) and moderate ATR rank (10-20)
+capture the same mechanism from two angles:
+- loc<0: STRUCTURAL breakdown — price already extended below multi-day support
+- rank10-20: VOLATILITY sweet spot — compressed enough to be a genuine low-ATR environment
+  but not so compressed that the setup has exhausted its momentum
+
+Combined: price is in a sustained quiet downtrend that just broke multi-day structure.
+This is the T131+EMA50 signal at its purest.
+
+=== TOTAL THEORIES TESTED: 276 ===
+T274: Rank sub-range — key breakpoint is rank<10 vs rank>=10 (confirmed). rank10-15 vs
+15-20 too sparse to split further.
+T275: Composite score threshold — score > 0.3 gives same result as consec_down>=1.
+Not a standalone improvement. T271 composite serves better as a predictor, not a filter.
+T276: Top-2 interaction (loc<0 AND rank10-20) — n=4, WR=100%, avg=+0.1296% (+21%).
+BEST MULTI-FACTOR FILTER FOUND. Structural insight: these two conditions are correlated
+and capture the same mechanism from two angles.
+
+CUMULATIVE RETURN PREDICTORS RANKED (from all theories):
+1. T272: ATR rank (within rank<20) — +0.756
+2. T259: Prior day range location — -0.730
+3. T271: Composite score (T259-weighted) — +0.619
+4. T268: EMA50 distance — +0.463
+5. T263: Consec down days — +0.356
+6. T260: Prior week location — -0.328
+7. T256: Signal bar size — -0.300
+8. T253: Intraday drift — +0.227
+9. T254: Compression length qc — +0.187
+
+BEST PROVISIONAL FILTER COMBINATIONS (all WR=100%):
+- loc<0 AND rank10-20:    n=4, avg=+0.1296% (+21% vs baseline)
+- ema50_dist >= 3.0×:     n=4, avg=+0.1298% (+21% vs baseline)
+- loc<-0.3 AND rank10-20: n=2, avg=+0.1393% (+30% vs baseline — too sparse)
+- consec_down >= 1:        n=8, avg=+0.1166% (+8.9% — most trades retained)

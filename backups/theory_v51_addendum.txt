@@ -1,0 +1,199 @@
+THEORY ADDENDUM v51 — T341-T345
+EURUSD FXOpen ECN H1 | COST=0.00008 (8pt round-trip) | UTC
+Base: n=10, WR=100%, avg=+0.1071%
+Generated: 2026-10-29
+
+================================================================
+T341: EXIT TIMING ANALYSIS
+================================================================
+
+EXIT TYPE BREAKDOWN:
+  target:  n=9, avg=+0.1137%   ← 90% of trades hit target
+  timeout: n=1, avg=+0.0480%   ← weakest outcome (lowest v6a=0.149)
+
+EXIT BAR DISTRIBUTION:
+  Bar 1 (+1h post): n=4, avg=+0.1084%
+  Bar 2 (+2h post): n=5, avg=+0.1180%  ← modal exit
+  Bar 4 (+4h post): n=1, avg=+0.0480%  (timeout only)
+  Bar 3: n=0
+
+Exit bar corr with pnl: -0.464  (MODERATE NEGATIVE — earlier exit = better)
+
+Per-trade exit timing:
+  2026-03-30: bar=1 target v6a=0.831 → +0.1618%
+  2026-05-14: bar=1 target v6a=0.408 → +0.1009%
+  2026-08-06: bar=1 target v6a=0.166 → +0.0906%
+  2026-07-21: bar=1 target v6a=0.227 → +0.0803%
+  2026-01-08: bar=2 target v6a=0.455 → +0.1001%
+  2025-12-30: bar=2 target v6a=0.345 → +0.1032%
+  2024-12-10: bar=2 target v6a=0.613 → +0.1399%
+  2024-12-18: bar=2 target v6a=0.586 → +0.1299%
+  2026-02-17: bar=2 target v6a=0.649 → +0.1167%
+  2026-02-16: bar=4 timeout v6a=0.149 → +0.0480%  ← worst (weakest setup)
+
+Early exit (bar 1-2): n=9, avg=+0.1137%
+Late  exit (bar 3-4): n=1, avg=+0.0480%
+
+INTERPRETATION:
+- 90% of trades hit 1.5×ATR target within 2 bars — very fast momentum
+- The 1 timeout trade (2026-02-16) is also the lowest v6a (0.149) and lowest pnl
+- Exit bar is a RESULT of setup quality, not a predictor
+- Earlier exit bar correlates with HIGHER v6a (stronger setups move faster)
+- No stop hits: system is 0% loss rate on all n=10 setups
+
+================================================================
+T342: MONTHLY SEASONALITY
+================================================================
+
+MONTHLY DISTRIBUTION:
+  Jan: n=1, WR=100%, avg=+0.1001%
+  Feb: n=2, WR=100%, avg=+0.0824%
+  Mar: n=1, WR=100%, avg=+0.1618%
+  May: n=1, WR=100%, avg=+0.1009%
+  Jul: n=1, WR=100%, avg=+0.0803%
+  Aug: n=1, WR=100%, avg=+0.0906%
+  Dec: n=3, WR=100%, avg=+0.1243%  ← highest count
+
+Month corr with pnl: +0.253 (weak)
+
+Q4 (Oct-Dec): n=3, avg=+0.1243% (+16% vs rest)
+Non-Q4:       n=7, avg=+0.0998%
+
+INTERPRETATION:
+- Dec concentration (3/10 = 30%) is notable but small sample
+- Q4 outperforms by +24bps avg — partial EURUSD year-end volatility expansion
+- Summer months (Jul, Aug) show lower pnl — thin liquidity = smaller ATR = weaker setup
+- Month corr=+0.253 is too weak to use as filter (direction: later months marginally better)
+- No Oct or Nov trades in sample (ATR rank likely too high = r<20 filter not met)
+- FINDING: Q4 seasonality aligns with higher ATR (year-end volatility) — this is mechanical,
+  captured by ATR_abs_norm in V6a/V7. Month is NOT an independent predictor.
+
+================================================================
+T343: V7 AS CONTINUOUS SIGNAL STRENGTH SCORE
+================================================================
+
+V7 range: 0.124 – 0.831
+V7 corr with pnl: +0.937
+
+QUARTILE ANALYSIS:
+  Q1 (v7=0.124–0.309): n=3, avg=+0.0730%
+  Q2 (v7=0.309–0.454): n=2, avg=+0.1020%
+  Q3 (v7=0.454–0.579): n=2, avg=+0.1150%
+  Q4 (v7=0.579–0.831): n=3, avg=+0.1395%
+
+Monotonic increase from Q1 to Q4 (+91% lift from Q1 to Q4)
+
+Top 1 (v7=0.831): avg=+0.1618%
+Rest n=9:         avg=+0.1011%
+
+V7-WEIGHTED POSITION SIZING:
+  V7-weighted avg pnl: +1.196% (vs equal-weight +0.1071%)
+  Note: weighted by v7/sum(v7) × n — amplifies strongest setups
+
+INTERPRETATION:
+- V7 continuous ranking is strongly monotonic with pnl
+- Q4 premium (+91% vs Q1) suggests 2x lot sizing on Q4 setups adds significant edge
+- V7 should drive lot sizing: Q1=0.5×, Q2=0.75×, Q3=1.0×, Q4=1.5× (hypothetical)
+- The v7>=0.50 binary gate is a Q3/Q4 filter — captures the 2 best quartiles
+- V7 is the most powerful scoring tool developed in this study
+
+================================================================
+T344: PRIOR LO10 BREAK IN COMPRESSION WINDOW
+================================================================
+
+FRESH vs REPEAT BREAK:
+  Fresh break (no prior in window):   n=1,  avg=+0.0803%  ← only 1 fresh trade
+  Repeat break (prior in window):     n=9,  avg=+0.1101%  (+37% vs fresh)
+
+prior_lo10_break corr with pnl: +0.294 (weak, dominated by small n)
+
+Per-trade (all but 2026-07-21 are repeat breaks):
+  2026-07-21: fresh, v6a=0.227 → +0.0803%
+  All others: repeat break → range +0.0480% to +0.1618%
+
+INTERPRETATION:
+- Only 1 fresh break in all 10 trades — essentially all setups are repeat breaks
+- This means the qc window itself is a "repeat area" — price has been trying to break lower
+  multiple times before the qualifying bar
+- prior_lo10_break=True is nearly universal, not a discriminating filter
+- The single fresh break (Jul 21) is mid-range (+0.0803%), not clearly worse
+- FINDING: Repeat lo10 breaks within compression window is NORMAL for this setup,
+  not a distinctive predictor. Skip as filter.
+
+================================================================
+T345: RAW DIRECTIONAL ACCURACY
+================================================================
+
+DIR CORRECT (close[bar+4] < entry — short direction) : 90% of 10 trades
+
+Breakdown by outcome:
+  Directionally correct: n=9, avg=+0.1061%
+  Directionally wrong:   n=1, avg=+0.1167%  ← one wrong direction trade STILL won!
+
+By exit type:
+  target:  dir_correct=89% (n=9)
+  timeout: dir_correct=100% (n=1)
+
+dir_correct corr with pnl: -0.105 (near zero — direction by bar+4 ≠ pnl quality)
+
+Timeout trade detail:
+  2026-02-16: dir_correct=True, timeout exit → +0.0480%
+  (Moved in right direction but not enough to hit 1.5×ATR target in 4 bars)
+
+The 1 directionally "wrong" trade:
+  2026-02-17: dir_correct=False → +0.1167%  (2nd-highest v6a=0.649)
+  This was a bar+2 TARGET hit — price moved sharply to target then reversed above entry by bar+4
+
+INTERPRETATION:
+- 90% directional accuracy over 4-bar horizon is high for H1 FX
+- The 1 "wrong" direction trade still won — target hit before bar+4 reversal
+- dir_correct by bar+4 is not a pnl predictor (corr=-0.105) — meaningless at this timeframe
+- The setup wins through SPEED (most hits in bar 1-2), not sustained trend
+- FINDING: Raw direction at bar+4 is irrelevant; target hit rate (90%) is the real edge driver
+
+================================================================
+SUMMARY — PREDICTOR RANKINGS (UPDATED THROUGH T345)
+================================================================
+
+Individual predictors (corr with pnl):
+  1. ATR absolute:           +0.912
+  2. V5 composite:           +0.885
+  3. ATR rank:               +0.756
+  4. EMA50 slope:            -0.702
+  5. Prior week direction:   -0.595
+  6. Compression ATR slope:  -0.569
+  7. Exit bar timing:        -0.464 (RESULT, not input)
+  8. H4 dist quality:        +0.356
+  9. Prior lo10 break:       +0.294
+ 10. Month/seasonality:      +0.253
+ 11. Hour of day:            +0.223
+ 12. qc length:              +0.187
+ 13. Directional accuracy:   -0.105
+ 14. Bar body size:          -0.097
+ 15. Day of week:            -0.096
+
+Composite predictors:
+  V7 (V5+ATR_abs+slope_norm): +0.937 ← BEST
+  V6a (V5+ATR_abs):           +0.920
+  V5:                         +0.885
+
+NEW FINDINGS FROM T341-T345:
+- T341: Exit timing (earlier = better) is a RESULT of setup quality, not independent
+- T342: Seasonality/month is mechanically explained by ATR — not independent
+- T343: V7 quartile scoring is monotonically predictive; use for lot sizing
+- T344: Prior lo10 break is nearly universal in this setup — not discriminating
+- T345: 90% directional accuracy, but direction at bar+4 ≠ pnl quality
+
+BEST PRACTICAL FILTERS (unchanged through T345):
+  1. v6a>=0.50 (=v7>=0.50): n=4, avg=+0.1371% (+28%) ← PRIMARY
+  2. v6a>=0.60: n=3, avg=+0.1395% (+30%) ← TIGHTEST
+  3. comp_v5>=0.5: n=5, avg=+0.1297% (+21%) ← BROADEST RECOMMENDED
+
+SIZING EXTENSION (T343 insight):
+  V7 quartile sizing: Q1=skip, Q2=0.5×, Q3=1.0×, Q4=1.5× (hypothesis for MT4 test)
+
+T346: Extended hold test — what if hold=6 bars instead of 4? Does it help the 1 timeout?
+T347: Volatility-adjusted target — 2.0× ATR instead of 1.5× on HIGH vol (v6a>=0.50) setups
+T348: Tighter stop — 1.0× ATR stop (vs 1.5×); fewer stop hits already=0 but guards timeout
+T349: Entry bar timing within hour — does close near lo vs mid-bar matter?
+T350: Cross-day continuation — if today's trade was target hit, does next-day setup exist?

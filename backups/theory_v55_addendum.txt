@@ -1,0 +1,244 @@
+THEORY ADDENDUM v55 — T361-T365
+EURUSD FXOpen ECN H1 | COST=0.00008 (8pt round-trip) | UTC
+Base: n=10, WR=100%, avg=+0.1071%
+Generated: 2026-10-29
+
+================================================================
+T361: BODY-TO-RANGE RATIO (BAR FILL %)
+================================================================
+
+body_range_ratio corr with pnl: -0.024 (ESSENTIALLY NULL)
+
+(bar_fill = abs(close-open) / (high-low); 0=doji, 1=full-body)
+Range: 0.077 – 0.699
+
+Per-trade sorted by fill:
+  2024-12-18: fill=0.077 (doji-like) → +0.1299%  ← best Dec trade, tiny body
+  2026-03-30: fill=0.099 (doji-like) → +0.1618%  ← BEST trade, near-doji
+  2025-12-30: fill=0.127 → +0.1032%
+  2026-02-16: fill=0.167 → +0.0480%  ← worst, also small fill
+  2026-01-08: fill=0.281 → +0.1001%
+  2026-07-21: fill=0.333 → +0.0803%
+  2026-02-17: fill=0.500 → +0.1167%
+  2026-05-14: fill=0.561 → +0.1009%
+  2024-12-10: fill=0.694 → +0.1399%  ← large body, still best
+  2026-08-06: fill=0.699 → +0.0906%
+
+Threshold sweep (fill<=X):
+  fill<=0.2: n=4, avg=+0.1107% (+3%)  ← marginal, n=4
+  fill<=0.3: n=5, avg=+0.1086% (+1%)
+  fill<=0.4: n=6, avg=+0.1039% (-3%)
+  fill<=0.5: n=7, avg=+0.1057% (-1%)
+
+INTERPRETATION:
+- corr=-0.024 is essentially random noise
+- Both ends of fill spectrum contain top performers (Dec 10 fill=0.694 → +0.1399%;
+  Dec 18 fill=0.077 → +0.1299%; Mar 30 fill=0.099 → +0.1618%)
+- The low fill (doji-like) bars contain the best AND worst trades (Feb 16 fill=0.167 → +0.0480%)
+- FINDING: Bar fill % = NULL predictor (corr=-0.024). Consistent with T349 (close pos null)
+  and T360 (break depth null). Entry bar internal structure has no predictive power.
+  Only that the LOW broke lo10 matters, not the bar's body shape.
+
+================================================================
+T362: CONSECUTIVE COMPRESSION HOURS — DISTRIBUTION IN QC WINDOW
+================================================================
+
+qc_non_entry_frac corr with pnl: -0.170 (WEAK)
+
+KEY OBSERVATION: ALL 10 trades have compression windows containing
+  non-13/14 hours (overnight/other bars). n=10 YES, n=0 NO.
+
+Per-trade h13/h14/other breakdown:
+  2026-03-30: qc=11 h13=1 h14=1 other=9 (82% non-entry) → +0.1618%
+  2026-02-17: qc=30 h13=2 h14=1 other=27 (90% non-entry) → +0.1167%
+  2024-12-10: qc=14 h13=1 h14=0 other=13 (93% non-entry) → +0.1399%
+  2024-12-18: qc=16 h13=1 h14=0 other=15 (94% non-entry) → +0.1299%
+  2026-01-08: qc=15 h13=1 h14=1 other=13 (87% non-entry) → +0.1001%
+  2026-05-14: qc=16 h13=1 h14=0 other=15 (94% non-entry) → +0.1009%
+  2025-12-30: qc=10 h13=1 h14=0 other=9 (90% non-entry) → +0.1032%
+  2026-07-21: qc=15 h13=1 h14=0 other=14 (93% non-entry) → +0.0803%
+  2026-08-06: qc=13 h13=1 h14=1 other=11 (85% non-entry) → +0.0906%
+  2026-02-16: qc=9  h13=1 h14=0 other=8  (89% non-entry) → +0.0480%
+
+Binary split:
+  Contains overnight bars: n=10, avg=+0.1071% (ALL trades)
+  Pure same-session:       n=0
+
+INTERPRETATION:
+- UNIVERSAL FEATURE: Every compression window (qc>=9) spans multiple sessions —
+  the 13-14h bars at entry are surrounded by overnight/pre-session bars
+- Most trades have exactly 1-2 "entry hour" bars out of 9-30 total qc bars
+- The overnight bars are what build the compression window — compression takes days to form
+  (consistent with T355: median qc=14.5 bars = ~2 trading days)
+- qc_non_entry_frac (82-94%) varies but corr=-0.170 is weak and non-monotonic
+- FINDING: Compression hours distribution = UNIVERSAL (100% multi-day) = NULL discriminator.
+  The overnight structure of compression windows is a feature of the setup, not a filter.
+  Adding it to composites adds no value.
+
+================================================================
+T363: EMA50 DISTANCE BINS (NONLINEAR SWEET SPOT?)
+================================================================
+
+ema50_dist corr with pnl: +0.463 (MODERATE — partially redundant with V6a)
+Range: 0.72 – 4.58 ATR units
+
+Per-trade sorted by ema_dist:
+  2026-08-06: dist=0.717 → +0.0906%
+  2024-12-18: dist=0.831 → +0.1299%
+  2025-12-30: dist=1.225 → +0.1032%
+  2026-02-16: dist=1.875 → +0.0480%  ← worst, mid-range distance
+  2026-07-21: dist=2.079 → +0.0803%  ← mid-range
+  2026-01-08: dist=2.942 → +0.1001%
+  2024-12-10: dist=3.309 → +0.1399%
+  2026-02-17: dist=3.688 → +0.1167%
+  2026-05-14: dist=4.006 → +0.1009%
+  2026-03-30: dist=4.582 → +0.1618%  ← BEST trade, far distance
+
+Bins:
+  near (0.5-2 ATR): n=3, avg=+0.1079% (+1%)
+  mid  (1.5-3 ATR): n=3, avg=+0.0761% (-29%)  ← worst bin (includes 2026-02-16!)
+  far  (3.0+ ATR):  n=4, avg=+0.1298% (+21%)  ← best bin
+
+Threshold sweep (ema_dist>=X):
+  dist>=2.0: n=6, avg=+0.1166% (+9%)
+  dist>=2.5: n=5, avg=+0.1239% (+16%)
+  dist>=3.0: n=4, avg=+0.1298% (+21%)  ← strong lift, n=4
+
+Upper cap (removing far outliers): removing large-dist trades HURTS.
+  dist<=3.0: n=6, avg=+0.0920% (-14%)  ← removing the best trades!
+  No evidence of "too far" being worse.
+
+INTERPRETATION:
+- The "mid" bin's poor performance (-29%) is largely driven by 2026-02-16 (worst trade at 1.875 dist)
+- Far distances consistently strong: all 4 "far" trades avg +0.1298%
+- No upper bound: the farthest trade (2026-03-30, dist=4.58) is the BEST trade
+- corr=+0.463 is moderate but partially redundant with V6a (ema_norm component caps at dist=6.0)
+- ema_norm uses (dist-0.5)/5.5 — it does encode higher dist as better, but the current
+  V6a threshold filters don't explicitly gate on dist
+- FINDING: ema_dist>=3.0 gate → n=4, avg=+0.1298% (+21%). Comparable to v6a>=0.50 (+28%, n=4).
+  This may overlap with v6a gate (both selecting high-quality trades) — needs T367 to test.
+  NOTE: The ema_norm in V5 already partially captures this, but a hard dist>=3.0 gate
+  could independently select the top trades alongside v6a.
+
+KEY INSIGHT: No "too far from EMA" penalty exists in this dataset (up to 4.58 ATR).
+  The farther price is below EMA50, the stronger the setup tends to be.
+
+================================================================
+T364: H4 EMA DISTANCE RATIO (CONTINUOUS VS BINARY)
+================================================================
+
+h4_ema_dist_atr corr with pnl: +0.356 (WEAK-MODERATE)
+Range: -5.768 – +7.001 ATR units
+(positive = price below H4 EMA = aligned short; negative = price above H4 EMA)
+
+Per-trade sorted by h4 dist:
+  2026-08-06: h4_dist=-5.768 (not aligned) → +0.0906%  ← unaligned, still won
+  2025-12-30: h4_dist=-0.314 (not aligned) → +0.1032%  ← unaligned, above base!
+  2026-02-16: h4_dist= 1.091 (aligned) → +0.0480%  ← aligned, worst trade
+  2024-12-18: h4_dist= 1.688 (aligned) → +0.1299%
+  2024-12-10: h4_dist= 2.319 (aligned) → +0.1399%
+  2026-07-21: h4_dist= 2.680 (aligned) → +0.0803%
+  2026-02-17: h4_dist= 4.244 (aligned) → +0.1167%
+  2026-05-14: h4_dist= 5.570 (aligned) → +0.1009%
+  2026-03-30: h4_dist= 6.520 (aligned) → +0.1618%  ← best trade, far aligned
+  2026-01-08: h4_dist= 7.001 (aligned) → +0.1001%
+
+Binary (current model):
+  aligned=True:  n=8, avg=+0.1097% (+2%)
+  aligned=False: n=2, avg=+0.0969% (-10%)
+
+Continuous threshold sweep (h4_ema_dist >= X):
+  h4_dist>=0 (same as binary): n=8, avg=+0.1097% (+2%)
+  h4_dist>=2: n=6, avg=+0.1166% (+9%)
+  h4_dist>=3: n=4, avg=+0.1199% (+12%)
+  h4_dist>=5: n=3, avg=+0.1209% (+13%)
+
+INTERPRETATION:
+- corr=+0.356 matches the existing "H4 dist quality" predictor ranking — same signal
+- Continuous h4_dist is BETTER than binary: +12% lift at h4>=3 vs +2% lift at h4>=0
+- 2025-12-30 (not aligned but dist=-0.314) performs ABOVE base — a near-miss alignment
+- 2026-08-06 (not aligned, dist=-5.768) is far above H4 EMA — genuinely anti-aligned
+- The two non-aligned trades are very different: one barely misses alignment (Oct 30)
+  while the other is strongly anti-aligned
+- FINDING: H4 EMA distance (continuous, ATR units) corr=+0.356 improves on binary h4_norm.
+  Replacing binary h4_norm (0/1) in V5 with normalized continuous h4_dist
+  could improve composite. This is a V9 candidate.
+  h4_dist>=3 as standalone gate: n=4, avg=+0.1199% (+12%).
+  NEXT: Test V9 = V5 variant with continuous h4_dist_norm instead of binary h4_norm.
+
+================================================================
+T365: TWO-SETUP WEEK (2ND TRADE PERFORMANCE)
+================================================================
+
+Distribution:
+  1st trade in week: n=9, avg=+0.1061%
+  2nd+ trade in week: n=1, avg=+0.1167%  (only 2026-02-17, the day after 2026-02-16)
+
+Only 1 case of 2nd-trade week (week of 2026-02-16/17):
+  Day 1: 2026-02-16 (Tue) → +0.0480%  ← worst trade
+  Day 2: 2026-02-17 (Wed) → +0.1167%  ← good recovery trade
+
+corr(trade_in_week, pnl) = +0.105 (null by n=1 second-trade cases)
+
+INTERPRETATION:
+- Only 9 of 10 weeks have a single trade; one week has 2 trades
+- The 2nd trade in the only multi-trade week (+0.1167%) is BETTER than the 1st (+0.0480%)
+- But n=1 → cannot draw conclusions
+- The natural spacing (~2 trading days for qc to rebuild) prevents most same-week repeats
+- FINDING: Two-setup week = NON-TESTABLE (n=1 second-trade cases). Cannot evaluate.
+  The compression requirement naturally prevents frequent same-week setups.
+
+================================================================
+SUMMARY — UPDATED FINDINGS THROUGH T365
+================================================================
+
+T361: Bar fill % = NULL predictor (corr=-0.024). Entry bar body shape irrelevant.
+T362: Compression hours = UNIVERSAL (100% multi-day windows). NULL discriminator.
+T363: ema_dist>=3.0 → n=4, avg=+0.1298% (+21%). MEANINGFUL. No "too far" penalty.
+T364: H4 EMA dist continuous (corr=+0.356) > binary. V9 candidate: replace h4_norm.
+T365: Two-setup week = NON-TESTABLE (n=1).
+
+COMPOSITE FINAL RANKING (after T365 — unchanged):
+  V7  (V5+ATR_abs+slope_qc):          +0.937 ← CONFIRMED BEST
+  V7p (V5+ATR_abs+slope_7):           +0.925
+  V6a (V5+ATR_abs):                   +0.920
+  V5  (rank+ema_norm+h4+cv):          +0.885
+
+NEW GATE CANDIDATES:
+  ema_dist>=3.0: n=4, avg=+0.1298% (+21%)  ← comparable to v6a>=0.50 (+28%)
+  h4_dist>=2.0:  n=6, avg=+0.1166% (+9%)
+
+CONFIRMED NULL PREDICTORS (T361-T365):
+  - Bar fill % / body-to-range ratio (corr=-0.024)
+  - Compression hour distribution (universal feature, 100% multi-day)
+  - Two-setup week occurrence (n=1, non-testable)
+
+PREDICTOR RANKINGS (FINAL THROUGH T365):
+  Individual predictors:
+    1. ATR absolute:           +0.912
+    2. V5 composite:           +0.885
+    3. ATR slope 7-bar:        -0.734
+    4. EMA50 slope (5-bar):    -0.702
+    5. ATR rank:               +0.756
+    6. ATR slope 5-bar:        -0.592
+    7. Prior week direction:   -0.595
+    8. ATR slope 10-bar:       -0.572
+    9. ATR slope qc-var:       -0.569
+   10. ATR × EMA interaction:  +0.668 (redundant)
+   11. EMA50 dist (H1):        +0.463  ← NEW (partially captured by V6a)
+   12. Exit bar timing:        -0.464 (result)
+   13. H4 EMA dist (cont.):    +0.356  ← continuous version (same as binary H4)
+   14. Prior lo10 break:       +0.294
+   15. Seasonality/month:      +0.253
+   16. Hour of day:            +0.223
+   17. qc length:              +0.187
+   18. Close position:         +0.131
+   19. Two-setup week:         +0.105 (non-testable, n=1)
+   20. Bar fill %:             -0.024 (null)
+
+NEXT THEORIES (T366-T370):
+T366: V9 composite — replace binary h4_norm with continuous h4_dist_atr_norm in V5
+T367: Joint gate: ema_dist>=3.0 AND v6a>=0.50 — same trades or additive filtration?
+T368: ATR rank percentile bins — rank<10 vs 10-20 (near-0 = extremely compressed)
+T369: Session hour split — h=13 entry vs h=14 entry performance difference
+T370: EMA50 curvature — second derivative of EMA50 (is EMA50 accelerating down?)

@@ -1,0 +1,120 @@
+Theory Loop v58 Addendum — T376-T380
+Generated: 2026-10-29
+Branch: claude/project-thread-yi2gia
+Data: FXOpen EURUSD ECN H1 UTC, COST=0.00008
+Base: n=10, WR=100%, avg=+0.1071%
+
+=================================================================
+T376: ATR>=7.5 GATE — FULL CONFIRMATION
+=================================================================
+ATR>=7.5 selects EXACTLY the same 4 trades as v6a>=0.50:
+  {2024-12-10, 2024-12-18, 2026-02-17, 2026-03-30}
+  n=4, avg=+0.1371% (+28% vs base)
+  ATR-only (not in v6a>=0.50): 0 trades
+  v6a-only (not in ATR>=7.5): 0 trades
+
+ATR bucket breakdown (all n=10, no filter):
+  ATR 5-7pts:  n=3, WR=100%, avg=+0.0730% (-32%)
+  ATR 7-8pts:  n=3, WR=100%, avg=+0.1014% (-5%)
+  ATR 8-9pts:  n=1, WR=100%, avg=+0.1167% (+9%)
+  ATR 9-15pts: n=3, WR=100%, avg=+0.1439% (+34%)
+
+CONCLUSION: ATR>=7.5pts confirmed EQUIVALENT to v6a>=0.50 gate.
+Practical MT4/EA implication: use raw ATR>=7.5pts (no rolling normalization needed).
+
+=================================================================
+T377: TIGHT STOP — 1.0×ATR STOP (vs 1.5×ATR BASELINE)
+=================================================================
+  Base 1.5×stop/1.5×target: n=10, WR=100%, avg=+0.1071%
+  Tight 1.0×stop/1.5×target: n=10, WR=40%, avg=-0.0036% ← FAILS
+
+6 of 10 trades hit the tighter stop:
+  2024-12-10: target→stop (-0.1066%)
+  2024-12-18: target→stop (-0.0999%)
+  2026-01-08: target→stop (-0.0801%)
+  2026-02-16: timeout→stop (-0.0743%)
+  2026-05-14: target→stop (-0.0806%)
+  2026-07-21: target→stop (-0.0669%)
+
+v6a>=0.50 with tight stop: n=4, WR=50%, avg=+0.0180% (vs +0.1371% with base stop)
+
+CONCLUSION: 1.0×ATR stop is too tight. Price needs 1.5×ATR room to move to target.
+1.5×ATR stop confirmed optimal. T373 MAE finding (live stop-out risk) stands,
+but tightening the stop is NOT the solution — it worsens results severely.
+SIZE DOWN for the 2026-02-17 type trade (high ATR/qc, MAE risk), don't tighten stop.
+
+=================================================================
+T378: WIDE TARGET — 2.0×ATR TARGET (R:R=1.33 AND R:R=2.00)
+=================================================================
+  Base 1.5×stop/1.5×target: n=10, WR=100%, avg=+0.1071%
+  Wide 1.5×stop/2.0×target: n=10, WR=90%, avg=+0.0879% ← WORSE
+  2R  1.0×stop/2.0×target:  n=10, WR=30%, avg=-0.0318% ← MUCH WORSE
+
+Wide target exit breakdown:
+  3 trades timeout before reaching 2.0×target (avg timeout +0.0367%)
+  1 trade hits stop before 2.0×target (2026-02-17: -0.1327%)
+  6 trades reach 2.0×target (avg +0.1503%)
+
+Critical: 2026-02-17 changes from target(+0.1167%) to stop(-0.1327%)
+when target is widened to 2.0×ATR — the T373 MAE trade.
+
+CONCLUSION: 1.5×ATR target confirmed optimal. Wider targets reduce WR
+significantly and add stop-out risk on the highest-v6a trades.
+
+=================================================================
+T379: WEEK-OF-MONTH EFFECT
+=================================================================
+  week_of_month corr with pnl: +0.310 (moderate positive)
+
+  Per-week results:
+  Week 1: n=1, avg=+0.0906% (-15% vs base) — too thin
+  Week 2: n=3, avg=+0.1136% (+6%)
+  Week 3: n=4, avg=+0.0937% (-13%)
+  Week 5: n=2, avg=+0.1325% (+24%)
+
+Note: Week 4 has zero trades in this dataset.
+Week 5 = last days of month (days 29-31) — promising but n=2.
+
+CONCLUSION: Moderate positive correlation (+0.310) but n too thin per week
+to filter. Weeks 2 and 5 marginally better. Not enough signal to act on
+with current n=10. Flag for re-test when n grows.
+
+=================================================================
+T380: PRE-SETUP ATR TREND (10 BARS BEFORE COMPRESSION)
+=================================================================
+  pre_slope_pts corr with pnl: +0.182 (weak positive)
+  Range: -0.628 to +0.148 pts/bar
+
+  ATR falling before setup: n=8, avg=+0.0975% (-9%)
+  ATR rising before setup:  n=2, avg=+0.1459% (+36%)
+
+  Rising before compression (pre_slope>0):
+    2026-03-30: pre_slope=+0.004pts → +0.1618% (best trade)
+    2024-12-18: pre_slope=+0.148pts → +0.1299%
+
+CONCLUSION: Weak positive correlation (+0.182). Rising ATR before setup
+(only 2 cases) coincides with best outcomes, but n=2 is null.
+The dominant pattern is ATR falling into compression (n=8), which still
+yields +0.0975% avg — so this is not a useful filter at current n.
+
+=================================================================
+CYCLE SUMMARY T376-T380
+=================================================================
+  T376: ATR>=7.5 CONFIRMED EQUIVALENT to v6a>=0.50 ✅ (MT4-ready gate)
+  T377: 1.0×ATR stop FAILS (WR 100%→40%) — 1.5×ATR stop confirmed ✅
+  T378: 2.0×ATR target WORSE (WR 100%→90%, avg drops) — 1.5×ATR target confirmed ✅
+  T379: Week-of-month weak signal (+0.310 corr) — not actionable yet
+  T380: Pre-slope weak signal (+0.182 corr) — not actionable yet
+
+KEY ACTIONABLE FINDINGS THIS CYCLE:
+1. ATR>=7.5pts is the simplest practical gate for MT4/EA — no rolling normalization needed
+2. Geometry 1.5×ATR stop / 1.5×ATR target / 4-bar hold = LOCKED IN (T377+T378 confirm)
+3. DO NOT tighten stop to address T373 MAE risk — tightening destroys WR
+   Solution: SIZE DOWN on high-qc setups (qc>20) per T373 warning
+
+NEXT THEORIES (T381-T385):
+- T381: H4 confirmation — require close > H4 EMA50 (strong alignment only)
+- T382: Hour split — 13 UTC vs 14 UTC win rates separately
+- T383: Monthly seasonality (Jan/Feb/Dec cluster?)
+- T384: Volume proxy — range-to-ATR ratio at entry
+- T385: Multi-compression — multiple lo10 breaks in same compression (chain entry)

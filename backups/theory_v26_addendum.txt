@@ -1,0 +1,102 @@
+THEORY ADDENDUM v26 — T253-T255
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-17
+
+=== T253: INTRADAY DRIFT (13h close vs 9h open, in ATR units) ===
+Question: Did price drift significantly lower from the day's 9h UTC open to the 13-14h signal bar?
+A large drift = price has been falling all day = more extended = better SHORT setup?
+
+Drift values (positive = price is BELOW the 9h open at signal time):
+  2024-12-18: drift=0.24×ATR, pnl=+0.1299%
+  2025-12-30: drift=0.55×ATR, pnl=+0.1032%
+  2026-01-08: drift=0.57×ATR, pnl=+0.1001%
+  2026-08-06: drift=1.22×ATR, pnl=+0.0906%
+  2026-02-16: drift=1.48×ATR, pnl=+0.0480%  (lowest return)
+  2026-07-21: drift=1.56×ATR, pnl=+0.0803%
+  2024-12-10: drift=1.68×ATR, pnl=+0.1399%
+  2026-02-17: drift=2.53×ATR, pnl=+0.1167%
+  2026-05-14: drift=2.65×ATR, pnl=+0.1009%
+  2026-03-30: drift=2.68×ATR, pnl=+0.1618%  (highest return)
+
+Correlation (drift vs pnl): +0.227 (WEAK POSITIVE — larger drift slightly predicts better return)
+
+Threshold analysis:
+  drift >= 0×ATR (all): n=10, WR=100%, avg=+0.1071%
+  drift >= 1×ATR:        n=7,  WR=100%, avg=+0.1054%
+  drift >= 2×ATR:        n=3,  WR=100%, avg=+0.1265%  ← slight edge but n too small
+
+CONCLUSION: Weak positive correlation (+0.227) between intraday drift and return.
+Price that has drifted further down from 9h open shows marginally better returns, but
+WR=100% at ALL drift levels. No useful filter — all trades win regardless.
+The highest-return trade (2026-03-30, +0.1618%) has the largest drift (2.68×ATR),
+but correlation is too weak and n too small for a drift threshold to be actionable.
+NOT a filter; provides context only.
+
+=== T254: COMPRESSION LENGTH (qc bars) vs RETURN ===
+Question: Does longer consecutive ATR compression (more bars with rank<20) before signal predict better return?
+
+qc (consecutive compression bar count) vs returns:
+  qc=9:  2026-02-16, pnl=+0.0480%  (worst return — shortest compression)
+  qc=10: 2025-12-30, pnl=+0.1032%
+  qc=11: 2026-03-30, pnl=+0.1618%  (best return — qc=11 not the highest)
+  qc=13: 2026-08-06, pnl=+0.0906%
+  qc=14: 2024-12-10, pnl=+0.1399%
+  qc=15: 2026-01-08, pnl=+0.1001%
+  qc=15: 2026-07-21, pnl=+0.0803%
+  qc=16: 2024-12-18, pnl=+0.1299%
+  qc=16: 2026-05-14, pnl=+0.1009%
+  qc=30: 2026-02-17, pnl=+0.1167%  (extreme compression, above-average return)
+
+Correlation (qc vs pnl): +0.187 (VERY WEAK POSITIVE)
+
+Threshold analysis:
+  qc >= 6:  n=10, WR=100%, avg=+0.1071%  (all trades qualify)
+  qc >= 10: n=9,  WR=100%, avg=+0.1137%  (drops 2026-02-16, marginal improvement)
+  qc >= 12: n=7,  WR=100%, avg=+0.1083%
+  qc >= 15: n=5,  WR=100%, avg=+0.1056%
+
+Note: Current system requires qc >= 3, but all qualifying T131+EMA50 trades have qc >= 9.
+The 3-bar minimum is effectively never the binding constraint; actual minimum observed is 9.
+
+CONCLUSION: Compression length has no meaningful predictive power over return.
+The +0.187 correlation is noise at n=10. All win regardless of qc.
+The one low-return trade (2026-02-16, qc=9) has the shortest compression, consistent
+with the direction, but qc=11 (not extreme) yields the best return. No actionable threshold.
+The current qc>=3 filter is effectively always met (observed minimum = 9). Could raise to
+qc>=5 without losing any trades — but pointless since qc>=9 is the practical floor.
+NOT a filter; structurally all qualifying signals already have substantial compression.
+
+=== T255: LONDON-NY TRANSITION SHORT (12h rank<20 → enter SHORT at 13h + EMA50) ===
+NEW DIRECTION: Enter SHORT at 13h UTC close when:
+  - 12h UTC bar has ATR rank < 20 (compressed at end of London session)
+  - 13h bar exists same day (NY open)
+  - EMA50 distance >= 0.5×ATR (below EMA50)
+  - NO lo10 break required (earlier entry than T131)
+
+Results (n=48 signals):
+  SHORT 13h after 12h compressed: n=48, WR=60.4%, PF=1.08, avg=+0.0051%, total=+0.2439%
+
+Year breakdown:
+  2024: n=6,  WR=83% (strong)
+  2025: n=22, WR=32% (very weak — year dominated this)
+  2026: n=20, WR=85% (strong recovery)
+
+Sample wins:  2024-01-25, 2024-01-29, 2024-05-08, 2024-12-10, 2024-12-18
+Sample losses: 2024-02-13, 2025-01-29, 2025-02-06, 2025-02-07, 2025-02-12
+
+CONCLUSION: T255 as designed is NOT viable. n=48 is well-sampled, WR=60.4% is above
+chance but PF=1.08 means the wins barely cover the losses — after costs, this is
+essentially breakeven to slightly negative. The 2025 year (WR=32%) is catastrophic.
+The critical difference vs T131+EMA50: WITHOUT the lo10 break requirement, the entry
+fires too early and too often, catching many false moves before the genuine liquidity
+grab. The lo10 break is ESSENTIAL — it identifies the actual stop-hunt event.
+Entering at 12h compression alone without waiting for the break adds no edge.
+RULED OUT — confirmed: the lo10 break signal is the core discriminating condition.
+PF=1.08 at n=48 adds strong evidence that the lo10 break is the key gate.
+
+=== TOTAL THEORIES TESTED: 255 ===
+Key finding from T255: The lo10 break requirement is VALIDATED as essential.
+T255 (no lo10 break) at n=48 shows PF=1.08 (near-random) vs T131's PF=∞.
+The compression + EMA50 conditions alone are insufficient; the break is the edge.
+T253 and T254 add context: drift and qc both weakly correlate but neither is actionable.
+All T131+EMA50 trades already have substantial intraday drift and long compression.

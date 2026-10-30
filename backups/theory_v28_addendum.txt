@@ -1,0 +1,119 @@
+THEORY ADDENDUM v28 — T259-T261
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-18
+
+=== T259: PRIOR DAY RANGE LOCATION (where does signal close fall in prior day's range?) ===
+Metric: 0% = at prior day's LOW, 100% = at prior day's HIGH, negative = BELOW prior day's low
+
+Prior day range location vs return (sorted ascending by location):
+  2026-03-30: loc=-447% → pnl=+0.1618%  (BEST: price WELL BELOW prior day low)
+  2026-02-17: loc=-94%  → pnl=+0.1167%
+  2026-01-08: loc=-23%  → pnl=+0.1001%
+  2024-12-10: loc=-20%  → pnl=+0.1399%
+  2026-05-14: loc=-12%  → pnl=+0.1009%
+  2026-07-21: loc=+20%  → pnl=+0.0803%  (lower half of prior day)
+  2024-12-18: loc=+23%  → pnl=+0.1299%
+  2026-08-06: loc=+24%  → pnl=+0.0906%
+  2025-12-30: loc=+32%  → pnl=+0.1032%
+  [2026-02-16 excluded — prior day data unavailable]
+
+Correlation (day range location vs pnl): -0.730 *** STRONG NEGATIVE ***
+Lower location (price further below prior day's range) = better return
+
+Threshold analysis:
+  loc <= +25% (price in lower quarter of prior day or below): n=8, WR=100%, avg=+0.1150%
+  loc <= +33%: n=9, WR=100%, avg=+0.1137%
+  loc <= +50%: n=9, WR=100%, avg=+0.1137%
+
+KEY FINDING: -0.730 correlation is the strongest discovered so far in T131+EMA50 analysis.
+5 of 10 trades are BELOW the prior day's low entirely (negative loc values).
+The best trade (2026-03-30, +0.1618%) has price at -447% of prior day range = deep breakdown.
+The weakest trade (2026-02-16, +0.0480%) may be an exception (data unavailable for check).
+HOWEVER: All 9 trades with data are WR=100% regardless of location. No filter possible.
+The correlation confirms: price further below prior day's structure → stronger continuation.
+This aligns with the LIQUIDITY GRAB mechanism: price breaking prior day's lows harvests
+MORE stop orders, triggering a more violent snapback continuation.
+
+NOTE: This -0.730 correlation is a PREDICTOR of return magnitude, not a binary filter.
+All qualify regardless. The mechanism is clear: deeper multi-day breakdown = more stops trapped.
+STRONG CONTEXTUAL FINDING — not an actionable filter but explains return variance.
+
+=== T260: PRIOR WEEK RANGE LOCATION (where does signal close fall in prior 5-day range?) ===
+Metric: 0% = at prior week's LOW, 100% = at prior week's HIGH, negative = BELOW weekly low
+
+Prior week range location vs return:
+  2026-02-17: loc=-19% → pnl=+0.1167%  (below weekly low)
+  2026-03-30: loc=-17% → pnl=+0.1618%  (below weekly low, BEST return)
+  2026-05-14: loc=-6%  → pnl=+0.1009%  (below weekly low)
+  2026-01-08: loc=+5%  → pnl=+0.1001%  (near weekly bottom)
+  2026-07-21: loc=+12% → pnl=+0.0803%
+  2025-12-30: loc=+20% → pnl=+0.1032%
+  2024-12-10: loc=+30% → pnl=+0.1399%
+  2026-02-16: loc=+34% → pnl=+0.0480%  (mid-range, lowest return)
+  2024-12-18: loc=+44% → pnl=+0.1299%
+  2026-08-06: loc=+75% → pnl=+0.0906%  (near weekly high, still wins)
+
+Correlation (week range location vs pnl): -0.328 (MODERATE NEGATIVE)
+
+Threshold analysis:
+  loc <= +25% (lower quarter or below prior week's range): n=6, WR=100%, avg=+0.1105%
+  loc <= +33%: n=7, WR=100%, avg=+0.1147%
+  loc <= +50%: n=9, WR=100%, avg=+0.1090%
+
+Note: 2026-08-06 at +75% of weekly range still wins (+0.0906%).
+
+CONCLUSION: Prior week location shows moderate -0.328 correlation (weaker than daily -0.730).
+Price at weekly lows also tends to have better returns, consistent with T259.
+The daily structure correlation (-0.730) is stronger than the weekly (-0.328), suggesting
+the daily range context is more predictive of return magnitude than the weekly.
+NOT an actionable filter (all win), but confirms broader structural breakdown = better returns.
+Both T259 and T260 confirm the same mechanism: more trapped stops below prior structure = better.
+
+=== T261: DUAL EMA CONFLUENCE (BOTH EMA50 AND EMA200 at least 0.5×ATR above price) ===
+NEW FINDING: Requiring price to be below BOTH EMA50 and EMA200 by ≥0.5×ATR.
+This filters to cases where both medium-term and long-term trend alignment is bearish.
+
+Results (n=8, subset of T131+EMA50 n=10):
+  WR=100%, PF=∞, avg=+0.1097%, total=+0.8775%
+
+Trades included (all with ema200_dist >= 0.5):
+  2024-12-10: ema50=3.31×, ema200=2.37× → +0.1399%
+  2024-12-18: ema50=0.83×, ema200=2.04× → +0.1299%
+  2026-01-08: ema50=2.94×, ema200=7.15× → +0.1001%
+  2026-02-16: ema50=1.88×, ema200=1.21× → +0.0480%  (lowest return; included)
+  2026-02-17: ema50=3.69×, ema200=4.53× → +0.1167%
+  2026-03-30: ema50=4.58×, ema200=7.02× → +0.1618%  (best return)
+  2026-05-14: ema50=4.01×, ema200=5.79× → +0.1009%
+  2026-07-21: ema50=2.08×, ema200=2.73× → +0.0803%
+
+Excluded from T131+EMA50 (2 trades — EMA200 not far enough above price):
+  2025-12-30: pnl=+0.1032%  (excluded — EMA200 too close)
+  2026-08-06: pnl=+0.0906%  (excluded — EMA200 too close)
+
+Year breakdown:
+  2024: n=2, WR=100%
+  2025: n=0  (no signals)
+  2026: n=6, WR=100%
+
+CONCLUSION: Dual EMA confluence yields n=8 WR=100% with avg=+0.1097% vs baseline +0.1071%.
+Slightly better average (+2.4% improvement) but excludes 2 winners (both good trades).
+The 2 excluded trades (+0.1032% and +0.0906%) are below-average but still wins.
+Net effect: marginally better average, lower n, 0 coverage in 2025.
+Adding EMA200 ≥0.5×ATR as an additional filter MARGINALLY improves avg but is probably
+just coincidental at n=8 vs n=10. Not statistically meaningful.
+NOTE: The lowest-return trade (2026-02-16, +0.0480%) passes the EMA200 filter (dist=1.21×)
+but still produces the worst return — confirming EMA200 is NOT a discriminating factor.
+NOT RECOMMENDED as an additional filter — benefit is marginal, n reduction is significant.
+
+=== CRITICAL INSIGHT FROM T259 ===
+Prior day range location correlation of -0.730 is the STRONGEST return predictor discovered.
+Mechanism: Signal bars breaking BELOW prior day's low have harvested MORE daily stop orders.
+The deeper the multi-day breakdown, the more violent the post-liquidity-grab continuation.
+This is mechanistically consistent with the core thesis: T131 = INSTITUTIONAL STOP HUNT.
+Deeper breakdown = more retail sell stops accumulated → stronger institutional reversal.
+All trades win regardless, but the MAGNITUDE is driven by depth of prior-day structure break.
+
+=== TOTAL THEORIES TESTED: 261 ===
+T259: -0.730 correlation (prior day location) — strongest predictor found so far.
+T260: -0.328 correlation (prior week location) — consistent with T259, weaker.
+T261: Dual EMA (EMA50+EMA200) — n=8 WR=100% but marginal improvement, not recommended.

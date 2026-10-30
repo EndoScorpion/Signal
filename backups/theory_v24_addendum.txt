@@ -1,0 +1,73 @@
+THEORY ADDENDUM v24 — T247-T249
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-17
+
+=== T247: TR SPIKE AT SIGNAL TIME ===
+Question: Does the signal bar's TR (vs prior 5-bar mean) predict return strength?
+A large TR spike = bar with more activity = potentially stronger move ahead?
+
+TR spike values and returns (sorted ascending):
+  2026-03-30: 0.95x → +0.1618%  (below-average TR, highest return)
+  2026-02-16: 0.96x → +0.0480%  (below-average TR, lowest return)
+  2026-01-08: 1.13x → +0.1001%
+  2025-12-30: 1.17x → +0.1032%
+  2024-12-10: 1.29x → +0.1399%
+  2026-02-17: 1.35x → +0.1167%
+  2024-12-18: 1.51x → +0.1299%
+  2026-05-14: 1.66x → +0.1009%
+  2026-08-06: 1.78x → +0.0906%
+  2026-07-21: 1.94x → +0.0803%  (highest TR spike, lowest-but-2 return)
+
+Correlation (TR spike vs pnl): -0.199 (NEGATIVE — larger TR spike = slightly LOWER return)
+
+All thresholds (>=1.0x, >=1.5x): WR=100% regardless.
+Note: 2026-03-30 achieved highest return (+0.1618%) with BELOW-average TR (0.95x).
+
+CONCLUSION: TR spike is not a useful filter or predictor. The weak negative correlation
+(-0.199) actually suggests calmer signal bars (less TR spike) slightly outperform.
+This aligns with the liquidity-grab mechanism: a quieter signal bar may indicate less
+noise, while a big TR spike may indicate more immediate opposition.
+NOT a filter — all n=10 trades win regardless.
+
+=== T248: TIME OF MONTH DISTRIBUTION ===
+Day-of-month groups and performance:
+  Week1 (1-7):   n=1, WR=100%, avg=+0.0906%
+  Week2 (8-14):  n=3, WR=100%, avg=+0.1136%
+  Week3 (15-21): n=4, WR=100%, avg=+0.0937%
+  Week4 (22-31): n=2, WR=100%, avg=+0.1325%
+
+Correlation (day-of-month vs pnl): 0.280 (weak positive — later in month → slightly better)
+
+Week4 (late month): n=2 avg=+0.1325% (highest, includes the best trade 2026-03-30 +0.1618%)
+Week2 (early-mid): n=3 avg=+0.1136%
+Week3 (mid-month): n=4 avg=+0.0937% (most trades, mid-range returns)
+Week1 (very early): n=1 (too small)
+
+Prior finding T198 (second half of month = day 15+): n=6, WR=100%.
+Week4 being best is consistent with T198 direction but n is too small for significance.
+
+CONCLUSION: No significant time-of-month filtering possible. All weeks WR=100%.
+The 0.280 correlation is weak and likely noise at n=10. Cannot use day-of-month as filter.
+
+=== T249: ATR RANK EXPANSION CROSS (rank <20 → ≥20) — FRESH DIRECTION TEST ===
+Hypothesis: when ATR rank crosses from compression (<20) to expansion (≥20), can we
+trade the expansion direction? Test: any hour, no EMA filter, 3+ bars prior compression.
+
+Results (n=413 signals — highly sampled):
+  SHORT expansion bar: n=413, WR=49.4%, PF=0.85, avg=-0.0095%, total=-3.93%
+  LONG expansion bar:  n=413, WR=48.2%, PF=0.86, avg=-0.0092%, total=-3.80%
+
+Year stability:
+  SHORT: 2024=52%, 2025=46%, 2026=51% (oscillates around 50% — coin flip)
+  LONG:  2024=47%, 2025=53%, 2026=42% (same coin flip)
+
+CONCLUSION: ATR rank expansion cross has NO EDGE in either direction.
+Both short and long of the first expansion bar are essentially random (WR~49-50%).
+This is a well-sampled, definitively ruled out approach (n=413).
+The edge only exists WITHIN the compressed zone at a specific price action break
+(lo10 break at 13-14 UTC with EMA50 alignment) — NOT at the compression exit.
+The T131 edge is not about the compression ending; it is about an intracompression
+liquidity grab during a specific session overlap.
+
+=== TOTAL THEORIES TESTED: 249 ===
+T249 well-sampled negative result added to ruling-out list (n=413).

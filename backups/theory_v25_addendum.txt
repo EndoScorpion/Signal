@@ -1,0 +1,71 @@
+THEORY ADDENDUM v25 — T250-T252
+EURUSD FXOpen ECN H1, COST=0.00008, n=17247 bars
+Generated: 2026-10-17
+
+=== T250: PRE-SIGNAL BAR ANALYSIS ===
+What does the bar immediately BEFORE the T131+EMA50 signal bar look like?
+
+Prior bar type:
+  bear (bearish close): n=8, WR=100%, avg=+0.1051%  ← 80% of signals
+  bull (bullish close):  n=1, WR=100%, avg=+0.0906%  (2026-08-06)
+  pin_up (upper wick):   n=1, WR=100%, avg=+0.1399%  (2024-12-10)
+
+Prior bar bearish vs bullish:
+  Prior bar bearish: n=9, WR=100%, avg=+0.1090%
+  Prior bar bullish: n=1, WR=100%, avg=+0.0906%
+
+CONCLUSION: 9/10 signals are preceded by a bearish prior bar. This is inherent —
+T131 requires price to be in a downtrend (below EMA50 by ≥0.5×ATR), so the prior
+bar being bearish is expected. Not a useful independent filter. The single bullish
+prior bar (2026-08-06) still produces a winning trade.
+The pre-signal bar is consistent with the trend context, not a discriminating factor.
+
+=== T251: HOLD DURATION ANALYSIS ===
+How many bars does each T131+EMA50 trade take to resolve?
+
+Resolution breakdown:
+  TARGET hit: n=9 (90%), WR=100%, avg=+0.1137%  ← overwhelming majority hit target
+  TIMEOUT (4-bar): n=1 (10%), WR=100%, avg=+0.0480%  (2026-02-16)
+  STOP hit: n=0 (0%)  ← not a single stop hit in 10 trades
+
+Resolution bar distribution:
+  Bar 1: n=4 (40%), avg=+0.1084%  (target hit on next bar!)
+  Bar 2: n=5 (50%), avg=+0.1180%
+  Bar 4: n=1 (10%), avg=+0.0480%  (timeout — target never hit)
+
+KEY FINDINGS:
+1. 90% of trades resolve by hitting the target — only 1 timeout, 0 stops
+2. 90% of trades resolve within 2 bars (bars 1-2) — the move is fast
+3. No stop was ever hit — the ATR stop is never reached in this sample
+4. The 4-bar hold timeout is the conservative safety net — rarely needed
+5. Fastest resolution: 4/10 trades hit target on bar 1 (within 1 hour of entry!)
+
+IMPLICATION FOR EA: Since 90% hit bar 1 or 2, a 2-bar hold could capture most
+without sacrificing much. However, the 1 timeout would then exit at bar 2 close
+instead of bar 4 close — and that trade (+0.0480%) would still profit.
+The 4-bar max-hold rule is correct and conservative.
+
+=== T252: FIRST BAR OF ATR COMPRESSION AT 13-14 UTC ===
+Entering on the FIRST bar where ATR rank crosses below 20 (initial compression entry).
+No lo10 break required. Test both directions.
+
+Results (n=4 signals — very sparse):
+  SHORT first compression bar: n=4, WR=75%, PF=4.39, avg=+0.0415%, total=+0.1660%
+    2024: n=1 WR=100%; 2025: n=1 WR=100%; 2026: n=2 WR=50%
+  LONG first compression bar:  n=4, WR=25%, PF=0.13, avg=-0.0575%, total=-0.2300%
+    2024: n=1 WR=0%; 2025: n=1 WR=0%; 2026: n=2 WR=50%
+
+Interpretation:
+  SHORT tends to work (WR=75%, PF=4.39) — compression starts as price falls
+  LONG loses (WR=25%, PF=0.13) — don't fade compression onset
+  BUT n=4 is insufficient for any conclusion (p-value >> 0.05)
+
+CONCLUSION: Too few occurrences (n=4) at first compression bar during 13-14 UTC to draw
+meaningful conclusions. The SHORT direction looks promising but the sample is far too small.
+This could be explored further if data volume increases (5yr dataset would give ~10 signals).
+PROVISIONAL STATUS: interesting direction, not a confirmed edge. Cannot trade n=4.
+
+=== TOTAL THEORIES TESTED: 252 ===
+Key structural finding from T251: T131 trades resolve almost entirely on bars 1-2.
+The 90% target hit rate with 0% stop rate confirms the edge quality — price moves
+rapidly and decisively in the short direction after the liquidity grab signal.
