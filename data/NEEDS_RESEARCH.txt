@@ -1,0 +1,3 @@
+2026-10-15 19:13 self-improvement is stuck. Leader sim_tier3p0_at_275000; candidates since last improvement 134.
+Ask Claude to: search the web and papers for new mean-reversion/regime/volatility methods for EURUSD M15, turn the best 3 into new gates in a new MR_RegimeSwitch version, queue them, and report.
+Options logged in last_options.json.

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal Offline Lab — build048</title>
+<style>
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--g:#00ff88;--g2:#00cc66;--g3:#008844;--dim:#444;--text:#ccc;--warn:#ffaa00;--err:#ff4444;--rad:4px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:13px/1.5 "Courier New",monospace;padding:12px}
+h1{color:var(--g);font-size:16px;margin-bottom:4px}
+h2{color:var(--g2);font-size:13px;margin:12px 0 6px;border-bottom:1px solid var(--bg3);padding-bottom:3px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;margin-bottom:8px}
+.col{display:flex;flex-direction:column;gap:4px;min-width:140px}
+label{font-size:11px;color:var(--dim)}
+select,input[type=text],input[type=number]{background:var(--bg3);color:var(--g);border:1px solid var(--dim);padding:4px 6px;border-radius:var(--rad);font:inherit;width:100%}
+select:focus,input:focus{outline:1px solid var(--g);border-color:var(--g)}
+.btn{background:var(--bg3);color:var(--g);border:1px solid var(--g3);padding:5px 14px;border-radius:var(--rad);cursor:pointer;font:inherit;white-space:nowrap}
+.btn:hover{background:var(--g3);color:#000}
+.btn.pri{background:var(--g3);color:#000;font-weight:bold}
+.btn.warn{border-color:var(--warn);color:var(--warn)}
+.btn.warn:hover{background:var(--warn);color:#000}
+.btn.red{border-color:var(--err);color:var(--err)}
+.btn.red:hover{background:var(--err);color:#000}
+.panel{background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--rad);padding:10px;margin-bottom:10px}
+#status{color:var(--g);font-size:12px;min-height:18px;padding:4px 0}
+#log{background:var(--bg);border:1px solid var(--bg3);padding:8px;height:120px;overflow-y:auto;font-size:11px;color:var(--dim);border-radius:var(--rad)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{color:var(--g);text-align:left;padding:3px 6px;border-bottom:1px solid var(--bg3)}
+td{padding:3px 6px;border-bottom:1px solid var(--bg3)}
+tr:hover td{background:var(--bg3)}
+.pos{color:var(--g)}.neg{color:var(--err)}.neu{color:var(--dim)}
+.badge{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--bg3);margin-left:4px}
+.tag-win{background:#003322;color:var(--g)}.tag-fail{background:#220000;color:var(--err)}
+#branchList{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.branch-chip{padding:3px 10px;border:1px solid var(--dim);border-radius:12px;cursor:pointer;font-size:11px}
+.branch-chip.active{border-color:var(--g);color:var(--g)}
+.branch-chip.baseline{border-color:var(--g3);color:var(--g3)}
+.share-box{background:var(--bg3);border:1px solid var(--dim);padding:6px;border-radius:var(--rad);font-size:10px;word-break:break-all;max-height:60px;overflow:auto;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<h1>⬛ Signal Offline Lab <span style="color:var(--dim);font-size:11px">build048 | net-of-costs rule tester</span></h1>
+
+<!-- ====== BRANCH SELECTOR ====== -->
+<div class="panel">
+<h2>Branches</h2>
+<div id="branchList"></div>
+<div class="row">
+  <input type="text" id="newBranchName" placeholder="new-branch-name" style="width:180px">
+  <button class="btn" onclick="newBranch()">+ Fork from baseline</button>
+  <button class="btn warn" onclick="deleteBranch()">✕ Delete selected</button>
+  <button class="btn" onclick="exportBranch()">↓ Export branch JSON</button>
+  <button class="btn" onclick="importBranch()">↑ Import branch JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="doImportBranch(event)">
+</div>
+</div>
+
+<!-- ====== RULE EDITOR ====== -->
+<div class="panel">
+<h2>Rule Editor — <span id="editingBranch" style="color:var(--g)">baseline (locked)</span></h2>
+<div id="ruleTable"></div>
+<div class="row" style="margin-top:8px">
+  <button class="btn pri" onclick="addRule()">+ Add Rule</button>
+  <button class="btn" onclick="saveRules()">💾 Save</button>
+</div>
+
+<h2>Add / Edit Rule</h2>
+<div class="row">
+  <div class="col"><label>Family</label>
+    <select id="eFamily" onchange="updateFamilyHints()">
+      <option>STO</option><option>EMA</option><option>MACD</option><option>BB</option>
+      <option>BBO</option><option>SAR</option><option>ADX</option><option>CCI</option>
+      <option>CNV</option><option>KC</option><option>ENV</option><option>MOM</option>
+      <option>AO</option><option>ICH</option><option>STD</option>
+    </select>
+  </div>
+  <div class="col"><label>Params <span id="paramHint" style="color:var(--dim)"></span></label>
+    <input type="text" id="eParams" placeholder="e.g. 14,30,2">
+  </div>
+  <div class="col"><label>TF</label>
+    <select id="eTF"><option>h1</option><option>h2</option><option>h4</option>
+      <option>m15</option><option>m30</option><option>d1</option></select>
+  </div>
+  <div class="col"><label>Exit</label>
+    <select id="eExit"><option>hold2</option><option>hold3</option>
+      <option>atp</option><option>asl</option><option>ctp</option><option>csl</option></select>
+  </div>
+  <div class="col"><label>Exit Val</label><input type="number" id="eExitVal" value="2" step="0.5" min="0.5"></div>
+  <div class="col"><label>Exit Val2</label><input type="number" id="eExitVal2" value="1" step="0.5" min="0.5"></div>
+  <div class="col"><label>Regimes (csv)</label>
+    <input type="text" id="eRegimes" placeholder="adx,cg,ll">
+  </div>
+  <div class="col"><label>Active</label>
+    <select id="eActive"><option value="true">Yes</option><option value="false">No</option></select>
+  </div>
+  <div class="col" style="justify-content:flex-end">
+    <button class="btn pri" style="margin-top:18px" onclick="upsertRule()">✓ Apply</button>
+  </div>
+</div>
+</div>
+
+<!-- ====== COST MODEL ====== -->
+<div class="panel">
+<h2>Cost Model</h2>
+<div class="row">
+  <div class="col"><label>Commission (pts round-trip)</label>
+    <input type="number" id="cComm" value="5" step="0.5" min="0"></div>
+  <div class="col"><label>Spread (pts)</label>
+    <input type="number" id="cSpread" value="2" step="0.5" min="0"></div>
+  <div class="col"><label>Swap %/night</label>
+    <input type="number" id="cSwap" value="0.003" step="0.001" min="0"></div>
+  <div class="col"><label>Tax %</label>
+    <input type="number" id="cTax" value="0" step="0.1" min="0"></div>
+</div>
+<div style="font-size:11px;color:var(--dim);margin-top:4px">
+  First test = cheapest (3.45 pts). Escalate: 3.45 → 5 → 6 → 8. Label every result.
+</div>
+</div>
+
+<!-- ====== DATA ====== -->
+<div class="panel">
+<h2>Price Data</h2>
+<div class="row">
+  <button class="btn" onclick="document.getElementById('csvFile').click()">↑ Load CSV</button>
+  <input type="file" id="csvFile" accept=".csv" multiple style="display:none" onchange="loadCSV(event)">
+  <button class="btn" onclick="useSampleData()">Use sample (50 bars EURUSD)</button>
+  <button class="btn" onclick="clearData()">✕ Clear data</button>
+  <span id="dataInfo" style="font-size:11px;color:var(--dim);margin-left:8px"></span>
+</div>
+<div style="font-size:10px;color:var(--dim);margin-top:4px">
+  CSV columns: date,open,high,low,close,volume — or MT4 export format
+</div>
+</div>
+
+<!-- ====== BACKTEST ====== -->
+<div class="panel">
+<h2>Backtest</h2>
+<div class="row">
+  <button class="btn pri" onclick="runBacktest()">▶ Run Backtest</button>
+  <button class="btn" onclick="runBaseline()">▶ Run Baseline</button>
+  <button class="btn" onclick="runAllBranches()">▶ Run All Branches</button>
+  <button class="btn warn" onclick="clearResults()">✕ Clear Results</button>
+</div>
+<div id="status">Ready.</div>
+<div id="log"></div>
+</div>
+
+<!-- ====== RESULTS ====== -->
+<div class="panel" id="resultsPanel" style="display:none">
+<h2>Results <span id="resultsLabel" style="font-size:11px;color:var(--dim)"></span></h2>
+<div id="resultsTable"></div>
+
+<h2 style="margin-top:12px">Period Breakdown</h2>
+<div id="periodTable"></div>
+
+<h2 style="margin-top:12px">Branch Comparison</h2>
+<div id="compTable"></div>
+</div>
+
+<!-- ====== EXPORT / SHARE ====== -->
+<div class="panel">
+<h2>Export &amp; Share</h2>
+<div class="row">
+  <button class="btn" onclick="exportHistory()">↓ Export history (JSON)</button>
+  <button class="btn" onclick="exportResultsCSV()">↓ Export results CSV</button>
+  <button class="btn" onclick="shareLink()">🔗 Share link (data URL)</button>
+  <button class="btn" onclick="sendNtfy()">📢 Send via ntfy</button>
+</div>
+<div id="shareBox" class="share-box" style="display:none;margin-top:8px"></div>
+<div class="row" style="margin-top:8px">
+  <div class="col"><label>ntfy topic</label>
+    <input type="text" id="ntfyTopic" placeholder="signal-lab-abc123"></div>
+  <div class="col"><label>ntfy server</label>
+    <input type="text" id="ntfyServer" value="https://ntfy.sh"></div>
+</div>
+</div>
+
+<div style="font-size:10px;color:var(--dim);margin-top:8px;padding-top:8px;border-top:1px solid var(--bg3)">
+Signal Offline Lab build048 · Net-of-cost rule tester · Past results ≠ advice ·
+<span id="onlineStatus"></span>
+</div>
+
+<script>
+// ====== STATE ======
+const LS_PREFIX = 'slc_offline_';
+let state = {
+  branches: {},      // {name: {rules:[], cost:{}}}
+  activeBranch: 'baseline',
+  bars: [],          // [{date,open,high,low,close,volume}]
+  results: {},       // {branchName: {rules:[...], summary:{...}, periods:{...}}}
+};
+
+const BASELINE_KEY = '_baseline_locked_';
+
+// ====== INIT ======
+function init() {
+  loadState();
+  if (!state.branches[BASELINE_KEY]) {
+    state.branches[BASELINE_KEY] = {
+      name: 'baseline',
+      locked: true,
+      rules: getBaselineRules(),
+      cost: {comm_pts_rt: 5, spread_pts: 2, swap_pct_night: 0.003, tax_pct: 0}
+    };
+    saveState();
+  }
+  renderBranchList();
+  selectBranch(BASELINE_KEY);
+  updateOnlineStatus();
+  log('Offline Lab ready. Load CSV data and click Run Backtest.');
+}
+
+function getBaselineRules() {
+  return [
+    {id:"R001",family:"STO",params:[14,30,2],tf:"h1",exit:"hold3",exit_val:3,exit_val2:1,regimes:["adx"],active:true},
+    {id:"R002",family:"EMA",params:[5,20],tf:"h1",exit:"hold3",exit_val:3,exit_val2:1,regimes:["cg"],active:true},
+    {id:"R003",family:"MACD",params:[12,26,9],tf:"h1",exit:"atp",exit_val:2,exit_val2:1,regimes:["adx"],active:true},
+    {id:"R004",family:"BB",params:[20,20],tf:"h1",exit:"hold2",exit_val:2,exit_val2:1,regimes:[],active:true},
+    {id:"R005",family:"CNV",params:[14,20,3,60],tf:"h1",exit:"ctp",exit_val:3,exit_val2:1,regimes:["ll"],active:true},
+    {id:"R006",family:"SAR",params:[2,20],tf:"h1",exit:"hold3",exit_val:3,exit_val2:1,regimes:["trend"],active:true},
+    {id:"R007",family:"ADX",params:[14,20],tf:"h1",exit:"atp",exit_val:2,exit_val2:1,regimes:[],active:true},
+    {id:"R008",family:"CCI",params:[20,100,100],tf:"h1",exit:"hold3",exit_val:3,exit_val2:1,regimes:["adx"],active:true}
+  ];
+}
+
+// ====== PERSISTENCE ======
+function saveState() {
+  try { localStorage.setItem(LS_PREFIX+'state', JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const s = localStorage.getItem(LS_PREFIX+'state');
+    if (s) { const p = JSON.parse(s); Object.assign(state, p); }
+  } catch(e) {}
+}
+
+// ====== BRANCHES ======
+function renderBranchList() {
+  const el = document.getElementById('branchList');
+  el.innerHTML = '';
+  const bl = Object.createElement ? null : null;
+  const keys = [BASELINE_KEY, ...Object.keys(state.branches).filter(k=>k!==BASELINE_KEY)];
+  keys.forEach(k => {
+    const b = state.branches[k];
+    if (!b) return;
+    const chip = document.createElement('div');
+    chip.className = 'branch-chip' + (k===BASELINE_KEY?' baseline':'') + (k===state.activeBranch?' active':'');
+    chip.textContent = b.name || k;
+    chip.onclick = () => selectBranch(k);
+    el.appendChild(chip);
+  });
+}
+
+function selectBranch(key) {
+  state.activeBranch = key;
+  const b = state.branches[key];
+  document.getElementById('editingBranch').textContent = (b.locked ? b.name+' (locked — fork to edit)' : b.name);
+  renderRuleTable(b.rules, b.locked);
+  if (b.cost) {
+    document.getElementById('cComm').value = b.cost.comm_pts_rt ?? 5;
+    document.getElementById('cSpread').value = b.cost.spread_pts ?? 2;
+    document.getElementById('cSwap').value = b.cost.swap_pct_night ?? 0.003;
+    document.getElementById('cTax').value = b.cost.tax_pct ?? 0;
+  }
+  renderBranchList();
+}
+
+function newBranch() {
+  const name = document.getElementById('newBranchName').value.trim().replace(/[^a-zA-Z0-9_-]/g,'_') || ('branch_'+Date.now());
+  if (state.branches[name]) { status('Branch "'+name+'" already exists.'); return; }
+  const src = state.branches[BASELINE_KEY];
+  state.branches[name] = {
+    name,
+    locked: false,
+    rules: JSON.parse(JSON.stringify(src.rules)),
+    cost: JSON.parse(JSON.stringify(src.cost))
+  };
+  saveState();
+  renderBranchList();
+  selectBranch(name);
+  log('Forked baseline → '+name);
+}
+
+function deleteBranch() {
+  const k = state.activeBranch;
+  if (k===BASELINE_KEY) { status('Cannot delete locked baseline.'); return; }
+  if (!confirm('Delete branch "'+state.branches[k].name+'"?')) return;
+  delete state.branches[k];
+  saveState();
+  state.activeBranch = BASELINE_KEY;
+  renderBranchList();
+  selectBranch(BASELINE_KEY);
+}
+
+function exportBranch() {
+  const b = state.branches[state.activeBranch];
+  const json = JSON.stringify(b, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (b.name||'branch')+'_rules.json';
+  a.click();
+}
+
+function importBranch() { document.getElementById('importFile').click(); }
+function doImportBranch(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const b = JSON.parse(ev.target.result);
+      if (!b.rules) throw new Error('No rules array');
+      b.locked = false;
+      const key = (b.name||'imported')+'_'+Date.now();
+      b.name = b.name || 'imported';
+      state.branches[key] = b;
+      saveState(); renderBranchList(); selectBranch(key);
+      log('Imported: '+b.name);
+    } catch(ex) { alert('Import failed: '+ex.message); }
+  };
+  r.readAsText(f);
+}
+
+// ====== RULE TABLE ======
+function renderRuleTable(rules, locked) {
+  const el = document.getElementById('ruleTable');
+  if (!rules || !rules.length) { el.innerHTML = '<div style="color:var(--dim);font-size:11px">No rules.</div>'; return; }
+  let h = '<table><thead><tr><th>ID</th><th>Family</th><th>Params</th><th>TF</th><th>Exit</th><th>Val</th><th>Regimes</th><th>Active</th>';
+  if (!locked) h += '<th>Actions</th>';
+  h += '</tr></thead><tbody>';
+  rules.forEach((r,i) => {
+    h += `<tr>
+      <td>${r.id}</td><td><b style="color:var(--g)">${r.family}</b></td>
+      <td>${r.params.join(',')}</td><td>${r.tf}</td>
+      <td>${r.exit} ${r.exit_val}</td><td>${r.exit_val2}</td>
+      <td>${(r.regimes||[]).join(',') || '<span style="color:var(--dim)">—</span>'}</td>
+      <td>${r.active ? '<span class="pos">✓</span>' : '<span class="neg">✗</span>'}</td>`;
+    if (!locked) h += `<td><button class="btn" style="padding:1px 6px;font-size:11px" onclick="editRule(${i})">edit</button>
+      <button class="btn red" style="padding:1px 6px;font-size:11px" onclick="removeRule(${i})">✕</button></td>`;
+    h += '</tr>';
+  });
+  el.innerHTML = h + '</tbody></table>';
+}
+
+function editRule(i) {
+  const r = state.branches[state.activeBranch].rules[i];
+  document.getElementById('eFamily').value = r.family;
+  document.getElementById('eParams').value = r.params.join(',');
+  document.getElementById('eTF').value = r.tf;
+  document.getElementById('eExit').value = r.exit;
+  document.getElementById('eExitVal').value = r.exit_val;
+  document.getElementById('eExitVal2').value = r.exit_val2;
+  document.getElementById('eRegimes').value = (r.regimes||[]).join(',');
+  document.getElementById('eActive').value = String(r.active);
+  document.getElementById('eFamily')._editIdx = i;
+  updateFamilyHints();
+}
+
+function removeRule(i) {
+  const b = state.branches[state.activeBranch];
+  if (b.locked) return;
+  b.rules.splice(i,1);
+  saveState(); renderRuleTable(b.rules, false);
+}
+
+const FAMILY_HINTS = {
+  STO:'n,hi,lo',EMA:'fast,slow',MACD:'fast,slow,sig',BB:'n,dev×10',BBO:'n,dev×10',
+  SAR:'step×1000,max×100',ADX:'n,thresh',CCI:'n,lo,hi',CNV:'n,lv,q,hi',
+  KC:'n,mult×10,atrPeriod',ENV:'period,pct×100',MOM:'n',AO:'fast,slow',
+  ICH:'tenkan,kijun,senkou',STD:'n,slowing'
+};
+function updateFamilyHints() {
+  const f = document.getElementById('eFamily').value;
+  document.getElementById('paramHint').textContent = '('+( FAMILY_HINTS[f]||'params')+')';
+}
+
+function upsertRule() {
+  const b = state.branches[state.activeBranch];
+  if (b.locked) { status('Cannot edit locked baseline — fork it first.'); return; }
+  const fam = document.getElementById('eFamily');
+  const idx = fam._editIdx != null ? fam._editIdx : -1;
+  const rule = {
+    id: idx>=0 ? b.rules[idx].id : 'R'+(b.rules.length+1).toString().padStart(3,'0'),
+    family: fam.value,
+    params: document.getElementById('eParams').value.split(',').map(Number).filter(x=>!isNaN(x)),
+    tf: document.getElementById('eTF').value,
+    exit: document.getElementById('eExit').value,
+    exit_val: +document.getElementById('eExitVal').value,
+    exit_val2: +document.getElementById('eExitVal2').value,
+    regimes: document.getElementById('eRegimes').value.split(',').map(s=>s.trim()).filter(Boolean),
+    active: document.getElementById('eActive').value === 'true'
+  };
+  if (idx>=0) { b.rules[idx] = rule; fam._editIdx = null; }
+  else { b.rules.push(rule); }
+  saveState(); renderRuleTable(b.rules, false);
+  log((idx>=0?'Updated ':'Added ')+rule.id+' '+rule.family);
+}
+
+function addRule() { document.getElementById('eFamily')._editIdx = null; updateFamilyHints(); }
+
+function saveRules() {
+  const b = state.branches[state.activeBranch];
+  if (b.locked) { status('Cannot save — baseline is locked.'); return; }
+  b.cost = {
+    comm_pts_rt: +document.getElementById('cComm').value,
+    spread_pts: +document.getElementById('cSpread').value,
+    swap_pct_night: +document.getElementById('cSwap').value,
+    tax_pct: +document.getElementById('cTax').value
+  };
+  saveState();
+  status('Saved: '+b.name+' ('+b.rules.length+' rules)');
+}
+
+// ====== CSV LOADING ======
+function loadCSV(e) {
+  const files = e.target.files;
+  let allBars = [...state.bars];
+  let loaded = 0;
+  Array.from(files).forEach(f => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const rows = ev.target.result.split('\n');
+      rows.forEach(row => {
+        const p = row.trim().split(/[,\t]/);
+        if (p.length < 5) return;
+        // Try: date,open,high,low,close[,vol] or MT4: date,time,open,high,low,close,vol
+        let [date,open,high,low,close,volume] = [null,0,0,0,0,0];
+        if (isNaN(p[1]) && !isNaN(p[2])) {
+          // MT4: date,time,open,high,low,close,vol
+          [date,,open,high,low,close,volume] = p;
+          date = p[0]+' '+p[1];
+        } else {
+          [date,open,high,low,close,volume] = p;
+        }
+        if (!date || isNaN(+open)) return;
+        allBars.push({date:date.trim(),open:+open,high:+high,low:+low,close:+close,volume:+(volume||0)});
+      });
+      loaded++;
+      if (loaded===files.length) {
+        allBars.sort((a,b)=>a.date.localeCompare(b.date));
+        state.bars = allBars;
+        saveState();
+        document.getElementById('dataInfo').textContent = state.bars.length+' bars loaded';
+        log('Loaded '+state.bars.length+' bars from '+files.length+' file(s)');
+      }
+    };
+    r.readAsText(f);
+  });
+}
+
+function clearData() { state.bars = []; saveState(); document.getElementById('dataInfo').textContent = '0 bars'; }
+
+function useSampleData() {
+  // Generate 200 synthetic bars (disclaimer: synthetic — for UI testing only)
+  const bars = [];
+  let c = 1.1000, dt = new Date('2023-01-02T00:00:00');
+  for (let i=0; i<200; i++) {
+    const chg = (Math.random()-0.495)*0.0030;
+    const o = c, cl = +(c+chg).toFixed(5);
+    const hi = +(Math.max(o,cl)+Math.random()*0.0010).toFixed(5);
+    const lo = +(Math.min(o,cl)-Math.random()*0.0010).toFixed(5);
+    bars.push({date:dt.toISOString().slice(0,16).replace('T',' '),open:o,high:hi,low:lo,close:cl,volume:Math.floor(Math.random()*5000+500)});
+    c=cl; dt.setHours(dt.getHours()+1);
+  }
+  state.bars = bars;
+  saveState();
+  document.getElementById('dataInfo').textContent = '200 sample bars (SYNTHETIC — not real data)';
+  log('[WARN] Sample data is synthetic. Real data required for real backtests.');
+}
+
+// ====== BACKTEST ENGINE ======
+function costPct(cost, avgClose) {
+  const pts = (cost.comm_pts_rt || 5) + (cost.spread_pts || 2);
+  const tickSize = avgClose >= 10 ? 0.01 : avgClose >= 1 ? 0.001 : 0.0001;
+  return (pts * tickSize / avgClose) * 100;
+}
+
+function sma(arr, n, field='close') {
+  return arr.map((b,i) => i<n-1 ? null : arr.slice(i-n+1,i+1).reduce((s,x)=>s+x[field],0)/n);
+}
+
+function ema(arr, n, field='close') {
+  const k = 2/(n+1); const out = new Array(arr.length).fill(null);
+  let val = null;
+  arr.forEach((b,i) => {
+    const v = b[field];
+    if (val===null) { if (i>=n-1) { val=arr.slice(0,n).reduce((s,x)=>s+x[field],0)/n; out[i]=val; } return; }
+    val = v*k + val*(1-k); out[i]=val;
+  });
+  return out;
+}
+
+function stoch(bars, n, slowK=3) {
+  const k = bars.map((b,i) => {
+    if (i<n-1) return null;
+    const sl = bars.slice(i-n+1,i+1);
+    const lo=Math.min(...sl.map(x=>x.low)), hi=Math.max(...sl.map(x=>x.high));
+    return hi===lo ? 50 : (b.close-lo)/(hi-lo)*100;
+  });
+  const d = sma(k.map((v,i)=>({close:v??50})), slowK).map((v,i)=>v);
+  return {k,d};
+}
+
+function atr(bars, n=14) {
+  const tr = bars.map((b,i) => {
+    if (i===0) return b.high-b.low;
+    const pc=bars[i-1].close;
+    return Math.max(b.high-b.low, Math.abs(b.high-pc), Math.abs(b.low-pc));
+  });
+  return sma(tr.map(v=>({close:v})), n);
+}
+
+function entrySignal(family, params, bars, i) {
+  if (i < 50) return false;
+  const p = params;
+  const b = bars;
+  switch (family) {
+    case 'EMA': {
+      const ef = ema(b, p[0]||5), es = ema(b, p[1]||20);
+      return ef[i]>es[i] && ef[i-1]<=es[i-1];
+    }
+    case 'MACD': {
+      const f=ema(b,p[0]||12), sl=ema(b,p[1]||26);
+      const ml=f.map((v,i)=>v!==null&&sl[i]!==null?v-sl[i]:null);
+      const sig=ema(ml.map((v,i)=>({close:v??0})),p[2]||9);
+      return ml[i]!==null&&sig[i]!==null&&ml[i]>sig[i]&&ml[i-1]<=sig[i-1];
+    }
+    case 'STO': {
+      const {k} = stoch(b, p[0]||14, p[2]||3);
+      return k[i]!==null&&k[i]>( p[1]||30) && k[i-1]<=(p[1]||30);
+    }
+    case 'BB': {
+      const n=p[0]||20, d=(p[1]||20)/10;
+      const sm=sma(b,n); const std=b.map((_,i)=>{
+        if(i<n-1)return null;
+        const sl=b.slice(i-n+1,i+1),mn=sm[i];
+        return Math.sqrt(sl.reduce((s,x)=>s+(x.close-mn)**2,0)/n);
+      });
+      if(sm[i]===null||std[i]===null)return false;
+      return b[i].close <= sm[i]-d*std[i];
+    }
+    case 'ADX': {
+      const n=p[0]||14, th=p[1]||20;
+      const at=atr(b,n);
+      if(at[i]===null)return false;
+      const dm1=b.map((_,j)=>j<1?0:Math.max(b[j].high-b[j-1].high,0));
+      const dm2=b.map((_,j)=>j<1?0:Math.max(b[j-1].low-b[j].low,0));
+      const di1=dm1.map((v,j)=>at[j]?v/at[j]*100:0);
+      const di2=dm2.map((v,j)=>at[j]?v/at[j]*100:0);
+      const dx=di1.map((v,j)=>di1[j]+di2[j]?Math.abs(di1[j]-di2[j])/(di1[j]+di2[j])*100:0);
+      const adxLine=sma(dx.map(v=>({close:v})),n);
+      return adxLine[i]!==null&&adxLine[i]>th&&di1[i]>di2[i]&&di1[i-1]<=di2[i-1];
+    }
+    case 'CCI': {
+      const n=p[0]||20, lo=p[1]||100, hi=p[2]||100;
+      const tp=b.map(x=>(x.high+x.low+x.close)/3);
+      const sm2=sma(tp.map(v=>({close:v})),n);
+      const cci=tp.map((v,i)=>{
+        if(sm2[i]===null)return null;
+        const sl=tp.slice(Math.max(0,i-n+1),i+1);
+        const md=sl.reduce((s,x)=>s+Math.abs(x-sm2[i]),0)/sl.length;
+        return md?( v-sm2[i])/(0.015*md):0;
+      });
+      return cci[i]!==null&&cci[i]>-lo&&cci[i-1]<=-lo;
+    }
+    default: {
+      // Fallback: simple close > SMA cross
+      const sm=sma(b,20);
+      return sm[i]!==null&&b[i].close>sm[i]&&b[i-1].close<=sm[i-1];
+    }
+  }
+}
+
+function runRules(rules, bars, cost) {
+  const trades = [];
+  const cp = costPct(cost, bars.reduce((s,b)=>s+b.close,0)/bars.length);
+
+  rules.filter(r=>r.active).forEach(rule => {
+    for (let i=50; i<bars.length-10; i++) {
+      if (!entrySignal(rule.family, rule.params, bars, i)) continue;
+      const entry = bars[i].close;
+      const at = atr(bars,14);
+      const atrVal = at[i] || entry*0.005;
+      let hold = rule.exit==='hold2'?2:rule.exit==='hold3'?3:rule.exit_val;
+      if (hold<1) hold=1;
+      const exit_i = Math.min(i+Math.ceil(hold), bars.length-1);
+      const exitPrice = bars[exit_i].close;
+      const gross = (exitPrice-entry)/entry*100;
+      const swapCost = cost.swap_pct_night * Math.ceil(hold);
+      const net = gross - cp - swapCost - cost.tax_pct*(gross>0?gross:0);
+      const yr = bars[i].date.slice(0,4);
+      trades.push({rule:rule.id, family:rule.family, entry_i:i, exit_i, entry, exitPrice, gross, net, year:+yr});
+      i = exit_i; // no overlapping trades per rule
+    }
+  });
+  return trades;
+}
+
+function summarize(trades) {
+  if (!trades.length) return {n:0, winPct:0, avgNet:0, wins:0};
+  const wins = trades.filter(t=>t.net>0).length;
+  return {
+    n: trades.length,
+    wins,
+    winPct: +(wins/trades.length*100).toFixed(1),
+    avgNet: +(trades.reduce((s,t)=>s+t.net,0)/trades.length).toFixed(4),
+    totalNet: +(trades.reduce((s,t)=>s+t.net,0)).toFixed(3)
+  };
+}
+
+function periodSummary(trades) {
+  const periods = [{label:'2015-19',s:2015,e:2019},{label:'2020-22',s:2020,e:2022},{label:'2023-26',s:2023,e:2026}];
+  return periods.map(p => {
+    const pt = trades.filter(t=>t.year>=p.s&&t.year<=p.e);
+    return {period:p.label, ...summarize(pt)};
+  });
+}
+
+function runBranchBacktest(key) {
+  const b = state.branches[key];
+  if (!b) return null;
+  const bars = state.bars;
+  if (!bars.length) { status('No data loaded. Load CSV first.'); return null; }
+  const trades = runRules(b.rules, bars, b.cost);
+  const summary = summarize(trades);
+  const periods = periodSummary(trades);
+  return {branchName:b.name, key, summary, periods, trades, costPts:b.cost.comm_pts_rt};
+}
+
+function runBacktest() {
+  const k = state.activeBranch;
+  if (!state.bars.length) { status('[ERR] No data. Load CSV first.'); return; }
+  status('Running '+state.branches[k].name+'...');
+  setTimeout(()=>{
+    const res = runBranchBacktest(k);
+    if (!res) return;
+    state.results[k] = res;
+    renderResults(k);
+    status('Done. '+res.summary.n+' trades, win '+res.summary.winPct+'%, avg net '+res.summary.avgNet+'% (at '+res.costPts+' pts commission)');
+    log('Backtest: '+state.branches[k].name+' → n='+res.summary.n+' win='+res.summary.winPct+'% avgNet='+res.summary.avgNet+'%');
+  }, 20);
+}
+
+function runBaseline() {
+  state.activeBranch = BASELINE_KEY;
+  renderBranchList();
+  renderRuleTable(state.branches[BASELINE_KEY].rules, true);
+  runBacktest();
+}
+
+function runAllBranches() {
+  if (!state.bars.length) { status('[ERR] No data. Load CSV first.'); return; }
+  const keys = Object.keys(state.branches);
+  let done=0;
+  keys.forEach(k => {
+    setTimeout(()=>{
+      const res = runBranchBacktest(k);
+      if (res) state.results[k] = res;
+      done++;
+      if (done===keys.length) { renderComparison(); status('All branches done.'); }
+    }, done*30);
+  });
+}
+
+function clearResults() { state.results = {}; document.getElementById('resultsPanel').style.display='none'; }
+
+// ====== RESULT RENDERING ======
+function renderResults(key) {
+  const res = state.results[key];
+  if (!res) return;
+  const panel = document.getElementById('resultsPanel');
+  panel.style.display='block';
+  document.getElementById('resultsLabel').textContent = res.branchName+' @ '+res.costPts+' pts commission';
+
+  // Per-rule breakdown
+  const byRule = {};
+  res.trades.forEach(t => {
+    if (!byRule[t.rule]) byRule[t.rule]={rule:t.rule,family:t.family,trades:[]};
+    byRule[t.rule].trades.push(t);
+  });
+  let h='<table><thead><tr><th>Rule</th><th>Family</th><th>n</th><th>Win%</th><th>Avg Net%</th><th>Total Net%</th><th>Pass?</th></tr></thead><tbody>';
+  Object.values(byRule).forEach(r => {
+    const s=summarize(r.trades);
+    const pass = s.n>=30 && s.winPct>=50 && s.avgNet>0;
+    h+=`<tr><td>${r.rule}</td><td><b style="color:var(--g)">${r.family}</b></td>
+      <td>${s.n}</td><td class="${s.winPct>=50?'pos':'neg'}">${s.winPct}%</td>
+      <td class="${s.avgNet>0?'pos':'neg'}">${s.avgNet}%</td>
+      <td class="${s.totalNet>0?'pos':'neg'}">${s.totalNet}%</td>
+      <td><span class="badge ${pass?'tag-win':'tag-fail'}">${pass?'✓ PASS':'✗ FAIL'}</span></td></tr>`;
+  });
+  document.getElementById('resultsTable').innerHTML = h+'</tbody></table>';
+
+  // Period breakdown
+  let ph='<table><thead><tr><th>Period</th><th>n</th><th>Win%</th><th>Avg Net%</th></tr></thead><tbody>';
+  res.periods.forEach(p=>{
+    ph+=`<tr><td>${p.period}</td><td>${p.n}</td>
+      <td class="${p.winPct>=50?'pos':'neg'}">${p.winPct}%</td>
+      <td class="${p.avgNet>0?'pos':'neg'}">${p.avgNet}%</td></tr>`;
+  });
+  document.getElementById('periodTable').innerHTML = ph+'</tbody></table>';
+  renderComparison();
+}
+
+function renderComparison() {
+  const keys = Object.keys(state.results);
+  if (!keys.length) return;
+  const bl = state.results[BASELINE_KEY];
+  let h='<table><thead><tr><th>Branch</th><th>n</th><th>Win%</th><th>Avg Net%</th><th>vs Baseline</th></tr></thead><tbody>';
+  keys.forEach(k=>{
+    const r=state.results[k];
+    const delta = bl ? +(r.summary.avgNet - bl.summary.avgNet).toFixed(4) : null;
+    h+=`<tr><td>${r.branchName}</td><td>${r.summary.n}</td>
+      <td class="${r.summary.winPct>=50?'pos':'neg'}">${r.summary.winPct}%</td>
+      <td class="${r.summary.avgNet>0?'pos':'neg'}">${r.summary.avgNet}%</td>
+      <td class="${delta==null?'neu':delta>0?'pos':'neg'}">${delta!=null?(delta>0?'+':'')+delta+'%':'—'}</td></tr>`;
+  });
+  document.getElementById('compTable').innerHTML = h+'</tbody></table>';
+}
+
+// ====== EXPORT / SHARE ======
+function exportHistory() {
+  const data = {bars: state.bars, exported: new Date().toISOString()};
+  const json = JSON.stringify(data);
+  // Use CompressionStream if available
+  if (window.CompressionStream) {
+    const enc = new TextEncoder();
+    const rs = new ReadableStream({start(ctrl){ctrl.enqueue(enc.encode(json));ctrl.close();}});
+    const cs = rs.pipeThrough(new CompressionStream('gzip'));
+    const chunks=[]; const r=cs.getReader();
+    function read(){r.read().then(({done,value})=>{
+      if(done){
+        const blob=new Blob(chunks,{type:'application/gzip'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+        a.download='signal_history_'+Date.now()+'.json.gz';a.click();
+        log('Exported '+state.bars.length+' bars (gzip)');
+        return;
+      }
+      chunks.push(value);read();
+    });}
+    read();
+  } else {
+    const blob=new Blob([json],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='signal_history_'+Date.now()+'.json';a.click();
+    log('Exported '+state.bars.length+' bars (JSON, no gzip — use Chrome for compressed)');
+  }
+}
+
+function exportResultsCSV() {
+  const lines = ['branch,n,winPct,avgNet,totalNet,costPts'];
+  Object.values(state.results).forEach(r=>{
+    lines.push(`${r.branchName},${r.summary.n},${r.summary.winPct},${r.summary.avgNet},${r.summary.totalNet},${r.costPts}`);
+  });
+  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='signal_results_'+Date.now()+'.csv';a.click();
+}
+
+function shareLink() {
+  const b = state.branches[state.activeBranch];
+  const res = state.results[state.activeBranch];
+  const payload = {branch:b, result:res?{summary:res.summary,periods:res.periods}:null};
+  const json = JSON.stringify(payload);
+  const b64 = btoa(unescape(encodeURIComponent(json)));
+  const shareUrl = location.href.split('?')[0] + '?share=' + b64;
+
+  // If online, auto-redirect to claude.ai companion (update URL as needed)
+  if (navigator.onLine) {
+    const companion = 'https://claude.ai/code';
+    log('Online: share data URL generated. Companion link: '+companion);
+  }
+
+  document.getElementById('shareBox').style.display='block';
+  document.getElementById('shareBox').textContent = shareUrl.length > 2000
+    ? '[Too large for URL — use Export branch JSON instead. '+json.length+' chars]'
+    : shareUrl;
+  log('Share URL generated ('+shareUrl.length+' chars). Copy from box below.');
+}
+
+async function sendNtfy() {
+  const topic = document.getElementById('ntfyTopic').value.trim();
+  const server = document.getElementById('ntfyServer').value.trim() || 'https://ntfy.sh';
+  if (!topic) { status('[ERR] Enter ntfy topic first.'); return; }
+  const b = state.branches[state.activeBranch];
+  const res = state.results[state.activeBranch];
+  const msg = res
+    ? `Branch: ${b.name}\nn=${res.summary.n} win=${res.summary.winPct}% avgNet=${res.summary.avgNet}%\nCommission: ${res.costPts}pts RT`
+    : `Branch: ${b.name} — no results yet`;
+  try {
+    await fetch(server+'/'+topic, {
+      method:'POST', headers:{'Content-Type':'text/plain','Title':'Signal Lab Result'},
+      body: msg
+    });
+    status('Sent to ntfy: '+server+'/'+topic);
+    log('ntfy sent: '+topic);
+  } catch(e) {
+    status('[WARN] ntfy failed (CORS in browser — use the EA or PS relay for reliable push): '+e.message);
+  }
+}
+
+// ====== UTILITIES ======
+function status(msg) { document.getElementById('status').textContent = msg; }
+function log(msg) {
+  const el = document.getElementById('log');
+  el.innerHTML += '<div>'+new Date().toTimeString().slice(0,8)+' '+msg+'</div>';
+  el.scrollTop = el.scrollHeight;
+}
+function updateOnlineStatus() {
+  const el = document.getElementById('onlineStatus');
+  const on = navigator.onLine;
+  el.textContent = on ? '🟢 Online' : '⚫ Offline';
+  el.style.color = on ? 'var(--g)' : 'var(--dim)';
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// Handle shared data in URL
+function loadSharedData() {
+  const m = location.search.match(/[?&]share=([^&]+)/);
+  if (!m) return;
+  try {
+    const payload = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+    if (payload.branch) {
+      const key = 'shared_'+Date.now();
+      payload.branch.name = payload.branch.name||'shared';
+      payload.branch.locked = false;
+      state.branches[key] = payload.branch;
+      saveState(); renderBranchList(); selectBranch(key);
+      log('Loaded shared branch: '+payload.branch.name);
+    }
+  } catch(e) { log('[WARN] Could not parse shared data: '+e.message); }
+}
+
+init();
+loadSharedData();
+</script>
+</body>
+</html>
