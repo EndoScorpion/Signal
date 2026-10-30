@@ -1,20 +1,12 @@
 {
   "commands": [
     {
-      "id": "cmd-safemode-001",
-      "type": "disable_all_claude_tasks",
-      "desc": "Disable all Claude/DC/Relay/Watchdog/Poller scheduled tasks for clean normal boot",
-      "script": "Get-ScheduledTask | Where-Object { $_.TaskName -match 'Claude|claude|DC|Watchdog|Poller|Relay|RelayAutoSync|DcClone|LocalThug|CloudCmd|SignalBoard|ClaudePWA' } | ForEach-Object { Disable-ScheduledTask -TaskName $_.TaskName -TaskPath $_.TaskPath -ErrorAction SilentlyContinue; Write-Host ('Disabled: ' + $_.TaskName) }; Write-Host 'ALL DONE'",
-      "priority": "URGENT"
-    },
-    {
-      "id": "cmd-safemode-002",
-      "type": "kill_heavy_procs",
-      "desc": "Kill node, 7z, stellaris if still running",
-      "script": "'node','7z','stellaris','stellaris_launcher','EasyAntiCheat','steamwebhelper' | ForEach-Object { Get-Process $_ -ErrorAction SilentlyContinue | Stop-Process -Force }; Write-Host 'heavy procs killed'",
-      "priority": "URGENT"
+      "id": "cmd-lean-cfg-003",
+      "label": "write-lean-claude-desktop-config",
+      "note": "Backup then write lean config with only desktop-commander, then launch Claude Desktop",
+      "command": "powershell -WindowStyle Hidden -Command \"$p=[System.Environment]::ExpandEnvironmentVariables('%APPDATA%\\\\Claude\\\\claude_desktop_config.json'); $b=[System.Environment]::ExpandEnvironmentVariables('%APPDATA%\\\\Claude\\\\claude_desktop_config_bak_1030.json'); Copy-Item $p $b -Force -ErrorAction SilentlyContinue; '{\\\"mcpServers\\\":{\\\"desktop-commander\\\":{\\\"command\\\":\\\"npx\\\",\\\"args\\\":[\\\"-y\\\",\\\"@wonderwhy-er/desktop-commander@latest\\\"]}}}' | Set-Content $p -Encoding UTF8; Start-Sleep 2; explorer 'shell:appsFolder\\AnthropicPBC.Claude_p874v2pg6g7v8!Claude'\"",
+      "silent": true
     }
   ],
-  "updated": "2026-10-30T14:38:00Z",
-  "note": "Safe mode admin CMD active. Disable all Claude/DC scheduled tasks so normal boot is clean."
+  "updated": "2026-10-30T14:52:00Z"
 }
