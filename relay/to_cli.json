@@ -1,34 +1,20 @@
 {
   "commands": [
     {
-      "id": "cmd-emergency-001",
-      "type": "kill_processes",
-      "desc": "EMERGENCY: kill node.exe, 7z.exe to free RAM",
-      "script": "Get-Process node,7z -ErrorAction SilentlyContinue | Stop-Process -Force; Write-Host 'node+7z killed'",
+      "id": "cmd-safemode-001",
+      "type": "disable_all_claude_tasks",
+      "desc": "Disable all Claude/DC/Relay/Watchdog/Poller scheduled tasks for clean normal boot",
+      "script": "Get-ScheduledTask | Where-Object { $_.TaskName -match 'Claude|claude|DC|Watchdog|Poller|Relay|RelayAutoSync|DcClone|LocalThug|CloudCmd|SignalBoard|ClaudePWA' } | ForEach-Object { Disable-ScheduledTask -TaskName $_.TaskName -TaskPath $_.TaskPath -ErrorAction SilentlyContinue; Write-Host ('Disabled: ' + $_.TaskName) }; Write-Host 'ALL DONE'",
       "priority": "URGENT"
     },
     {
-      "id": "cmd-emergency-002",
-      "type": "kill_system_ps",
-      "desc": "EMERGENCY: kill non-essential SYSTEM powershell (keep current session)",
-      "script": "Get-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.SI -eq 0 } | Stop-Process -Force; Write-Host 'SYSTEM ps killed'",
-      "priority": "URGENT"
-    },
-    {
-      "id": "cmd-emergency-003",
-      "type": "pause_claude_tasks",
-      "desc": "EMERGENCY: temporarily disable Claude scheduled tasks to free RAM",
-      "script": "Get-ScheduledTask | Where-Object { $_.TaskName -like '*Claude*' -or $_.TaskName -like '*claude*' -or $_.TaskName -like '*DC*' -or $_.TaskName -like '*Watchdog*' -or $_.TaskName -like '*Poller*' -or $_.TaskName -like '*Relay*' } | Disable-ScheduledTask -ErrorAction SilentlyContinue; Write-Host 'Claude tasks paused'",
-      "priority": "URGENT"
-    },
-    {
-      "id": "cmd-emergency-004",
-      "type": "free_ram_misc",
-      "desc": "EMERGENCY: kill Stellaris and other heavy processes if running",
-      "script": "'stellaris','stellaris_launcher','EasyAntiCheat','steamwebhelper' | ForEach-Object { Get-Process $_ -ErrorAction SilentlyContinue | Stop-Process -Force }; [System.GC]::Collect(); Write-Host 'misc heavy procs killed'",
+      "id": "cmd-safemode-002",
+      "type": "kill_heavy_procs",
+      "desc": "Kill node, 7z, stellaris if still running",
+      "script": "'node','7z','stellaris','stellaris_launcher','EasyAntiCheat','steamwebhelper' | ForEach-Object { Get-Process $_ -ErrorAction SilentlyContinue | Stop-Process -Force }; Write-Host 'heavy procs killed'",
       "priority": "URGENT"
     }
   ],
-  "updated": "2026-10-30T14:35:00Z",
-  "note": "EMERGENCY batch — laptop frozen, can't run PS or Task Manager. Kill node/7z/Stellaris, pause Claude tasks."
+  "updated": "2026-10-30T14:38:00Z",
+  "note": "Safe mode admin CMD active. Disable all Claude/DC scheduled tasks so normal boot is clean."
 }
