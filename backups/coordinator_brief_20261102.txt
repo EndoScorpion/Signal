@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-11-02
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+No new MT4 reports since 10-20; the 2021 out-of-sample gate is still not passed (g1a PF 1.05, g2a PF 0.87 at 8pt; bar PF 1.10). 194 items still wait on local MT4.
+
+Since Friday: do_all_safe.bat and adb_tablet_setup.bat landed in Signal. Per the board, the LocalThug bridge is live on :7861, but the NSSM/RAM loop is unresolved and Remote Control failed to connect twice; the WSL claude install still waits on RC.
+
+Note: the public board (10-30) now carries LAN IPs and a device map. These are private addresses, but consider moving them to a private file.
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted today.
