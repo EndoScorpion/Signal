@@ -15,7 +15,8 @@ def feats(c,h,l):
             ag,al=sum(g)/14,sum(d)/14;f["rsi"]=100 if al==0 else 100-100/(1+ag/al)
             hh,ll=max(h[i-13:i+1]),min(l[i-13:i+1]);f["stoch"]=50 if hh==ll else 100*(c[i]-ll)/(hh-ll)
         if i>=20:
-            m=sma(c,20,i);sd=(sum((x-m)**2 for x in c[i-19:i+1])/20)**.5;f["bbl"]=m-2*sd
+            m=sma(c,20,i);sd=(sum((x-m)**2 for x in c[i-19:i+1])/20)**.5
+            if sd>0:f["bbl"]=m-2*sd  # skip bbl if flat (sd=0 → spurious signal)
         if i>=10:f["r3"]=c[i]/c[i-3]-1;f["r10"]=c[i]/c[i-10]-1
         if i>=50:f["up"]=c[i]>sma(c,50,i)
         out.append(f)
@@ -28,7 +29,11 @@ def parts(kind,days):
     return dict(spread=C["spread_bps"].get(kind,4)/100,slippage=2*C["slippage_bps_per_side"]/100,commission=2*C["comm_per_order_usd"]/C["position_usd"]*100,fees=(2*C["crypto_fee_bps_per_side"]/100 if kind=="crypto" else C["reg_fee_bps_sell"]/100),swap=days*C["swap_pct_per_year"]/365)
 P=parts(a.group,a.hold)
 for fn in glob.glob(a.data+"/*.csv"):
-    R=list(csv.DictReader(open(fn)));c=[float(r["close"]) for r in R];h=[float(r["high"]) for r in R];l=[float(r["low"]) for r in R];d=[r["date"] for r in R];F=feats(c,h,l);prev={k:False for k in RULES};ST={}
+    R=list(csv.DictReader(open(fn)));c=[float(r["close"]) for r in R];h=[float(r["high"]) for r in R];l=[float(r["low"]) for r in R];d=[r["date"] for r in R]
+    assert all(x>0 for x in c),f"Non-positive close in {fn} — corrupt data"
+    assert not any(x!=x for x in c+h+l),f"NaN in prices {fn}"
+    if len(c)<55:print(f"SKIP {fn}: only {len(c)} rows, need >=55 for indicators");continue
+    F=feats(c,h,l);prev={k:False for k in RULES};ST={}
     for i in range(len(c)-a.hold):
         if d[i]<"2015":continue
         g=(c[i+a.hold]/c[i]-1)*100;n=g-cc;at=n*(1-C["tax_short_term_pct"]/100) if n>0 else n
