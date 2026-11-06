@@ -24,7 +24,7 @@
   const RESUME = {
     name:    'EndoScorpion',
     email:   'endoscorpion@gmail.com',
-    phone:   '',
+    phone:   '9045244100',
     location:'',
     github:  'https://github.com/EndoScorpion',
     website: '',
