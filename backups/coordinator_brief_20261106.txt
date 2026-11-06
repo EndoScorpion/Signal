@@ -1,0 +1,11 @@
+COORDINATOR BRIEF - 2026-11-06
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+New: the board reports the MT4 kit deployed and backtesting ready (CloudCode, 04:27 UTC). That unblocks the 194 queued items once Nasif gives the go-ahead. File-sharing scripts for the desktop/CLI/cloud bridge landed in Signal (#56).
+
+No new MT4 reports since 10-20; the 2021 out-of-sample gate is still not passed (g1a PF 1.05, g2a PF 0.87 at 8pt; bar PF 1.10).
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted today.
