@@ -22,33 +22,45 @@
 
   // ─── RESUME DATA ──────────────────────────────────────────────────────────
   const RESUME = {
-    name:    'EndoScorpion',
+    name:    'Nasif Hossain',
     email:   'endoscorpion@gmail.com',
     phone:   '9045244100',
-    location:'',
+    location:'Jacksonville, FL',
+    linkedin:'https://www.linkedin.com/in/hossainnasif',
     github:  'https://github.com/EndoScorpion',
     website: '',
-    summary: 'Algorithmic trading systems developer with expertise in Python, MQL4/MQL5, and automated backtesting frameworks.',
-    education: '',
-    experience: '5+',
+    summary: 'High-velocity IT Support Specialist with over 10 years of experience managing complex IT infrastructures for a distributed workforce. Expert in MacOS and Windows troubleshooting, Identity and Access Management (IAM), and Multi-factor Authentication (MFA) across cloud-based platforms.',
+    education: 'Bachelor of Science, Virginia Tech, 2008',
+    experience: '10+',
     resumeText: `
-      Algorithmic trading systems developer. Expertise in MQL4/MQL5 Expert Advisors,
-      backtesting frameworks, Python, pandas, numpy, scipy, yfinance.
-      Signal processing, technical analysis, EURUSD forex strategies.
-      JavaScript, Tampermonkey, HTML, CSS, automation, data pipelines.
-      Git, GitHub, CI/CD, Linux, Windows, MT4/MT5.
-      Financial data analysis, pattern recognition, risk management.
-      Node.js, bash scripting, REST APIs, JSON.
+      IT Support Specialist, Technical Analyst, MS Administrator, Azure Administrator.
+      Identity and Access Management IAM, Multi-factor Authentication MFA, SSO,
+      Active Directory, Microsoft 365, Google Workspace, Azure Administration.
+      ServiceNow, ConnectWise, BMC Remedy, Jira, SolarWinds DameWare.
+      MacOS, Windows 10, Windows 11, iOS, Android, Linux Ubuntu.
+      Mobile Device Management MDM, JAMF, Mosyle, Rippling, Microsoft Intune, SCCM.
+      VPN Management, Network Security, Firewalls, TCP/IP, DNS, DHCP.
+      PowerShell automation, scripting, ticket management, asset tracking.
+      Incident Management, Root Cause Analysis, Change Management, Agile, Project Management.
+      HTML, CSS, JavaScript, React, SVG, web applications.
+      CompTIA Security+, CompTIA A+, CompTIA Network+.
+      VyStar Credit Union, Deutsche Bank, Kemper, Microsoft Azure Virtual Desktop.
+      Distributed workforce support, remote administration, troubleshooting.
+      TLS, server logs, security compliance, cloud-based platforms.
     `,
     skills: [
-      'Python','pandas','numpy','scipy','yfinance',
-      'JavaScript','HTML','CSS','Node.js',
-      'MQL4','MQL5','MT4','MT5','MetaTrader',
-      'algorithmic trading','backtesting','forex','EURUSD',
-      'technical analysis','risk management','data analysis',
-      'Git','GitHub','Linux','bash','REST API','JSON',
-      'automation','signal processing','CI/CD',
-      'Excel','SQL','matplotlib',
+      'IAM','Identity and Access Management','MFA','Multi-factor Authentication','SSO',
+      'Active Directory','Microsoft 365','Azure','Azure Administration','Google Workspace',
+      'ServiceNow','ConnectWise','Jira','BMC Remedy','SolarWinds',
+      'MacOS','Windows','Windows 10','Windows 11','Linux','Ubuntu','iOS','Android',
+      'MDM','Mobile Device Management','JAMF','Mosyle','Rippling','Intune','SCCM',
+      'VPN','TCP/IP','DNS','DHCP','Firewalls','Network Security',
+      'PowerShell','scripting','automation','ticket management','asset tracking',
+      'Agile','Incident Management','Root Cause Analysis','Change Management',
+      'HTML','CSS','JavaScript','React','web applications',
+      'CompTIA','Security+','A+','Network+',
+      'remote support','help desk','service desk','NOC','Tier 1','Tier 2','Tier 3',
+      'TLS','cloud','distributed workforce',
     ],
   };
 
