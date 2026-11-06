@@ -1,0 +1,35 @@
+{
+  "name": "Claude Local",
+  "short_name": "Claude",
+  "description": "Local Claude desktop PWA with file sync",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#16213e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Board Status",
+      "url": "/?view=board",
+      "description": "Check board.json status"
+    },
+    {
+      "name": "Files",
+      "url": "/?view=files",
+      "description": "Shared file manager"
+    }
+  ]
+}

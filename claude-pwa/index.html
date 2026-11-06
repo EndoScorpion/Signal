@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16213e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Claude Local</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+  <span style="font-size:18px">⬡</span>
+  <h1>Claude Local</h1>
+  <span id="status-text" style="font-size:11px;color:var(--muted)">…</span>
+  <div id="status-dot" class="status-dot"></div>
+</header>
+
+<nav>
+  <button data-view="board" class="active">Board</button>
+  <button data-view="files">Files</button>
+  <button data-view="cli">CLI</button>
+  <button data-view="claude">Claude</button>
+</nav>
+
+<main>
+
+  <!-- Board view -->
+  <div id="board-view" class="view active">
+    <div class="board-card" style="margin:12px;margin-bottom:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3>board.json</h3>
+        <button class="btn secondary" id="refresh-board">↻ Refresh</button>
+      </div>
+      <pre id="board-content">Loading…</pre>
+    </div>
+    <div class="board-card" style="margin:12px">
+      <h3>Quick actions</h3>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn" onclick="document.querySelector('[data-view=cli]').click()">Open CLI</button>
+        <button class="btn secondary" onclick="document.querySelector('[data-view=files]').click()">Files</button>
+        <button class="btn secondary" id="install-btn" style="display:none">Install App</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Files view -->
+  <div id="files-view" class="view">
+    <div style="padding:10px 12px;display:flex;gap:8px;border-bottom:1px solid var(--border)">
+      <button class="btn" onclick="loadFiles()">↻ Refresh</button>
+      <span style="font-size:11px;color:var(--muted);align-self:center">Local share: localhost:8765</span>
+    </div>
+    <div id="files-list" style="padding:12px;overflow-y:auto;flex:1"></div>
+  </div>
+
+  <!-- CLI view -->
+  <div id="cli-view" class="view">
+    <div id="cli-output"></div>
+    <div id="cli-input-row">
+      <span id="cli-prompt">$</span>
+      <input id="cli-input" type="text" autocomplete="off" spellcheck="false" placeholder="type command…">
+    </div>
+  </div>
+
+  <!-- Claude view -->
+  <div id="claude-view" class="view">
+    <div style="padding:12px;display:flex;gap:8px;border-bottom:1px solid var(--border)">
+      <button class="btn" id="open-claude-btn">Open claude.ai</button>
+      <span style="font-size:11px;color:var(--muted);align-self:center">Loads in iframe (may be blocked by CSP)</span>
+    </div>
+    <iframe id="claude-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+  </div>
+
+</main>
+
+<div id="sync-bar"></div>
+
+<script src="/app.js"></script>
+<script>
+  // PWA install prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-btn').style.display = 'inline-block';
+  });
+  document.getElementById('install-btn').addEventListener('click', () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('install-btn').style.display = 'none';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

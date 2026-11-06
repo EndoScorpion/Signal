@@ -1,0 +1,199 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --danger: #f85149;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+header h1 { font-size: 16px; font-weight: 600; flex: 1; }
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.3s;
+}
+.status-dot.online { background: var(--accent2); }
+.status-dot.syncing { background: orange; animation: pulse 1s infinite; }
+
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+nav {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+nav button {
+  flex: 1;
+  padding: 8px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+nav button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+nav button:hover { color: var(--text); }
+
+main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+.view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.view.active { display: flex; }
+
+/* Board view */
+#board-view { padding: 12px; gap: 10px; overflow-y: auto; }
+
+.board-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.board-card h3 { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.board-card pre {
+  font-size: 12px;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--accent2);
+}
+
+/* Files view */
+#files-view { padding: 12px; gap: 8px; overflow-y: auto; }
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.file-row .fname { flex: 1; color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-row .fsize { color: var(--muted); font-size: 11px; }
+
+.file-row button {
+  padding: 3px 8px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* CLI view */
+#cli-view { background: #000; }
+
+#cli-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.cli-line { margin: 1px 0; }
+.cli-line.cmd { color: var(--accent2); }
+.cli-line.out { color: #ccc; }
+.cli-line.err { color: var(--danger); }
+.cli-line.sys { color: var(--muted); font-style: italic; }
+
+#cli-input-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-top: 1px solid #333;
+  gap: 6px;
+}
+
+#cli-prompt { color: var(--accent2); font-family: monospace; font-size: 12px; }
+#cli-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  outline: none;
+}
+
+/* Claude view */
+#claude-view {
+  position: relative;
+}
+
+#claude-view iframe {
+  flex: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+.btn {
+  padding: 6px 12px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+#sync-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 6px 12px;
+  background: #1f2937;
+  font-size: 11px;
+  color: var(--muted);
+  display: none;
+  border-top: 1px solid var(--border);
+}
