@@ -13,11 +13,16 @@ a=ap.parse_args();C=json.load(open(a.cost))
 TAX=C["tax_short_term_pct"]/100
 RT_STOCK=(C["spread_bps"]["stock"]+2*C["slippage_bps_per_side"]+C["reg_fee_bps_sell"])/100   # % round trip
 RT_CRYPTO=(C["spread_bps"]["crypto"]+2*C["slippage_bps_per_side"]+2*C["crypto_fee_bps_per_side"])/100
-COLS=["rule","sym","signal_time","entry_time","entry","exit_time","exit","gross_pct","net_pct","after_tax_pct","status"]
+COLS=["rule","sym","signal_time","entry_time","entry","exit_time","exit","gross_pct","net_pct","after_tax_pct","status","snapshot_json"]
 def load(fn):
     R=list(csv.DictReader(open(fn)));k="date" if "date" in R[0] else "time_utc"
     return [(r[k],float(r["open"]),float(r["high"]),float(r["low"]),float(r["close"])) for r in R]
-def sma(x,n,i):return sum(x[i-n+1:i+1])/n
+def sma(x,n,i):return sum(x[i-n+1:i+1])/n if i>=n-1 else None
+def ema(x,n,i):
+    if i<n-1:return None
+    e=[x[n-1]];k=2/(n+1)
+    for j in range(n,i+1):e.append(e[-1]*(1-k)+x[j]*k)
+    return e[-1]
 def feat(c,h,l,i):
     f={}
     if i>=14:
@@ -27,7 +32,16 @@ def feat(c,h,l,i):
     if i>=12:f["r12"]=100*(c[i]/c[i-12]-1)
     if i>=20:m=sma(c,20,i);sd=(sum((x-m)**2 for x in c[i-19:i+1])/20)**.5;f["bbl"]=m-2*sd
     if i>=50:f["up"]=c[i]>sma(c,50,i)
+    if i>=120:
+        e120_0=ema(c,120,i);e120_1=ema(c,120,i-1) if i>=120 else None;e120_2=ema(c,120,i-2) if i>=121 else None
+        f["ema120"]=e120_0;f["ema120_slope"]=(e120_0-e120_1)*1e5 if e120_1 else None;f["ema120_accel"]=(e120_0-2*e120_1+e120_2)*1e10 if e120_2 else None
     return f
+def ratios(f,p):
+    r={}
+    if f.get("ema120_slope") and f.get("stoch"):r["sp"]=f["ema120_slope"]/max(f["stoch"],1)
+    if f.get("ema120_accel") and f.get("stoch"):r["ap"]=f["ema120_accel"]/max(f["stoch"],1)
+    if f.get("ema120") and p:r["sh"]=(p-f["ema120"])/max(f["ema120"],0.0001)
+    return r
 RULES={"S2":(lambda f,p:f.get("rsi",99)<25,3,None,RT_STOCK),
        "S4":(lambda f,p:p<f.get("bbl",0) and f.get("stoch",50)<10 and f.get("up",False),3,None,RT_STOCK),
        "C1":(lambda f,p:f.get("rsi",99)<30 and f.get("r12",0)<-2,4,1.5,RT_CRYPTO)}
@@ -36,6 +50,9 @@ if os.path.exists(a.ledger):
     for r in csv.DictReader(open(a.ledger)):
         if "rule" in r and r.get("signal_time"):L[(r["rule"],r["sym"],r["signal_time"])]=r
 def net(g,rt):n=g-rt;return n,(n*(1-TAX) if n>0 else n)
+def build_snapshot(sym,f,p,t):
+    snap={"sym":sym,"signal_time":t,"entry_price":p,"rsi":round(f.get("rsi",0),2),"stoch":round(f.get("stoch",0),2),"ema120_slope":round(f.get("ema120_slope",0),6),"ema120_accel":round(f.get("ema120_accel",0),10),"r12":round(f.get("r12",0),3)}
+    snap.update(ratios(f,p));return json.dumps(snap)
 def run(rule,files):
     fn_,hold,stop,rt=RULES[rule]
     for fn in files:
@@ -45,9 +62,10 @@ def run(rule,files):
             if t[i][:10]<a.start:continue
             k=(rule,s,t[i])
             if k in L and L[k]["status"]=="closed":last=i;continue
-            if k not in L and (i-last<=hold or not fn_(feat(c,h,l,i),c[i])):continue
+            feat_i=feat(c,h,l,i);f_check=feat_i
+            if k not in L and (i-last<=hold or not fn_(f_check,c[i])):continue
             last=i
-            e=B[i+1][1];r=dict(rule=rule,sym=s,signal_time=t[i],entry_time=t[i+1],entry=round(e,6),exit_time="",exit="",gross_pct="",net_pct="",after_tax_pct="",status="open")
+            e=B[i+1][1];snap=build_snapshot(s,feat_i,c[i],t[i]);r=dict(rule=rule,sym=s,signal_time=t[i],entry_time=t[i+1],entry=round(e,6),exit_time="",exit="",gross_pct="",net_pct="",after_tax_pct="",status="open",snapshot_json=snap)
             x=xt=None
             for j in range(i+1,min(i+1+hold,len(B))):
                 if stop and B[j][3]<=e*(1-stop/100):x,xt=e*(1-stop/100),t[j];break
