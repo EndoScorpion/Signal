@@ -1,0 +1,142 @@
+JAX IT JOBS — MASTER ARCHIVE — Chunk 1: Mar–Oct 2026
+Compiled: 2026-11-06 | Sources: Indeed (Alexandria API), Robert Half, iHire Technology, Insight Global
+========================================================
+Oldest postings first (posted Mar 2026 → Oct 2026)
+NOTE: All listed recruiters/emails not publicly shown on Indeed/job boards.
+      Contact via apply links or company careers pages.
+
+--------------------------------------------------------
+A1. GEN AI SOFTWARE ENGINEER (VP)
+   Company:    Citi (via ITSMF Leaders)
+   Location:   Jacksonville, FL (Office)
+   Type:       Full-time
+   Salary:     $125,600 – $188,400 / year
+   Posted:     2026-03-25
+   Apply URL:  https://jobs.itsmfleaders.org/job/gzacw4/gen-ai-software-engineer-vice-president/jacksonville/fl
+   Indeed URL: https://www.indeed.com/viewjob?jk=29cfe2393251c8c8
+   Skills:     Python, Java, AI/ML, AWS, Microservices, Agile, DevOps, distributed systems
+   Description: VP-level Gen AI engineer at Citi. 2yr AI/ML exp min.
+                Building AI-powered digital solutions. Mentoring, leadership.
+   Benefits:   Health/dental/vision, 401k, disability ins, PTO
+   Contact:    jobs.itsmfleaders.org / Citi careers: jobs.citi.com
+
+--------------------------------------------------------
+A2. SENIOR LEAD SOFTWARE ENGINEER — DIGITAL SOLUTIONS (VP)
+   Company:    Citi (via ITSMF Leaders)
+   Location:   Jacksonville, FL (Office)
+   Type:       Full-time
+   Salary:     $125,600 – $188,400 / year
+   Posted:     2026-05-08
+   Apply URL:  https://jobs.itsmfleaders.org/job/4vjd5h/senior-lead-software-engineer-digital-solutions-vice-president/jacksonville/fl
+   Indeed URL: https://www.indeed.com/viewjob?jk=db16f7c47399311f
+   Skills:     AWS, Microservices, Agile, DevOps, CI/CD, distributed systems, cloud architecture
+   Description: VP-level digital software engineering lead at Citi. 6yr exp.
+                Strategic tech authority, team leadership, cross-functional.
+   Benefits:   Health/dental/vision, 401k, disability ins, PTO
+   Contact:    jobs.itsmfleaders.org / Citi careers: jobs.citi.com
+
+--------------------------------------------------------
+A3. DIGITAL SOFTWARE ENGINEER LEAD ANALYST (VP)
+   Company:    Citi (via ITSMF Leaders)
+   Location:   Jacksonville, FL (Office)
+   Type:       Full-time
+   Salary:     $125,600 – $188,400 / year
+   Posted:     2026-05-08
+   Apply URL:  https://jobs.itsmfleaders.org/job/6j28wh/digital-software-engineer-lead-analyst-vice-president/jacksonville/fl
+   Indeed URL: https://www.indeed.com/viewjob?jk=19e7e185c66426b4
+   Skills:     Spring Boot, AWS, Microservices, Agile, DevOps, Java, distributed systems
+   Description: VP-level digital software engineer at Citi. 6yr exp.
+                Recognized technical authority, team development, mentoring.
+   Benefits:   Health/dental/vision, 401k, disability ins, PTO
+   Contact:    jobs.itsmfleaders.org / Citi careers: jobs.citi.com
+
+--------------------------------------------------------
+A4. AUTOMATION & OPERATIONS TECHNOLOGY ENGINEER
+   Company:    Danone
+   Location:   Jacksonville, FL (Hybrid)
+   Type:       Full-time
+   Salary:     $110,000 – $149,000 / year
+   Posted:     2026-10-02
+   Apply URL:  https://enusapply-danone.icims.com/jobs/28322/job
+   Indeed URL: https://www.indeed.com/viewjob?jk=3dca4fba439228a4
+   Skills:     OT cybersecurity, SCADA, PLC, PRTG, Qualys, patch mgmt, Windows Server
+   Description: OT Cybersecurity strategy for manufacturing plant.
+                Liaison between plant ops and global IT/Cybersecurity team. 5yr exp.
+   Benefits:   Health/dental/vision, 401k, tuition reimb, parental leave, pet ins
+   Contact:    enusapply-danone.icims.com / Danone careers: danone.com/careers
+
+--------------------------------------------------------
+A5. SOFTWARE ENGINEER SR LEAD
+   Company:    FIS (FIS Global)
+   Location:   Jacksonville, FL 32202
+   Type:       Full-time
+   Salary:     Not listed
+   Posted:     2026-10-15
+   Apply URL:  https://careers.fisglobal.com/us/en/job/FIGLUSJR0309825EXTERNAL/Software-Engineer-Sr-Lead
+   Indeed URL: https://www.indeed.com/viewjob?jk=3ec06d50fad52bd7
+   Skills:     COBOL, DB2, CICS, ISPF, Mainframe, SQL, batch processing
+   Description: IBM mainframe environment, deposit/transaction processing.
+                7yr exp. No sponsorship. Senior/lead role.
+   Contact:    careers.fisglobal.com
+
+--------------------------------------------------------
+A6. IT SUPPORT ENGINEER (Azure/Cloud)
+   Company:    Robert Half (client unnamed)
+   Location:   Jacksonville, FL
+   Type:       Contract (DOE)
+   Salary:     Not listed (DOE)
+   Posted:     Oct 2026
+   Apply URL:  https://www.roberthalf.com/us/en/jobs/jacksonville-fl/it-support-engineer
+   Skills:     Azure, cloud, enterprise, IT infrastructure, Temporary/Contract
+   Contact:    Robert Half Jacksonville: roberthalf.com
+
+--------------------------------------------------------
+A7. IT SUPPORT SPECIALIST (Azure/MS Env)
+   Company:    Robert Half (client unnamed)
+   Location:   Jacksonville, FL
+   Type:       Contract (DOE)
+   Salary:     Not listed (DOE)
+   Posted:     Oct 2026
+   Apply URL:  https://www.roberthalf.com/us/en/jobs/jacksonville-fl/it-support-specialist
+   Skills:     Azure, Microsoft, IT support, cloud, Contract
+   Contact:    Robert Half Jacksonville: roberthalf.com
+
+--------------------------------------------------------
+A8. IT SOFTWARE ENGINEER
+   Company:    Yusen Logistics
+   Location:   Jacksonville, FL 32216
+   Type:       Full-time
+   Salary:     $61,568 – $97,825 / year
+   Posted:     2026-10-29
+   Apply URL:  https://careers-yusen-logistics.icims.com/jobs/6579/job
+   Indeed URL: https://www.indeed.com/viewjob?jk=b5c01f11f5dfe783
+   Skills:     .NET, SQL, EDI, XML, JSON, SOAP, ERP, WMS, scripting, systems integration
+   Description: Develop and manage systems for logistics information exchange.
+                External trading partner integration. System install/config/support. 5yr exp.
+   Benefits:   Health/dental/vision, 401k matching, tuition reimb, commuter
+   Contact:    careers-yusen-logistics.icims.com
+
+--------------------------------------------------------
+A9. SENIOR CLOUD ENGINEER
+   Company:    VyStar Credit Union
+   Location:   Jacksonville, FL 32202
+   Type:       Full-time (30h+ part-time also available)
+   Salary:     Not listed (competitive + 401k, tuition reimb)
+   Posted:     2026-10-30
+   Apply URL:  https://vystarcu.wd1.myworkdayjobs.com/Careers/job/Jacksonville-FL---VyStar-Tower/Senior-Cloud-Engineer_R0012275-1
+   Indeed URL: https://www.indeed.com/viewjob?jk=dad8405ace60c2e7
+   Skills:     AWS, Azure IaaS, Terraform, PowerShell, IaC, DevOps, HIPAA, security compliance
+   Description: Cloud engineering role at VyStar Credit Union.
+                Competitive pay, 401(k), tuition reimbursement.
+   Contact:    careers.vystarcu.org (apply via Workday link above)
+
+========================================================
+COMPANY CONTACTS
+Citi:            jobs.citi.com  |  ITSMF Jobs: jobs.itsmfleaders.org
+Danone:          enusapply-danone.icims.com  |  danone.com/careers
+FIS Global:      careers.fisglobal.com
+Robert Half:     roberthalf.com/us/en/jobs/jacksonville-fl/
+Yusen Logistics: careers-yusen-logistics.icims.com
+VyStar CU:       careers.vystarcu.org  |  vystarcu.org/about/careers
+========================================================
+Archived by Claude Code — endoscorpion@gmail.com project
