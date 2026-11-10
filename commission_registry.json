@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "version": "neoclone_batch_20261110",
+    "date": "2026-11-10",
+    "note": "FXOpen ECN commission tiers. MT4 charges ONCE per RT, not per-side x2.",
+    "first_test_tier": "over_250k_1.5pts"
+  },
+  "commission_tiers": {
+    "over_250k_1.5pts": {
+      "balance_min": 250000,
+      "rt_per_lot": 1.5,
+      "label": ">$250k",
+      "test_order": 1,
+      "comment": "Cheapest tier - first test always uses this"
+    },
+    "mid_1.8pts": {
+      "balance_min": 25000,
+      "balance_max": 250000,
+      "rt_per_lot": 1.8,
+      "label": "$25k-$250k",
+      "test_order": 2
+    },
+    "sim_2.5pts": {
+      "balance_min": 1000,
+      "balance_max": 25000,
+      "rt_per_lot": 2.5,
+      "label": "$1k-$25k",
+      "test_order": 3,
+      "comment": "Cloud/sim tier"
+    },
+    "below_1k_3.5pts": {
+      "balance_max": 1000,
+      "rt_per_lot": 3.5,
+      "label": "<$1k",
+      "test_order": 4
+    },
+    "stress_6.0pts": {
+      "rt_per_lot": 6.0,
+      "label": "stress",
+      "test_order": 5,
+      "comment": "Upper stress test - fail threshold 10pts RT"
+    },
+    "gross_0pts": {
+      "rt_per_lot": 0.0,
+      "label": "gross",
+      "test_order": 0,
+      "comment": "Baseline - no commission"
+    }
+  },
+  "fp_fixes": {
+    "enabled_for": ["slow_pupils"],
+    "rules": [
+      "hardcode p=0.0001 (FXOpen 5-digit ECN)",
+      "NormalizeDouble(price, 4) — NOT Digits",
+      "M1-resolved TP/SL fill (SL-first on ties)",
+      "int boundary: price_int = (int)(price/p ±0.5)"
+    ]
+  },
+  "test_scope": {
+    "2015_w23_hurricane": {
+      "period": "2015-06-01 to 2015-06-07",
+      "label": "2015-W23 HURRICANE (best weeks)",
+      "expected_buy_n": 6,
+      "notes": "hottest week from prior audit"
+    }
+  }
+}
