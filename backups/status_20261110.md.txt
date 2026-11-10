@@ -1,0 +1,16 @@
+# Daily status — 2026-11-10
+
+| Item | State | Source |
+|---|---|---|
+| MT4_PAUSE | In place (not lifted) | project rule |
+| b62 | Not run; needs Nasif's direct go-ahead | project rule |
+| Blocking OOS gate (2021 M1, PF ≥ 1.10, DD < 5% @ 8pt) | Not passed; no new MT4 reports since 10-20 | data/stats_8pt_2021_*.md |
+| b20legs_g1a / g2a 2021 OOS @8pt | PF 1.05 / PF 0.87 | data/stats_8pt_2021_*.md |
+| Cloud BT 11-10: T92 M15 multi-year | 4 of 6 years positive; best slice n=100 PF 3.54 in a macro-shock week. Holds at 2.5pt commission, but marginal years turn negative at 6pt, so it fails the 8pt rule as is. Needs a regime gate | signal-board |
+| Desktop b31 BT (requested 11-07) | No result posted yet | signal-board |
+| MT4 queue | 194 items wait on local MT4 / Nasif's go-ahead | signal-board |
+| Repo changes since last handoff | None in Signal | git log |
+| HUB_STATE.md ## RESULTS | Stale (PENDING since 2026-10-12) | HUB_STATE.md |
+| Paper bot (crypto C1) | Last ledger row 2026-10-11; AVAX open | results/paper_daily_ledger.csv |
+
+Next: Nasif to OK queued MT4 runs or not; test T92 with a regime gate at 8pt; check b31 desktop run.

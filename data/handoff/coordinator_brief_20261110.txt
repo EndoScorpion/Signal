@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-11-10
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+New cloud backtest (board, 05:49 UTC): T92 on M15 was positive in 4 of 6 years. The best slice (n=100, PF 3.54) came from a macro-shock week, and low-activity weeks fail. The edge holds at 2.5pt commission, but marginal years go negative at 6pt, so it does not meet the project's 8pt rule yet. A regime gate is the suggested next test, scored at 8pt.
+
+The b31 desktop backtest requested on 11-07 still has no posted result.
+
+No new MT4 reports in Signal since 10-20; the 2021 out-of-sample gate is still not passed. 194 items wait on local MT4 and Nasif's go-ahead.
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted today.
