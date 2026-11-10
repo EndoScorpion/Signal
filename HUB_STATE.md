@@ -3,7 +3,7 @@ Last updated: 2026-10-12 (OOS-gate cloud thread)
 
 ## BLOCKING GATE
 **2021 M1 OOS backtest must exit 0 before ANY EA code changes.**
-Pass bar: PF ≥ 1.10 AND max DD < 5% ($500 on $10k) after 8pt commission.
+Pass bar: PF ≥ 1.10 AND max DD < 5% ($500 on $10k) after 8pt commission. [NOTE 2026-11-10: 8pt was the Oct-2026 test baseline; locked cloud standard is 2.5 pts RT — results here are historical at 8pt]
 
 ---
 
@@ -40,7 +40,7 @@ Period:    2021-03-19 to 2022-01-01
 SpreadPt:  3  (sp3)
 Deposit:   $10,000
 Leverage:  1:100
-Commission: 8pt per RT (InpCommissionPts=8)
+Commission: 8pt per RT (InpCommissionPts=8)  [HISTORICAL — locked cloud standard is 2.5 pts RT as of 2026-11-10]
 ```
 **Steps:**
 1. RAM check: `Get-CimInstance Win32_OperatingSystem | Select FreePhysicalMemory`
