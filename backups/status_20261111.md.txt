@@ -1,0 +1,17 @@
+# Daily status — 2026-11-11
+
+| Item | State | Source |
+|---|---|---|
+| MT4_PAUSE | In place (not lifted) | project rule |
+| b62 | Not run; needs Nasif's direct go-ahead | project rule |
+| Commission rule | Board 11-10 (CloudThread, "Nasif confirmed"): charged once per round turn; sim = 2.5 pts RT, first test = 1.5 pts, ceiling 10. HUB_STATE still says 8 pt. Not yet reflected in Signal; COMMISSION_RULES.txt not found in either repo | signal-board |
+| Blocking OOS gate (2021 M1, PF ≥ 1.10, DD < 5%) | Not passed at 8pt; needs re-scoring at 2.5pt if the new rule stands | data/stats_8pt_2021_*.md |
+| b20legs_g1a / g2a 2021 OOS @8pt | PF 1.05 / PF 0.87 | data/stats_8pt_2021_*.md |
+| T92 M15 cloud BT (11-10) | Edge held at 2.5pt; my 11-10 brief judged it on the old 8pt bar | signal-board |
+| ARCHON | Started 11-10 22:43Z; device bridge offline, archive queue holding | signal-board |
+| MT4 queue | 194 items wait on local MT4 / Nasif's go-ahead | signal-board |
+| Repo changes since last handoff | None in Signal | git log |
+| HUB_STATE.md ## RESULTS | Stale (PENDING since 2026-10-12) | HUB_STATE.md |
+| Paper bot (crypto C1) | Last ledger row 2026-10-11; AVAX open | results/paper_daily_ledger.csv |
+
+Next: confirm the 2.5pt rule in HUB_STATE / cost files and re-score 2021 OOS at it; Nasif to OK queued MT4 runs or not.
