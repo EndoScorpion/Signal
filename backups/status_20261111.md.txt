@@ -15,3 +15,14 @@
 | Paper bot (crypto C1) | Last ledger row 2026-10-11; AVAX open | results/paper_daily_ledger.csv |
 
 Next: confirm the 2.5pt rule in HUB_STATE / cost files and re-score 2021 OOS at it; Nasif to OK queued MT4 runs or not.
+
+## Addendum (13:58Z): 2021 OOS re-score with the reports present in the repo
+
+The g1a/g2a 2021 .htm reports are no longer in the repo, so they could not be re-scored. The g4a and g4b 2021 reports are present and were scored with `analysis/oos_check.py --deposit 10000`:
+
+| Report | Trades | Win % | PF @8pt | PF @2.5pt | Max DD | Gate |
+|---|---|---|---|---|---|---|
+| g4a 2021 M1 OOS | — | — | 1.085 | 1.089 | 0.90% | FAIL (PF) |
+| g4b 2021 M1 OOS | 182 | 67.6% | 1.460 | 1.466 | 0.34% | PASS |
+
+The commission flag moves PF very little, because the report's profit column already carries the broker cost (see HUB_STATE). g4b clears PF ≥ 1.10 and DD < 5% on 2021 OOS. Still to check before calling it a winner: the day-block p ≤ 0.0024 test from HUB_STATE, and 2011/2012 OOS.
