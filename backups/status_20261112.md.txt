@@ -1,0 +1,15 @@
+# Daily status — 2026-11-12
+
+| Item | State | Source |
+|---|---|---|
+| MT4_PAUSE | In place (not lifted) | project rule |
+| b62 | Not run; needs Nasif's direct go-ahead | project rule |
+| g4b 2021 M1 OOS | PF 1.47, DD 0.34%, 182 trades over 55 days: passes the PF/DD gate and the lucky-bar PF ≥ 1.306, but day-block p(net ≤ 0) = 0.085, far above the 0.0024 bar. Not a confirmed winner | oos_check.py + day-block bootstrap (20k resamples) |
+| g4a 2021 M1 OOS | PF 1.09, day-block p = 0.36: fails | same |
+| Commission rule | Board says 2.5 pts RT; HUB_STATE still says 8. Decision card open for Nasif | signal-board, HUB_STATE.md |
+| MT4 queue | 194 items wait on local MT4 / Nasif's go-ahead | signal-board |
+| Repo/board changes since last handoff | None besides my handoff | git log |
+| HUB_STATE.md ## RESULTS | Stale (PENDING since 2026-10-12) | HUB_STATE.md |
+| Paper bot (crypto C1) | Last ledger row 2026-10-11; AVAX open | results/paper_daily_ledger.csv |
+
+Next: more g4b OOS data (2011/2012) to tighten the day-block test; Nasif to decide on the commission rule and the MT4 queue.
