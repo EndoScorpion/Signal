@@ -1,0 +1,100 @@
+{
+  "phase": "FORWARD_TEST_SIM",
+  "initiated": "2026-11-15T15:30:53.297560",
+  "top_5_survivors": [
+    {
+      "variant_id": 49,
+      "session": "LONDON",
+      "win_rate": 0.6242857142857143,
+      "avg_net_pct": 0.4047,
+      "trades_count": 156,
+      "pf": 5.311455484655121,
+      "trail_pct": 0.2,
+      "hard_tp": 80,
+      "hard_sl": 25,
+      "formula_type": "linear",
+      "confidence": 0.9
+    },
+    {
+      "variant_id": 51,
+      "session": "LONDON",
+      "win_rate": 0.6242857142857143,
+      "avg_net_pct": 0.4047,
+      "trades_count": 156,
+      "pf": 5.311455484655121,
+      "trail_pct": 0.2,
+      "hard_tp": 80,
+      "hard_sl": 25,
+      "formula_type": "quadratic",
+      "confidence": 0.9
+    },
+    {
+      "variant_id": 53,
+      "session": "LONDON",
+      "win_rate": 0.6242857142857143,
+      "avg_net_pct": 0.4047,
+      "trades_count": 156,
+      "pf": 5.311455484655121,
+      "trail_pct": 0.2,
+      "hard_tp": 80,
+      "hard_sl": 25,
+      "formula_type": "linear",
+      "confidence": 0.9
+    },
+    {
+      "variant_id": 55,
+      "session": "LONDON",
+      "win_rate": 0.6242857142857143,
+      "avg_net_pct": 0.4047,
+      "trades_count": 156,
+      "pf": 5.311455484655121,
+      "trail_pct": 0.2,
+      "hard_tp": 80,
+      "hard_sl": 25,
+      "formula_type": "quadratic",
+      "confidence": 0.9
+    },
+    {
+      "variant_id": 57,
+      "session": "NY",
+      "win_rate": 0.6242857142857143,
+      "avg_net_pct": 0.4047,
+      "trades_count": 156,
+      "pf": 5.311455484655121,
+      "trail_pct": 0.2,
+      "hard_tp": 80,
+      "hard_sl": 25,
+      "formula_type": "linear",
+      "confidence": 0.9
+    }
+  ],
+  "configuration": {
+    "phase": "FORWARD_TEST_SIM",
+    "lot_size": 0.01,
+    "account_size_usd": 1000,
+    "max_concurrent_trades": 1,
+    "slippage_model": "REAL",
+    "cost_model": "FULL (spread+slippage+tax)",
+    "duration": "50-100 trades minimum",
+    "symbols": [
+      "SPY",
+      "QQQ",
+      "AAPL"
+    ],
+    "timeframe": "D1 (daily)",
+    "session_focus": "LONDON (primary) + NY expansion",
+    "approval": "Approved by Nasif (2026-11-15 05:51:24 UTC)",
+    "timestamp": "2026-11-15T15:30:53.297520"
+  },
+  "target_metrics": {
+    "minimum_trades": 50,
+    "minimum_win_rate": 0.55,
+    "minimum_pf": 1.5,
+    "maximum_drawdown": 0.15
+  },
+  "expected_outcomes": {
+    "best_case": "WR > 62%, PF > 5.0 (matches backtest)",
+    "target_case": "WR 55-62%, PF 3.0-4.5 (realistic slippage)",
+    "worst_case": "WR < 50%, PF < 1.5 (overfitting detected)"
+  }
+}

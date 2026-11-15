@@ -1,0 +1,18 @@
+{
+  "updates": [
+    {
+      "ts": "2026-11-15T16:02:14.094031+00:00",
+      "from": "CloudForwardTestCycle1",
+      "type": "DISCOVERY",
+      "msg": "All5Survivors_GO | WR69% | PF9.92 | Trail0.2% | AAPL>QQQ>SPY | FormulaRedundant | HotWeekValidationNext",
+      "codes": [
+        "#Trail0.2",
+        "#WR69",
+        "#PF9.92",
+        "#n300",
+        "#AAPL-Primary",
+        "#FormulaRedundant"
+      ]
+    }
+  ]
+}
