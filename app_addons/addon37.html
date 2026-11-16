@@ -46,7 +46,10 @@ function feats(b){var n=b.length,c=b.map(function(x){return x[4]}),f=[],ag=0,al=
   if(i>=19){var m=0,v=0;for(k=i-19;k<=i;k++)m+=c[k];m/=20;for(k=i-19;k<=i;k++)v+=(c[k]-m)*(c[k]-m);o.bbl=m-2*Math.sqrt(v/20)}
   if(i>=13){var lo=1e99,hi=-1e99;for(k=i-13;k<=i;k++){lo=Math.min(lo,b[k][3]);hi=Math.max(hi,b[k][2])}o.stoch=100*(c[i]-lo)/Math.max(hi-lo,1e-12)}
   if(i>=10){o.r3=c[i]/c[i-3]-1;o.r10=c[i]/c[i-10]-1}f.push(o)}return f}
-var RULES=[["S1 RSI<30 & below Bollinger",function(f,c){return f.rsi!=null&&f.bbl!=null&&f.rsi<30&&c<f.bbl}],["S2 RSI<25",function(f){return f.rsi!=null&&f.rsi<25}],["S3 3d -5% & 10d -10%",function(f){return f.r3!=null&&f.r3<-.05&&f.r10<-.10}],["S4 below Bollinger & Stoch<10 in uptrend",function(f,c){return f.bbl!=null&&f.sma200!=null&&f.stoch!=null&&c<f.bbl&&f.stoch<10&&c>f.sma200}]];
+/* Phase 7 Survivors: All signal rules (S1-S4) failed WR>50% in ≥2 periods test (cost-aware backtest).
+   Only BASE rule (all-days baseline) survived: 56% WR (2020-22), 55.2% WR (2023-26), +0.196 net avg after-tax (2023-26).
+   See results/SURVIVORS.md for full analysis. Keep RULES empty; BASE is tested separately. */
+var RULES=[];
 function per(d){return d<"2020-01-01"?"2015-19":d<"2023-01-01"?"2020-22":"2023-26"}
 function CST(grp){return window.slcCost?slcCost.cost(grp,3):0}var CT=window.slcCost?slcCost.cfg.taxST:0;
 function evalAll(){CT=window.slcCost?slcCost.cfg.taxST:0;var acc={};function A(k){return acc[k]||(acc[k]={n:0,w:0,s:0,g:0,a:0,dN:0,dS:0,dM:0})}

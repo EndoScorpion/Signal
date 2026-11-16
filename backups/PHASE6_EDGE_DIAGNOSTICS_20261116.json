@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "phase": "Phase 6",
+    "title": "Edge-Case Diagnostics (2020-2024)",
+    "timestamp": "2026-11-16T18:02:00Z",
+    "version": "1.0"
+  },
+  "edge_case_analysis": [
+    {
+      "period": "2020-COVID",
+      "variants": 1080,
+      "hurst_avg": 0.78,
+      "actual_profitable": "57.8%",
+      "predicted": "58.6%",
+      "avg_wr": "52.1%",
+      "market_conditions": "High volatility",
+      "trail_range": "> 0.5%",
+      "recommendation": "REDUCE lot, use mean-revert strategy",
+      "action": "Monitor volatility index; throttle lot size to 0.5x"
+    },
+    {
+      "period": "2022-RateHikes",
+      "variants": 360,
+      "hurst_avg": 0.78,
+      "actual_profitable": "100.0%",
+      "predicted": "96.4%",
+      "avg_wr": "95.9%",
+      "market_conditions": "Trending (rate hike cycle)",
+      "trail_range": "≤ 0.3% + BUY",
+      "recommendation": "LOCK trail=0.2%, hard_tp=60, hard_sl=25",
+      "action": "Full size deployment; highest confidence regime"
+    },
+    {
+      "period": "2024-Recent",
+      "variants": 1080,
+      "hurst_avg": 0.78,
+      "actual_profitable": "94.7%",
+      "predicted": "93.9%",
+      "avg_wr": "87.4%",
+      "market_conditions": "Mixed (post-hike stabilization)",
+      "trail_range": "0.2-0.5%",
+      "recommendation": "Monitor Hurst, rebalance quarterly",
+      "action": "Adaptive trail based on Hurst_120 weekly; maintain 0.75x lot"
+    }
+  ],
+  "phase_7_next_steps": [
+    {
+      "task": "Hot-week validation",
+      "details": "Test on 2015-W23, 2011-W02, 2010-W38",
+      "status": "NEXT"
+    },
+    {
+      "task": "Commission validation",
+      "details": "Expect 99.5% retention",
+      "status": "NEXT"
+    },
+    {
+      "task": "Forward test",
+      "details": "0.01 lot on sim with slippage",
+      "status": "NEXT"
+    },
+    {
+      "task": "MQL4/MQL5 Bridge",
+      "details": "Regime_Weights.csv generator + EA reader",
+      "status": "PHASE_7_EXECUTION"
+    }
+  ],
+  "production_gate_rule": {
+    "feature": "Trail/ADR (volatility ratio)",
+    "importance": "91.79% dominant predictor",
+    "thresholds": {
+      "disable_execution": "> 0.60",
+      "enable_full_size": "< 0.40",
+      "throttle_0_5x": "0.40 - 0.60"
+    },
+    "historical_validation": {
+      "disable_condition": "2016-18 (0% WR), 2023+ losses",
+      "enable_condition": "2010-15 wins (85.8% WR)"
+    }
+  }
+}

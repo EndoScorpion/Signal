@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "phase": "Phase 5",
+    "title": "Regime-Dependent Edge Discovery",
+    "timestamp": "2026-11-16T18:15:00Z",
+    "version": "1.0"
+  },
+  "executive_summary": {
+    "regimes": [
+      {
+        "regime": "Winning Regime",
+        "prevalence": "71% of variants",
+        "win_rate": "82.2%",
+        "parameters": {
+          "trail_pct": "≤ 0.3%",
+          "direction": "BUY",
+          "variant": "TRAIL_STOP"
+        },
+        "performance": {
+          "win_rate_range": "85-98%",
+          "avg_net_pts": "+275 to +460 pts",
+          "characteristics": "M1/M5 timeframes, tight stops"
+        }
+      },
+      {
+        "regime": "Losing Regime",
+        "prevalence": "29% of variants",
+        "win_rate": "27.9%",
+        "parameters": {
+          "trail_pct": "≥ 0.5%",
+          "direction": "SELL",
+          "variant": "SINE_WAVE"
+        },
+        "performance": {
+          "win_rate_range": "36-54%",
+          "avg_net_pts": "negative",
+          "root_cause": "Wide stops + wrong direction + wrong formula"
+        }
+      }
+    ]
+  },
+  "dimension_analysis": {
+    "pruning": "25 → 15 essential dimensions",
+    "top_correlations": [
+      {"rank": 1, "dimension": "trail_pct", "correlation": -0.655, "note": "CRITICAL — lower stops = higher WR"},
+      {"rank": 2, "dimension": "hard_sl", "correlation": 0.207, "note": "Moderate"},
+      {"rank": 3, "dimension": "base_tp", "correlation": -0.124, "note": "Weak"},
+      {"rank": 4, "dimension": "hard_tp", "correlation": 0.015, "note": "Negligible"},
+      {"rank": 5, "dimension": "amplitude", "correlation": 0.015, "note": "Drop"},
+      {"rank": 6, "dimension": "lookback", "correlation": 0.005, "note": "Drop"}
+    ],
+    "categorical_effects": {
+      "direction": {"BUY_WR": "81.5%", "SELL_WR": "51.5%", "delta": "+30 pts"},
+      "timeframe": {"M1": "77.5%", "M5": "64.2%", "M15": "57.8%"},
+      "variant_type": {"TRAIL_STOP": "69.7%", "SINE_WAVE": "58.5%"},
+      "week": "regime_dependent"
+    },
+    "essential_dimensions": 15,
+    "to_drop": ["amplitude", "lookback"]
+  },
+  "trail_stop_sensitivity_2010_w38": [
+    {"trail_pct": "0.20%", "profitability": "100%", "avg_wr": "98.4%", "best_wr": "100.0%", "implication": "OPTIMAL"},
+    {"trail_pct": "0.30%", "profitability": "100%", "avg_wr": "93.7%", "best_wr": "100.0%", "implication": "ZONE 2"},
+    {"trail_pct": "0.50%", "profitability": "72%", "avg_wr": "71.6%", "best_wr": "100.0%", "implication": "Degradation starts"},
+    {"trail_pct": "0.70%", "profitability": "56%", "avg_wr": "55.4%", "best_wr": "100.0%", "implication": "Below threshold"},
+    {"trail_pct": "0.90%", "profitability": "53%", "avg_wr": "51.1%", "best_wr": "100.0%", "implication": "Unusable"},
+    {"trail_pct": "1.00%", "profitability": "53%", "avg_wr": "50.2%", "best_wr": "100.0%", "implication": "Unusable"}
+  ],
+  "timeframe_performance_2010_w38": [
+    {"timeframe": "M5", "profitability": "63%", "avg_wr": "85.3%", "avg_net_pts": "+451.5", "rank": 1},
+    {"timeframe": "M1", "profitability": "84%", "avg_wr": "85.6%", "avg_net_pts": "+275.2", "rank": 2},
+    {"timeframe": "M15", "profitability": "65%", "avg_wr": "80.3%", "avg_net_pts": "+368.0", "rank": 3}
+  ],
+  "direction_variant_analysis_2010_w38": [
+    {"strategy": "BUY + TRAIL_STOP", "sample": 360, "profitable": "360 (100%)", "avg_wr": "85.8%", "avg_net_pts": "+460", "status": "WINNER"},
+    {"strategy": "BUY + SINE_WAVE", "sample": 144, "profitable": "144 (100%)", "avg_wr": "78.8%", "avg_net_pts": "+313", "status": "Strong"},
+    {"strategy": "SELL + TRAIL_STOP", "sample": 360, "profitable": "161 (45%)", "avg_wr": "54.4%", "avg_net_pts": "+51", "status": "Weak"},
+    {"strategy": "SELL + SINE_WAVE", "sample": 144, "profitable": "48 (33%)", "avg_wr": "36.6%", "avg_net_pts": "-177", "status": "LOSER"}
+  ],
+  "top_performer_2010_w38": {
+    "parameters": {
+      "trail_pct": "0.2%",
+      "hard_tp": 60,
+      "hard_sl": 25,
+      "timeframe": "M1",
+      "direction": "BUY",
+      "variant": "TRAIL_STOP"
+    },
+    "performance": {
+      "win_rate": "100.0%",
+      "sample_size": 10,
+      "note": "small sample",
+      "net_pts": "+502.9"
+    },
+    "status": "Valid proof of concept"
+  },
+  "commission_analysis": {
+    "fxopen_ecn_tiers": [
+      {"range": "$1k–$25k", "pts_rt_per_lot": 2.5, "comment": "Cloud/sim range"},
+      {"range": "$25k–$250k", "pts_rt_per_lot": 1.8, "comment": "Scaling tier"},
+      {"range": "$250k+", "pts_rt_per_lot": 1.5, "comment": "Elite tier"}
+    ],
+    "cloud_sim_assumption": "2.5 pts RT per 0.01 lot",
+    "regime_impact": {
+      "winning_regime": {
+        "config": "trail=0.2%, BUY+TRAIL_STOP",
+        "gross_pts": "+460",
+        "commission_pts": "-2.5",
+        "net_pts": "+457.5",
+        "retention_pct": "99.5%",
+        "pf_after_commission": "Still profitable"
+      },
+      "losing_regime": {
+        "config": "trail=0.7%, SELL+SINE_WAVE",
+        "gross_pts": "-177",
+        "commission_pts": "-2.5",
+        "net_pts": "-179.5",
+        "retention_pct": "Commission makes worse",
+        "pf_after_commission": "Unprofitable"
+      }
+    }
+  },
+  "recommendations": {
+    "immediate_actions": [
+      "Lock trail_pct = 0.2% for forward testing",
+      "Filter on direction = BUY only",
+      "Prefer M5 timeframe for best net; M1 for reliability",
+      "Drop amplitude, lookback from dimension set",
+      "Keep categorical filters: variant_type, week, timeframe"
+    ],
+    "phase_6_hot_week_validation": {
+      "test_weeks": ["2015-W23", "2011-W02", "2010-W38"],
+      "locked_params": {
+        "trail_pct": "0.2%",
+        "direction": "BUY",
+        "variant": "TRAIL_STOP"
+      },
+      "objectives": [
+        "Measure consistency across periods",
+        "Validate commission model (expect 97%+ retention)"
+      ]
+    },
+    "deployment_readiness": {
+      "sim": {
+        "lot_size": "0.01",
+        "min_trades_per_variant": 100,
+        "include": "full commission model"
+      },
+      "live": {
+        "requirements": [
+          "hot_week_wr_all_periods > 55%",
+          "forward_test_pf > 1.5"
+        ]
+      }
+    }
+  },
+  "status": "Phase 5 complete. Regime-dependent edge locked in. Ready for Phase 6 hot-week validation."
+}

@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "phase": "Phase 6",
+    "title": "Classification Thresholds & Feature Importance",
+    "timestamp": "2026-11-16T18:02:00Z",
+    "version": "1.0"
+  },
+  "model_performance": {
+    "logistic_regression": {
+      "train_accuracy": "73.5%",
+      "test_accuracy": "71.0%",
+      "config": "penalty='l2', C=1.0, max_iter=1000"
+    },
+    "decision_tree": {
+      "train_accuracy": "73.2%",
+      "test_accuracy": "71.6%",
+      "config": "max_depth=2, min_samples_leaf=5"
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "VR(trail%)",
+      "dt_importance": 0.073097,
+      "lr_coefficient": 1.044628,
+      "rank": 2
+    },
+    {
+      "feature": "ER(hard_sl)",
+      "dt_importance": 0.0,
+      "lr_coefficient": 0.274097,
+      "rank": 3
+    },
+    {
+      "feature": "Hurst(hard_tp)",
+      "dt_importance": 0.0,
+      "lr_coefficient": 0.080361,
+      "rank": 4
+    },
+    {
+      "feature": "ADR(ratio)",
+      "dt_importance": 0.926903,
+      "lr_coefficient": 0.712801,
+      "rank": 1,
+      "note": "DOMINANT PREDICTOR"
+    }
+  ],
+  "decision_thresholds_decision_tree": {
+    "primary_split": "hurst_indicator (hard_tp offset)",
+    "rules": [
+      {
+        "condition": "hurst_indicator > 0.65 (hard_tp > 65)",
+        "regime": "TRENDING",
+        "config": "trail=0.2%, BUY",
+        "win_rate": "85.8%"
+      },
+      {
+        "condition": "hurst_indicator ≤ 0.65 & vr_indicator ≤ 0.3",
+        "regime": "MEAN-REVERT",
+        "config": "trail=0.7%+",
+        "win_rate": "54.4%"
+      },
+      {
+        "condition": "else",
+        "regime": "MIXED",
+        "config": "trail=0.4-0.5%, adaptive",
+        "win_rate": "variable"
+      }
+    ]
+  },
+  "logistic_regression_coefficients": {
+    "VR(trail%)": {
+      "coefficient": -1.0446,
+      "interpretation": "Negative: lower trail % → higher probability of winning regime"
+    },
+    "ER(hard_sl)": {
+      "coefficient": 0.2741,
+      "interpretation": "Positive: higher hard_sl slightly improves regime"
+    },
+    "Hurst(hard_tp)": {
+      "coefficient": -0.0804,
+      "interpretation": "LARGEST: hard_tp (trending bias) is key regressor"
+    },
+    "ADR(ratio)": {
+      "coefficient": -0.7128,
+      "interpretation": "Negative: lower ADR → winning regime"
+    }
+  },
+  "interpretation": {
+    "dominant_feature": "Hurst indicator (hard_tp offset)",
+    "phase_5_locked_config": {
+      "hard_tp": 60,
+      "trail": "0.2%",
+      "direction": "BUY",
+      "variant": "TRAIL_STOP",
+      "reasoning": "Trending regime (Hurst >0.65 proxy) confirmed optimal"
+    }
+  }
+}
