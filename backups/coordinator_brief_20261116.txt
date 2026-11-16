@@ -1,0 +1,13 @@
+COORDINATOR BRIEF - 2026-11-16
+
+MT4_PAUSE remains in place. b62 not run; it needs Nasif's direct go-ahead.
+
+New since 11-13: commit 84691e0 (merged as PR #63, 11-15) adds a "25-dimension multiverse" run claiming top-5 variants at WR 62.4%, PF 5.31. Treat it as a hypothesis, not an edge. It scores 13,824 variants in-sample on one SPY daily series (1000 bars, 2022-2026), labels sessions (London/NY) that daily bars cannot carry, has no per-period or OOS split, and leaves tax unapplied by its own TODO. SURVIVORS.csv holds all 13,824 rows, so no filter was applied. Picking the top 5 of 13,824 in-sample inflates PF heavily. It does not meet the CLAUDE.md rules (net of full costs, per-period consistency).
+
+g4b unchanged: clears PF/DD and lucky bar on 2021 OOS but day-block p = 0.085 vs the 0.0024 bar. Next step is 2011/2012 OOS via MT4.
+
+Commission decision (2.5 vs 8 pts RT) is still open with Nasif. 194 MT4 items still wait on his go-ahead.
+
+Still stale: HUB_STATE.md RESULTS (PENDING since 10-12) and the crypto paper ledger (last row 10-11, AVAX open).
+
+Board: one vague line posted today.
