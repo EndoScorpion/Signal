@@ -233,7 +233,7 @@ class HotWeekValidator:
                 result = self.backtest_hot_week(variant, week_df, week_name)
                 if result:
                     all_results.append(result)
-                    status = "✅ PASS" if (result['pass_wl_pf'] and result['pass_n']) else "❌ FAIL"
+                    status = "[PASS]" if (result['pass_wl_pf'] and result['pass_n']) else "[FAIL]"
                     print(f"  Variant {variant['variant_id']}: WR={result['win_rate']:.1%}, "
                           f"PF={result['pf']:.2f}, n={result['n_trades']} {status}")
 
@@ -262,7 +262,7 @@ class HotWeekValidator:
             passes = subset[subset['pass_wl_pf'] & subset['pass_n']]
             pass_pct = len(passes) / len(subset) * 100
 
-            status = "✅ GO" if pass_pct >= 66.7 else "❌ NO-GO"
+            status = "[GO]" if pass_pct >= 66.7 else "[NO-GO]"
 
             print(f"\nVariant {variant_id}: {status} ({len(passes)}/{len(subset)} weeks passed)")
             print(f"  Avg WR: {avg_wr:.1%} | Avg PF: {avg_pf:.2f} | Total Trades: {total_trades} | Pips: {total_pnl:.0f}")
@@ -270,7 +270,7 @@ class HotWeekValidator:
             # Per-week breakdown
             for week in subset['week'].unique():
                 week_data = subset[subset['week'] == week].iloc[0]
-                week_status = "✅" if (week_data['pass_wl_pf'] and week_data['pass_n']) else "❌"
+                week_status = "[OK]" if (week_data['pass_wl_pf'] and week_data['pass_n']) else "[XX]"
                 print(f"    {week}: {week_status} WR={week_data['win_rate']:.1%}, PF={week_data['pf']:.2f}, n={week_data['n_trades']}")
 
 def main():
@@ -291,7 +291,7 @@ def main():
 
     # Run hot week validation
     validator = HotWeekValidator()
-    results = validator.run_hot_week_validation(variants)
+    results = validator.run_hot_week_validation(variants, data_path='data/history/EURUSD.csv')
 
     # Save results
     os.makedirs('results', exist_ok=True)
@@ -302,7 +302,7 @@ def main():
             'results': results
         }, f, indent=2, default=str)
 
-    print(f"\n✅ Hot week validation complete. Results saved to results/hot_week_validation_results.json")
+    print(f"\n[OK] Hot week validation complete. Results saved to results/hot_week_validation_results.json")
 
 if __name__ == '__main__':
     main()
