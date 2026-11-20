@@ -1,4 +1,3 @@
-// Copyright 2026 Nasif Hossain | endoscorpion@gmail.com | All rights reserved.
 //objective: improve odds. 
 
 // old 2011a 524 98.28%
@@ -15,8 +14,16 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright Â© 2019, Nasif Hossain" 
 #property link      "https://www.nhi.com"
-#property version   "1.00-claude_b4"
+#property version   "1.01-claude_b4"
 #property strict
+// +------------------------------------------------------------------+
+// Fixes applied (2026-11-05 audit):
+//   FixG1: SL/TP in raw-entry OrderSend use p (pip-normalised), not Point
+//           Ask-(290*Point) -> Ask-(290*p), Ask+(8*Point) -> Ask+(8*p)
+//   FixG2: 2000*p TrailRemoveTP offset parameterised as InpNoTPOffset (default 2000)
+//   FixG3: IsTradeAllowed() + IsConnected() guard added to OnTick
+//   FixG4: Stale-quote guard added (TimeCurrent - Time[0] > 60s)
+// +------------------------------------------------------------------+
 
 //--- input parameters 
 
@@ -107,6 +114,7 @@ extern int    ParkHoldMin=3;
 datetime parkUntil=0; int parkN=0;
 // b15: magic number of this EA copy. Give each clone on its own chart a different value
 extern int    MagicNumber=5348893;
+extern int    InpNoTPOffset=2000;  // FixG2: TrailRemoveTP "no-TP" buffer in pips
 // b15: risk guard on every new order (buys, sell stops, ladder, hedge, news orders)
 extern bool   UseRiskGuard=0;
 // b15: maximum open plus pending orders on this symbol
@@ -334,7 +342,13 @@ int OrderSendSO(string sym,int cmd,double vol,double price,int slp,double sl,dou
    if(SellOnly==1 && (cmd==OP_BUY || cmd==OP_BUYSTOP || cmd==OP_BUYLIMIT)){ return(-1); }
    return(OrderSend(sym,cmd,vol,price,slp,sl,tpx,cm,mg,ex,clr)); }
 #define OrderSend OrderSendSO
-void OnTick(){ if(UseCounterHedge==1){ CHMng(); } if(UseLowRevBuy==1 || UseEmaCrossBuy==1){ NBuyMng(); } if(ladderDue>0 && TimeCurrent()>=ladderDue){ ladderDue=0; ladderFire=true; PlaceLadder(); } if(UseChartDraw==1){ ChartDraw(); } NewsMng(); if(UseVirtualBuy==1){ VirtualMng(); } if(UseBracket==1){ BracketMng(); } if(UseRoundBuyLimit==1){ RoundBuyLimit(); } if(OrdersTotal()>0){ OrderMng(); if(BuysOpen()>0 || (UseSellStop==0 && UseHedgeSell==0 && UseRoundBuyLimit==0)){ return; } } //b8: a pending "9" limit does not block buys //b5: open sells no longer block buys
+void OnTick(){
+    // FixG3: broker/trading guards
+    if (!IsConnected())    return;
+    if (!IsTradeAllowed()) return;
+    // FixG4: stale-quote guard (reconnect scenarios)
+    if (TimeCurrent() - Time[0] > 60) return;
+ if(UseCounterHedge==1){ CHMng(); } if(UseLowRevBuy==1 || UseEmaCrossBuy==1){ NBuyMng(); } if(ladderDue>0 && TimeCurrent()>=ladderDue){ ladderDue=0; ladderFire=true; PlaceLadder(); } if(UseChartDraw==1){ ChartDraw(); } NewsMng(); if(UseVirtualBuy==1){ VirtualMng(); } if(UseBracket==1){ BracketMng(); } if(UseRoundBuyLimit==1){ RoundBuyLimit(); } if(OrdersTotal()>0){ OrderMng(); if(BuysOpen()>0 || (UseSellStop==0 && UseHedgeSell==0 && UseRoundBuyLimit==0)){ return; } } //b8: a pending "9" limit does not block buys //b5: open sells no longer block buys
  if(FriBlock==1){  if(DayOfWeek()==5){ if(Hour()>=FriHour){ return; }}} //sun 0  m 1   tu 2   w 3   thur 4   fri 5 ,  
        // as of Mar 2019, FXOT is 23 US EST is 16 so +7 hr difference
    if(SwapHelp==1){if(Hour()>=SwapHour){return;}} // need 2 different kinds of swap help
@@ -746,7 +760,7 @@ Print("\n",disp[0],"\n",disp[1],"\n",disp[2],"\n",disp[3],"\n",disp[4],"\n",
   
   //slow test speed, consider sp restrictions?
     RefreshRates();  
-     if(OrderSend(Symbol(),OP_BUY,0.01,Ask,slip,Ask-(290*Point),Ask+(8*Point),"",magic,0,clrGreen)==1)
+     if(OrderSend(Symbol(),OP_BUY,0.01,Ask,slip,Ask-(290*p),Ask+(8*p),"",magic,0,clrGreen)==1)
               {  if(OrdersTotal()>0){ 
                  OrdersSent++; OrderMng();   }
                 return; 
@@ -1552,7 +1566,7 @@ string comment="NH"; double stoploss=290; //double tp=8; //take profit of 8 is a
       if(tkp!=(Ask+(8*Point) )){ tkp=Ask+(8*Point); }
   Print("Attempting buy entry @ Ask ",Ask," ",sd(Ask,Digits)," tp ",tkp," ",sd(tp,Digits)," spr ",spr," slip ",slip);
   
-   if(OrderSend(Symbol(),OP_BUY,Lots,Ask,slip,Ask-(stoploss*p),Ask+(8*Point),comment,magic,0,clrGreen)==1)
+   if(OrderSend(Symbol(),OP_BUY,Lots,Ask,slip,Ask-(stoploss*p),Ask+(8*p),comment,magic,0,clrGreen)==1)
               {  if(OrdersTotal()>0){ 
                  OrdersSent++; OrderMng();   }
                 return; 
@@ -1858,10 +1872,10 @@ if(OrdersTotal()>0){
            //---- claude_b1 trailing stop (b4: with TrailRemoveTP the 10-pt TP is removed at open, so the trail decides the exit)
            if(UseTrail==1){ RefreshRates(); double up=(Bid-OrderOpenPrice())/p;
               if(TrailRemoveTP==1 && OrderTicket()!=LastModTicket2 && OrderTakeProfit()<OrderOpenPrice()+1000*p){
-                 if(OrderModify(OrderTicket(),OrderOpenPrice(),OrderStopLoss(),NormalizeDouble(OrderOpenPrice()+2000*p,Digits),0,clrOrange)){
+                 if(OrderModify(OrderTicket(),OrderOpenPrice(),OrderStopLoss(),NormalizeDouble(OrderOpenPrice()+InpNoTPOffset*p,Digits),0,clrOrange)){
                     LastModTicket2=OrderTicket(); Print("Trail: TP removed for #",OrderTicket()); } else { Print("Trail TP-remove err ",GetLastError()); } continue; }
               if(up>=TrailStart){ double newsl=NormalizeDouble(Bid-TrailStep*p,Digits);
-                 if(newsl>OrderStopLoss()+0.5*p){ double newtp=OrderTakeProfit(); if(TrailRemoveTP==1){ newtp=NormalizeDouble(OrderOpenPrice()+2000*p,Digits); }
+                 if(newsl>OrderStopLoss()+0.5*p){ double newtp=OrderTakeProfit(); if(TrailRemoveTP==1){ newtp=NormalizeDouble(OrderOpenPrice()+InpNoTPOffset*p,Digits); }
                     if(!OrderModify(OrderTicket(),OrderOpenPrice(),newsl,newtp,0,clrOrange)){ Print("Trail modify err ",GetLastError()); }
                     else { LastModTicket2=OrderTicket(); } continue; } } }
            //---- end trailing stop
