@@ -1,0 +1,175 @@
+JAX IT JOBS — MASTER ARCHIVE — Chunk 2: Nov 2026
+Compiled: 2026-11-06 | Sources: Indeed (Alexandria API), iHire Technology, Robert Half, Insight Global
+========================================================
+November 2026 postings — lowest salary first within tier
+NOTE: Recruiter direct contacts not publicly listed on job boards.
+      Contact via apply links or company careers pages.
+
+--------------------------------------------------------
+B1. HELP DESK / CUSTOMER TECH
+   Company:    (via iHire Technology)
+   Location:   Jacksonville, FL
+   Type:       Full-time
+   Salary:     ~$18 – $24 / hr ($37k–$50k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.ihiretechnology.com/jobs/view/522173483
+   Skills:     Help desk, Tier 1, ticketing, Windows, customer support
+   Contact:    ihiretechnology.com
+
+--------------------------------------------------------
+B2. DESKTOP SUPPORT TECHNICIAN
+   Company:    (via Robert Half — Temp-to-Hire)
+   Location:   Jacksonville, FL
+   Type:       Temp-to-Hire
+   Salary:     ~$20 – $26 / hr ($41k–$54k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.roberthalf.com/us/en/job/jacksonville-fl/desktop-support-technician/01120-9504227420-usen
+   Skills:     Desktop support, temp-to-hire, hardware, Windows, imaging
+   Contact:    Robert Half Jacksonville: roberthalf.com
+
+--------------------------------------------------------
+B3. TECHNOLOGY SUPPORT SPECIALIST I
+   Company:    (via iHire Technology)
+   Location:   Jacksonville, FL
+   Type:       Full-time
+   Salary:     ~$20 – $28 / hr ($41k–$58k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.ihiretechnology.com/jobs/view/520675918
+   Skills:     IT support, Windows 10, Office 365, Active Directory, troubleshooting
+   Contact:    ihiretechnology.com
+
+--------------------------------------------------------
+B4. IT SUPPORT TECHNICIAN L2 (ONSITE)
+   Company:    (via Insight Global — Contract)
+   Location:   Jacksonville, FL (In-Office)
+   Type:       Contract
+   Salary:     ~$22 – $28 / hr ($46k–$58k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://insightglobal.com/jobs/find_a_job/job-515384
+   Skills:     Tier 2, desktop support, onsite, imaging, ServiceNow
+   Contact:    insightglobal.com
+
+--------------------------------------------------------
+B5. IT SUPPORT SPECIALIST
+   Company:    (via Robert Half — Contract-to-Hire)
+   Location:   Jacksonville, FL (Hybrid)
+   Type:       Contract-to-Hire
+   Salary:     ~$22 – $30 / hr ($46k–$62k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.roberthalf.com/us/en/jobs/jacksonville-fl/it-support-specialist
+   Skills:     IT support, ServiceNow, Hybrid, O365, contract-to-hire
+   Contact:    roberthalf.com
+
+--------------------------------------------------------
+B6. IT SUPPORT SPECIALIST (DIRECT HIRE)
+   Company:    (via Robert Half — Direct)
+   Location:   Jacksonville, FL (Hybrid)
+   Type:       Full-time Direct
+   Salary:     ~$22 – $30 / hr ($46k–$62k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.roberthalf.com/us/en/job/jacksonville-fl/it-support-specialist/01120-9504265528-usen
+   Skills:     IT support, direct hire, Hybrid, ServiceNow, Windows 10
+   Contact:    roberthalf.com
+
+--------------------------------------------------------
+B7. TECHNICAL SERVICE DESK SUPERVISOR
+   Company:    FSCJ (Florida State College at Jacksonville)
+   Location:   Jacksonville, FL 32256 (In-Office)
+   Type:       Full-time
+   Salary:     ~$22 / hr ($46k/yr)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.indeed.com/jobs?q=Technical+Service+Desk&l=Jacksonville%2C+FL
+   Skills:     Service desk, supervisor, FSCJ, tuition reimbursement
+   Benefits:   Tuition reimbursement (state college)
+   Contact:    FSCJ HR: fscj.edu/about/administration/human-resources
+
+--------------------------------------------------------
+B8. IT SUPPORT ANALYST
+   Company:    (via Robert Half — Contract-to-Hire)
+   Location:   Jacksonville, FL (Hybrid)
+   Type:       Contract-to-Hire
+   Salary:     ~$24 – $34 / hr ($50k–$71k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.roberthalf.com/us/en/jobs/jacksonville-fl/it-support-analyst
+   Skills:     IT analyst, Hybrid, Active Directory, ticketing, Windows 11
+   Contact:    roberthalf.com
+
+--------------------------------------------------------
+B9. IT SUPPORT ENGINEER
+   Company:    American Roll-on Roll-off Carrier (via Indeed)
+   Location:   Ponte Vedra Beach, FL (In-Office)
+   Type:       Full-time
+   Salary:     ~$29 – $41 / hr ($60k–$85k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.indeed.com/jobs?q=IT+Support+Engineer&l=Jacksonville%2C+FL
+   Skills:     IT support, endpoint, Office technology, 401k
+   Contact:    Apply via Indeed link above
+
+--------------------------------------------------------
+B10. IT SUPPORT ENGINEER (DIRECT HIRE)
+   Company:    (via Robert Half — Direct)
+   Location:   Jacksonville, FL (Hybrid)
+   Type:       Full-time Direct
+   Salary:     ~$28 – $40 / hr ($58k–$83k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.roberthalf.com/us/en/job/jacksonville-fl/it-support-engineer/01120-9504277367-usen
+   Skills:     IT engineer, direct hire, Hybrid, Tier 2, VPN
+   Contact:    roberthalf.com
+
+--------------------------------------------------------
+B11. IT SUPPORT ENGINEER (Contract)
+   Company:    (via Robert Half — Contract)
+   Location:   Jacksonville, FL (Hybrid)
+   Type:       Contract
+   Salary:     ~$28 – $40 / hr ($58k–$83k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.roberthalf.com/us/en/jobs/jacksonville-fl/it-support-engineer
+   Skills:     IT engineer, Hybrid, networking, VPN, Office 365, Tier 2
+   Contact:    roberthalf.com
+
+--------------------------------------------------------
+B12. SYSTEMS ADMINISTRATOR
+   Company:    Atomic-6 (via Indeed)
+   Location:   Yulee, FL 32097 (~25mi N of JAX, In-Office)
+   Type:       Full-time
+   Salary:     ~$53 – $65 / hr ($110k–$135k/yr est)
+   Schedule:   M–F Days, 40 hrs/wk
+   Posted:     Nov 2026
+   Apply URL:  https://www.indeed.com/jobs?q=Systems+Administrator&l=Jacksonville%2C+FL
+   Skills:     Sysadmin, systems administrator, yearly bonus
+   Benefits:   Yearly bonus
+   Contact:    Apply via Indeed link above
+
+========================================================
+SEARCH LINKS (live as of 2026-11-06)
+Indeed IT:         https://www.indeed.com/jobs?q=IT&l=Jacksonville%2C+FL
+Indeed Help Desk:  https://www.indeed.com/jobs?q=help+desk&l=Jacksonville%2C+FL
+Indeed Sysadmin:   https://www.indeed.com/jobs?q=systems+administrator&l=Jacksonville%2C+FL
+Indeed Remote IT:  https://www.indeed.com/jobs?q=IT&l=Jacksonville%2C+FL&remotejob=032b3046-06a4-4a1b-897c-6f2cbba89630
+ZipRecruiter IT:   https://www.ziprecruiter.com/jobs-search?search=IT+support&location=Jacksonville%2C+FL
+LinkedIn IT JAX:   https://www.linkedin.com/jobs/search/?keywords=IT&location=Jacksonville%2C%20FL
+BuiltIn JAX:       https://builtin.com/jobs/jacksonville/operations/it
+iHire Technology:  https://www.ihiretechnology.com
+Robert Half JAX:   https://www.roberthalf.com/us/en/jobs/jacksonville-fl/
+Insight Global:    https://insightglobal.com/jobs/
+
+========================================================
+NOTES
+- All 12 listings are M–F day shift. No nights/weekends.
+- Robert Half (staffing) handles 7 of 12 — worth calling their JAX office directly
+  (they sometimes have unlisted roles): 904-396-5844 (Jacksonville branch)
+- Recruiter personal emails not publicly listed on job boards.
+- Chunk 1 (Mar–Oct 2026) is in jax_it_jobs_MASTER_mar_oct2026.txt
+========================================================
+Archived by Claude Code — endoscorpion@gmail.com project
