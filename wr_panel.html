@@ -1,0 +1,348 @@
+<title>WR Chart</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+
+<style>
+  :root { color-scheme: dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #000;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 24px 80px;
+    min-height: 100vh;
+  }
+
+  .page-hint {
+    color: #003300;
+    font-size: 12px;
+    max-width: 320px;
+  }
+
+  /* ── Taskbar pill (minimized) ─────────────── */
+  #taskbar-btn {
+    position: fixed;
+    bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #111;
+    border: 1px solid #00ff00;
+    border-radius: 4px 4px 0 0;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #00ff00;
+    letter-spacing: 0.06em;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  #taskbar-btn:hover { background: #001a00; }
+  #taskbar-btn .blink {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #00ff00;
+    animation: blink 1.6s step-start infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── Floating panel ──────────────────────── */
+  #panel {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    background: #000;
+    border: 1px solid #00ff00;
+    min-width: 340px;
+    min-height: 180px;
+    flex-direction: column;
+    box-shadow: 0 0 24px rgba(0,255,0,0.18);
+    /* default position: bottom-right above taskbar */
+    bottom: calc(36px + env(safe-area-inset-bottom, 0px));
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    width: 480px;
+  }
+  #panel.open { display: flex; }
+
+  /* Resize handle (bottom-right corner) */
+  #resize-handle {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 14px; height: 14px;
+    cursor: se-resize;
+    background: linear-gradient(135deg, transparent 50%, #00ff00 50%);
+    opacity: 0.5;
+  }
+  #resize-handle:hover { opacity: 1; }
+
+  .panel-titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background: #001a00;
+    border-bottom: 1px solid #00ff00;
+    cursor: move;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .panel-title {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #00ff00;
+    font-weight: bold;
+  }
+  .titlebar-btns { display: flex; gap: 6px; }
+  .tb-btn {
+    background: none;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    padding: 1px 6px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .tb-btn:hover { background: #00ff00; color: #000; }
+
+  .panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px 14px 20px;
+    position: relative;
+  }
+
+  /* ── Chart ───────────────────────────────── */
+  .chart-title {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: #00cc00;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 40px;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 7px;
+    font-size: 13px;
+  }
+  .bar-label { color: #00ff00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+  .bar-track {
+    background: #001200;
+    border: 1px solid #003300;
+    height: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: #00ff00;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .bar-fill.hi  { background: #00ff00; }
+  .bar-fill.mid { background: #aaff00; }
+  .bar-fill.lo  { background: #ffaa00; }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 8px,
+      rgba(0,0,0,0.18) 8px,
+      rgba(0,0,0,0.18) 9px
+    );
+  }
+  .bar-pct { color: #00ff00; text-align: right; font-size: 13px; font-weight: bold; }
+  .bar-pct.mid { color: #aaff00; }
+  .bar-pct.lo  { color: #ffaa00; }
+
+  .divider {
+    border: none;
+    border-top: 1px dashed #003300;
+    margin: 10px 0;
+  }
+
+  .section-lbl {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: #006600;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+
+  .est-note {
+    font-size: 11px;
+    color: #004400;
+    margin-top: 12px;
+  }
+
+  .status-line {
+    font-size: 11px;
+    color: #006600;
+    padding: 4px 10px;
+    border-top: 1px solid #003300;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+  }
+</style>
+
+<div class="page-hint">[ WR panel — click taskbar button ↘ ]</div>
+
+<!-- Taskbar minimized button -->
+<div id="taskbar-btn" onclick="openPanel()" title="Win Rate Chart">
+  <span class="blink"></span>
+  WR CHART
+</div>
+
+<!-- Floating panel -->
+<div id="panel">
+  <div class="panel-titlebar" id="drag-handle">
+    <span class="panel-title">▸ WIN RATE — SIGNAL</span>
+    <div class="titlebar-btns">
+      <button class="tb-btn" onclick="closePanel()" title="Minimize">_</button>
+    </div>
+  </div>
+  <div class="panel-body" id="panel-body">
+    <div class="chart-title">EURUSD ECN · WR by rule (net of cost)</div>
+
+    <div class="section-lbl">STACK C</div>
+
+    <div class="bar-row">
+      <span class="bar-label" title="Clone gen11 rule #3, T31s+GateA, skip NFP">G11-3</span>
+      <div class="bar-track"><div class="bar-fill hi" style="width:75%"></div></div>
+      <span class="bar-pct">75%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label" title="Mon 17:00 long, exit 22:00">Mon 17→22</span>
+      <div class="bar-track"><div class="bar-fill mid" style="width:60%"></div></div>
+      <span class="bar-pct mid">~60%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label" title="Mon 15-16 LOSSY long">Mon 15-16 L</span>
+      <div class="bar-track"><div class="bar-fill lo" style="width:48%"></div></div>
+      <span class="bar-pct lo">~48%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label" title="Fri 13-16 LOSSY short, z≥0.9">Fri 13-16 S</span>
+      <div class="bar-track"><div class="bar-fill mid" style="width:55%"></div></div>
+      <span class="bar-pct mid">~55%</span>
+    </div>
+    <div class="bar-row" style="margin-top:4px;border-top:1px solid #003300;padding-top:6px">
+      <span class="bar-label" style="color:#00ff88;font-weight:bold">STACK C</span>
+      <div class="bar-track"><div class="bar-fill hi" style="width:64%;background:#00ff88"></div></div>
+      <span class="bar-pct" style="color:#00ff88">64%</span>
+    </div>
+
+    <hr class="divider">
+    <div class="section-lbl">v2.3 SURVIVOR · Asia-London Fade</div>
+
+    <div class="bar-row">
+      <span class="bar-label" title="Wed/Thu short, EMA120<0, ADX<30, ATR<75pct">v2.3 W/T</span>
+      <div class="bar-track"><div class="bar-fill hi" style="width:72%"></div></div>
+      <span class="bar-pct">~72%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label" title="+07:00 bearish bar filter, n=19 needs more data">v2.4 cand.</span>
+      <div class="bar-track"><div class="bar-fill hi" style="width:84%;background:#00ffaa"></div></div>
+      <span class="bar-pct" style="color:#00ffaa">~84%</span>
+    </div>
+
+    <div class="est-note">~ = estimate · n&lt;30 provisional · past results ≠ advice</div>
+  </div>
+  <div class="status-line" id="status-line">IS+OOS · Stack C OOS PF 2.94 · v2.3 PF 6.29</div>
+  <div id="resize-handle"></div>
+</div>
+
+<script>
+  const panel = document.getElementById('panel');
+  const taskbarBtn = document.getElementById('taskbar-btn');
+
+  function openPanel() {
+    panel.classList.add('open');
+    taskbarBtn.style.display = 'none';
+    try { localStorage.setItem('wr_open', '1'); } catch(e) {}
+  }
+  function closePanel() {
+    panel.classList.remove('open');
+    taskbarBtn.style.display = 'flex';
+    try { localStorage.setItem('wr_open', '0'); } catch(e) {}
+  }
+
+  // Restore state
+  try {
+    if (localStorage.getItem('wr_open') === '1') openPanel();
+  } catch(e) {}
+
+  // ── Draggable ─────────────────────────────────
+  const dragHandle = document.getElementById('drag-handle');
+  let dragging = false, dx = 0, dy = 0;
+
+  dragHandle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    dragging = true;
+    const r = panel.getBoundingClientRect();
+    // switch to top/left positioning when dragging
+    panel.style.bottom = 'auto';
+    panel.style.right = 'auto';
+    panel.style.top = r.top + 'px';
+    panel.style.left = r.left + 'px';
+    dx = e.clientX - r.left;
+    dy = e.clientY - r.top;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    panel.style.left = (e.clientX - dx) + 'px';
+    panel.style.top  = (e.clientY - dy) + 'px';
+  });
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  // Touch drag
+  dragHandle.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    const r = panel.getBoundingClientRect();
+    panel.style.bottom = 'auto'; panel.style.right = 'auto';
+    panel.style.top = r.top + 'px'; panel.style.left = r.left + 'px';
+    dx = t.clientX - r.left; dy = t.clientY - r.top;
+    dragging = true;
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const t = e.touches[0];
+    panel.style.left = (t.clientX - dx) + 'px';
+    panel.style.top  = (t.clientY - dy) + 'px';
+  }, { passive: true });
+  document.addEventListener('touchend', () => { dragging = false; });
+
+  // ── Resizable ─────────────────────────────────
+  const resizeHandle = document.getElementById('resize-handle');
+  let resizing = false, rsx = 0, rsy = 0, rw = 0, rh = 0;
+
+  resizeHandle.addEventListener('mousedown', e => {
+    resizing = true;
+    rsx = e.clientX; rsy = e.clientY;
+    rw = panel.offsetWidth; rh = panel.offsetHeight;
+    e.preventDefault(); e.stopPropagation();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!resizing) return;
+    const nw = Math.max(280, rw + (e.clientX - rsx));
+    const nh = Math.max(160, rh + (e.clientY - rsy));
+    panel.style.width = nw + 'px';
+    panel.style.height = nh + 'px';
+  });
+  document.addEventListener('mouseup', () => { resizing = false; });
+</script>
