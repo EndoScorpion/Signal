@@ -169,6 +169,8 @@ def parse_report(filepath, commission_n):
                 'profit':     raw_profit - commission,
             })
 
+    if opens:
+        print(f"WARNING: {len(opens)} unclosed order(s) in {filepath} — excluded from stats: {list(opens.keys())[:5]}")
     return trades, initial_deposit
 
 
