@@ -1,0 +1,1 @@
+python-telegram-bot>=21.0\nanthropic>=0.25.0\nrequests>=2.31.0\npython-dotenv>=1.0.0\n
